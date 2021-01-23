@@ -1,23 +1,21 @@
-const Users = require("../../models/users")
-const { handleBody } = require("./handleBody")
+const ActionAssign = require('../../models/actionAssign')
+const { handleBody } = require('./handleBody')
 const { startSession } = require('mongoose')
-const bcrypt = require('bcryptjs')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
-
-const create = async (req, res) => {
+const update = async (req, res) => {
   let sessions = []
   try {
-    const query = { 
-      $or: [
-        {phone: req.body.phone},
-        {email: req.body.email},
-        {username: req.body.username},
+    const queryOld = {
+      $and: [
+        { actionId: req.body.actionId },
+        { userId: req.body.userId },
       ],
       isDeleted: false
-    } // for oldDocs
+    }
+    const queryUpdate = { _id: req.params.id, isDeleted: false }
 
     // Handle data
-    const { error, body} = handleBody(req.body) // for newDoc
+    const { error, body } = handleBody(req.body) // for newDoc
     if (error) {
       return res.status(406).json({
         success: false,
@@ -30,16 +28,15 @@ const create = async (req, res) => {
     session.startTransaction();
     sessions.push(session);
 
-    // Hash password
-    if (body.password != null) {
-      body.password = await bcrypt.hashSync(body.password, 10);
-    }
+    const updated = await ActionAssign.findOneAndUpdate(
+      queryUpdate,
+      body,
+      { session, new: true }
+    )
 
-    // Access DB
-    const newDoc = await Users.create( [body], { session: session } )
-    
     // Check duplicate
-    const oldDocs = await Users.find(query, null, {session})
+    const oldDocs = await ActionAssign.find(queryOld, null, { session })
+
     if (oldDocs.length > 1) {
       await abortTransactions(sessions)
       return res.status(406).json({
@@ -48,19 +45,19 @@ const create = async (req, res) => {
       })
     }
 
-    // Success
+    // Updated Successfully
     await commitTransactions(sessions)
     return res.status(200).json({
       success: true,
-      data: newDoc
-    });
+      data: updated
+    })
   } catch (error) {
     await abortTransactions(sessions)
     return res.status(500).json({
       success: false,
       error: error.message
-    });
+    })
   }
 }
 
-module.exports = { create }
+module.exports = { update }

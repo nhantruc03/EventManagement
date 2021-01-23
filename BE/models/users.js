@@ -4,6 +4,12 @@ const Schema = mongoose.Schema;
 
 const Users = new Schema(
   {
+    //   medicinecategoriesId: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "medicinecategories",
+    //     index: true,
+    //     required: true
+    // },
     name: {
       type: String,
       required: true,
@@ -19,14 +25,16 @@ const Users = new Schema(
       index: true,
       required: true
     },
-    phoneNumber: {
+    phone: {
       type: String,
       required: true,
-      index: true
+      index: true,
+      minlength: 10
     },
     email: {
       type: String,
       index: true,
+      unique: true,
       required: true
     },
     gender: {
@@ -45,6 +53,12 @@ const Users = new Schema(
       type: String,
       required: true,
       minlength: 8
+    },
+     role: {
+      type: String,
+      required: true,
+      enum: ["admin", "doctor", "pharmacist", "staff"],
+      default: "staff"
     },
     isDeleted: {
       type: Boolean,

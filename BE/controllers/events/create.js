@@ -1,7 +1,6 @@
-const Users = require("../../models/users")
+const Events = require("../../models/events")
 const { handleBody } = require("./handleBody")
 const { startSession } = require('mongoose')
-const bcrypt = require('bcryptjs')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
 
 const create = async (req, res) => {
@@ -9,9 +8,7 @@ const create = async (req, res) => {
   try {
     const query = { 
       $or: [
-        {phone: req.body.phone},
-        {email: req.body.email},
-        {username: req.body.username},
+        {name: req.body.name}
       ],
       isDeleted: false
     } // for oldDocs
@@ -30,16 +27,12 @@ const create = async (req, res) => {
     session.startTransaction();
     sessions.push(session);
 
-    // Hash password
-    if (body.password != null) {
-      body.password = await bcrypt.hashSync(body.password, 10);
-    }
 
     // Access DB
-    const newDoc = await Users.create( [body], { session: session } )
+    const newDoc = await Events.create( [body], { session: session } )
     
     // Check duplicate
-    const oldDocs = await Users.find(query, null, {session})
+    const oldDocs = await Events.find(query, null, {session})
     if (oldDocs.length > 1) {
       await abortTransactions(sessions)
       return res.status(406).json({

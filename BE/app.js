@@ -56,7 +56,11 @@ app.use('/api/images', express.static('images'));
 // app.use("/api/prescription-bill-details", authenticateToken, require("./routes/prescriptionbilldetails"));
 // app.use("/api/medical-records", authenticateToken, require("./routes/medicalrecords"));
 // app.use("/api/medical-details", authenticateToken, require("./routes/medicaldetails"));
-app.use("/api/users", require("./routes/users"))
+app.use("/api/users", require("./routes/users"));
+app.use("/api/actions", require("./routes/actions"));
+app.use("/api/events", require("./routes/events"));
+app.use("/api/action-assign", require("./routes/actionAssign"));
+app.use("/api/event-assign", require("./routes/eventAssign"));
 // app.use("/api/faculties", require("./routes/faculties"))
 // app.use("/api/departments", require("./routes/departments"))
 // app.use("/api/services", require("./routes/services"))
@@ -69,11 +73,8 @@ mongoose
     `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.rc4jh.mongodb.net/dbOne?retryWrites=true&w=majority`,
     { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: true }
   )
-  .then( () => {
+  .then(() => {
     console.log("Database connected successfully");
-    // app.listen(port, () => {
-    //   console.log(`Server is running on port ${port}`);
-    // });
     server.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });
