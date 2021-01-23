@@ -5,15 +5,15 @@ const Schema = mongoose.Schema;
 const Actions = new Schema(
   {
     eventId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "events",
-        index: true,
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "events",
+      index: true,
+      required: true
     },
     dependActionId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "actions",
-        index: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "actions",
+      index: true,
     },
     name: {
       type: String,
@@ -35,12 +35,20 @@ const Actions = new Schema(
       required: true,
       index: true,
     },
-    status:{
+    status: {
       type: Boolean,
       index: true,
       required: true,
       default: false,
     },
+    availUser: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+        index: true,
+        require: true
+      }
+    ],
     isDeleted: {
       type: Boolean,
       required: true,

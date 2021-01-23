@@ -24,12 +24,20 @@ const Events = new Schema(
             required: true,
             index: true,
         },
-        status:{
+        status: {
             type: Boolean,
             index: true,
             required: true,
             default: false,
-          },
+        },
+        availUser: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'users',
+                index: true,
+                require: true
+            }
+        ],
         isDeleted: {
             type: Boolean,
             required: true,

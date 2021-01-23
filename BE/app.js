@@ -61,6 +61,8 @@ app.use("/api/actions", require("./routes/actions"));
 app.use("/api/events", require("./routes/events"));
 app.use("/api/action-assign", require("./routes/actionAssign"));
 app.use("/api/event-assign", require("./routes/eventAssign"));
+app.use("/api/roles", require("./routes/roles"));
+app.use("/api/credentials", require("./routes/credentials"));
 // app.use("/api/faculties", require("./routes/faculties"))
 // app.use("/api/departments", require("./routes/departments"))
 // app.use("/api/services", require("./routes/services"))

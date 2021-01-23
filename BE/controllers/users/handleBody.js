@@ -21,7 +21,6 @@ const handleBody = (body) => {
         "phone",
         "username",
         "password",
-        "role",
         "email",
         "gender")
     }

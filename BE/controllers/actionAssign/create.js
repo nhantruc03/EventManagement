@@ -28,43 +28,6 @@ const create = async (req, res) => {
         "role"
       )
     )
-    // const query = {
-    //   isDeleted: false
-    // } // for oldDocs
-    // // check user user exist in event before assign to action
-    // let fail1 = false;
-    // let fail2 = false;
-    // let usernotExist;
-
-    // for (const e of data) {
-    //   let temp_action = await Actions.findById(e.actionId);
-    //   let temp_user_event = await EventAssign.find({
-    //     isDeleted: false,
-    //     userId: e.userId,
-    //     eventId: temp_action.eventId
-    //   })
-
-    //   if (isEmpty(temp_action.dependActionId)) {
-    //     if (temp_user_event.length < 1) {
-    //       fail1 = true;
-    //       usernotExist = e.userId;
-    //     }
-    //   } else {
-    //     let temp_user_action = await ActionAssign.find({ isDeleted: false, userId: e.userId, dependActionId: temp_action.dependActionId });
-    //     if (temp_user_event.length < 1 || temp_user_action.length < 1) {
-    //       fail2 = true;
-    //       usernotExist = e.userId;
-    //     }
-    //   }
-    // }
-
-    // if (fail1 || fail2) {
-    //   return res.status(409).json({
-    //     success: false,
-    //     error: "User are not exist in this event or this depend action!",
-    //     on: usernotExist
-    //   });
-    // }
 
     // Create
     const newActionAssign = await ActionAssign.insertMany(
@@ -113,12 +76,11 @@ const create = async (req, res) => {
     //check not in event
 
     let eventId = await Actions.findById(data[0].actionId);
-
     let findInEventMethods = []
     data.forEach(element => {
       findInEventMethods.push(
         EventAssign.find({
-          eventId: eventId,
+          eventId: eventId.eventId,
           userId: element.userId,
           isDeleted: false
         }, null, { session })

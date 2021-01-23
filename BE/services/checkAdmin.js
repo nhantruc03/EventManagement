@@ -1,5 +1,5 @@
 const isAdmin = (req, res, next) => {
-  if (req.user.role !== 'admin') {
+  if (req.role !== 'Admin') {
     return res.status(406).json({ success: false, error: "Not allow (admin)" });
   } else {
     next();
