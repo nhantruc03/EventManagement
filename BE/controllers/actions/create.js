@@ -7,8 +7,9 @@ const create = async (req, res) => {
   let sessions = []
   try {
     const query = { 
-      $or: [
-        {name: req.body.name}
+      $and: [
+        {name: req.body.name},
+        {eventId: req.body.eventId}
       ],
       isDeleted: false
     } // for oldDocs

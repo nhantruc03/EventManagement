@@ -1,7 +1,7 @@
 const { pick } = require("lodash")
 const { isEmpty } = require("lodash");
 const handleBody = (body) => {
-  if(isEmpty(body.phone) || isEmpty(body.role) || isEmpty(body.email) || isEmpty(body.gender) || isEmpty(body.birthday)){
+  if (isEmpty(body.phone) || isEmpty(body.email) || isEmpty(body.gender) || isEmpty(body.birthday) || isEmpty(body.roleId)) {
     return {
       error: "Missing fields!"
     }
@@ -22,6 +22,7 @@ const handleBody = (body) => {
         "username",
         "password",
         "email",
+        "roleId",
         "gender")
     }
   }

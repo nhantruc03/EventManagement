@@ -11,14 +11,15 @@ const authenticateToken = async (req, res, next) => {
       }
       const user = await mongoose
         .model("users")
-        .findOne({ _id: decoded.username, isDeleted: false });
-      const role = await mongoose
-        .model("credentials")
-        .findOne({ userId: user._id, isDeleted: false })
+        .findOne({ _id: decoded.userId, isDeleted: false })
         .populate({ path: 'roleId', select: 'name' })
+      // const role = await mongoose
+      //   .model("credentials")
+      //   .findOne({ userId: user._id, isDeleted: false })
+      //   .populate({ path: 'roleId', select: 'name' })
       if (user) {
         req.user = user;
-        req.role = role.roleId.name;
+        req.role = user.roleId.name;
       } else {
         return res.json({ success: false, error: "User not found" });
       }

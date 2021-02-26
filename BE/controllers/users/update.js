@@ -3,9 +3,25 @@ const { handleBody } = require('./handleBody')
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
 const bcrypt = require("bcryptjs")
+const Credentials = require("../../models/credentials")
 const update = async (req, res) => {
   let sessions = []
   try {
+    // Check owner:  not admin && not owner => out
+    const user = await Users
+        .findOne({ _id: req.user._id, isDeleted: false })
+        .populate({ path: 'roleId', select: 'name' })
+    // const role = await Credentials
+    //   .findOne({ userId: req.user._id, isDeleted: false })
+    //   .populate({ path: 'roleId', select: 'name' })
+    if (user.roleId.name !== "Admin" && req.user._id !== req.params.id) {
+      return res.status(406).json({
+        success: false,
+        error: "Can not access others user information"
+      })
+    }
+
+    //query
     const queryOld = {
       $or: [
         { phone: req.body.phone },

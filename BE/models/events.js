@@ -4,6 +4,12 @@ const Schema = mongoose.Schema;
 
 const Events = new Schema(
     {
+        typeId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "eventtypes",
+            required: true,
+            index: true,
+        },
         name: {
             type: String,
             required: true,

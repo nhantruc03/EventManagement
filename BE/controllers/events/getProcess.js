@@ -1,5 +1,3 @@
-// import {calcPorcess} f
-
 const { calcProcess } = require("./calcProcess")
 
 const getProcess = async (req, res) => {

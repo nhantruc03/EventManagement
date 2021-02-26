@@ -10,15 +10,15 @@ const getAll = async (req, res) => {
     let docs;
     if (!page || !limit) {
       docs = await Credentials.find(query)
-        .populate("userId")
-        .populate("roleId")
+        .populate({ path: 'userId', select: 'name' })
+        .populate({ path: 'roleId', select: 'name' })
     }
     else {
       docs = await Credentials.find(query)
         .skip(limit * (page - 1))
         .limit(limit)
-        .populate("userId")
-        .populate("roleId")
+        .populate({ path: 'userId', select: 'name' })
+        .populate({ path: 'roleId', select: 'name' })
     }
     return res.status(200).json({
       success: true,
