@@ -8,10 +8,12 @@ const guestTypes = new Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "events",
             index: true,
+            required: true,
         },
         name: {
             type: String,
             index: true,
+            unique: true,
             required: true,
             default: false,
         },

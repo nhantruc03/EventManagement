@@ -6,16 +6,15 @@ const { commitTransactions, abortTransactions } = require('../../services/transa
 const create = async (req, res) => {
   let sessions = []
   try {
-    const query = { 
+    const query = {
       $and: [
-        {name: req.body.name},
-        {eventId: req.body.eventId}
+        { name: req.body.name },
+        { eventID: req.body.eventId }
       ],
       isDeleted: false
     } // for oldDocs
-
     // Handle data
-    const { error, body} = handleBody(req.body) // for newDoc
+    const { error, body } = handleBody(req.body) // for newDoc
     if (error) {
       return res.status(406).json({
         success: false,
@@ -30,10 +29,10 @@ const create = async (req, res) => {
 
 
     // Access DB
-    const newDoc = await GuestTypes.create( [body], { session: session } )
-    
+    const newDoc = await GuestTypes.create([body], { session: session })
+
     // Check duplicate
-    const oldDocs = await GuestTypes.find(query, null, {session})
+    const oldDocs = await GuestTypes.find(query, null, { session })
     if (oldDocs.length > 1) {
       await abortTransactions(sessions)
       return res.status(406).json({

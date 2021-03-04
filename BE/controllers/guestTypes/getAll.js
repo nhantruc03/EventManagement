@@ -1,3 +1,4 @@
+const { pick } = require('lodash')
 const GuestTypes = require('../../models/guestTypes')
 
 const getAll = async (req, res) => {
@@ -5,7 +6,10 @@ const getAll = async (req, res) => {
   const limit = Number(req.query.limit) // limit docs per page
 
   try {
-    const query = { isDeleted: false }
+    const query = {
+      ...pick(req.body, "eventId"),
+      isDeleted: false
+    }
 
     let docs;
     if (!page || !limit) {

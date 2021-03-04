@@ -4,9 +4,9 @@ const Schema = mongoose.Schema;
 
 const Guests = new Schema(
     {
-        eventId: {
+        guestTypeId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "events",
+            ref: "guesttypes",
             index: true,
         },
         name: {
@@ -14,6 +14,18 @@ const Guests = new Schema(
             index: true,
             required: true,
             default: false,
+        },
+        phone: {
+            type: String,
+            required: true,
+            index: true,
+            minlength: 10
+        },
+        email: {
+            type: String,
+            index: true,
+            unique: true,
+            required: true
         },
         status: {
             type: Boolean,

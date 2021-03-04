@@ -4,9 +4,9 @@ const Schema = mongoose.Schema;
 
 const ChatMessages = new Schema(
     {
-        chatRoomID: {
+        groupID: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "chatrooms",
+            ref: "groups",
             index: true,
             required: true
         },

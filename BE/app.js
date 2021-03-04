@@ -49,15 +49,7 @@ app.use(busboyBodyParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/images', express.static('images'));
 // Routes
-// app.use("/api/medicine-categories", authenticateToken, require("./routes/medicinecategories"));
 // app.use("/api/medicines", authenticateToken, require("./routes/medicines"));
-// app.use("/api/patients", authenticateToken, require("./routes/patients"));
-// app.use("/api/prescriptions", authenticateToken, require("./routes/prescriptions"));
-// app.use("/api/prescription-details", authenticateToken, require("./routes/prescriptiondetails"));
-// app.use("/api/prescription-bills", authenticateToken, require("./routes/prescriptionbills"));
-// app.use("/api/prescription-bill-details", authenticateToken, require("./routes/prescriptionbilldetails"));
-// app.use("/api/medical-records", authenticateToken, require("./routes/medicalrecords"));
-// app.use("/api/medical-details", authenticateToken, require("./routes/medicaldetails"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/actions", require("./routes/actions"));
 app.use("/api/event-types", require("./routes/eventTypes"));
@@ -100,7 +92,7 @@ app.post("/api/uploads", (req, res) => {
 mongoose
   .connect(
     `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.rc4jh.mongodb.net/dbOne?retryWrites=true&w=majority`,
-    { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: true }
+    { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }
   )
   .then(() => {
     console.log("Database connected successfully");

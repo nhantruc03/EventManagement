@@ -1,3 +1,4 @@
+const { pick } = require('lodash')
 const Guests = require('../../models/guests')
 
 const getAll = async (req, res) => {
@@ -5,16 +6,22 @@ const getAll = async (req, res) => {
   const limit = Number(req.query.limit) // limit docs per page
 
   try {
-    const query = { isDeleted: false }
+    var temp = pick(req.body, "listguesttype")
+    const query = {
+      guestTypeId: { "$in": temp.listguesttype },
+      isDeleted: false
+    }
 
     let docs;
     if (!page || !limit) {
       docs = await Guests.find(query)
+        .populate({ path: 'guestTypeId', select: 'name status' })
     }
     else {
       docs = await Guests.find(query)
         .skip(limit * (page - 1))
         .limit(limit)
+        .populate({ path: 'guestTypeId', select: 'name status' })
     }
     return res.status(200).json({
       success: true,

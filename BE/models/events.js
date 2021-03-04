@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const Events = new Schema(
     {
-        typeId: {
+        eventTypeId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "eventtypes",
             required: true,
@@ -20,12 +20,17 @@ const Events = new Schema(
             index: true,
             required: true
         },
-        endDate: {
-            type: Date,
+        startTime: {
+            type: String,
             index: true,
             required: true
         },
         address: {
+            type: String,
+            required: true,
+            index: true,
+        },
+        posterUrl: {
             type: String,
             required: true,
             index: true,
@@ -36,12 +41,18 @@ const Events = new Schema(
             required: true,
             default: false,
         },
+        tagId: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'tags',
+                index: true,
+            }
+        ],
         availUser: [
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'users',
                 index: true,
-                require: true
             }
         ],
         isDeleted: {

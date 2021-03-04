@@ -1,7 +1,7 @@
 const { pick } = require("lodash")
 const { isEmpty } = require("lodash");
 const handleBody = (body) => {
-  if (isEmpty(body.name) || isEmpty(body.startDate) || isEmpty(body.endDate) || isEmpty(body.address) || isEmpty(body.faculties)) {
+  if (isEmpty(body.name) || isEmpty(body.startDate) || isEmpty(body.startTime) || isEmpty(body.address) || isEmpty(body.posterUrl) || isEmpty(body.eventTypeId) || isEmpty(body.description)) {
     return {
       error: "Missing fields!"
     }
@@ -12,9 +12,15 @@ const handleBody = (body) => {
       ...pick(body,
         "name",
         "startDate",
-        "endDate",
+        "startTime",
         "address",
-        "faculties")
+        "posterUrl",
+        "availUser",
+        "tagId",
+        "eventTypeId",
+        "description"
+        // "faculties"
+      )
     }
   }
 } // for newDoc

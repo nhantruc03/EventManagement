@@ -86,47 +86,6 @@ const createMany = async (req, res) => {
             });
         }
 
-        // //create chatRoom with other users
-
-        // let listRoomNeed = [];
-        // // new users - old users
-        // newDoc.forEach(user1 => {
-        //     listOldUser.forEach(user2 => {
-        //         let temp = {
-        //             userID1: user1._id,
-        //             userID2: user2._id
-        //         }
-        //         listRoomNeed.push(temp)
-        //     })
-        // })
-        // // new users - new users
-        // if (newDoc.length > 1) {
-        //     for (i = 0; i < newDoc.length - 1; i++) {
-        //         for (j = i + 1; j < newDoc.length; j++) {
-        //             let temp = {
-        //                 userID1: newDoc[i]._id,
-        //                 userID2: newDoc[j]._id
-        //             }
-        //             listRoomNeed.push(temp)
-        //         }
-        //     }
-        // }
-
-        // // Access DB
-        // // Create Rooms
-        // const newDoc_Room = await ChatRooms.insertMany(
-        //     listRoomNeed,
-        //     { session: session }
-        // )
-
-        // if (isEmpty(newDoc_Room) || newDoc_Room.length != listRoomNeed.length) {
-        //     await abortTransactions(sessions);
-        //     return res.status(406).json({
-        //         success: false,
-        //         error: "Created failed"
-        //     });
-        // }
-
         // Success
         await commitTransactions(sessions)
         return res.status(200).json({

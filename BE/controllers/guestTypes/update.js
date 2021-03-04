@@ -8,7 +8,7 @@ const update = async (req, res) => {
     const queryOld = {
       $and: [
         { name: req.body.name },
-        { eventId: req.body.eventId }
+        { eventID: req.body.eventId }
       ],
       isDeleted: false
     }
