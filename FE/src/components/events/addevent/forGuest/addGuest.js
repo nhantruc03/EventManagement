@@ -3,7 +3,7 @@ import TableData from './TableData';
 
 import { v1 as uuidv1 } from 'uuid';
 import { Button, Col, Row } from 'antd';
-import Search from '../../helper/search';
+import Search from '../../../helper/search';
 class addGuest extends Component {
     constructor(props) {
         super(props);

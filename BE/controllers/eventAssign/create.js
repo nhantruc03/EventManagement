@@ -6,11 +6,21 @@ const { isArray, pick, isEmpty } = require("lodash")
 const create = async (req, res) => {
   let sessions = []
   try {
-    if (isArray(req.body) !== true) {
+    const query = {
+      $and: [
+        { name: req.body.name },
+        { eventID: req.body.eventID }
+      ],
+      isDeleted: false
+    } // for oldDocs
+
+    // Handle data
+    const { error, body } = handleBody(req.body) // for newDoc
+    if (error) {
       return res.status(406).json({
         success: false,
-        error: "You must be pass an array"
-      });
+        error: error
+      })
     }
 
     // Transactions
@@ -18,65 +28,26 @@ const create = async (req, res) => {
     session.startTransaction();
     sessions.push(session);
 
-    // Prepare data for Create
-    let data = req.body.map(element =>
-      pick(element,
-        "userId",
-        "eventId",
-        "role"
-      )
-    )
-
     // Create
-    const newEventAssign = await EventAssign.insertMany(
-      data,
+    const newDoc = await EventAssign.create(
+      [body],
       { session: session }
     )
-
-    if (isEmpty(newEventAssign) || newEventAssign.length != data.length) {
-      await abortTransactions(sessions);
+    // Check duplicate
+    const oldDocs = await EventAssign.find(query, null, { session })
+    if (oldDocs.length > 1) {
+      await abortTransactions(sessions)
       return res.status(406).json({
         success: false,
-        error: "Created failed"
-      });
+        error: "Duplicate data"
+      })
     }
 
-    // Check exist
-    let findEventAssignMethods = []
-    data.forEach(element => {
-      findEventAssignMethods.push(
-        EventAssign.find({
-          userId: element.userId,
-          eventId: element.eventId,
-          isDeleted: false
-        }, null, { session })
-      )
-    })
-    let oldEventAssign = await Promise.all(findEventAssignMethods)
-
-    let checkExist = false;
-    let duplicate = [];
-    oldEventAssign.forEach(e => {
-      if (e.length > 1) {
-        duplicate = e;
-        checkFail = true
-      }
-    })
-    if (checkExist) {
-      await abortTransactions(sessions);
-      return res.status(409).json({
-        success: false,
-        error: "This Action Assign is already exist",
-        on: duplicate
-      });
-    }
-
-    // Done
-    await commitTransactions(sessions);
-
+    // Success
+    await commitTransactions(sessions)
     return res.status(200).json({
       success: true,
-      data: newEventAssign
+      data: newDoc
     });
   } catch (error) {
     await abortTransactions(sessions);

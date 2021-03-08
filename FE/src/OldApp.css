@@ -16736,9 +16736,7 @@
   .table-borderless thead th {
     border: 0;
   }
-  .table-striped tbody tr:nth-of-type(odd) {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
+
   .table-hover tbody tr:hover {
     color: #858796;
     background-color: rgba(0, 0, 0, 0.075);

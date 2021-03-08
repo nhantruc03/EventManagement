@@ -53,6 +53,9 @@ class SiderDemo extends React.Component {
                         <Menu.Item key="/listroles">
                             <Link to="/listroles">Quyền</Link>
                         </Menu.Item>
+                        <Menu.Item key="/listfaculties">
+                            <Link to="/listfaculties">Ban</Link>
+                        </Menu.Item>
                         <Menu.Item key="/listEventTypes">
                             <Link to="/listEventTypes">Hình thức sự kiện</Link>
                         </Menu.Item>

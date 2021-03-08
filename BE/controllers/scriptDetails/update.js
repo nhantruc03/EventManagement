@@ -7,8 +7,8 @@ const update = async (req, res) => {
   try {
     const queryOld = {
       $and: [
-        {name: req.body.name},
-        {scriptId: req.body.scriptId}
+        { name: req.body.name },
+        { scriptId: req.body.scriptId }
       ],
       isDeleted: false
     }
@@ -33,7 +33,6 @@ const update = async (req, res) => {
       body,
       { session, new: true }
     )
-
     // Check duplicate
     const oldDocs = await ScriptDetails.find(queryOld, null, { session })
 

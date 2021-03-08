@@ -1,11 +1,12 @@
 const Events = require("../../models/events")
+const EventAssign = require("../../models/eventAssign")
 const GuestTypes = require("../../models/guestTypes")
 const Guests = require("../../models/guests")
 const Groups = require("../../models/groups")
 const { handleBody } = require("./handleBody")
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
-const { isEmpty, isArray, pick } = require("lodash")
+const { isEmpty, pick } = require("lodash")
 const start = async (req, res) => {
     let sessions = []
     try {
@@ -49,9 +50,66 @@ const start = async (req, res) => {
                 "guestTypes",
                 "guests",
                 "groups",
+                "eventAssigns"
             )
         }
         // newDoc._id
+        // start Event Assign
+        let listEventAssign = [];
+        if (body_ref.eventAssigns) {
+            //prepare data
+            let body = [];
+            body_ref.eventAssigns.map(element => {
+                let temp = {}
+                temp.userId = element.userId
+                temp.roleId = element.roleId
+                temp.facultyId = element.facultyId
+                temp.eventId = newDoc[0]._id
+                body.push(temp)
+            })
+            //access DB
+            listEventAssign = await EventAssign.insertMany(
+                body,
+                { session: session }
+            )
+
+            if (isEmpty(listEventAssign) || listEventAssign.length != body.length) {
+                await abortTransactions(sessions);
+                return res.status(406).json({
+                    success: false,
+                    error: "Created failed"
+                });
+            }
+            // Check duplicate guestTypes
+            let findOldEventAssign = []
+            body_ref.eventAssigns.forEach(element => {
+                findOldEventAssign.push(
+                    GuestTypes.find({
+                        $and: [
+                            { userId: element.userId },
+                            { eventId: element.eventId },
+                        ],
+                        isDeleted: false
+                    }, null, { session })
+                )
+            })
+            let OldEventAssign = await Promise.all(findOldEventAssign)
+
+            let checkExist_forEventAssign = false;
+            OldEventAssign.forEach(e => {
+                if (e.length > 1) {
+                    checkExist_forEventAssign = true
+                }
+            })
+            if (checkExist_forEventAssign) {
+                await abortTransactions(sessions);
+                return res.status(409).json({
+                    success: false,
+                    error: "Event Assign is already exist"
+                });
+            }
+        }
+        // done Event Assign
         // start guest type
         let listGuestTypes = [];
         if (body_ref.guestTypes) {
@@ -201,7 +259,7 @@ const start = async (req, res) => {
                     error: "Created failed"
                 });
             }
-            // Check duplicate guestTypes
+            // Check duplicate Groups
             let findOldGroups = []
             body_ref.groups.forEach(element => {
                 findOldGroups.push(
@@ -239,7 +297,8 @@ const start = async (req, res) => {
             event: newDoc,
             guestTypes: listGuestTypes,
             guests: listGuests,
-            groups: listGroups
+            groups: listGroups,
+            eventAssign: listEventAssign
         });
     } catch (error) {
         await abortTransactions(sessions)

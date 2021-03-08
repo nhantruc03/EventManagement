@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Content } from "antd/lib/layout/layout";
 import Title from "antd/lib/typography/Title";
 import { AUTH } from "../../env"
+import ListScripts from '../../eventScripts/list'
 import {
     Button,
     Row,
@@ -21,11 +22,13 @@ import {
 import { trackPromise } from "react-promise-tracker";
 import axios from "axios";
 import ListAvailUser from './forAvailUser/listAvailUser'
+import FacultiesAssign from './FacultiesAssign/FacultiesAssign'
 import ListGuest from './forGuest/listGuest'
 import GuestView from "./forGuest/guestView";
 import { Message } from "../../service/renderMessage";
 import { Link } from "react-router-dom";
 import moment from 'moment';
+import ChatRoom from '../../chat/ChatRoom'
 const { TabPane } = Tabs;
 
 class eventDetails extends Component {
@@ -38,7 +41,11 @@ class eventDetails extends Component {
             listguesttype: [],
             listgroups: [],
             data: null,
-            status: ''
+            status: '',
+            listEventAssign: [],
+            listRole: [],
+            listFaculty: [],
+            listGroups: [],
         }
     }
 
@@ -53,7 +60,7 @@ class eventDetails extends Component {
     async componentDidMount() {
         this._isMounted = true;
 
-        const [event, guestTypes] = await trackPromise(Promise.all([
+        const [event, guestTypes, listEventAssign, faculties, roles, groups] = await trackPromise(Promise.all([
             axios.get('/api/events/' + this.props.match.params.id, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -63,6 +70,38 @@ class eventDetails extends Component {
                     res.data.data
                 ),
             axios.post('/api/guest-types/getAll', { eventId: this.props.match.params.id }, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then((res) =>
+                    res.data.data
+                ),
+            axios.post('/api/event-assign/getAll', { eventId: this.props.match.params.id }, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then((res) =>
+                    res.data.data
+                ),
+            axios.post('/api/faculties/getAll', {}, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then((res) =>
+                    res.data.data
+                ),
+            axios.post('/api/roles/getAll', {}, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then((res) =>
+                    res.data.data
+                ),
+            axios.post('/api/groups/getAll', { eventId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
@@ -95,7 +134,8 @@ class eventDetails extends Component {
 
         if (event !== null) {
             if (this._isMounted) {
-                console.log('event', event)
+
+                console.log('groups', groups)
                 let status = '';
                 let today = new Date().setHours(0, 0, 0, 0)
                 if (new Date(event.startDate).setHours(0, 0, 0, 0) > today) {
@@ -107,7 +147,11 @@ class eventDetails extends Component {
                 }
                 this.setState({
                     data: event,
-                    status: status
+                    listEventAssign: listEventAssign,
+                    listRole: roles,
+                    listFaculty: faculties,
+                    status: status,
+                    listGroups: groups
                 })
                 if (guestTypes !== null) {
                     this.setState({
@@ -132,34 +176,6 @@ class eventDetails extends Component {
         this.props.history.goBack();
     };
 
-    onFinish = async (values) => {
-        let data = {
-            ...values,
-            'availUser': this.state.listusersforevent.reduce((a, o) => { a.push(o._id); return a }, []),
-            'startDate': values['startDate'].format('YYYY-MM-DD'),
-            'startTime': values['startTime'].format('HH:mm'),
-            // .toDate
-            'posterUrl': values['posterUrl'].fileList[0].response.url,
-            'guestTypes': this.state.listguesttype,
-            'guests': this.state.listguest,
-            'groups': this.state.listgroups,
-        }
-
-        console.log('Received values of form: ', data);
-
-        await trackPromise(axios.post('/api/events/start', data, {
-            headers: {
-                'Authorization': { AUTH }.AUTH
-            }
-        })
-            .then(res => {
-                // Message('Tạo thành công', true, this.props);
-            })
-            .catch(err => {
-                Message('Tạo thất bại', false);
-            }))
-    };
-
     setModal2Visible(modal2Visible) {
         this.setState({ modal2Visible });
     }
@@ -171,9 +187,23 @@ class eventDetails extends Component {
         <TabPane tab={e.name} key={key}><GuestView type={e._id} list={this.state.listguest} /></TabPane>
     )
 
+    renderGroups = () => this.state.listGroups.map((e, key) =>
+        <TabPane tab={e.name} key={key}><ChatRoom roomId={e._id} /></TabPane>
+    )
+
+    updateEventAssign = (e) => {
+        this.setState({
+            listEventAssign: e
+        })
+    }
+
     renderModel = () => {
         return (
-            <ListAvailUser listusers={this.state.data.availUser} />
+            <Tabs defaultActiveKey="1">
+                <TabPane tab="Danh sách ban tổ chức" key="1"><ListAvailUser listusers={this.state.data.availUser} /></TabPane>
+                <TabPane tab="Phân nhóm" key="2"><FacultiesAssign update={this.updateEventAssign} eventId={this.props.match.params.id} listRole={this.state.listRole} listFaculty={this.state.listFaculty} data={this.state.listEventAssign} /></TabPane>
+            </Tabs>
+
         );
     };
 
@@ -232,9 +262,9 @@ class eventDetails extends Component {
                                 <Title className="event-detail-title" level={3}>Tags</Title>
                                 {this.state.data.tagId.map((value, key) => <Tag style={{ width: 'auto' }} key={key}>{value.name}</Tag>)}
 
-                                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                                <div className="flex-container-row">
                                     <Title className="event-detail-title" level={3}>Khách mời</Title>
-                                    <Button style={{ marginLeft: 'auto' }} onClick={() => this.setModal2Visible2(true)}>Chỉnh sửa</Button>
+                                    <Button className="flex-row-item-right" onClick={() => this.setModal2Visible2(true)}>Chỉnh sửa</Button>
                                 </div>
 
                                 <Tabs defaultActiveKey="1" >
@@ -247,15 +277,26 @@ class eventDetails extends Component {
                                 {this.state.data.description}
 
                                 <div className="event-detail-time-date-address">
-                                    <ClockCircleOutlined className="event-detail" />  {this.state.data.startTime} - {moment(this.state.data.startDate).format('DD/MM/YYYY')}
+                                    <ClockCircleOutlined className="event-detail" />  {moment(this.state.data.startTime).format('HH:mm')} - {moment(this.state.data.startDate).format('DD/MM/YYYY')}
                                     <EnvironmentOutlined className="event-detail right" />  {this.state.data.address}
                                 </div>
 
                                 <Title className="event-detail-title" level={3}>Poster</Title>
                                 <Image src={`/api/images/${this.state.data.posterUrl}`} alt="poster"></Image>
+
+                                <div className="flex-container-row">
+                                    <Title className="event-detail-title" level={3}>Kịch bản</Title>
+                                    <Button className="flex-row-item-right" ><Link to={`/addscripts/${this.props.match.params.id}`}>Thêm</Link></Button>
+                                </div>
+
+                                <ListScripts eventId={this.props.match.params.id} />
                             </Col>
                             <Col span={8} className="event-detail">
                                 <Title className="event-detail-title" level={3}>Phòng hội thoại</Title>
+
+                                <Tabs defaultActiveKey="1" >
+                                    {this.renderGroups()}
+                                </Tabs>
                             </Col>
                         </Row>
                     </div>

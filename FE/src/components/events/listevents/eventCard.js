@@ -31,7 +31,7 @@ class eventCard extends Component {
                     <Meta title={this.props.data.name} description={this.props.data.description} />
 
                     <Row className="eventCard">
-                        <ClockCircleOutlined className="eventCard" />  {this.props.data.startTime} - {moment(this.props.data.startDate).format('DD/MM/YYYY')}
+                        <ClockCircleOutlined className="eventCard" />  {moment(this.props.data.startTime).format('HH:mm')} - {moment(this.props.data.startDate).format('DD/MM/YYYY')}
                     </Row>
                     <Row className="eventCard">
                         <EnvironmentOutlined className="eventCard" />  {this.props.data.address}

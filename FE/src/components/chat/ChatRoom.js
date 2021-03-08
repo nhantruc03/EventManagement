@@ -2,6 +2,9 @@ import axios from 'axios';
 import React, { Component } from 'react';
 import { w3cwebsocket } from 'websocket';
 import ChatMessage from './ChatMessage';
+import {
+    SendOutlined
+} from '@ant-design/icons';
 const client = new w3cwebsocket('ws://localhost:3001');
 class ChatRoom extends Component {
     constructor(props) {
@@ -16,7 +19,8 @@ class ChatRoom extends Component {
             onLoadMore: false,
         }
     }
-    getData = async () => { const temp = await axios.get('/api/chat-message?page=1&limit=12', { chatRoomID: this.props.roomId })
+    getData = async () => {
+        const temp = await axios.post('/api/chat-message/getAll?page=1&limit=12', { groupID: this.props.roomId })
             .then((res) =>
                 res.data.data
             )
@@ -51,12 +55,18 @@ class ChatRoom extends Component {
 
     sendMessage = async (e) => {
         e.preventDefault();
+        console.log(e)
 
+        const login = localStorage.getItem('login');
+        const obj = JSON.parse(login);
+        console.log(obj)
+        console.log('adfasfsaf')
         var message = {
             text: this.state.formValue,
-            userID: { _id: '5ff04a7ef72aa03a4cb6d8c5', photoURL: 'user1.png' },
-            chatRoomID: this.props.roomId
+            userID: { _id: obj.id, photoURL: 'user1.png' },
+            groupID: this.props.roomId
         }
+        console.log(message)
         // await this.props.firestore.collection('chats').doc(this.props.roomId).collection('messages').add(message)
         const temp = await axios.post('/api/chat-message', message)
             .then((res) =>
@@ -120,16 +130,17 @@ class ChatRoom extends Component {
 
     render() {
         return (
-            <>
-                <main onScroll={this.handleScroll}>
+            <div className="section">
+                <div className="ChatBox" onScroll={this.handleScroll}>
                     {this.renderMessage()}
                     <span ref="messagesEnd"></span>
-                </main>
-                <form onSubmit={this.sendMessage}>
-                    <input value={this.state.formValue} onChange={(e) => this.setFormValue(e.target.value)} placeholder="say something nice" />
-                    <button type="submit" disabled={!this.state.formValue}>🕊️</button>
+                </div>
+                <form className="chat-form" onSubmit={this.sendMessage}>
+                    <input className="input-chat" value={this.state.formValue} onChange={(e) => this.setFormValue(e.target.value)} placeholder="say something nice" />
+                    {/* <button className="chat-button" type="submit" disabled={!this.state.formValue}>🕊️</button> */}
+                    <button className="chat-button" type="submit" disabled={!this.state.formValue}><SendOutlined /></button>
                 </form>
-            </>
+            </div>
         );
     }
 }

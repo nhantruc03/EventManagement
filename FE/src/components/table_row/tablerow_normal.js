@@ -45,12 +45,12 @@ class TableDataRow extends Component {
                 <td>
                     <div className="btn-group">
                         <Tooltip title="Chỉnh sửa" arrow>
-                        <Link className="link" to={`/edit${this.props.obj}/${this.props.data._id}`} >
-                            <div className="btn btn-link"><i className="fa fa-edit" /></div>
-                        </Link>
+                            <Link className="link" to={`/edit${this.props.obj}/${this.props.data._id}`} >
+                                <div className="btn btn-link"><i className="fa fa-edit" /></div>
+                            </Link>
                         </Tooltip>
                         <Tooltip title="Xóa" arrow>
-                        <div onClick={() => this.deleteClick()} className="btn btn-link" style={{color:'red'}}> <i className="fa fa-trash-alt" /></div>
+                            <div onClick={() => this.deleteClick()} className="btn btn-link" style={{ color: 'red' }}> <i className="fa fa-trash-alt" /></div>
                         </Tooltip>
                     </div>
                 </td>

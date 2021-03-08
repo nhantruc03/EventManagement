@@ -7,7 +7,7 @@ const getAll = async (req, res) => {
 
   try {
     const query = {
-      ...pick(req.body, "chatRoomID"),
+      ...pick(req.body, "groupID"),
       isDeleted: false
     }
 

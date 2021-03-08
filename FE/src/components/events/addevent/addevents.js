@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Content } from "antd/lib/layout/layout";
 import Title from "antd/lib/typography/Title";
-import { AUTH } from "../env"
+import { AUTH } from "../../env"
 import { v1 as uuidv1 } from 'uuid';
 import {
     Form,
@@ -25,9 +25,11 @@ import { trackPromise } from "react-promise-tracker";
 import axios from "axios";
 import SelectUser from './forAvailUser/selectUsers'
 import AddGuest from './forGuest/addGuest'
+import ListEventAssign from './EventAssign/ListEventAssign'
 import AddTagType from "./add_TagType";
 import GuestView from "./forGuest/guestView";
-import { Message } from "../service/renderMessage";
+import EventAssignView from "./EventAssign/EventAssignView";
+import { Message } from "../../service/renderMessage";
 import { Link } from "react-router-dom";
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -47,6 +49,7 @@ class addevents extends Component {
         this.state = {
             modal2Visible: false,
             modal2Visible2: false,
+            modal2Visible3: false,
             listusers: [],
             listusersforevent: [],
             listeventtype: [],
@@ -56,20 +59,30 @@ class addevents extends Component {
             listguest: [],
             listguesttype: [],
             listgroups: [],
+            listEventAssign: [],
+            listRole: [],
+            listFaculty: [],
         }
     }
 
     addusertoevent = (e) => {
+        let temp_eventAssign = {
+            userId: e,
+            facultyId: {},
+            roleId: {}
+        }
         this.setState({
             listusers: this.state.listusers.filter(x => x._id !== e._id),
-            listusersforevent: [...this.state.listusersforevent, e]
+            listusersforevent: [...this.state.listusersforevent, e],
+            listEventAssign: [...this.state.listEventAssign, temp_eventAssign]
         })
     }
 
     removeuserfromevent = (e) => {
         this.setState({
             listusers: [...this.state.listusers, e],
-            listusersforevent: this.state.listusersforevent.filter(x => x._id !== e._id)
+            listusersforevent: this.state.listusersforevent.filter(x => x._id !== e._id),
+            listEventAssign: this.state.listEventAssign.filter(x => x.userId._id !== e._id)
         })
     }
 
@@ -86,16 +99,21 @@ class addevents extends Component {
     }
 
     updateguest = (e) => {
-
         this.setState({
             listguest: e
         })
+    }
 
+    updateEventAssign = (e) => {
+        console.log(e)
+        this.setState({
+            listEventAssign: e
+        })
     }
 
     async componentDidMount() {
         this._isMounted = true;
-        const [users, eventTypes, tags] = await trackPromise(Promise.all([
+        const [users, eventTypes, tags, faculties, roles] = await trackPromise(Promise.all([
             axios.post('/api/users/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -120,13 +138,32 @@ class addevents extends Component {
                 .then((res) =>
                     res.data.data
                 ),
+            axios.post('/api/faculties/getAll', {}, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then((res) =>
+                    res.data.data
+                ),
+            axios.post('/api/roles/getAll', {}, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then((res) =>
+                    res.data.data
+                )
         ]));
 
 
-        if (users !== null && eventTypes !== null && tags !== null) {
+        if (users !== null && eventTypes !== null && tags !== null && roles !== null && faculties !== null) {
             if (this._isMounted) {
                 console.log(users)
-
+                this.setState({
+                    listRole: roles,
+                    listFaculty: faculties
+                })
                 let temp = [];
                 users.forEach(e => {
                     temp.push(<Option key={e._id}>{e.name}</Option>)
@@ -150,6 +187,7 @@ class addevents extends Component {
                 this.setState({
                     listtags: temp,
                 })
+
             }
         }
     }
@@ -162,16 +200,26 @@ class addevents extends Component {
     };
 
     onFinish = async (values) => {
+        let temp_listEventAssign = [];
+        this.state.listEventAssign.forEach(e => {
+            let temp = {
+                userId: e.userId._id,
+                facultyId: e.facultyId._id,
+                roleId: e.roleId._id,
+            }
+            temp_listEventAssign.push(temp)
+        })
         let data = {
             ...values,
             'availUser': this.state.listusersforevent.reduce((a, o) => { a.push(o._id); return a }, []),
             'startDate': values['startDate'].format('YYYY-MM-DD'),
-            'startTime': values['startTime'].format('HH:mm'),
+            'startTime': values['startTime'].toDate(),
             // .toDate
             'posterUrl': values['posterUrl'].fileList[0].response.url,
             'guestTypes': this.state.listguesttype,
             'guests': this.state.listguest,
             'groups': this.state.listgroups,
+            'eventAssigns': temp_listEventAssign
         }
 
         console.log('Received values of form: ', data);
@@ -182,7 +230,7 @@ class addevents extends Component {
             }
         })
             .then(res => {
-                // Message('Tạo thành công', true, this.props);
+                Message('Tạo thành công', true, this.props);
             })
             .catch(err => {
                 Message('Tạo thất bại', false);
@@ -194,6 +242,9 @@ class addevents extends Component {
     }
     setModal2Visible2(modal2Visible2) {
         this.setState({ modal2Visible2 });
+    }
+    setModal2Visible3(modal2Visible3) {
+        this.setState({ modal2Visible3 });
     }
 
     updatelistguesttype = (values) => {
@@ -215,7 +266,7 @@ class addevents extends Component {
         <TabPane tab={e} key={key}><GuestView type={e} list={this.state.listguest} /></TabPane>
     )
 
-    renderModel = (val) => {
+    renderModel = () => {
         return (
             <SelectUser
                 removeuserfromevent={(e) => this.removeuserfromevent(e)}
@@ -226,9 +277,15 @@ class addevents extends Component {
         );
     };
 
-    renderModel2 = (val) => {
+    renderModel2 = () => {
         return (
             <AddGuest listguesttype={this.state.listguesttype} listguest={this.state.listguest} addGuest={(e) => this.addguest(e)} deleteguest={(e) => { this.deleteguest(e) }} updateguest={(e) => { this.updateguest(e) }} />
+        )
+    }
+
+    renderModel3 = () => {
+        return (
+            <ListEventAssign listRole={this.state.listRole} listFaculty={this.state.listFaculty} data={this.state.listEventAssign} update={(e) => { this.updateEventAssign(e) }} />
         )
     }
 
@@ -313,6 +370,18 @@ class addevents extends Component {
                                 </Form.Item>
                                 <Form.Item
                                     wrapperCol={{ sm: 20 }}
+                                    name="EventAssign"
+                                    label={<Title level={4}>Phân công</Title>}
+                                    hasFeedback
+                                >
+                                    <Button onClick={() => this.setModal2Visible3(true)} >Phân công</Button>
+                                </Form.Item>
+                                <div style={{ width: '90%' }}>
+                                    <EventAssignView data={this.state.listEventAssign} />
+                                </div>
+
+                                <Form.Item
+                                    wrapperCol={{ sm: 20 }}
                                     name="tagId"
                                     label={<Title level={4}>Tags</Title>}
                                     hasFeedback
@@ -346,7 +415,6 @@ class addevents extends Component {
                                     name="guests"
                                     label={<Title level={4}>Khách mời</Title>}
                                     hasFeedback
-                                // rules={[{ message: 'Cần chọn ban tổ chức!' }]}
                                 >
                                     <Button onClick={() => this.setModal2Visible2(true)} >Chỉnh sửa</Button>
                                 </Form.Item>
@@ -484,7 +552,7 @@ class addevents extends Component {
                     pagination={false}
                     footer={false}
                 >
-                    {this.renderModel(this.state.listusers)}
+                    {this.renderModel()}
                 </Modal>
 
                 <Modal
@@ -497,7 +565,20 @@ class addevents extends Component {
                     pagination={false}
                     footer={false}
                 >
-                    {this.renderModel2(this.state.listusers)}
+                    {this.renderModel2()}
+                </Modal>
+
+                <Modal
+                    title="Phân công"
+                    centered
+                    visible={this.state.modal2Visible3}
+                    onOk={() => this.setModal2Visible3(false)}
+                    onCancel={() => this.setModal2Visible3(false)}
+                    width="70%"
+                    pagination={false}
+                    footer={false}
+                >
+                    {this.renderModel3()}
                 </Modal>
             </Content >
         );

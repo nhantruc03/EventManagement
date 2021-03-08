@@ -1,3 +1,4 @@
+const { pick } = require('lodash')
 const Groups = require('../../models/groups')
 
 const getAll = async (req, res) => {
@@ -5,7 +6,7 @@ const getAll = async (req, res) => {
   const limit = Number(req.query.limit) // limit docs per page
 
   try {
-    const query = { isDeleted: false }
+    const query = { ...pick(req.body, "eventId"), isDeleted: false }
 
     let docs;
     if (!page || !limit) {

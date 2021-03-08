@@ -1,6 +1,6 @@
 import { Button, Col, Row, Table } from 'antd';
 import React, { Component } from 'react';
-import Search from '../../helper/search';
+import Search from '../../../helper/search';
 
 class selectUsers extends Component {
     constructor(props) {

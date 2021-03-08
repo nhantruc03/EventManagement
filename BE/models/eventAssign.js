@@ -5,23 +5,28 @@ const Schema = mongoose.Schema;
 const EventAssign = new Schema(
   {
     eventId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "events",
-        index: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "events",
+      required: true,
+      index: true,
     },
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "users",
-        index: true,
-    },
-    role: {
-      type: Number,
-      index: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
       required: true,
-      enum: [1, 2],
-      default: 2
+      index: true,
     },
-    status:{
+    facultyId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "faculties",
+      index: true,
+    },
+    roleId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "roles",
+      index: true,
+    },
+    status: {
       type: Boolean,
       index: true,
       required: true,

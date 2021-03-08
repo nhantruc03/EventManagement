@@ -21,6 +21,11 @@ const Events = new Schema(
             required: true
         },
         startTime: {
+            type: Date,
+            index: true,
+            required: true
+        },
+        description: {
             type: String,
             index: true,
             required: true

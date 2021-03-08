@@ -1,15 +1,9 @@
 const { pick } = require("lodash")
 const { isEmpty } = require("lodash");
 const handleBody = (body) => {
-  if(isEmpty(body.userId) || isEmpty(body.role) || isEmpty(body.eventId)){
+  if (isEmpty(body.userId) || isEmpty(body.eventId)) {
     return {
       error: "Missing fields!"
-    }
-  }
-
-  if (body.role != null && isNaN(body.role)) {
-    return {
-      error: "Role only contains numbers"
     }
   }
 
@@ -19,8 +13,9 @@ const handleBody = (body) => {
       ...pick(body,
         "userId",
         "eventId",
-        "role",
-        )
+        "roleId",
+        "facultyId"
+      )
     }
   }
 } // for newDoc

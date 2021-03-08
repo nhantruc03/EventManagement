@@ -30,6 +30,10 @@ import addTags from '../components/tags/add';
 import editTags from '../components/tags/edit';
 import Tags from '../components/tags/list';
 
+import addFaculties from '../components/faculties/add';
+import editFaculties from '../components/faculties/edit';
+import Faculties from '../components/faculties/list';
+
 
 import addcredentials from '../components/credentials/addcredentials';
 import editcredentials from '../components/credentials/editcredentials';
@@ -37,7 +41,11 @@ import credentials from '../components/credentials/listcredentials';
 
 import events from '../components/events/listevents/listevents'
 import eventDetails from '../components/events/details/eventDetails'
-import addevents from '../components/events/addevents'
+import addevents from '../components/events/addevent/addevents'
+
+import addscripts from '../components/eventScripts/add'
+import editscripts from '../components/eventScripts/edit'
+
 class router extends Component {
     render() {
         return (
@@ -67,6 +75,10 @@ class router extends Component {
                 <SecureRouteAdmin exact path="/addtags" component={addTags} layout={Page} />
                 <SecureRouteAdmin exact path="/edittags/:id" component={editTags} layout={Page} />
 
+                <SecureRouteAdmin exact path="/listfaculties" component={Faculties} layout={Page} />
+                <SecureRouteAdmin exact path="/addfaculties" component={addFaculties} layout={Page} />
+                <SecureRouteAdmin exact path="/editfaculties/:id" component={editFaculties} layout={Page} />
+
                 <SecureRouteAdmin exact path="/listcredentials" component={credentials} layout={Page} />
                 <SecureRouteAdmin exact path="/addcredentials" component={addcredentials} layout={Page} />
                 <SecureRouteAdmin exact path="/editcredentials/:id" component={editcredentials} layout={Page} />
@@ -74,6 +86,9 @@ class router extends Component {
                 <SecureRouteAdmin exact path="/events" component={events} layout={Page} />
                 <SecureRouteAdmin exact path="/events/:id" component={eventDetails} layout={Page} />
                 <SecureRouteAdmin exact path="/addevents" component={addevents} layout={Page} />
+                
+                <SecureRouteAdmin exact path="/addscripts/:id" component={addscripts} layout={Page} />
+                <SecureRouteAdmin exact path="/editscripts/:id" component={editscripts} layout={Page} />
 
 
             </div>

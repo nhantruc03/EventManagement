@@ -91,19 +91,19 @@ class listevents extends Component {
 
                 <div className="site-layout-background-main">
                     <Row>
-                        <Col span={8}>
+                        <Col span={8} style={{padding:20}}>
                             <Title level={2}>Sắp diễn ra</Title>
                             {this.state.data_future.map((value, key) =>
                                 <EventCard data={value} key={key} />
                             )}
                         </Col>
-                        <Col span={8}>
+                        <Col span={8} style={{padding:20}}>
                             <Title level={2}>Đang diễn ra</Title>
                             {this.state.data_ongoing.map((value, key) =>
                                 <EventCard data={value} key={key} />
                             )}
                         </Col>
-                        <Col span={8}>
+                        <Col span={8} style={{padding:20}}>
                             <Title level={2}>Đã diễn ra</Title>
                             {this.state.data_past.map((value, key) =>
                                 <EventCard data={value} key={key} />
