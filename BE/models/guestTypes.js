@@ -15,7 +15,6 @@ const guestTypes = new Schema(
             index: true,
             unique: true,
             required: true,
-            default: false,
         },
         isDeleted: {
             type: Boolean,

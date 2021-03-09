@@ -162,32 +162,11 @@ class addevents extends Component {
                 console.log(users)
                 this.setState({
                     listRole: roles,
-                    listFaculty: faculties
-                })
-                let temp = [];
-                users.forEach(e => {
-                    temp.push(<Option key={e._id}>{e.name}</Option>)
-                })
-                this.setState({
+                    listFaculty: faculties,
                     listusers: users,
+                    listeventtype: eventTypes,
+                    listtags: tags
                 })
-
-                temp = [];
-                eventTypes.forEach(e => {
-                    temp.push(<Option key={e._id}>{e.name}</Option>)
-                })
-                this.setState({
-                    listeventtype: temp,
-                })
-
-                temp = [];
-                tags.forEach(e => {
-                    temp.push(<Option key={e._id}>{e.name}</Option>)
-                })
-                this.setState({
-                    listtags: temp,
-                })
-
             }
         }
     }
@@ -303,8 +282,7 @@ class addevents extends Component {
     render() {
         return (
             <Content style={{ margin: "0 16px" }}>
-                < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }
-                }>
+                < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }}>
                     <Col span={8}>
                         <Breadcrumb separator=">">
                             <Breadcrumb.Item >
@@ -334,7 +312,7 @@ class addevents extends Component {
                                     rules={[{ required: true, message: 'Cần chọn hình thức sự kiện!' }]}
                                 >
                                     <Select placeholder="Chọn hình thức sự kiện">
-                                        {this.state.listeventtype}
+                                        {this.state.listeventtype.map((e) => <Option key={e._id}>{e.name}</Option>)}
                                     </Select>
                                 </Form.Item>
                                 <Form.Item
@@ -397,7 +375,7 @@ class addevents extends Component {
                                             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
                                     >
-                                        {this.state.listtags}
+                                        {this.state.listtags.map((e) => <Option key={e._id}>{e.name}</Option>)}
                                     </Select>
                                 </Form.Item>
                                 <Form.Item

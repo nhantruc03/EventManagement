@@ -95,7 +95,6 @@ class listGuest extends Component {
                     dataSource={this.state.SearchData1}
                     pagination={false}
                 />
-                <LoadingIndicator />
             </div>
         );
     }

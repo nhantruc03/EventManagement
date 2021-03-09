@@ -9,10 +9,11 @@ const create = async (req, res) => {
     const query = {
       $and: [
         { name: req.body.name },
-        { eventID: req.body.eventId }
+        { eventId: req.body.eventId }
       ],
       isDeleted: false
     } // for oldDocs
+
     // Handle data
     const { error, body } = handleBody(req.body) // for newDoc
     if (error) {
@@ -45,7 +46,7 @@ const create = async (req, res) => {
     await commitTransactions(sessions)
     return res.status(200).json({
       success: true,
-      data: newDoc
+      data: newDoc[0]
     });
   } catch (error) {
     await abortTransactions(sessions)

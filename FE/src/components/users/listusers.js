@@ -7,7 +7,7 @@ import Search from '../helper/search';
 import { AUTH } from '../env'
 import { trackPromise } from 'react-promise-tracker';
 const tablerow = ['Tên', 'Email', 'Ngày sinh', 'Địa chỉ', 'Giới tính', 'Điện thoại', 'Vai trò', 'Trạng thái', 'Thao tác']
-const keydata = ['name', 'email', 'birthday', 'address', 'gender', 'phone','roleId.name', 'isDeleted']
+const keydata = ['name', 'email', 'birthday', 'address', 'gender', 'phone', 'roleId.name', 'isDeleted']
 const obj = "users"
 
 class listusers extends Component {
@@ -17,8 +17,10 @@ class listusers extends Component {
             data: [],
             currentPage: 1,
             postsPerPage: 10,
-            listPage: [],
-            SearchData: []
+            SearchData: [],
+            columns:[
+                
+            ]
         }
     }
 
@@ -89,11 +91,7 @@ class listusers extends Component {
         })
     }
     getlistpage = (SearchData) => {
-        var listpage = [];
-        for (let i = 1; i <= Math.ceil(SearchData.length / this.state.postsPerPage); i++) {
-            listpage.push(i);
-        }
-        return listpage;
+        return  Math.ceil(SearchData.length / this.state.postsPerPage);
     }
 
     printData = (SearchData) => {
@@ -113,9 +111,9 @@ class listusers extends Component {
                     <Search target="name" data={this.state.data} getSearchData={(e) => this.getSearchData(e)} />
                     <TableData obj={obj} dataRow={tablerow} data={this.getCurData(SearchData)} keydata={keydata} onDelete={(e) => this.onDelete(e)} />
                     <Pagination
-                        postsPerPage={this.state.postsPerPage}
-                        totalPosts={this.getlistpage(SearchData)}
+                        totalPosts={this.getlistpage(this.state.data)}
                         paginate={(e) => this.paginate(e)}
+                        PageSize={this.state.postsPerPage}
                     />
                 </div>
             )

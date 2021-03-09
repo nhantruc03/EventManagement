@@ -1,14 +1,12 @@
 import Axios from 'axios';
 import React, { Component } from 'react';
-import TableData from '../table';
-import Pagination from '../helper/Pagination';
 import { Link } from 'react-router-dom';
 import Search from '../helper/search';
 import { AUTH } from '../env'
 import { trackPromise } from 'react-promise-tracker';
-const tablerow = ['Tên', 'Trạng thái', 'Thao tác']
-const keydata = ['name', 'isDeleted']
-const obj = "tags"
+import { Content } from 'antd/lib/layout/layout';
+import { Button, Table } from 'antd';
+import Title from 'antd/lib/typography/Title';
 
 class list extends Component {
     constructor(props) {
@@ -18,14 +16,29 @@ class list extends Component {
             currentPage: 1,
             postsPerPage: 10,
             listPage: [],
-            SearchData: []
+            SearchData: [],
+            columns: [
+                { title: 'Tên', dataIndex: 'name', key: 'name' },
+                {
+                    title: 'Hành động',
+                    dataIndex: '',
+                    key: 'x',
+                    render: (e) => this.renderAction(e),
+                },
+            ]
         }
     }
 
+    renderAction = (e) =>
+        <div className="center">
+            <Button className="add"><Link to={`/editeventtypes/${e._id}`}>Sửa</Link></Button >
+            <Button className="back" onClick={() => this.onDelete(e)}>Xoá</Button>
+        </div>
+
     async componentDidMount() {
         this._isMounted = true;
-        const [eventTypes] = await trackPromise(Promise.all([
-            Axios.post('/api/tags/getAll', {}, {
+        const [users] = await trackPromise(Promise.all([
+            Axios.post('/api/event-types/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
@@ -35,11 +48,12 @@ class list extends Component {
                 )
         ]));
 
-        if (eventTypes !== null) {
+        console.log(users)
+        if (users !== null) {
             if (this._isMounted) {
                 this.setState({
-                    data: eventTypes,
-                    SearchData: eventTypes
+                    data: users,
+                    SearchData: users
                 })
             }
         }
@@ -50,91 +64,52 @@ class list extends Component {
         this._isMounted = false;
     }
 
-    getCurData = (SearchData) => {
-        var indexOfLastPost = this.state.currentPage * this.state.postsPerPage;
-        var indexOfFirstPost = indexOfLastPost - this.state.postsPerPage;
-        return SearchData.slice(indexOfFirstPost, indexOfLastPost);
-
-    }
-
     getSearchData = (data) => {
         this.setState({
             SearchData: data
         })
     }
 
-    paginate = (pageNumber) => {
-        this.setState(
-            {
-                currentPage: pageNumber
-            });
+    onDelete = async (e) => {
+        await trackPromise(
+            Axios.delete("/api/event-types/" + e._id, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then((res) => {
+                    this.setState({
+                        data: this.state.data.filter(o => o._id !== e._id),
+                        SearchData: this.state.data.filter(o => o._id !== e._id)
+                    })
+                }))
+
     }
 
-    onAddClick = () => {
-        this.setState({
-            onAdd: true
-        })
-    }
-
-    onDelete = (e) => {
-        this.setState({
-            data: this.state.data.filter(o => o._id !== e),
-            SearchData: this.state.data.filter(o => o._id !== e)
-        })
-    }
-    onChange = (e) => {
-        this.setState({
-            [e.target.name]: e.target.value
-        })
-    }
-    getlistpage = (SearchData) => {
-        var listpage = [];
-        for (let i = 1; i <= Math.ceil(SearchData.length / this.state.postsPerPage); i++) {
-            listpage.push(i);
-        }
-        return listpage;
-    }
-
-    printData = (SearchData) => {
-        if (this.state.data !== null) {
-            return (
-                <div className='mt-1'>
-                    <div className="row">
-                        <div className="col-9">
-                            <div className='subject'>Danh sách hình thức sự kiện</div>
-                        </div>
-                        <div className="col">
-                            <Link className="link" to={`/addtags`} >
-                                <div className="btn btn-createnew">+ Tạo mới</div>
-                            </Link>
-                        </div>
-                    </div>
+    printData = () => {
+        return (
+            <div >
+                <Title level={4}>Danh sách hình thức sự kiện</Title>
+                <div className="flex-container-row">
                     <Search target="name" data={this.state.data} getSearchData={(e) => this.getSearchData(e)} />
-                    <TableData obj={obj} dataRow={tablerow} data={this.getCurData(SearchData)} keydata={keydata} onDelete={(e) => this.onDelete(e)} />
-                    <Pagination
-                        postsPerPage={this.state.postsPerPage}
-                        totalPosts={this.getlistpage(SearchData)}
-                        paginate={(e) => this.paginate(e)}
-                    />
+                    <Button className="flex-row-item-right add">
+                        <Link to={`/addeventtypes`} >
+                            <div className="btn btn-createnew">Tạo mới</div>
+                        </Link>
+                    </Button>
                 </div>
-            )
-        } else {
-            return (
-                <div className='mt-5'>
-                    <h1 className='text-primary mb-3'>Danh sách hình thức sự kiện</h1>
-                    <div onClick={() => this.onAddClick()} className="btn btn-block btn-success"><i className="fa fa-edit" />Thêm</div>
-                </div>
-            )
-        }
+                <Table rowKey="_id" dataSource={this.state.SearchData} columns={this.state.columns} />
+            </div>
+        )
     }
 
     render() {
         return (
-            <div>
+            <Content style={{ margin: "0 16px" }}>
                 <div className="site-layout-background-main">
-                    {this.printData(this.state.SearchData)}
+                    {this.printData()}
                 </div>
-            </div>
+            </Content>
         );
     }
 }

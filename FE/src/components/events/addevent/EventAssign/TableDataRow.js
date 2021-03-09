@@ -41,6 +41,7 @@ class TableDataRow extends Component {
                 <td className="ant-table-cell">{this.props.data.roleId ? this.props.data.roleId.name : null}</td>
                 <td className="ant-table-cell">
                     <div className="btn-group">
+                        {this.props.canDelete ? <Button onClick={() => this.props.deleteClick(this.props.data._id)} className="back">Xóa</Button> : null}
                         <Button onClick={() => this.editClick()} className="add">Sửa</Button>
                     </div>
                 </td>

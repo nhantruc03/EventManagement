@@ -6,8 +6,7 @@ import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
 import { AUTH } from '../../../env'
 import { Message } from '../../../service/renderMessage';
-import { LoadingIndicator } from '../../../helper/Loading';
-class FacultiesAssign extends Component {
+class EventAssign extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -74,7 +73,28 @@ class FacultiesAssign extends Component {
             data: data
         })
     }
+    deleteClick = async (id) => {
+        await trackPromise(
+            axios.delete('/api/event-assign/' + id, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then(res => {
 
+                    let temp = this.props.data.filter(e => e._id !== res.data.data._id)
+                    console.log('temp', temp)
+                    this.setState({
+                        data: temp
+                    })
+                    this.props.update(temp, res.data.data.userId)
+                  
+                    Message('Xóa thành công', true);
+                })
+                .catch(err => {
+                    Message('Xóa thất bại', false);
+                }))
+    }
     render() {
         return (
             <div >
@@ -83,12 +103,11 @@ class FacultiesAssign extends Component {
                         <Search targetParent="userId" target="name" data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
                     </Col>
                 </Row>
-                <TableData listFaculty={this.props.listFaculty} listRole={this.props.listRole} getUserEditInfo={(info) => this.getUserEditInfo(info)} dataUser={this.state.data} />
-                <LoadingIndicator />
+                <TableData deleteClick={(id) => this.deleteClick(id)} canDelete={this.props.canDelete} listFaculty={this.props.listFaculty} listRole={this.props.listRole} getUserEditInfo={(info) => this.getUserEditInfo(info)} dataUser={this.state.data} />
             </div>
 
         );
     }
 }
 
-export default FacultiesAssign;
+export default EventAssign;

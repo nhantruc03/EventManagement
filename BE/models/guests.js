@@ -12,20 +12,15 @@ const Guests = new Schema(
         name: {
             type: String,
             index: true,
-            required: true,
-            default: false,
         },
         phone: {
             type: String,
-            required: true,
             index: true,
             minlength: 10
         },
         email: {
             type: String,
             index: true,
-            unique: true,
-            required: true
         },
         status: {
             type: Boolean,

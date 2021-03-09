@@ -27,18 +27,18 @@ class login extends Component {
         data.append("password", this.state.password);
         await trackPromise(Axios.post('/api/users/login', data)
             .then(res => {
+                console.log(res.data)
                 console.log(res.data.data)
                 if (res.data.success === true) {
-
                     auth.login(res.data.data);
-                }
-                if (auth.isAuthenticatedAdmin() === true || auth.isAuthenticatedDoctor() === true || auth.isAuthenticatedPharmacist() === true || auth.isAuthenticatedStaff() === true) {
-                    this.props.history.push("/");
-                }
-                else {
-                    this.setState({
-                        isFail: true
-                    })
+                    if (auth.isAuthenticatedAdmin() === true || auth.isAuthenticatedDoctor() === true || auth.isAuthenticatedPharmacist() === true || auth.isAuthenticatedStaff() === true) {
+                        this.props.history.push("/");
+                    }
+                    else {
+                        this.setState({
+                            isFail: true
+                        })
+                    }
                 }
             })
             .catch(err => {

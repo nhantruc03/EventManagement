@@ -11,6 +11,7 @@ class TableData extends Component {
             getUserEditInfo={(value) => this.props.getUserEditInfo(value)}
             key={key}
             data={value}
+            canDelete={this.props.canDelete}
         />
     ))
 

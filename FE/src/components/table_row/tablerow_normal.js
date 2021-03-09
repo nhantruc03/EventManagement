@@ -42,7 +42,7 @@ class TableDataRow extends Component {
 
         } else {
             return (
-                <td>
+                <td className="ant-table-cell">
                     <div className="btn-group">
                         <Tooltip title="Chỉnh sửa" arrow>
                             <Link className="link" to={`/edit${this.props.obj}/${this.props.data._id}`} >

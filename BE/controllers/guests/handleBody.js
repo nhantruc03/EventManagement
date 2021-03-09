@@ -1,11 +1,11 @@
 const { pick } = require("lodash")
 const { isEmpty } = require("lodash");
 const handleBody = (body) => {
-  if (isEmpty(body.name) || isEmpty(body.guestTypeId)) {
-    return {
-      error: "Missing fields!"
-    }
-  }
+  // if (isEmpty(body.name) || isEmpty(body.guestTypeId)) {
+  //   return {
+  //     error: "Missing fields!"
+  //   }
+  // }
   return {
     error: null,
     body: {

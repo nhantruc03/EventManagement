@@ -76,7 +76,6 @@ class addGuest extends Component {
                 <div className="searchForm">
                     <div className="container">
                         <div className="row">
-
                             <Row style={{ width: '100%', marginLeft: 30, marginRight: 30 }}>
                                 <Col span={20}>
                                     <Search target={["name", "phone", "email", "guestTypeName"]} multi={true} data={this.props.listguest} getSearchData={(e) => this.getSearchData(e)} />
@@ -85,7 +84,6 @@ class addGuest extends Component {
                                     <Button className="add" style={{ float: "right" }} onClick={() => this.TaoKM()}>Tạo khách mời</Button>
                                 </Col>
                             </Row>
-
                             <TableData listguesttype={this.props.listguesttype} getUserEditInfo={(info) => this.getUserEditInfo(info)} deleteClick={(id) => this.deleteClick(id)} onClickEditUser={() => this.onClickEditUser()} dataUser={this.state.data} />
                         </div>
                     </div>

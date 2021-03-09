@@ -20,6 +20,7 @@ const getAll = async (req, res) => {
         .skip(limit * (page - 1))
         .limit(limit)
     }
+    console.log(docs)
     return res.status(200).json({
       success: true,
       data: docs

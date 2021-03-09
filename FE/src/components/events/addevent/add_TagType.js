@@ -34,6 +34,7 @@ class add_TagType extends Component {
         if (inputValue && tags.indexOf(inputValue) === -1) {
             tags = [...tags, inputValue];
         }
+        console.log(tags)
         this.props.update(tags)
 
         console.log(tags);

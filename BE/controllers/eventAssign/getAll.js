@@ -6,8 +6,8 @@ const getAll = async (req, res) => {
   const limit = Number(req.query.limit) // limit docs per page
 
   try {
-    const query = { ...pick(req.body.eventId), isDeleted: false }
-
+    const query = { ...pick(req.body, 'eventId'), isDeleted: false }
+    console.log(query)
     let docs;
     if (!page || !limit) {
       docs = await EventAssign.find(query)

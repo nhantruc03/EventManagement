@@ -3,37 +3,30 @@ import React, { Component } from 'react';
 import { AUTH } from '../env';
 import { trackPromise } from 'react-promise-tracker';
 import { Message } from '../service/renderMessage';
-
+import { Breadcrumb, Button, Col, Form, Input, Row } from 'antd';
+import { Link } from 'react-router-dom';
+import { Content } from 'antd/lib/layout/layout';
+import Title from 'antd/lib/typography/Title';
+const formItemLayout = {
+    labelCol: {
+        span: 6,
+    },
+    wrapperCol: {
+        span: 14,
+    },
+};
 class add extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            name: '',
-        }
-    }
-
-    onChange = (e) => {
-        this.setState({
-            [e.target.name]: e.target.value
-        })
-    }
-
     onSubmit = async (e) => {
-        e.preventDefault();
-        var data = {
-            name: this.state.name,
-        };
-        console.log(data)
-        await trackPromise(Axios.post('/api/tags', data, {
+        await trackPromise(Axios.post('/api/tags', e, {
             headers: {
                 'Authorization': { AUTH }.AUTH
             }
         })
             .then(res => {
-                Message('Tạo thành công', true,this.props); 
+                Message('Tạo thành công', true, this.props);
             })
             .catch(err => {
-                Message('Tạo thất bại', false); 
+                Message('Tạo thất bại', false);
             }))
     }
 
@@ -43,35 +36,50 @@ class add extends Component {
 
     render() {
         return (
-            <form onSubmit={this.onSubmit}>
+            <Content style={{ margin: "0 16px" }}>
+                < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }}>
+                    <Breadcrumb separator=">">
+                        <Breadcrumb.Item >
+                            <Link to="/events">Sự kiện</Link>
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item>
+                            Thêm mới sự kiện
+                            </Breadcrumb.Item>
+                    </Breadcrumb>
+                </Row>
                 <div className="site-layout-background-main">
-                    <div className="row">
-                        <div className="col-9">
-                            <div onClick={() => this.goBack()} className='subject'> {`<- Tạo người dùng mới`}</div>
-                        </div>
-                        <div className="col" style={{paddingRight:'126px'}}>
-                            {/* <button onClick={() => this.onDone()} className="btn btn-warning">Quay về</button> */}
-                            <button type="submit" className="btn btn-createnew">Tạo mới</button>
-                        </div>
-                    </div>
-
-                    <div className="container-fluid mt-3">
-                        <div className="row">
-                            <div className="col-12">
-                                <div className="section">
-                                    <li className="fas fa-user"></li> Thông tin
-                                    </div>
-                                <div className="row mt-3">
-                                    <div className="col">
-                                        <label htmlFor="name"  >Tên</label>
-                                        <input onChange={(e) => this.onChange(e)} type="text" className="form-control" name="name" placeholder="Tên quyền" required={true} />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <Form
+                        name="validate_other"
+                        {...formItemLayout}
+                        onFinish={(e) => this.onSubmit(e)}
+                        layout="vertical"
+                    >
+                        <Form.Item
+                            wrapperCol={{ sm: 24 }}
+                            name="name"
+                            label={<Title level={4}>Tên tags</Title>}
+                            hasFeedback
+                            rules={[{ required: true, message: 'Cần nhập tên tags!' }]}
+                        >
+                            <Input placeholder="Nhập tên tags..."></Input>
+                        </Form.Item>
+                        <br></br>
+                        <Form.Item wrapperCol={{ span: 24, offset: 9 }}>
+                            <Button
+                                onClick={this.goBack}
+                                className="back"
+                                style={{ width: 150, marginRight: 20 }}
+                            >
+                                Hủy
+                            </Button>
+                            <Button htmlType="submit" className="add" style={{ width: 150 }}>
+                                Tạo mới
+                            </Button>
+                        </Form.Item>
+                    </Form>
                 </div>
-            </form>
+            </Content>
+
         );
     }
 }

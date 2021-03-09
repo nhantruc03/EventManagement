@@ -14,13 +14,13 @@ import { AppRoute } from './AppRoute';
 import trangchu from '../components/home/home';
 import thongtincanhan from '../components/thongtincanhan/thongtincanhan';
 
-import addusers from '../components/users/addusers';
-import editusers from '../components/users/editusers';
-import users from '../components/users/listusers';
+import addusers from '../components/users/add';
+import editusers from '../components/users/edit';
+import users from '../components/users/list';
 
-import addroles from '../components/roles/addroles';
-import editroles from '../components/roles/editroles';
-import roles from '../components/roles/listroles';
+import addroles from '../components/roles/add';
+import editroles from '../components/roles/edit';
+import roles from '../components/roles/list';
 
 import addEventTypes from '../components/eventTypes/add';
 import editEventTypes from '../components/eventTypes/edit';
@@ -42,6 +42,7 @@ import credentials from '../components/credentials/listcredentials';
 import events from '../components/events/listevents/listevents'
 import eventDetails from '../components/events/details/eventDetails'
 import addevents from '../components/events/addevent/addevents'
+import editevent from '../components/events/editevent/editevent'
 
 import addscripts from '../components/eventScripts/add'
 import editscripts from '../components/eventScripts/edit'
@@ -85,6 +86,7 @@ class router extends Component {
 
                 <SecureRouteAdmin exact path="/events" component={events} layout={Page} />
                 <SecureRouteAdmin exact path="/events/:id" component={eventDetails} layout={Page} />
+                <SecureRouteAdmin exact path="/editevent/:id" component={editevent} layout={Page} />
                 <SecureRouteAdmin exact path="/addevents" component={addevents} layout={Page} />
                 
                 <SecureRouteAdmin exact path="/addscripts/:id" component={addscripts} layout={Page} />

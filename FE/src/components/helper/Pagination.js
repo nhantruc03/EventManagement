@@ -1,26 +1,18 @@
 import React, { Component } from 'react';
-
-class Pagination extends Component {
+import { Pagination } from 'antd';
+class Paginations extends Component {
     renderRow = () => {
         return (
-            this.props.totalPosts.map(number => (
-                <li key={number} className='page-item'>
-                    <button onClick={() => this.props.paginate(number)} className='page-link'>
-                        {number}
-                    </button>
-                </li>
-            ))
+            <Pagination className="flex-row-item-right" defaultCurrent={2} defaultPageSize={this.props.PageSize} total={this.props.totalPosts} onChange={(e) => this.props.paginate(e)} />
         )
     }
     render() {
         return (
-            <nav>
-                <ul className='pagination'>
-                    {this.renderRow()}
-                </ul>
-            </nav >
+            <div className='flex-container-row pagination'>
+                {this.renderRow()}
+            </div>
         );
     }
 }
 
-export default Pagination;
+export default Paginations;

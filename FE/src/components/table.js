@@ -208,7 +208,7 @@ class TableData extends Component {
 
     printRow = () =>
         this.props.dataRow.map((value, key) => (
-            <th key={key}>{value}</th>
+            <th className="ant-table-cell" key={key}>{value}</th>
         ))
 
 
@@ -222,8 +222,8 @@ class TableData extends Component {
     renderBlank = () => {
         if (this.props.autoScroll && this.props.data.length > 12) {
             return (
-                <tr style={{ height: '200px' }}>
-                  
+                <tr className="ant-table-row ant-table-row-level-0" style={{ height: '200px' }}>
+
                 </tr>
             )
         }
@@ -250,21 +250,25 @@ class TableData extends Component {
                     StopScrolling={false}
                     isEnabled={this.props.autoScroll}>
                     <div onScroll={this.handleScroll} ref="test" className={`${this.state.tableType}`}>
-                        <table className="table table-striped table-hover">
-                            <thead className="thead">
-                                <tr style={{ textAlign: "center" }}>
-                                    {this.printRow()}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {this.mappingDataUser()}
-                                {this.renderBlank()}
-                            </tbody>
-                        </table>
+                        <div className="ant-table">
+                            <div className="ant-table-container">
+                                < div className="ant-table-content" >
+                                    <table className="table table-striped table-hover">
+                                        <thead className="thead">
+                                            <tr style={{ textAlign: "center" }}>
+                                                {this.printRow()}
+                                            </tr>
+                                        </thead>
+                                        <tbody className="ant-table-tbody">
+                                            {this.mappingDataUser()}
+                                            {this.renderBlank()}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
                 </ReactAutoScroll>
-
             </div>
         );
     }

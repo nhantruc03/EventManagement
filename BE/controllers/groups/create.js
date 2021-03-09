@@ -46,7 +46,7 @@ const create = async (req, res) => {
     await commitTransactions(sessions)
     return res.status(200).json({
       success: true,
-      data: newDoc
+      data: newDoc[0]
     });
   } catch (error) {
     await abortTransactions(sessions)

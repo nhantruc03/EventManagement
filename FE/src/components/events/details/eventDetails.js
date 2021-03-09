@@ -22,7 +22,7 @@ import {
 import { trackPromise } from "react-promise-tracker";
 import axios from "axios";
 import ListAvailUser from './forAvailUser/listAvailUser'
-import FacultiesAssign from './FacultiesAssign/FacultiesAssign'
+import EventAssign from './EventAssign/EventAssign'
 import ListGuest from './forGuest/listGuest'
 import GuestView from "./forGuest/guestView";
 import { Message } from "../../service/renderMessage";
@@ -201,7 +201,7 @@ class eventDetails extends Component {
         return (
             <Tabs defaultActiveKey="1">
                 <TabPane tab="Danh sách ban tổ chức" key="1"><ListAvailUser listusers={this.state.data.availUser} /></TabPane>
-                <TabPane tab="Phân nhóm" key="2"><FacultiesAssign update={this.updateEventAssign} eventId={this.props.match.params.id} listRole={this.state.listRole} listFaculty={this.state.listFaculty} data={this.state.listEventAssign} /></TabPane>
+                <TabPane tab="Phân nhóm" key="2"><EventAssign update={this.updateEventAssign} eventId={this.props.match.params.id} listRole={this.state.listRole} listFaculty={this.state.listFaculty} data={this.state.listEventAssign} /></TabPane>
             </Tabs>
 
         );
@@ -230,7 +230,7 @@ class eventDetails extends Component {
             return (
                 <Content style={{ margin: "0 16px" }}>
                     < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }}>
-                        <Col span={8}>
+                        <div className="flex-container-row" style={{ width: '100%' }}>
                             <Breadcrumb separator=">">
                                 <Breadcrumb.Item >
                                     <Link to="/events">Sự kiện</Link>
@@ -239,7 +239,10 @@ class eventDetails extends Component {
                                     Chi tiết
                                 </Breadcrumb.Item>
                             </Breadcrumb>
-                        </Col>
+                            <Button onClick={() => { this.props.history.push(`/editevent/${this.props.match.params.id}`) }} className="flex-row-item-right">Chỉnh sửa</Button>
+                        </div>
+
+
                     </Row >
 
                     <div className="site-layout-background-main">

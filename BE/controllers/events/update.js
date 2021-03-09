@@ -2,6 +2,7 @@ const Events = require('../../models/events')
 const { handleBody } = require('./handleBody')
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
+const { pick } = require('lodash')
 const update = async (req, res) => {
   let sessions = []
   try {
@@ -14,12 +15,27 @@ const update = async (req, res) => {
     const queryUpdate = { _id: req.params.id, isDeleted: false }
 
     // Handle data
-    const { error, body } = handleBody(req.body) // for newDoc
-    if (error) {
-      return res.status(406).json({
-        success: false,
-        error: error
-      })
+    // const { error, body } = handleBody(req.body) // for newDoc
+    // if (error) {
+    //   return res.status(406).json({
+    //     success: false,
+    //     error: error
+    //   })
+    // }
+
+    const body = {
+      ...pick(
+        req.body,
+        "name",
+        "startDate",
+        "startTime",
+        "address",
+        "posterUrl",
+        "availUser",
+        "tagId",
+        "eventTypeId",
+        "description"
+      )
     }
 
     // Transactions
