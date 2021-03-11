@@ -22,7 +22,7 @@
     "jsonwebtoken": "8.5.1",
     "lodash": "4.17.20",
     "moment": "2.29.1",
-    "mongoose": "5.10.9",
+    "mongoose": "^5.11.19",
     "mongoose-extend-schema": "^1.0.0",
     "morgan": "1.10.0",
     "nodemon": "^2.0.4",

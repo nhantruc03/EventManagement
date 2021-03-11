@@ -17,6 +17,7 @@ class ChatRoom extends Component {
             onRoll: false,
             lastDoc: null,
             onLoadMore: false,
+            currentUser: {}
         }
     }
     getData = async () => {
@@ -47,7 +48,11 @@ class ChatRoom extends Component {
             }
 
         };
-
+        const login = localStorage.getItem('login');
+        const obj = JSON.parse(login);
+        this.setState({
+            currentUser: obj.id
+        })
         await this.getData();
         // this.refs.messagesEnd.scrollIntoView({ behavior: 'smooth' });
     }
@@ -122,12 +127,11 @@ class ChatRoom extends Component {
     renderMessage = () => {
         return (
             this.state.messages.map((msg, index) => (
-                <ChatMessage key={index} messageClass={msg.userID._id === '5ff04a7ef72aa03a4cb6d8c5' ? 'sent' : 'received'} message={msg} />
+                <ChatMessage key={index} messageClass={msg.userID._id === this.state.currentUser ? 'sent' : 'received'} message={msg} />
             ))
         )
 
     }
-
 
     render() {
         return (
