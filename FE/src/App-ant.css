@@ -415,38 +415,43 @@ span.ant-tag.site-tag-plus {
 }
 
 
-.ant-card.ant-card-bordered.ant-card-hoverable.eventCard {
+.event-card-container .ant-card.ant-card-bordered.ant-card-hoverable {
   overflow-wrap: break-word;
   padding: 10px;
   border-radius: 10px;
 }
 
-.ant-row.eventCard {
+.eventCard .ant-row {
   margin-top: 10px;
 }
 
-span.anticon.eventCard {
+.eventCard span.anticon {
   margin-right: 10px;
 }
 
-span.anticon.eventCard.eventCardFooter {
+.eventCard span.anticon.eventCardFooter {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
+.eventCard img{
+  text-align: center;
+  max-width: 150px;
+  margin: auto;
+}
 
 
 
-.ant-avatar-group.eventCard {
-  margin-left: auto;
+.eventCard .ant-avatar-group {
+  margin-left: auto !important;
 }
 
 @media (max-width: 1400px) {
-  span.anticon.eventCard.eventCardFooter {
+  .eventCard span.anticon.eventCardFooter {
     display: flex;
     flex-direction: column;
   }
-  .ant-avatar-group.eventCard {
+  .eventCard .ant-avatar-group {
     margin-left: unset;
   }
 }
@@ -664,4 +669,17 @@ ul, li {
 
 .pagination{
   margin-top: 20px;
+}
+
+.event-card-container{
+  padding: 20px;
+}
+
+.add-action-container .ant-steps.ant-steps-horizontal.ant-steps-label-horizontal {
+  margin: auto;
+  max-width: 50% !important;
+}
+
+.form .ant-col {
+  padding: 5px;
 }

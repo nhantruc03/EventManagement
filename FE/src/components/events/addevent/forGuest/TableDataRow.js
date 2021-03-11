@@ -29,15 +29,16 @@ class TableDataRow extends Component {
 
         if (this.state.onEditUser === true) {
             return (<tr>
-                <td colSpan="5"><EditUser list={this.props.list} delete={(e)=>this.props.deleteClick(e)} listguesttype={this.props.listguesttype} getUserEditInfo={(info) => this.props.getUserEditInfo(info)} userEditObject={this.props.data} onClickEditUser={() => this.onClickEditUser()} /></td></tr>)
+                <td className="ant-table-cell" colSpan="5"><EditUser list={this.props.list} delete={(e)=>this.props.deleteClick(e)} listguesttype={this.props.listguesttype} getUserEditInfo={(info) => this.props.getUserEditInfo(info)} userEditObject={this.props.data} onClickEditUser={() => this.onClickEditUser()} /></td></tr>)
         }
         else
-            return (<tr>
-                <td>{this.props.data.name}</td>
-                <td>{this.props.data.phone}</td>
-                <td>{this.props.data.email}</td>
-                <td>{this.props.data.guestTypeName}</td>
-                <td>
+            return (
+            <tr className="ant-table-row ant-table-row-level-0">
+                <td className="ant-table-cell">{this.props.data.name}</td>
+                <td className="ant-table-cell">{this.props.data.phone}</td>
+                <td className="ant-table-cell">{this.props.data.email}</td>
+                <td className="ant-table-cell">{this.props.data.guestTypeName}</td>
+                <td className="ant-table-cell">
                     <div className="btn-group">
                         <div onClick={() => this.editClick()} className="btn btn-warning sua"><i className="fa fa-edit" />Sửa</div>
                         <div onClick={() => this.props.deleteClick(this.props.data.id)} className="btn btn-danger xoa"> <i className="fa fa-remove" />Xóa</div>

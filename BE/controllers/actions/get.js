@@ -5,7 +5,13 @@ const get = async (req, res) => {
     const query = { _id: req.params.id, isDeleted: false }
 
     const doc = await Actions.findOne(query)
-
+      .populate({ path: 'availUser', select: 'name photoUrl' })
+      .populate({ path: 'tagsId', select: 'name' })
+      .populate({ path: 'facultyId', select: 'name' })
+      .populate({ path: 'priorityId', select: 'name' })
+      .populate({ path: 'eventId', select: 'name' })
+      .populate({ path: 'actionTypeId', select: 'name' })
+      .populate("dependActionId")
     return res.status(200).json({
       success: true,
       data: doc

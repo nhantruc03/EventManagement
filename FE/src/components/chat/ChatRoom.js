@@ -49,7 +49,7 @@ class ChatRoom extends Component {
         };
 
         await this.getData();
-        this.refs.messagesEnd.scrollIntoView({ behavior: 'smooth' });
+        // this.refs.messagesEnd.scrollIntoView({ behavior: 'smooth' });
     }
 
 
@@ -90,6 +90,7 @@ class ChatRoom extends Component {
     }
 
     handleScroll = async (e) => {
+        console.log(e)
         if (e.target.scrollTop === 0) {
             if (!this.state.onLoadMore) {
                 this.setState({

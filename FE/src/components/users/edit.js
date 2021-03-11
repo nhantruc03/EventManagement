@@ -67,7 +67,7 @@ class edit extends Component {
         ]));
 
 
-        if (data !== null, roles !== null) {
+        if (data !== null && roles !== null) {
             if (this._isMounted) {
                 this.setState({
                     data: data,

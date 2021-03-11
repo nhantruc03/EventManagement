@@ -62,6 +62,12 @@ class SiderDemo extends React.Component {
                         <Menu.Item key="/listtags">
                             <Link to="/listtags">Tags sự kiện</Link>
                         </Menu.Item>
+                        <Menu.Item key="/listactiontags">
+                            <Link to="/listactiontags">Tags công việc</Link>
+                        </Menu.Item>
+                        <Menu.Item key="/listactionpriorities">
+                            <Link to="/listactionpriorities">Độ ưu tiên công việc</Link>
+                        </Menu.Item>
                     </SubMenu>
                 </Menu>
             </Sider>

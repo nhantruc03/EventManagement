@@ -29,7 +29,6 @@ import ListEventAssign from './EventAssign/ListEventAssign'
 import AddTagType from "./add_TagType";
 import GuestView from "./forGuest/guestView";
 import EventAssignView from "./EventAssign/EventAssignView";
-import { Message } from "../../service/renderMessage";
 import { Link } from "react-router-dom";
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -209,10 +208,10 @@ class addevents extends Component {
             }
         })
             .then(res => {
-                Message('Tạo thành công', true, this.props);
+                message.success('Tạo thành công');
             })
             .catch(err => {
-                Message('Tạo thất bại', false);
+                message.error('Tạo thất bại');
             }))
     };
 

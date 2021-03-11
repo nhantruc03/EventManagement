@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import TableData from './TableData';
-import { v1 as uuidv1 } from 'uuid';
 import { Button, Col, message, Row } from 'antd';
 import Search from '../../../helper/search';
 import { AUTH } from '../../../env'
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
-import { Message } from '../../../service/renderMessage';
 import Paginations from '../../../helper/Pagination';
 class guestView extends Component {
     constructor(props) {

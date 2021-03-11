@@ -23,8 +23,6 @@ import {
 import { trackPromise } from "react-promise-tracker";
 import axios from "axios";
 import SelectUser from '../addevent/forAvailUser/selectUsers'
-import AddTagType from "../addevent/add_TagType";
-import { Message } from "../../service/renderMessage";
 import { Link } from "react-router-dom";
 import moment from 'moment'
 import EventAssign from "../details/EventAssign/EventAssign";
@@ -256,7 +254,12 @@ class editevent extends Component {
             ...values,
             'startDate': values['startDate'].toDate(),
             'startTime': values['startTime'].toDate(),
-            'posterUrl': this.state.posterUrl,
+        }
+        if (this.state.posterUrl !== null) {
+            data = {
+                ...data,
+                'posterUrl': this.state.posterUrl,
+            }
         }
 
         console.log('Received values of form: ', data);
@@ -267,10 +270,10 @@ class editevent extends Component {
             }
         })
             .then(res => {
-                Message('Sửa thành công', true, this.props);
+                message.success('Cập nhật thành công');
             })
             .catch(err => {
-                Message('Sửa thất bại', false);
+                message.error('Cập nhật thất bại');
             }))
     };
 

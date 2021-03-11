@@ -1,3 +1,4 @@
+const { pick } = require('lodash')
 const Actions = require('../../models/actions')
 
 const getAll = async (req, res) => {
@@ -5,19 +6,29 @@ const getAll = async (req, res) => {
   const limit = Number(req.query.limit) // limit docs per page
 
   try {
-    const query = { isDeleted: false }
+    const query = { ...pick(req.body, "eventId"), isDeleted: false }
 
     let docs;
     if (!page || !limit) {
       docs = await Actions.find(query)
-      .populate("eventId")
-      .populate("dependActionId")
+        .populate({ path: 'availUser', select: 'name photoUrl' })
+        .populate({ path: 'tagsId', select: 'name' })
+        .populate({ path: 'facultyId', select: 'name' })
+        .populate({ path: 'priorityId', select: 'name' })
+        .populate({ path: 'eventId', select: 'name' })
+        .populate({ path: 'actionTypeId', select: 'name' })
+        .populate("dependActionId")
     }
     else {
       docs = await Actions.find(query)
         .skip(limit * (page - 1))
         .limit(limit)
-        .populate("eventId")
+        .populate({ path: 'availUser', select: 'name photoUrl' })
+        .populate({ path: 'tagsId', select: 'name' })
+        .populate({ path: 'facultyId', select: 'name' })
+        .populate({ path: 'priorityId', select: 'name' })
+        .populate({ path: 'eventId', select: 'name' })
+        .populate({ path: 'actionTypeId', select: 'name' })
         .populate("dependActionId")
     }
     return res.status(200).json({

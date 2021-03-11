@@ -21,33 +21,34 @@ class eventCard extends Component {
     }
     render() {
         return (
-            <Link to={`/events/${this.props.data._id}`}>
-                <Card
-                    hoverable
-                    className="eventCard"
-                    cover={<img alt="example" src={`api/images/${this.props.data.posterUrl}`} />}
+            <div className="event-card-container">
+                <Link to={`/events/${this.props.data._id}`}>
+                    <Card
+                        hoverable
+                        className="eventCard"
+                        cover={<img alt="example" src={`api/images/${this.props.data.posterUrl}`} />}
 
-                >
-                    <Meta title={this.props.data.name} description={this.props.data.description} />
+                    >
+                        <Meta title={this.props.data.name} description={this.props.data.description} />
 
-                    <Row className="eventCard">
-                        <ClockCircleOutlined className="eventCard" />  {moment(this.props.data.startTime).format('HH:mm')} - {moment(this.props.data.startDate).format('DD/MM/YYYY')}
-                    </Row>
-                    <Row className="eventCard">
-                        <EnvironmentOutlined className="eventCard" />  {this.props.data.address}
-                    </Row>
-                    <Row className="eventCard eventCardFooter">
-                        {this.props.data.tagId.map((value, key) => <Tag style={{ width: 'auto' }} key={key}>{value.name}</Tag>)}
-                        <Avatar.Group
-                            maxCount={2}
-                            className="eventCard"
-                            maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}
-                        >
-                            {this.renderAvailUser()}
-                        </Avatar.Group>
-                    </Row>
-                </Card>
-            </Link>
+                        <Row >
+                            <ClockCircleOutlined />  {moment(this.props.data.startTime).format('HH:mm')} - {moment(this.props.data.startDate).format('DD/MM/YYYY')}
+                        </Row>
+                        <Row >
+                            <EnvironmentOutlined />  {this.props.data.address}
+                        </Row>
+                        <Row className="eventCardFooter">
+                            {this.props.data.tagId.map((value, key) => <Tag style={{ width: 'auto' }} key={key}>{value.name}</Tag>)}
+                            <Avatar.Group
+                                maxCount={2}
+                                maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}
+                            >
+                                {this.renderAvailUser()}
+                            </Avatar.Group>
+                        </Row>
+                    </Card>
+                </Link>
+            </div>
         );
     }
 }

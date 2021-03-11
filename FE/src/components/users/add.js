@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { AUTH } from '../env';
 import { trackPromise } from 'react-promise-tracker';
 import { Message } from '../service/renderMessage';
-import { Breadcrumb, Button, Col, Form, Input, InputNumber, Row, Select } from 'antd';
+import { Breadcrumb, Button, Form, Input, InputNumber, Row, Select } from 'antd';
 import { Link } from 'react-router-dom';
 import { Content } from 'antd/lib/layout/layout';
 import Title from 'antd/lib/typography/Title';

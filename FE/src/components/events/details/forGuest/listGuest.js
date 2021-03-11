@@ -8,7 +8,6 @@ import {
 } from '@ant-design/icons';
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
-import { LoadingIndicator } from '../../../helper/Loading';
 class listGuest extends Component {
     constructor(props) {
         super(props);

@@ -25,7 +25,6 @@ import ListAvailUser from './forAvailUser/listAvailUser'
 import EventAssign from './EventAssign/EventAssign'
 import ListGuest from './forGuest/listGuest'
 import GuestView from "./forGuest/guestView";
-import { Message } from "../../service/renderMessage";
 import { Link } from "react-router-dom";
 import moment from 'moment';
 import ChatRoom from '../../chat/ChatRoom'

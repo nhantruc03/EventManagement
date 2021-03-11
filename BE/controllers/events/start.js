@@ -84,10 +84,10 @@ const start = async (req, res) => {
             let findOldEventAssign = []
             body_ref.eventAssigns.forEach(element => {
                 findOldEventAssign.push(
-                    GuestTypes.find({
+                    EventAssign.find({
                         $and: [
                             { userId: element.userId },
-                            { eventId: element.eventId },
+                            { eventId: newDoc[0]._id },
                         ],
                         isDeleted: false
                     }, null, { session })
@@ -141,7 +141,7 @@ const start = async (req, res) => {
                     GuestTypes.find({
                         $and: [
                             { name: element.name },
-                            { eventId: element.eventId },
+                            { eventId: newDoc[0]._id },
                         ],
                         isDeleted: false
                     }, null, { session })
@@ -266,7 +266,7 @@ const start = async (req, res) => {
                     Groups.find({
                         $and: [
                             { name: element.name },
-                            { eventId: element.eventId },
+                            { eventId: newDoc[0]._id },
                         ],
                         isDeleted: false
                     }, null, { session })

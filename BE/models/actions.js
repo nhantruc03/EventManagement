@@ -10,10 +10,35 @@ const Actions = new Schema(
       index: true,
       required: true
     },
-    dependActionId: {
+    name: {
+      type: String,
+      required: true,
+      index: true
+    },
+    facultyId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "actions",
+      ref: "faculties",
       index: true,
+      required: true
+    },
+    actionTypeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "actiontypes",
+      index: true,
+      required: true
+    },
+    tagsId: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'actiontags',
+        index: true,
+      }
+    ],
+    priorityId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "actionpriorities",
+      index: true,
+      required: true
     },
     name: {
       type: String,
@@ -30,7 +55,12 @@ const Actions = new Schema(
       index: true,
       required: true
     },
-    note: {
+    description: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    coverUrl: {
       type: String,
       required: true,
       index: true,

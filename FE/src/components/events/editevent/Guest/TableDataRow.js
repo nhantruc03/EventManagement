@@ -30,7 +30,7 @@ class TableDataRow extends Component {
 
         if (this.state.onEditUser === true) {
             return (<tr>
-                <td colSpan="5"><EditUser guestTypeId={this.props.guestTypeId} list={this.props.list} delete={(e) => this.props.deleteClick(e)} listguesttype={this.props.listguesttype} edit={(info) => this.props.edit(info)} data={this.props.data} onClickEditUser={() => this.onClickEditUser()} /></td></tr>)
+                <td className="ant-table-cell" colSpan="5"><EditUser guestTypeId={this.props.guestTypeId} list={this.props.list} delete={(e) => this.props.deleteClick(e)} listguesttype={this.props.listguesttype} edit={(info) => this.props.edit(info)} data={this.props.data} onClickEditUser={() => this.onClickEditUser()} /></td></tr>)
         }
         else
             return (
