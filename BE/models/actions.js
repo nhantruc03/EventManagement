@@ -10,11 +10,6 @@ const Actions = new Schema(
       index: true,
       required: true
     },
-    name: {
-      type: String,
-      required: true,
-      index: true
-    },
     facultyId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "faculties",

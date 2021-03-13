@@ -14,14 +14,14 @@ const getAll = async (req, res) => {
     let docs;
     if (!page || !limit) {
       docs = await ChatMessages.find(query)
-        .populate({ path: 'userID', select: 'photoURL' })
+        .populate({ path: 'userID', select: 'name photoUrl' })
     }
     else {
       docs = await ChatMessages.find(query)
         .sort({ 'createdAt': -1 })
         .skip(limit * (page - 1))
         .limit(limit)
-        .populate({ path: 'userID', select: 'photoURL' })
+        .populate({ path: 'userID', select: 'name photoUrl' })
     }
     return res.status(200).json({
       success: true,

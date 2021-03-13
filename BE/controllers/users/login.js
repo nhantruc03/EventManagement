@@ -8,7 +8,7 @@ const login = async (req, res) => {
     // Check username is exist
     const user = await Users
       .findOne({ username: req.body.username, isDeleted: false }).select("password _id name roleId")
-      .populate({ path: 'roleId', select: 'name' });
+      .populate({ path: 'roleId', select: 'name photoUrl' });
 
     // const role = await Credentials
     //   .findOne({ userId: user._id, isDeleted: false })
@@ -34,7 +34,8 @@ const login = async (req, res) => {
       token: token,
       name: user.name,
       id: user._id,
-      role: user.roleId.name
+      role: user.roleId.name,
+      photoUrl: user.photoUrl
     }
 
     return res.status(200).json({ success: isLogin, data });

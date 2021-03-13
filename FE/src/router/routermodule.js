@@ -56,6 +56,7 @@ import addscripts from '../components/eventScripts/add'
 import editscripts from '../components/eventScripts/edit'
 
 import listactions from '../components/actions/listactions/listactions'
+import actiondetails from '../components/actions/actiondetails/actionDetails'
 
 class router extends Component {
     render() {
@@ -112,6 +113,7 @@ class router extends Component {
 
 
                 <SecureRouteAdmin exact path="/actions" component={listactions} layout={Page} />
+                <SecureRouteAdmin exact path="/actions/:id" component={actiondetails} layout={Page} />
                 {/* <SecureRouteAdmin exact path="/actions/:id" component={eventDetails} layout={Page} />
                 <SecureRouteAdmin exact path="/editactions/:id" component={editevent} layout={Page} /> */}
                 {/* <SecureRouteAdmin exact path="/addactions" component={addactions} layout={Page} /> */}

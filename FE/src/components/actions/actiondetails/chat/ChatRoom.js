@@ -21,7 +21,7 @@ class ChatRoom extends Component {
         }
     }
     getData = async () => {
-        const temp = await axios.post('/api/chat-message/getAll?page=1&limit=12', { groupID: this.props.roomId })
+        const temp = await axios.post('/api/chat-actions/getAll?page=1&limit=12', { actionId: this.props.roomId })
             .then((res) =>
                 res.data.data
             )
@@ -31,6 +31,7 @@ class ChatRoom extends Component {
     }
 
     async componentDidMount() {
+        this._isMounted = true;
 
         client.onopen = () => {
             console.log('Connect to ws')
@@ -54,9 +55,12 @@ class ChatRoom extends Component {
             currentUser: obj.id
         })
         await this.getData();
-        // this.refs.messagesEnd.scrollIntoView({ behavior: 'smooth' });
     }
 
+    componentWillUnmount() {
+        this._isMounted = false;
+        client.close()
+    }
 
     sendMessage = async (e) => {
         e.preventDefault();
@@ -68,12 +72,12 @@ class ChatRoom extends Component {
         console.log('adfasfsaf')
         var message = {
             text: this.state.formValue,
-            userID: { _id: obj.id, photoUrl: obj.photoUrl },
-            groupID: this.props.roomId
+            userId: { _id: obj.id, photoURL: obj.photoUrl },
+            actionId: this.props.roomId
         }
         console.log(message)
         // await this.props.firestore.collection('chats').doc(this.props.roomId).collection('messages').add(message)
-        const temp = await axios.post('/api/chat-message', message)
+        const temp = await axios.post('/api/chat-actions', message)
             .then((res) =>
                 res.data.data
             )
@@ -102,7 +106,7 @@ class ChatRoom extends Component {
                     onLoadMore: true
                 })
                 console.log(this.state.onLoadMore)
-                await axios.get(`/api/chat-message?page=${this.state.page + 1}&limit=12`, { groupID: this.props.roomId })
+                await axios.get(`/api/chat-actions?page=${this.state.page + 1}&limit=12`, { actionId: this.props.roomId })
                     .then((res) => {
                         const temp = res.data.data;
                         this.setState({
@@ -125,9 +129,10 @@ class ChatRoom extends Component {
     }
 
     renderMessage = () => {
+        console.log(this.state.messages)
         return (
             this.state.messages.map((msg, index) => (
-                <ChatMessage key={index} messageClass={msg.userID._id === this.state.currentUser ? 'sent' : 'received'} message={msg} />
+                <ChatMessage key={index} messageClass={msg.userId._id === this.state.currentUser ? 'sent' : 'received'} message={msg} />
             ))
         )
 
@@ -142,7 +147,6 @@ class ChatRoom extends Component {
                 </div>
                 <form className="chat-form" onSubmit={this.sendMessage}>
                     <input className="input-chat" value={this.state.formValue} onChange={(e) => this.setFormValue(e.target.value)} placeholder="Hãy chia sẻ ý kiến của bạn" />
-                    {/* <button className="chat-button" type="submit" disabled={!this.state.formValue}>🕊️</button> */}
                     <button className="chat-button" type="submit" disabled={!this.state.formValue}><SendOutlined /></button>
                 </form>
             </div>

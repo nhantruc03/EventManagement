@@ -23,7 +23,7 @@ class actionCard extends Component {
     render() {
         return (
             <div className="event-card-container">
-                <Link to={`/#`}>
+                <Link to={`/actions/${this.props.data._id}`}>
                     <Card
                         hoverable
                         className="eventCard"

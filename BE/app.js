@@ -1,4 +1,5 @@
 const express = require('express')
+const fs = require('fs');
 var path = require('path');
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -48,10 +49,12 @@ app.use(bodyParser.json())
 app.use(busboyBodyParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/images', express.static('images'));
+app.use('/api/resources', express.static('resources'));
 // Routes
 // app.use("/api/medicines", authenticateToken, require("./routes/medicines"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/actions", require("./routes/actions"));
+app.use("/api/sub-actions", require("./routes/subActions"));
 app.use("/api/action-tags", require("./routes/actionTags"));
 app.use("/api/action-priorities", require("./routes/actionPriorities"));
 app.use("/api/action-types", require("./routes/actionTypes"));
@@ -59,11 +62,13 @@ app.use("/api/event-types", require("./routes/eventTypes"));
 app.use("/api/events", require("./routes/events"));
 app.use("/api/tags", require("./routes/tags"));
 app.use("/api/action-assign", require("./routes/actionAssign"));
+app.use("/api/action-resources", require("./routes/actionResources"));
 app.use("/api/event-assign", require("./routes/eventAssign"));
 app.use("/api/roles", require("./routes/roles"));
 app.use("/api/credentials", require("./routes/credentials"));
 app.use("/api/groups", require("./routes/groups"));
 app.use("/api/chat-message", require("./routes/chatMessages"));
+app.use("/api/chat-actions", require("./routes/chatActions"));
 app.use("/api/scripts", require("./routes/scripts"));
 app.use("/api/script-details", require("./routes/scriptDetails"));
 app.use("/api/guests", require("./routes/guests"));
@@ -89,8 +94,33 @@ app.post("/api/uploads", (req, res) => {
       url: filename,
     });
   });
-
 })
+
+app.post("/api/upload-resources/:id", (req, res) => {
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send('No files were uploaded.');
+  }
+  // console.log(req)
+  let sampleFile = req.files.file;
+  console.log(req.files.file)
+  let extension = mime.extension(sampleFile.mimetype);
+  const uniqueSuffix = Date.now()
+  let filename = uniqueSuffix + '-' + req.files.file.name;
+  // Use the mv() method to place the file somewhere on your server
+  if (!fs.existsSync(`./resources/${req.params.id}`)){
+    fs.mkdirSync(`./resources/${req.params.id}`);
+}
+  sampleFile.mv(`./resources/${req.params.id}/` + filename, function (err) {
+    if (err)
+      return res.status(500).send(err);
+    res.status(200).json({
+      uploaded: true,
+      url: filename,
+      extension: extension
+    });
+  });
+})
+
 // Connect DB then start server
 mongoose
   .connect(

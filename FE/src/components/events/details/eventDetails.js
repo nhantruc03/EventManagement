@@ -274,7 +274,7 @@ class eventDetails extends Component {
                                 </Tabs>
                             </Col>
                             <Col span={10} className="event-detail">
-                                <Tag className="event-detail-status">{this.state.status}</Tag>
+                                <Tag className="event-detail-status" style={{ marginTop: '15px' }}>{this.state.status}</Tag>
                                 <Title level={1}>{this.state.data.name}</Title>
                                 {this.state.data.description}
 
@@ -284,7 +284,7 @@ class eventDetails extends Component {
                                 </div>
 
                                 <Title className="event-detail-title" level={3}>Poster</Title>
-                                <Image src={`/api/images/${this.state.data.posterUrl}`} alt="poster"></Image>
+                                <Image style={{ maxWidth: '120px' }} src={`/api/images/${this.state.data.posterUrl}`} alt="poster"></Image>
 
                                 <div className="flex-container-row">
                                     <Title className="event-detail-title" level={3}>Kịch bản</Title>
@@ -294,9 +294,9 @@ class eventDetails extends Component {
                                 <ListScripts eventId={this.props.match.params.id} />
                             </Col>
                             <Col span={8} className="event-detail">
-                                <Title className="event-detail-title" level={3}>Phòng hội thoại</Title>
+                                {/* <Title className="event-detail-title" level={3}>Phòng hội thoại</Title> */}
 
-                                <Tabs defaultActiveKey="1" >
+                                <Tabs className="chat-tabs" defaultActiveKey="1" >
                                     {this.renderGroups()}
                                 </Tabs>
                             </Col>
