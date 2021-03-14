@@ -42,11 +42,6 @@ import addFaculties from '../components/faculties/add';
 import editFaculties from '../components/faculties/edit';
 import Faculties from '../components/faculties/list';
 
-
-import addcredentials from '../components/credentials/addcredentials';
-import editcredentials from '../components/credentials/editcredentials';
-import credentials from '../components/credentials/listcredentials';
-
 import events from '../components/events/listevents/listevents'
 import eventDetails from '../components/events/details/eventDetails'
 import addevents from '../components/events/addevent/addevents'
@@ -98,10 +93,6 @@ class router extends Component {
                 <SecureRouteAdmin exact path="/listfaculties" component={Faculties} layout={Page} />
                 <SecureRouteAdmin exact path="/addfaculties" component={addFaculties} layout={Page} />
                 <SecureRouteAdmin exact path="/editfaculties/:id" component={editFaculties} layout={Page} />
-
-                <SecureRouteAdmin exact path="/listcredentials" component={credentials} layout={Page} />
-                <SecureRouteAdmin exact path="/addcredentials" component={addcredentials} layout={Page} />
-                <SecureRouteAdmin exact path="/editcredentials/:id" component={editcredentials} layout={Page} />
 
                 <SecureRouteAdmin exact path="/events" component={events} layout={Page} />
                 <SecureRouteAdmin exact path="/events/:id" component={eventDetails} layout={Page} />

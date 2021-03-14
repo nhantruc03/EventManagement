@@ -1,8 +1,5 @@
 const Actions = require("../../models/actions")
 const ActionAssign = require("../../models/actionAssign")
-const GuestTypes = require("../../models/guestTypes")
-const Guests = require("../../models/guests")
-const Groups = require("../../models/groups")
 const { handleBody } = require("./handleBody")
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')

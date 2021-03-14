@@ -7,7 +7,7 @@ const getAll = async (req, res) => {
 
   try {
     const query = { ...pick(req.body, 'eventId'), isDeleted: false }
-    console.log(query)
+    
     let docs;
     if (!page || !limit) {
       docs = await EventAssign.find(query)

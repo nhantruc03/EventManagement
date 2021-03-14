@@ -54,7 +54,6 @@ const create = async (req, res) => {
     // }
     // Success
     await commitTransactions(sessions)
-    console.log(newDoc)
     const doc = await Guests.findOne({ _id: newDoc[0]._id, isDeleted: false })
       .populate({ path: 'guestTypeId', select: 'name status' })
 

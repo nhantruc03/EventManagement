@@ -15,6 +15,7 @@ import {
 import ResourceCard from './resourceCard/resourceCard';
 import AddSubAction from './subActions/add'
 import EditSubAction from './subActions/edit'
+import EditAction from './editAction/editAction'
 const { TabPane } = Tabs;
 class actionDetails extends Component {
     constructor(props) {
@@ -27,8 +28,15 @@ class actionDetails extends Component {
             modalAddSubActionVisible: false,
             modalEditSubActionVisible: false,
             subActions: [],
-            currentSubAction: null
+            currentSubAction: null,
+            modalEditActionVisible: false,
         }
+    }
+
+    setModalEditActionVisible = (modalEditActionVisible) => {
+        this.setState({
+            modalEditActionVisible: modalEditActionVisible
+        })
     }
 
     setModalAddSubActionVisible = (modalAddSubActionVisible) => {
@@ -65,6 +73,22 @@ class actionDetails extends Component {
             subActions: temp
         })
         this.setModalEditSubActionVisible(false)
+    }
+
+    updateAction = (action, manager, actionAssign) => {
+        // console.log(e)
+        this.setState({
+            data: action,
+            manager: manager,
+            actionAssign: actionAssign
+        })
+        this.setModalEditActionVisible(false)
+    }
+
+    renderModalEditAction = () => {
+        return (
+            <EditAction data={this.state.data} manager={this.state.manager} update={(action, manager, actionAssign) => this.updateAction(action, manager, actionAssign)} />
+        )
     }
 
     renderModalAddSubAction = () => {
@@ -130,6 +154,7 @@ class actionDetails extends Component {
 
         if (action !== null) {
             if (this._isMounted) {
+                console.log(action)
                 this.setState({
                     data: action,
                     actionAssign: actionAssign.filter(e => e.role === 2),
@@ -256,7 +281,7 @@ class actionDetails extends Component {
                                     Chi tiết
                             </Breadcrumb.Item>
                             </Breadcrumb>
-                            <Button onClick={() => { this.props.history.push(`/editevent/${this.props.match.params.id}`) }} className="flex-row-item-right">Chỉnh sửa</Button>
+                            <Button onClick={() => this.setModalEditActionVisible(true)} className="flex-row-item-right">Chỉnh sửa</Button>
                         </div>
                     </Row >
 
@@ -369,6 +394,19 @@ class actionDetails extends Component {
                         footer={false}
                     >
                         {this.renderModalEditSubAction()}
+                    </Modal>
+
+                    <Modal
+                        title="Sửa thông tin công việc"
+                        centered
+                        visible={this.state.modalEditActionVisible}
+                        onOk={() => this.setModalEditActionVisible(false)}
+                        onCancel={() => this.setModalEditActionVisible(false)}
+                        width="70%"
+                        pagination={false}
+                        footer={false}
+                    >
+                        {this.renderModalEditAction()}
                     </Modal>
                 </Content >
             );

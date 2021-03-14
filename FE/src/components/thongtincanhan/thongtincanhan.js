@@ -1,9 +1,6 @@
 import Axios from 'axios';
 import React, { Component } from 'react';
-import Select from 'react-select';
 import { AUTH } from '../env'
-import DayPickerInput from 'react-day-picker/DayPickerInput';
-import 'react-day-picker/lib/style.css';
 import { trackPromise } from 'react-promise-tracker';
 import { Message } from '../service/renderMessage';
 // var Roles = [
@@ -13,10 +10,10 @@ import { Message } from '../service/renderMessage';
 //     { value: 'staff', label: 'Nhân viên' }
 // ];
 
-var Genders = [
-    { value: 'male', label: 'Nam' },
-    { value: 'female', label: 'Nữ' }
-]
+// var Genders = [
+//     { value: 'male', label: 'Nam' },
+//     { value: 'female', label: 'Nữ' }
+// ]
 class thongtincanhan extends Component {
     constructor(props) {
         super(props);
@@ -153,81 +150,84 @@ class thongtincanhan extends Component {
     }
     render() {
         return (
-            <form onSubmit={this.onSubmit}>
-                <div className="site-layout-background-main">
-                    <div className="row">
-                        <div className="col-9">
-                            <div onClick={() => this.goBack()} className='subject'> {`<- Thông tin cá nhân`}</div>
-                        </div>
-                        <div className="col">
-                            {/* <button onClick={() => this.onDone()} className="btn btn-warning">Quay về</button> */}
-                            <button type="submit" className="btn btn-createnew">Sửa</button>
-                        </div>
-                    </div>
+            <div>
 
-                    <div className="container-fluid mt-3">
-                        <div className="row">
-                            <div className="col-12">
-                                <div className="section">
-                                    <li className="fas fa-user"></li> Thông tin
-                                    </div>
-                                <div className="row mt-3">
-                                    <div className="col">
-                                        <label htmlFor="username"  >Tài khoản</label>
-                                        <input onChange={(e) => this.onChange(e)} type="text" className="form-control" name="username" placeholder="Tài khoản" value={this.state.username} required={true} />
-                                    </div>
-                                    <div className="col">
-                                        <label htmlFor="name"  >Tên</label>
-                                        <input onChange={(e) => this.onChange(e)} type="text" className="form-control" name="name" placeholder="Tên người dùng" value={this.state.name} required={true} />
-                                    </div>
-                                </div>
-                                <div className="row mt-3">
-                                    <div className="col">
-                                        <label htmlFor="phoneNumber"  >Điện thoại</label>
-                                        <input onChange={(e) => this.onChange(e)} type="number" className="form-control" name="phoneNumber" placeholder="Eg. 0919385172" value={this.state.phoneNumber} required={true} />
-                                    </div>
-                                    <div className="col">
-                                        <label htmlFor="address">Địa chỉ</label>
-                                        <input onChange={(e) => this.onChange(e)} type="text" className="form-control" name="address" placeholder="Eg. 37/10BIS" value={this.state.address} required={true} />
-                                    </div>
-                                </div>
-                                <div className="row mt-3">
-                                    <div className="col-7">
-                                        {this.state.birthday && <label htmlFor="birthday">Ngày: {this.state.birthday.toLocaleDateString()}</label>}
-                                        {!this.state.birthday && <label htmlFor="birthday">Ngày</label>}
-                                        <DayPickerInput
-                                            onDayChange={this.handleDayChange}
-                                            value={this.state.birthday}
-                                            dayPickerProps={{
-                                                selectedDays: this.state.birthday
-                                            }}
-                                        />
-                                    </div>
-                                    <div className="col-5">
-                                        <label htmlFor="gender"  >Giới tính</label>
-                                        <Select
-                                            onChange={(e) => this.onSelectGender(e)}
-                                            value={Genders.filter(({ value }) => value === this.state.gender)}
-                                            options={Genders}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="row mt-3">
-                                    <div className="col">
-                                        <label htmlFor="email"  >Email</label>
-                                        <input onChange={(e) => this.onChange(e)} type="email" className="form-control" name="email" placeholder="Eg. abc**@gmail.com" value={this.state.email} required={true} />
-                                    </div>
-                                </div>
-                                <hr></hr>
-                                <label htmlFor="password"  >Mật khẩu</label>
-                                <input onChange={(e) => this.onChange(e)} type="password" className="form-control" name="password" placeholder="Mật khẩu" value={this.state.password} required={true} />
-                                <br></br>
-                            </div>
+            </div>
+            // <form onSubmit={this.onSubmit}>
+            //     <div className="site-layout-background-main">
+            //         <div className="row">
+            //             <div className="col-9">
+            //                 <div onClick={() => this.goBack()} className='subject'> {`<- Thông tin cá nhân`}</div>
+            //             </div>
+            //             <div className="col">
+            //                 {/* <button onClick={() => this.onDone()} className="btn btn-warning">Quay về</button> */}
+            //                 <button type="submit" className="btn btn-createnew">Sửa</button>
+            //             </div>
+            //         </div>
 
-                        </div>
-                    </div>
-                </div>
-            </form>
+            //         <div className="container-fluid mt-3">
+            //             <div className="row">
+            //                 <div className="col-12">
+            //                     <div className="section">
+            //                         <li className="fas fa-user"></li> Thông tin
+            //                         </div>
+            //                     <div className="row mt-3">
+            //                         <div className="col">
+            //                             <label htmlFor="username"  >Tài khoản</label>
+            //                             <input onChange={(e) => this.onChange(e)} type="text" className="form-control" name="username" placeholder="Tài khoản" value={this.state.username} required={true} />
+            //                         </div>
+            //                         <div className="col">
+            //                             <label htmlFor="name"  >Tên</label>
+            //                             <input onChange={(e) => this.onChange(e)} type="text" className="form-control" name="name" placeholder="Tên người dùng" value={this.state.name} required={true} />
+            //                         </div>
+            //                     </div>
+            //                     <div className="row mt-3">
+            //                         <div className="col">
+            //                             <label htmlFor="phoneNumber"  >Điện thoại</label>
+            //                             <input onChange={(e) => this.onChange(e)} type="number" className="form-control" name="phoneNumber" placeholder="Eg. 0919385172" value={this.state.phoneNumber} required={true} />
+            //                         </div>
+            //                         <div className="col">
+            //                             <label htmlFor="address">Địa chỉ</label>
+            //                             <input onChange={(e) => this.onChange(e)} type="text" className="form-control" name="address" placeholder="Eg. 37/10BIS" value={this.state.address} required={true} />
+            //                         </div>
+            //                     </div>
+            //                     <div className="row mt-3">
+            //                         <div className="col-7">
+            //                             {this.state.birthday && <label htmlFor="birthday">Ngày: {this.state.birthday.toLocaleDateString()}</label>}
+            //                             {!this.state.birthday && <label htmlFor="birthday">Ngày</label>}
+            //                             <DayPickerInput
+            //                                 onDayChange={this.handleDayChange}
+            //                                 value={this.state.birthday}
+            //                                 dayPickerProps={{
+            //                                     selectedDays: this.state.birthday
+            //                                 }}
+            //                             />
+            //                         </div>
+            //                         <div className="col-5">
+            //                             <label htmlFor="gender"  >Giới tính</label>
+            //                             <Select
+            //                                 onChange={(e) => this.onSelectGender(e)}
+            //                                 value={Genders.filter(({ value }) => value === this.state.gender)}
+            //                                 options={Genders}
+            //                             />
+            //                         </div>
+            //                     </div>
+            //                     <div className="row mt-3">
+            //                         <div className="col">
+            //                             <label htmlFor="email"  >Email</label>
+            //                             <input onChange={(e) => this.onChange(e)} type="email" className="form-control" name="email" placeholder="Eg. abc**@gmail.com" value={this.state.email} required={true} />
+            //                         </div>
+            //                     </div>
+            //                     <hr></hr>
+            //                     <label htmlFor="password"  >Mật khẩu</label>
+            //                     <input onChange={(e) => this.onChange(e)} type="password" className="form-control" name="password" placeholder="Mật khẩu" value={this.state.password} required={true} />
+            //                     <br></br>
+            //                 </div>
+
+            //             </div>
+            //         </div>
+            //     </div>
+            // </form>
         );
     }
 }

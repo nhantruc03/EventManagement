@@ -3,7 +3,6 @@ const Guests = require('../../models/guests')
 const _delete = async (req, res) => {
   try {
     const queryDelete = { _id: req.params.id, isDeleted: false }
-    console.log(queryDelete)
     const deleted = await Guests.findOneAndUpdate(
         queryDelete,
         { isDeleted: true },
