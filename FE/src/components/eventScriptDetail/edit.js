@@ -69,7 +69,7 @@ class edit extends Component {
                 <Row>
                     <Col span={18}>
                         <Row>
-                            <Col span={12}>
+                            <Col sm={24} md={12}>
                                 <Title level={5}>Mốc thời gian</Title>
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
@@ -80,7 +80,7 @@ class edit extends Component {
                                     <TimePicker format="HH:mm" placeholder="Chọn giờ..." />
                                 </Form.Item>
                             </Col>
-                            <Col span={12}>
+                            <Col sm={24} md={12}>
                                 <Title level={5}>Tiêu đề</Title>
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}

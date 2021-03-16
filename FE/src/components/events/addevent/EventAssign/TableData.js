@@ -30,7 +30,7 @@ class TableData extends Component {
                                     <th className="ant-table-cell">Email</th>
                                     <th className="ant-table-cell">Ban</th>
                                     <th className="ant-table-cell">Vị trí</th>
-                                    <th className="ant-table-cell">Thao tác</th>
+                                    <th className="ant-table-cell" style={{ width: '150px' }}>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody className="ant-table-tbody">

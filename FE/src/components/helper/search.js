@@ -9,7 +9,6 @@ class ss extends Component {
                 if (this.props.multi === true) {
                     this.props.target.every(x => {
                         if (item[x].toString().toLowerCase().indexOf(e.target.value) !== -1) {
-                            console.log(item)
                             ketqua.push(item);
                             return false;
                         }
@@ -30,7 +29,7 @@ class ss extends Component {
 
             })
         }
-        if(e.target.value===""){
+        if (e.target.value === "") {
             ketqua = this.props.data
         }
         this.props.getSearchData(ketqua)

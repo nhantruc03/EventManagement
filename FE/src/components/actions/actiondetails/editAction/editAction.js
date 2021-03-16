@@ -127,7 +127,7 @@ class editAction extends Component {
         let data = {
             ...e,
             coverUrl: this.state.coverUrl,
-            eventId: this.props.data.eventId._id
+            eventId: this.props.data.eventId._id,
         }
         await trackPromise(
             axios.put('/api/actions/' + this.props.data._id, data, {
@@ -192,7 +192,7 @@ class editAction extends Component {
                     initialValues={this.state.data}
                 >
                     <Row >
-                        <Col span={12}>
+                        <Col sm={24} lg={12}>
                             <Row>
                                 <Col span={12}>
                                     <Form.Item
@@ -298,9 +298,7 @@ class editAction extends Component {
                                 </Col>
                             </Row>
                         </Col>
-
-
-                        <Col span={12}>
+                        <Col sm={24} lg={12}>
                             <Form.Item
                                 wrapperCol={{ sm: 24 }}
                                 name="managerId"

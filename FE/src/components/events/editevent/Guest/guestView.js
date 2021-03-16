@@ -5,7 +5,7 @@ import Search from '../../../helper/search';
 import { AUTH } from '../../../env'
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
-import Paginations from '../../../helper/Pagination';
+import Pagination from '../../../helper/Pagination';
 class guestView extends Component {
     constructor(props) {
         super(props);
@@ -153,11 +153,14 @@ class guestView extends Component {
                     </Col>
                 </Row>
                 <TableData guestTypeId={this.props.guestTypeId} canDelete={this.props.canDelete} listguesttype={this.props.listguesttype} edit={(info) => this.edit(info)} deleteClick={(id) => this.deleteClick(id)} data={this.state.data} />
-                <Paginations
-                    totalPosts={this.getlistpage(this.state.data)}
-                    paginate={(e) => this.paginate(e)}
-                    PageSize={this.state.postsPerPage}
-                />
+                {this.getlistpage(this.state.data) > 1 ?
+                    <Pagination
+                        totalPosts={this.getlistpage(this.state.data)}
+                        paginate={(e) => this.paginate(e)}
+                        PageSize={this.state.postsPerPage}
+                    /> :
+                    null
+                }
             </div>
         );
     }

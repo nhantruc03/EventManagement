@@ -177,7 +177,7 @@ class addactions extends Component {
                             </Col>
                             <Col span={24}>
                                 <Row>
-                                    <Col span={8}>
+                                    <Col sm={24} md={8}>
                                         <Form.Item
                                             wrapperCol={{ sm: 24 }}
                                             label="Bắt đầu"
@@ -187,7 +187,7 @@ class addactions extends Component {
                                             <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày bắt đầu..." />
                                         </Form.Item>
                                     </Col>
-                                    <Col span={8}>
+                                    <Col sm={24} md={8}>
                                         <Form.Item
                                             wrapperCol={{ sm: 24 }}
                                             label="Kết thúc"
@@ -197,7 +197,7 @@ class addactions extends Component {
                                             <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày kết thúc..." />
                                         </Form.Item>
                                     </Col>
-                                    <Col span={8}>
+                                    <Col sm={24} md={8}>
                                         <Form.Item
                                             wrapperCol={{ sm: 24 }}
                                             label="Ban"

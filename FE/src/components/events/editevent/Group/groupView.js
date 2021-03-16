@@ -106,7 +106,7 @@ class groupView extends Component {
                         data: temp
                     })
                     this.props.update(temp)
-                
+
                     message.success('Thêm thành công');
                     this.form.current.resetFields();
                     this.setModalVisible(false)
@@ -170,15 +170,18 @@ class groupView extends Component {
                         <Search target="name" data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
                     </Col>
                     <Col span={4}>
-                        <Button className="add" style={{ float: "right" }} onClick={() => this.setModalVisible(true)}>Tạo loại khách mời</Button>
+                        <Button className="add" style={{ float: "right" }} onClick={() => this.setModalVisible(true)}>Tạo phòng hội thoại</Button>
                     </Col>
                 </Row>
                 <TableData deleteClick={(id) => this.deleteClick(id)} canDelete={this.props.canDelete} listFaculty={this.props.listFaculty} listRole={this.props.listRole} edit={(info) => this.edit(info)} data={this.getCurData(this.state.data)} />
-                <Pagination
-                    totalPosts={this.getlistpage(this.state.data)}
-                    paginate={(e) => this.paginate(e)}
-                    PageSize={this.state.postsPerPage}
-                />
+                {this.getlistpage(this.state.data) > 1 ?
+                    <Pagination
+                        totalPosts={this.getlistpage(this.state.data)}
+                        paginate={(e) => this.paginate(e)}
+                        PageSize={this.state.postsPerPage}
+                    /> :
+                    null
+                }
                 <Modal
                     title="Tạo phòng hội thoại"
                     centered

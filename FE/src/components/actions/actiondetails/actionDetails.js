@@ -67,6 +67,8 @@ class actionDetails extends Component {
                 x.description = e.description
                 x.startDate = e.startDate
                 x.endDate = e.endDate
+                x.startTime = e.startTime
+                x.endTime = e.endTime
             }
         })
         this.setState({
@@ -102,6 +104,8 @@ class actionDetails extends Component {
                 ...this.state.currentSubAction,
                 'startDate': moment(this.state.currentSubAction.startDate),
                 'endDate': moment(this.state.currentSubAction.endDate),
+                'startTime': moment(this.state.currentSubAction.startTime),
+                'endTime': moment(this.state.currentSubAction.endTime),
             }
             return (
                 <EditSubAction edit={(e) => this.editSubAction(e)} data={data} />
@@ -287,7 +291,7 @@ class actionDetails extends Component {
 
                     <div className="site-layout-background-main">
                         <Row>
-                            <Col span={6} className="event-detail">
+                            <Col sm={24} xl={6} className="event-detail">
                                 <div className="flex-container-row">
                                     <Title level={3}>Cần làm</Title>
                                     <Button onClick={() => this.setModalAddSubActionVisible(true)} className="flex-row-item-right add">Thêm</Button>
@@ -316,7 +320,7 @@ class actionDetails extends Component {
                                 </div>
                                 {this.state.resources.map((e, key) => <ResourceCard delete={(e) => this.deleteResources(e)} key={key} resourcePath={this.props.match.params.id} data={e}></ResourceCard>)}
                             </Col>
-                            <Col span={10} className="event-detail">
+                            <Col sm={24} xl={10} className="event-detail">
                                 <div className="flex-container-row" style={{ width: '80%' }}>
                                     <Tag className="event-detail-status">{this.state.data.actionTypeId.name}</Tag>
                                     <p>Bắt đầu: {moment(this.state.data.startTime).format("DD/MM/YYYY")}</p>
@@ -330,17 +334,17 @@ class actionDetails extends Component {
                                 {this.state.data.eventId.name}
 
                                 <Row>
-                                    <Col span={10}>
+                                    <Col sm={24} md={10}>
                                         <Title className="event-detail-title" level={3}>Người quản lý</Title>
                                         {this.state.manager.userId.name}
                                     </Col>
 
-                                    <Col span={8}>
+                                    <Col sm={24} md={8}>
                                         <div className="vl"></div>
                                         <Title className="event-detail-title" level={3}>Kết thúc</Title>
                                         {moment(this.state.data.endDate).format("DD/MM/YYYY")}
                                     </Col>
-                                    <Col span={6}>
+                                    <Col sm={24} md={6}>
                                         <div className="vl"></div>
                                         <Title className="event-detail-title" level={3}>Ban</Title>
                                         <Tag >{this.state.data.facultyId.name}</Tag>
@@ -363,7 +367,7 @@ class actionDetails extends Component {
                                 {/* <Image style={{ maxWidth: '300px' }} src={`/api/images/${this.state.data.coverUrl}`}></Image> */}
                                 {this.state.data.tagsId.map((e, key) => <Tag style={{ width: 'auto' }} key={key}>{e.name}</Tag>)}
                             </Col>
-                            <Col span={8} className="event-detail">
+                            <Col sm={24} xl={8} className="event-detail">
                                 {/* <div className="vl"></div> */}
                                 <Tabs className="chat-tabs" defaultActiveKey="1" >
                                     <TabPane tab="Bình luận" key="1"><ChatRoom roomId={this.props.match.params.id} /></TabPane>
@@ -377,19 +381,19 @@ class actionDetails extends Component {
                         visible={this.state.modalAddSubActionVisible}
                         onOk={() => this.setModalAddSubActionVisible(false)}
                         onCancel={() => this.setModalAddSubActionVisible(false)}
-                        width="70%"
+                        width="30%"
                         pagination={false}
                         footer={false}
                     >
                         {this.renderModalAddSubAction()}
                     </Modal>
                     <Modal
-                        title="Thêm việc cần làm"
+                        title="Sửa thông tin việc cần làm"
                         centered
                         visible={this.state.modalEditSubActionVisible}
                         onOk={() => this.setModalEditSubActionVisible(false)}
                         onCancel={() => this.setModalEditSubActionVisible(false)}
-                        width="70%"
+                        width="30%"
                         pagination={false}
                         footer={false}
                     >

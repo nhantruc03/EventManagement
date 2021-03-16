@@ -173,11 +173,14 @@ class guestTypeView extends Component {
                     </Col>
                 </Row>
                 <TableData deleteClick={(id) => this.deleteClick(id)} canDelete={this.props.canDelete} listFaculty={this.props.listFaculty} listRole={this.props.listRole} edit={(info) => this.edit(info)} data={this.getCurData(this.state.data)} />
-                <Pagination
-                    totalPosts={this.getlistpage(this.state.data)}
-                    paginate={(e) => this.paginate(e)}
-                    PageSize={this.state.postsPerPage}
-                />
+                {this.getlistpage(this.state.data) > 1 ?
+                    <Pagination
+                        totalPosts={this.getlistpage(this.state.data)}
+                        paginate={(e) => this.paginate(e)}
+                        PageSize={this.state.postsPerPage}
+                    /> :
+                    null
+                }
                 <Modal
                     title="Tạo loại khách mời"
                     centered

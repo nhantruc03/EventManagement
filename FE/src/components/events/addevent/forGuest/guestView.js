@@ -21,8 +21,12 @@ class guestView extends Component {
                     dataIndex: 'email',
                     key: 'email',
                 },
-            ]
+            ],
+            postsPerPage: 2
         }
+    }
+    getlistpage = (SearchData) => {
+        return Math.ceil(SearchData.length / this.state.postsPerPage);
     }
     renderView = () => {
         let temp = this.props.list.filter(e => e.guestTypeName === this.props.type)
@@ -30,7 +34,7 @@ class guestView extends Component {
             e.key = e.id
         });
         console.log(temp)
-        return <Table pagination={{ pageSize: 5 }} dataSource={temp} columns={this.state.columns} />;
+        return <Table pagination={this.getlistpage(temp) > 1 ? { pageSize: this.state.postsPerPage } : false} dataSource={temp} columns={this.state.columns} />;
     }
     render() {
         return (

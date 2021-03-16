@@ -36,6 +36,7 @@ class list extends Component {
                     title: 'Hành động',
                     dataIndex: '_id',
                     key: '_id',
+                    width: '40%',
                     render: (e) =>
                         <div className="btn-group">
                             <Tooltip title="Chỉnh sửa" arrow>

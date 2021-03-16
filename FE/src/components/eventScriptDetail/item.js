@@ -25,14 +25,14 @@ class item extends Component {
                 <Row>
                     <Col span={18}>
                         <Row>
-                            <Col span={12}>
+                            <Col sm={24} md={12}>
                                 <Title level={5}>Mốc thời gian</Title>
                                 <div className="flex-container-row" style={{ width: '50%' }}>
                                     {moment(this.props.data.time).format("HH:mm")}
                                     <ClockCircleOutlined className="flex-row-item-right" />
                                 </div>
                             </Col>
-                            <Col span={12}>
+                            <Col sm={24} md={12}>
                                 <Title level={5}>Tiêu đề</Title>
                                 {this.props.data.name}
                             </Col>

@@ -1,7 +1,7 @@
 const { pick } = require("lodash")
 const { isEmpty } = require("lodash");
 const handleBody = (body) => {
-  if (isEmpty(body.name) || isEmpty(body.actionId) || isEmpty(body.startDate) || isEmpty(body.endDate)) {
+  if (isEmpty(body.name) || isEmpty(body.actionId)) {
     return {
       error: "Missing fields!"
     }
@@ -14,6 +14,8 @@ const handleBody = (body) => {
         "name",
         "startDate",
         "endDate",
+        "startTime",
+        "endTime",
         "description",
       )
     }

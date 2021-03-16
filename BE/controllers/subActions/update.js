@@ -29,6 +29,8 @@ const update = async (req, res) => {
         "name",
         "startDate",
         "endDate",
+        "startTime",
+        "endTime",
         "description",
         "status"
       )

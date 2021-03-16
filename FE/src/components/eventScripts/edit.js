@@ -214,7 +214,7 @@ class edit extends Component {
                     <div className="site-layout-background-main">
 
                         <Row>
-                            <Col span={18}>
+                            <Col sm={24} xl={18}>
                                 <Form
                                     name="validate_other"
                                     {...formItemLayout}
@@ -223,7 +223,7 @@ class edit extends Component {
                                     initialValues={this.state}
                                 >
                                     <Row>
-                                        <Col span={8}>
+                                        <Col sm={24} lg={8}>
                                             <Form.Item
                                                 wrapperCol={{ sm: 24 }}
                                                 style={{ width: "90%" }}
@@ -234,7 +234,7 @@ class edit extends Component {
                                                 <Input placeholder="Tên kịch bản..." />
                                             </Form.Item>
                                         </Col>
-                                        <Col span={8}>
+                                        <Col sm={24} lg={8}>
                                             <Form.Item
                                                 wrapperCol={{ sm: 24 }}
                                                 style={{ width: "90%" }}
@@ -245,7 +245,7 @@ class edit extends Component {
                                             </Form.Item>
                                         </Col>
 
-                                        <Col span={8}>
+                                        <Col sm={24} lg={8}>
                                             <Form.Item
                                                 wrapperCol={{ sm: 24 }}
                                                 style={{ width: "90%" }}
@@ -255,7 +255,6 @@ class edit extends Component {
                                             >
                                                 <Select
                                                     showSearch
-                                                    style={{ width: 200 }}
                                                     placeholder=""
                                                     optionFilterProp="children"
                                                     filterOption={(input, option) =>
@@ -284,7 +283,7 @@ class edit extends Component {
                                 <Title style={{ marginTop: '20px' }} level={3}>Kịch bản chính</Title>
                                 <ListScriptDetails onEdit={true} data={this.state.listscriptdetails} onDelete={this.onDeleteDetail} onAdd={this.onAddDetail} onUpdate={this.onUpdateDetail} />
                             </Col>
-                            <Col span={6}>
+                            <Col sm={24} xl={6}>
                                 <Title level={3}>Xem trước</Title>
                                 <ReviewScriptDetail data={this.state.listscriptdetails} />
                             </Col>

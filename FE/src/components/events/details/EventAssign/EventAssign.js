@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import TableData from '../../addevent/EventAssign/TableData';
-import { Col, Row } from 'antd';
+import { Button, Col, Row } from 'antd';
 import Search from '../../../helper/search';
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
 import { AUTH } from '../../../env'
 import { Message } from '../../../service/renderMessage';
+import Pagination from '../../../helper/Pagination';
 class EventAssign extends Component {
     constructor(props) {
         super(props);
@@ -14,6 +15,8 @@ class EventAssign extends Component {
             data: [],
             searchKey: '',
             onEditUser: false,
+            currentPage: 1,
+            postsPerPage: 5,
         }
     }
 
@@ -88,12 +91,29 @@ class EventAssign extends Component {
                         data: temp
                     })
                     this.props.update(temp, res.data.data.userId)
-                  
+
                     Message('Xóa thành công', true);
                 })
                 .catch(err => {
                     Message('Xóa thất bại', false);
                 }))
+    }
+
+    getlistpage = (SearchData) => {
+        return Math.ceil(SearchData.length / this.state.postsPerPage);
+    }
+
+    paginate = (pageNumber) => {
+        this.setState(
+            {
+                currentPage: pageNumber
+            });
+    }
+    getCurData = (SearchData) => {
+        var indexOfLastPost = this.state.currentPage * this.state.postsPerPage;
+        var indexOfFirstPost = indexOfLastPost - this.state.postsPerPage;
+        return SearchData.slice(indexOfFirstPost, indexOfLastPost);
+
     }
     render() {
         return (
@@ -102,8 +122,19 @@ class EventAssign extends Component {
                     <Col span={20}>
                         <Search targetParent="userId" target="name" data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
                     </Col>
+                    <Col span={4}>
+                        <Button className="add" style={{ float: "right" }} onClick={() => this.props.onAddClick()}>Thêm ban tổ chức</Button>
+                    </Col>
                 </Row>
-                <TableData deleteClick={(id) => this.deleteClick(id)} canDelete={this.props.canDelete} listFaculty={this.props.listFaculty} listRole={this.props.listRole} getUserEditInfo={(info) => this.getUserEditInfo(info)} dataUser={this.state.data} />
+                <TableData deleteClick={(id) => this.deleteClick(id)} canDelete={this.props.canDelete} listFaculty={this.props.listFaculty} listRole={this.props.listRole} getUserEditInfo={(info) => this.getUserEditInfo(info)} dataUser={this.getCurData(this.state.data)} />
+                {this.getlistpage(this.state.data) > 1 ?
+                    <Pagination
+                        totalPosts={this.getlistpage(this.state.data)}
+                        paginate={(e) => this.paginate(e)}
+                        PageSize={this.state.postsPerPage}
+                    /> :
+                    null
+                }
             </div>
 
         );

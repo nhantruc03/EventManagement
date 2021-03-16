@@ -1,4 +1,4 @@
-const { pick } = require('lodash')
+const { pick, isEmpty } = require('lodash')
 const Actions = require('../../models/actions')
 
 const getAll = async (req, res) => {
@@ -6,7 +6,9 @@ const getAll = async (req, res) => {
   const limit = Number(req.query.limit) // limit docs per page
 
   try {
-    const query = { ...pick(req.body, "eventId"), isDeleted: false }
+
+    // let currentUser = { ...pick(req.body, "currentUser") }
+    let query = { ...pick(req.body, "eventId", "availUser"), isDeleted: false }
 
     let docs;
     if (!page || !limit) {

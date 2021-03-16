@@ -257,7 +257,7 @@ class addevents extends Component {
 
     renderModel2 = () => {
         return (
-            <AddGuest listguesttype={this.state.listguesttype} listguest={this.state.listguest} addGuest={(e) => this.addguest(e)} deleteguest={(e) => { this.deleteguest(e) }} updateguest={(e) => { this.updateguest(e) }} />
+            <AddGuest listguesttype={this.state.listguesttype} data={this.state.listguest} addGuest={(e) => this.addguest(e)} deleteguest={(e) => { this.deleteguest(e) }} updateguest={(e) => { this.updateguest(e) }} />
         )
     }
 
@@ -300,11 +300,12 @@ class addevents extends Component {
                         {...formItemLayout}
                         onFinish={(e) => this.onFinish(e)}
                         layout="vertical"
+                        className="event-form"
                     >
                         <Row>
-                            <Col span={10}>
+                            <Col className="event-col" sm={24} lg={10}>
                                 <Form.Item
-                                    wrapperCol={{ sm: 20 }}
+                                    wrapperCol={{ sm: 24 }}
                                     name="eventTypeId"
                                     label={<Title level={4}>Hình thức</Title>}
                                     hasFeedback
@@ -314,51 +315,39 @@ class addevents extends Component {
                                         {this.state.listeventtype.map((e) => <Option key={e._id}>{e.name}</Option>)}
                                     </Select>
                                 </Form.Item>
-                                <Form.Item
-                                    wrapperCol={{ sm: 20 }}
-                                    name="availUser"
-                                    label={<Title level={4}>Ban tổ chức</Title>}
-                                    hasFeedback
-                                    rules={[{ message: 'Cần chọn ban tổ chức!' }]}
-                                >
-                                    <Row>
-                                        <Col span={18}>
-                                            <Select
-                                                id="1"
-                                                mode="multiple"
-                                                allowClear
-                                                style={{ width: '100%' }}
-                                                placeholder="Chọn ban tổ chức..."
-                                                filterOption={(input, option) =>
-                                                    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                                }
-                                                maxTagCount='responsive'
-                                                value={this.state.listusersforevent.reduce((a, o) => { a.push(o._id); return a }, [])}
-                                                disabled={true}
-                                            >
-                                                {this.state.listusersforevent.map((e) => <Option key={e._id}>{e.name}</Option>)}
-                                            </Select>
-                                        </Col>
 
-                                        <Col span={6}>
-                                            <Button style={{ width: '100%', height: '40px', borderRadius: '6px' }} onClick={() => this.setModal2Visible(true)}>Thêm</Button>
-                                        </Col>
-                                    </Row>
-                                </Form.Item>
-                                <Form.Item
-                                    wrapperCol={{ sm: 20 }}
-                                    name="EventAssign"
-                                    label={<Title level={4}>Phân công</Title>}
-                                    hasFeedback
-                                >
-                                    <Button onClick={() => this.setModal2Visible3(true)} >Phân công</Button>
-                                </Form.Item>
-                                <div style={{ width: '90%' }}>
-                                    <EventAssignView data={this.state.listEventAssign} />
+                                <Title level={4}>Ban tổ chức</Title>
+                                <div className="flex-container-row">
+                                    <Select
+                                        id="1"
+                                        mode="multiple"
+                                        allowClear
+                                        style={{ width: '100%' }}
+                                        placeholder="Chọn ban tổ chức..."
+                                        filterOption={(input, option) =>
+                                            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        }
+                                        maxTagCount='responsive'
+                                        value={this.state.listusersforevent.reduce((a, o) => { a.push(o._id); return a }, [])}
+                                        disabled={true}
+                                    >
+                                        {this.state.listusersforevent.map((e) => <Option key={e._id}>{e.name}</Option>)}
+                                    </Select>
+
+
+                                    <Button className="flex-row-item-right" onClick={() => this.setModal2Visible(true)}>Thêm</Button>
                                 </div>
 
+                                <div className="flex-container-row">
+                                    <Title level={4}>Phân công</Title>
+                                    <Button className="flex-row-item-right" onClick={() => this.setModal2Visible3(true)} >Phân công</Button>
+                                </div>
+
+                                <EventAssignView data={this.state.listEventAssign} />
+
+
                                 <Form.Item
-                                    wrapperCol={{ sm: 20 }}
+                                    wrapperCol={{ sm: 24 }}
                                     name="tagId"
                                     label={<Title level={4}>Tags</Title>}
                                     hasFeedback
@@ -378,7 +367,7 @@ class addevents extends Component {
                                     </Select>
                                 </Form.Item>
                                 <Form.Item
-                                    wrapperCol={{ sm: 20 }}
+                                    wrapperCol={{ sm: 24 }}
                                     name="guestTypes"
                                     label={<Title level={4}>Loại khách mời</Title>}
                                     hasFeedback
@@ -388,7 +377,7 @@ class addevents extends Component {
                                 </Form.Item>
 
                                 <Form.Item
-                                    wrapperCol={{ sm: 20 }}
+                                    wrapperCol={{ sm: 24 }}
                                     name="guests"
                                     label={<Title level={4}>Khách mời</Title>}
                                     hasFeedback
@@ -399,10 +388,9 @@ class addevents extends Component {
                                     {this.renderguest()}
                                 </Tabs>
                             </Col>
-                            <Col span={10}>
+                            <Col className="event-col" sm={24} lg={10}>
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
-                                    style={{ width: "90%" }}
                                     name="name"
                                     label={<Title className="normalLabel" level={4}>Tên sự kiện</Title>}
                                     rules={[{ required: true, message: 'Cần nhập tên sự kiện' }]}
@@ -412,7 +400,6 @@ class addevents extends Component {
 
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
-                                    style={{ width: "90%" }}
                                     name="description"
                                     label={<Title className="normalLabel" level={4}>Thông tin</Title>}
                                     rules={[{ required: true, message: 'Cần nhập thông tin' }]}
@@ -420,7 +407,7 @@ class addevents extends Component {
                                     <Input.TextArea rows={6} placeholder="Eg.mô tả yêu cầu" />
                                 </Form.Item>
 
-                                <Row style={{ width: "90%" }}>
+                                <Row >
                                     <Col span={12}>
                                         <Form.Item
                                             wrapperCol={{ sm: 22 }}
@@ -445,7 +432,6 @@ class addevents extends Component {
 
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
-                                    style={{ width: "90%" }}
                                     name="address"
                                     label={<Title className="normalLabel" level={4}>Địa điểm</Title>}
                                     rules={[{ required: true, message: 'Cần nhập địa điểm' }]}
@@ -454,7 +440,6 @@ class addevents extends Component {
                                 </Form.Item>
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
-                                    style={{ width: "90%" }}
                                     name="posterUrl"
                                     label={<Title className="normalLabel" level={4}>Ảnh đại diện</Title>}
                                     rules={[{ required: true, message: 'Cần tải lên poster' }]}
@@ -489,9 +474,9 @@ class addevents extends Component {
                                     </Upload>
                                 </Form.Item>
                             </Col>
-                            <Col span={4}>
+                            <Col className="event-col" sm={24} lg={4}>
                                 <Form.Item
-                                    wrapperCol={{ sm: 20 }}
+                                    wrapperCol={{ sm: 24 }}
                                     name="chatRooms"
                                     label={<Title level={4}>Phòng hội thoại</Title>}
                                     hasFeedback

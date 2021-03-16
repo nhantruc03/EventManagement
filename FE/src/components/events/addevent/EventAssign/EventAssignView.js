@@ -24,15 +24,25 @@ class guestView extends Component {
                     key: 'roleId',
                     render: (e) => <div>{e.name}</div>
                 },
-            ]
+            ],
+            postsPerPage: 2
         }
     }
+    getlistpage = (SearchData) => {
+        return Math.ceil(SearchData.length / this.state.postsPerPage);
+    }
+
     renderView = () => {
         let temp = this.props.data
         temp.forEach(e => {
             e.key = e.userId._id
         });
-        return <Table pagination={{ pageSize: 5 }} dataSource={temp} columns={this.state.columns} />;
+        if (temp.length > 0) {
+            return <Table pagination={this.getlistpage(temp) > 1 ? { pageSize: this.state.postsPerPage } : false} dataSource={temp} columns={this.state.columns} />;
+        }else{
+            return null
+        }
+
     }
     render() {
         return (

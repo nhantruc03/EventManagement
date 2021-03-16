@@ -328,16 +328,16 @@ class editevent extends Component {
                     </Row >
 
                     <div className="site-layout-background-main">
-
-                        <Row>
-                            <Col span={6} style={{ padding: 20 }}>
-                                <Form
-                                    name="validate_other"
-                                    {...formItemLayout}
-                                    onFinish={(e) => this.onFinish(e)}
-                                    layout="vertical"
-                                    initialValues={this.state.data}
-                                >
+                        <Form
+                            name="validate_other"
+                            {...formItemLayout}
+                            onFinish={(e) => this.onFinish(e)}
+                            layout="vertical"
+                            initialValues={this.state.data}
+                            className="event-form"
+                        >
+                            <Row>
+                                <Col className="event-col" sm={12} lg={6}>
                                     <Form.Item
                                         wrapperCol={{ sm: 24 }}
                                         name="eventTypeId"
@@ -370,6 +370,8 @@ class editevent extends Component {
                                             {this.state.listtags.map((e, key) => <Option key={e._id}>{e.name}</Option>)}
                                         </Select>
                                     </Form.Item>
+                                </Col>
+                                <Col className="event-col" sm={12} lg={6}>
                                     <Form.Item
                                         wrapperCol={{ sm: 24 }}
                                         name="name"
@@ -385,9 +387,10 @@ class editevent extends Component {
                                         label={<Title className="normalLabel" level={4}>Thông tin</Title>}
                                         rules={[{ required: true, message: 'Cần nhập thông tin' }]}
                                     >
-                                        <Input.TextArea rows={6} placeholder="Eg.mô tả yêu cầu" />
+                                        <Input.TextArea rows={4} placeholder="Eg.mô tả yêu cầu" />
                                     </Form.Item>
-
+                                </Col>
+                                <Col className="event-col" sm={12} lg={6}>
                                     <Row >
                                         <Col span={12}>
                                             <Form.Item
@@ -410,7 +413,6 @@ class editevent extends Component {
                                             </Form.Item>
                                         </Col>
                                     </Row>
-
                                     <Form.Item
                                         wrapperCol={{ sm: 24 }}
                                         name="address"
@@ -419,8 +421,13 @@ class editevent extends Component {
                                     >
                                         <Input placeholder="Địa điểm..." />
                                     </Form.Item>
+                                </Col>
+                                <Col className="event-col" sm={12} lg={6}>
                                     <Title className="normalLabel" level={4}>Ảnh đại diện hiện tại</Title>
-                                    <Image src={`/api/images/${this.state.data.posterUrl}`}></Image>
+                                    <div style={{ widht: '100%', textAlign: 'center' }}>
+                                        <Image style={{ maxWidth: '110px' }} src={`/api/images/${this.state.data.posterUrl}`}></Image>
+                                    </div>
+
                                     <Form.Item
                                         wrapperCol={{ sm: 24 }}
                                         name="posterUrl"
@@ -456,68 +463,54 @@ class editevent extends Component {
                                             <Button style={{ width: "100%" }} icon={<UploadOutlined />}>Tải ảnh lên</Button>
                                         </Upload>
                                     </Form.Item>
-
-                                    <br></br>
-                                    <div >
-                                        <Button
-                                            onClick={this.goBack}
-                                            className="back"
-                                            style={{ marginRight: 20 }}
-                                        >
-                                            Hủy
-                                        </Button>
-                                        <Button htmlType="submit" className="add" >
-                                            Tạo mới
-                                        </Button>
-                                    </div>
-                                </Form>
-                            </Col>
-                            <Col span={12} style={{ padding: 20 }}>
-                                <div >
-                                    <Title level={4}>Ban tổ chức</Title>
-                                    <Row>
-                                        <Col span={18}>
-                                            <Select
-                                                id="1"
-                                                mode="multiple"
-                                                allowClear
-                                                style={{ width: '100%' }}
-                                                placeholder="Chọn ban tổ chức..."
-                                                filterOption={(input, option) =>
-                                                    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                                }
-                                                maxTagCount='responsive'
-                                                value={this.state.listusersforevent.reduce((a, o) => { a.push(o._id); return a }, [])}
-                                                disabled={true}
+                                </Col>
+                                <Col span={24}>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <div >
+                                            <Button
+                                                onClick={this.goBack}
+                                                className="back"
+                                                style={{ marginRight: 20 }}
                                             >
-                                                {this.state.listusersforevent.map((e) => <Option key={e._id}>{e.name}</Option>)}
-                                            </Select>
-                                        </Col>
-
-                                        <Col span={6}>
-                                            <Button style={{ width: '100%', height: '40px', borderRadius: '6px' }} onClick={() => this.setModal2Visible(true)}>Thêm</Button>
-                                        </Col>
-                                    </Row>
-                                </div>
+                                                Hủy
+                                        </Button>
+                                            <Button htmlType="submit" className="add" >
+                                                Tạo mới
+                                        </Button>
+                                        </div>
+                                    </div>
+                                </Col>
+                            </Row>
+                        </Form>
+                        <Row>
+                            <Col sm={24} lg={12} style={{ padding: 10 }}>
                                 <div >
                                     <Title level={4}>Phân công</Title>
-                                    <EventAssign canDelete={true} update={this.updateEventAssign} eventId={this.props.match.params.id} listRole={this.state.listRole} listFaculty={this.state.listFaculty} data={this.state.listEventAssign}
+                                    <EventAssign onAddClick={() => this.setModal2Visible(true)} canDelete={true} update={this.updateEventAssign} eventId={this.props.match.params.id} listRole={this.state.listRole} listFaculty={this.state.listFaculty} data={this.state.listEventAssign}
                                         availUser={this.state.listusersforevent}
                                     />
                                 </div>
+                            </Col>
+                            <Col sm={24} lg={12} style={{ padding: 10 }}>
+                                <div>
+                                    <Title level={4}>Phòng hội thoại</Title>
+                                    <GroupView canDelete={true} eventId={this.props.match.params.id} update={this.updatelistgroup} data={this.state.listgroups}></GroupView>
+                                </div>
+
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col sm={24} lg={12} style={{ padding: 10 }}>
                                 <div >
                                     <Title level={4}>Loại khách mời</Title>
                                     <GuestTypeView canDelete={true} eventId={this.props.match.params.id} update={this.updatelistguesttype} data={this.state.listguesttype} />
                                 </div>
+                            </Col>
+                            <Col sm={24} lg={12} style={{ padding: 10 }}>
                                 <div >
                                     <Title level={4}>Khách mời</Title>
                                     <GuestView canDelete={true} data={this.state.listguest} listguesttype={this.state.listguesttype} update={this.updateguest} />
                                 </div>
-                            </Col>
-                            <Col span={6}>
-                                <Title level={4}>Phòng hội thoại</Title>
-                                {/* <AddTagType update={(e) => this.updatelistgroup(e)} /> */}
-                                <GroupView canDelete={true} eventId={this.props.match.params.id} update={this.updatelistgroup} data={this.state.listgroups}></GroupView>
                             </Col>
                         </Row>
                     </div>

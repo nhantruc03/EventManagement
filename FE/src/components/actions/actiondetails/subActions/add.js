@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Form, Input, message, Row } from 'antd';
+import { Button, Col, DatePicker, Form, Input, message, Row, TimePicker } from 'antd';
 import axios from 'axios';
 import React, { Component } from 'react';
 import { trackPromise } from 'react-promise-tracker';
@@ -16,7 +16,9 @@ class add extends Component {
     onFinish = async (e) => {
         let data = {
             ...e,
-            actionId: this.props.actionId
+            actionId: this.props.actionId,
+            startTime: e['startTime'].toDate(),
+            endTime: e['endTime'].toDate(),
         }
         await trackPromise(
             axios.post('/api/sub-actions', data, {
@@ -64,7 +66,7 @@ class add extends Component {
                             name="description"
                             label="Mô tả"
                             hasFeedback
-                            rules={[{ required: true, message: 'Cần nhập mô tả công việc!' }]}
+                        // rules={[{ required: true, message: 'Cần nhập mô tả công việc!' }]}
                         >
                             <Input.TextArea rows={4} placeholder="Nhập mô tả công việc..." />
 
@@ -75,8 +77,8 @@ class add extends Component {
                             <Col span={12}>
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
-                                    label="Bắt đầu"
-                                    rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
+                                    label="Ngày bắt đầu"
+                                    // rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
                                     name="startDate"
                                 >
                                     <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày bắt đầu..." />
@@ -85,11 +87,35 @@ class add extends Component {
                             <Col span={12}>
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
-                                    label="Kết thúc"
-                                    rules={[{ required: true, message: 'Cần chọn ngày kết thức!' }]}
+                                    label="Ngày kết thúc"
+                                    // rules={[{ required: true, message: 'Cần chọn ngày kết thức!' }]}
                                     name="endDate"
                                 >
                                     <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày kết thúc..." />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    </Col>
+                    <Col span={24}>
+                        <Row>
+                            <Col span={12}>
+                                <Form.Item
+                                    wrapperCol={{ sm: 24 }}
+                                    label="Giờ bắt đầu"
+                                    // rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
+                                    name="startTime"
+                                >
+                                    <TimePicker format="HH:mm" placeholder="Chọn giờ bắt đầu"></TimePicker>
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    wrapperCol={{ sm: 24 }}
+                                    label="Giờ kết thúc"
+                                    // rules={[{ required: true, message: 'Cần chọn ngày kết thức!' }]}
+                                    name="endTime"
+                                >
+                                    <TimePicker format="HH:mm" placeholder="Chọn giờ kết thúc"></TimePicker>
                                 </Form.Item>
                             </Col>
                         </Row>

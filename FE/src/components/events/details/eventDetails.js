@@ -246,7 +246,7 @@ class eventDetails extends Component {
 
                     <div className="site-layout-background-main">
                         <Row>
-                            <Col span={6} className="event-detail">
+                            <Col sm={24} xl={6} className="event-detail">
                                 <Title className="event-detail-title" level={3}>Hình thức</Title>
                                 {this.state.data.eventTypeId.name}
 
@@ -273,7 +273,7 @@ class eventDetails extends Component {
                                     {this.renderguest()}
                                 </Tabs>
                             </Col>
-                            <Col span={10} className="event-detail">
+                            <Col sm={24} xl={10} className="event-detail">
                                 <Tag className="event-detail-status" style={{ marginTop: '15px' }}>{this.state.status}</Tag>
                                 <Title level={1}>{this.state.data.name}</Title>
                                 {this.state.data.description}
@@ -293,7 +293,7 @@ class eventDetails extends Component {
 
                                 <ListScripts eventId={this.props.match.params.id} />
                             </Col>
-                            <Col span={8} className="event-detail">
+                            <Col sm={24} xl={8} className="event-detail">
                                 {/* <Title className="event-detail-title" level={3}>Phòng hội thoại</Title> */}
 
                                 <Tabs className="chat-tabs" defaultActiveKey="1" >
