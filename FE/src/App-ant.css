@@ -514,7 +514,6 @@ span.ant-tag.event-detail-status {
 .flex-container-column{
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 .flex-row-item-right{
@@ -711,7 +710,6 @@ p {
 .cut-text { 
   text-overflow: ellipsis;
   overflow: hidden;
-  height: 1.2em; 
   white-space: nowrap;
 }
 
@@ -840,4 +838,86 @@ button.ant-btn {
   background-color: white;
   box-shadow: 0px 2px 18px rgba(0, 0, 0, 0.08);
   border-radius: 12px;
+  min-height: 400px;
+}
+
+.calender-section{
+  background-color: white;
+  box-shadow: 0px 2px 18px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 20px;
+  height: 100%;
+}
+
+.calender-section .ant-picker-panel{
+  width: 100%;
+}
+
+.events {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.events .ant-badge-status {
+  width: 100%;
+  overflow: hidden;
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.notes-month {
+  font-size: 28px;
+  text-align: center;
+}
+.notes-month section {
+  font-size: 28px;
+}
+
+.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner, .ant-picker-cell-in-view.ant-picker-cell-range-start .ant-picker-cell-inner, .ant-picker-cell-in-view.ant-picker-cell-range-end .ant-picker-cell-inner {
+  background: #2A9D8F;
+  border-radius: 20px;
+}
+
+.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
+  border-radius: 20px !important;
+}
+
+
+.vl-sub-action {
+  border-left: 4px solid #E76F51;
+  border-radius: 12px;
+  bottom: 0;
+  min-height: 80px;
+}
+
+.vl-action {
+  border-left: 4px solid #264653;
+  border-radius: 12px;
+  bottom: 0;
+  min-height: 80px;
+}
+
+.calendar-sub-action .title{
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 33px;
+  /* margin-bottom: 6px; */
+  /* identical to box height */
+}
+
+.calendar-sub-action{
+  padding: 10px 5px;
+  width: 100%;
+  /* border-top: 0.5px solid #828282; */
+}
+
+.calender-subaction-section{
+  max-height: 350px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.calendar-sub-action a{
+  color: black;
+  width: 100%;
 }

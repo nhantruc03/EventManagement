@@ -65,12 +65,12 @@ class ActionItem extends Component {
                     <Col span={2}>
                         {this.props.stt + 1}
                     </Col>
-                    <Col span={15}>
+                    <Col span={14}>
                         <Tooltip title={this.props.data.name} placement="top">
                             <p className="cut-text">{this.props.data.name}</p>
                         </Tooltip>
                     </Col>
-                    <Col span={5}>
+                    <Col span={6}>
                         <div className="flex-container-row" style={{ color: 'grey' }}>
                             <PaperClipOutlined style={{ marginLeft: '5px' }} />
                             <p style={{ marginLeft: '5px' }}>{this.state.resources.length}</p>

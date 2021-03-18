@@ -8,6 +8,7 @@ import { AUTH } from '../env'
 import EventMiniCard from './EventMiniCard/EventMiniCard';
 import { Link } from 'react-router-dom';
 import ActionItem from './ActionItem/ActionItem';
+import CalendarSection from './CalendarSection/CalendarSection'
 
 class home extends Component {
     constructor(props) {
@@ -129,8 +130,9 @@ class home extends Component {
                         Trang chủ
                     </Title>
                     {/* <div className="site-layout-background-main"> */}
-                        <Row style={{ marginLeft: 30, marginRight: 30 }}>
-                            <Col sm={24} lg={16}>
+                    <Row style={{ marginLeft: 30, marginRight: 30 }}>
+                        <Col sm={24} xl={16}>
+                            <div style={{ padding: '10px', height: '100%' }}>
                                 <Row className="status-event-row">
                                     <Col sm={24} md={8}>
                                         <div className="flex-container-row status-event-card">
@@ -194,19 +196,19 @@ class home extends Component {
                                             {this.renderListAction()}
                                         </div>
                                     </Col>
-                                    <Col sm={24} lg={12}></Col>
+                                    <Col sm={24} lg={12}>
 
-
+                                    </Col>
                                 </Row>
-                            </Col>
-                            <Col sm={24} lg={6}>
+                            </div>
+                        </Col>
+                        <Col sm={24} xl={8}>
+                            <div style={{ padding: '10px', height: '100%' }}>
+                                <CalendarSection listActions={this.state.actions} />
+                            </div>
 
-                            </Col>
-                        </Row>
-
-
-
-
+                        </Col>
+                    </Row>
                     {/* </div> */}
                 </Content>
             );
