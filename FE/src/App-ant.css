@@ -626,6 +626,7 @@ ul, li {
 
 
 .ChatBox {
+  max-height: 636px;
   padding: 10px;
   height: 100%;
   overflow-y: auto;
