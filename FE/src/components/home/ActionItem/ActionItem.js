@@ -16,9 +16,12 @@ class ActionItem extends Component {
     }
     async componentDidMount() {
         this._isMounted = true;
+
         const login = localStorage.getItem('login');
         const obj = JSON.parse(login);
+        
         console.log(obj.id)
+
         const [subActions, resources] = await trackPromise(Promise.all([
             axios.post('/api/sub-actions/getAll', { actionId: this.props.data._id }, {
                 headers: {

@@ -96,6 +96,8 @@ app.post("/api/uploads", (req, res) => {
   });
 })
 
+
+
 app.post("/api/upload-resources/:id", (req, res) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send('No files were uploaded.');

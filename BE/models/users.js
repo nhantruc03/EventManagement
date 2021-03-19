@@ -44,7 +44,7 @@ const Users = new Schema(
       enum: ["nam", "nữ"],
       default: "nam"
     },
-    photoURL: {
+    photoUrl: {
       type: String,
       index: true,
     },

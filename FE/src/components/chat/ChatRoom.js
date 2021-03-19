@@ -40,6 +40,7 @@ class ChatRoom extends Component {
             const dataFromServer = JSON.parse(message.data);
             if (dataFromServer.type === "sendMessage") {
                 if (dataFromServer.roomId === this.props.roomId) {
+                    console.log(dataFromServer.message)
                     this.setState({
                         messages: [...this.state.messages, dataFromServer.message]
                     })

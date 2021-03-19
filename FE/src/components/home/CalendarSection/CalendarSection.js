@@ -14,6 +14,7 @@ class CalendarSection extends Component {
         this.state = {
             listSubActions: null,
             currentSubActions: [],
+            currentActions: [],
             mode: 'month'
         }
     }
@@ -99,40 +100,61 @@ class CalendarSection extends Component {
     }
 
     onSelect = value => {
-        let data = []
         if (this.state.mode === 'month') {
-            data = this.getListData(value)
+            let data = this.getListData(value)
+            this.setState({
+                currentSubActions: data
+            })
         } else {
-            data = this.getMonthData(value)
+            let data = this.getMonthData(value)
+            this.setState({
+                currentActions: data
+            })
         }
-
-        this.setState({
-            currentSubActions: data
-        })
     };
 
     renderCurrentSubAction = () => {
-        return (
-            this.state.currentSubActions.map((e, key) => {
-                if (!e.status) {
-                    return (
-                        <div key={key}>
-                            {key !== 0 ? <Divider /> : null}
-                            {this.state.mode === 'month' ? <SubActionItems data={e} stt={key} key={key} /> : <ActionItems data={e} stt={key} key={key} />}
-                        </div>
-                    )
-                } else {
-                    return (null)
-                }
+        if (this.state.mode === 'month') {
+            return (
+                this.state.currentSubActions.map((e, key) => {
+                    if (!e.status) {
+                        return (
+                            <div key={key}>
+                                {key !== 0 ? <Divider /> : null}
+                                <SubActionItems data={e} stt={key} key={key} />
+                            </div>
+                        )
+                    } else {
+                        return (null)
+                    }
 
-            })
-        )
+                })
+            )
+        } else {
+            return (
+                this.state.currentActions.map((e, key) => {
+                    if (!e.status) {
+                        return (
+                            <div key={key}>
+                                {key !== 0 ? <Divider /> : null}
+                                <ActionItems data={e} stt={key} key={key} />
+                            </div>
+                        )
+                    } else {
+                        return (null)
+                    }
+
+                })
+            )
+        }
+
     }
 
     onPanelChange = (value, mode) => {
         this.setState({
             mode: mode
         })
+        
     }
 
     render() {

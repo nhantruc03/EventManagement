@@ -15,7 +15,7 @@ class page extends Component {
                         <Header />
                         {React.cloneElement(this.props.children, { showDrawer: () => this.showDrawer() })}
                         <LoadingIndicator />
-                        <div className="beforeend text-center" id="beforeend"></div>
+                        {/* <div className="beforeend text-center" id="beforeend"></div> */}
                     </Layout>
                 </Layout>
             </React.Fragment>

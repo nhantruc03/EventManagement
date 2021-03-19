@@ -81,7 +81,7 @@ class router extends Component {
                 <SecureRouteAdmin exact path="/listtags" component={Tags} layout={Page} />
                 <SecureRouteAdmin exact path="/addtags" component={addTags} layout={Page} />
                 <SecureRouteAdmin exact path="/edittags/:id" component={editTags} layout={Page} />
-{/*  */}
+
                 <SecureRouteAdmin exact path="/listactiontags" component={ActionTags} layout={Page} />
                 <SecureRouteAdmin exact path="/addactiontags" component={addActionTags} layout={Page} />
                 <SecureRouteAdmin exact path="/editactiontags/:id" component={editActionTags} layout={Page} />

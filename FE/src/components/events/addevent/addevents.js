@@ -172,6 +172,10 @@ class addevents extends Component {
     componentWillUnmount() {
         this._isMounted = false;
     }
+
+
+
+    
     goBack = (e) => {
         e.preventDefault();
         this.props.history.goBack();
