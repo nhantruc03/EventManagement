@@ -9,6 +9,8 @@ import {
 } from "@ant-design/icons";
 import axios from 'axios';
 import moment from 'moment'
+import { w3cwebsocket } from 'websocket';
+const client = new w3cwebsocket('ws://localhost:3001');
 const { Option } = Select;
 const formItemLayout = {
     labelCol: {
@@ -79,6 +81,8 @@ class editAction extends Component {
                 ),
         ]))
 
+        console.log(event)
+
         if (tags !== null && priorities !== null) {
             console.log(event)
             this.setState({
@@ -123,12 +127,28 @@ class editAction extends Component {
     }
 
     onFinish = async (e) => {
-
         let data = {
             ...e,
             coverUrl: this.state.coverUrl,
             eventId: this.props.data.eventId._id,
         }
+        let managerId_change = false
+        if (data.managerId !== this.state.data.managerId) {
+            managerId_change = true
+        }
+        let availUser_change = false
+        if (JSON.stringify(data.availUser) !== JSON.stringify(this.state.data.availUser)) {
+            availUser_change = true
+        }
+
+        data = {
+            ...data,
+            managerId_change: managerId_change,
+            availUser_change: availUser_change,
+        }
+
+
+
         await trackPromise(
             axios.put('/api/actions/' + this.props.data._id, data, {
                 headers: {
@@ -169,6 +189,10 @@ class editAction extends Component {
                         coverUrl: temp_Action.coverUrl
                     })
                     message.success('Cập nhật thành công');
+                    client.send(JSON.stringify({
+                        type: "sendListNotifications",
+                        notifications: res.data.notifications
+                    }))
                     this.props.update(temp_Action, temp_manager, temp_actionAssign)
 
                 })
@@ -176,7 +200,7 @@ class editAction extends Component {
                     console.log(err)
                     message.error('Cập nhật thất bại');
                 }))
-        console.log(data)
+        // console.log(data)
     }
 
     renderView = () => {

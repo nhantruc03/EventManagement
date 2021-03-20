@@ -3,6 +3,7 @@ const EventAssign = require("../../models/eventAssign")
 const GuestTypes = require("../../models/guestTypes")
 const Guests = require("../../models/guests")
 const Groups = require("../../models/groups")
+const notifications = require("../../models/notifications")
 const { handleBody } = require("./handleBody")
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
@@ -110,6 +111,35 @@ const start = async (req, res) => {
             }
         }
         // done Event Assign
+        // start notification
+        if (!isEmpty(listEventAssign)) {
+            let listNotifications = [];
+            //prepare data
+            let body = [];
+            listEventAssign.map(element => {
+                let temp = {}
+                temp.name = "Phân công"
+                temp.userId = element.userId
+                temp.description = `Bạn được phân công vào sự kiện ${newDoc[0].name}`
+                temp.eventId = newDoc[0]._id
+                body.push(temp)
+            })
+            //access DB
+            listNotifications = await notifications.insertMany(
+                body,
+                { session: session }
+            )
+
+            if (isEmpty(listNotifications) || listNotifications.length != body.length) {
+                await abortTransactions(sessions);
+                return res.status(406).json({
+                    success: false,
+                    error: "Created failed"
+                });
+            }
+
+        }
+        // done notification
         // start guest type
         let listGuestTypes = [];
         if (body_ref.guestTypes) {
@@ -298,7 +328,8 @@ const start = async (req, res) => {
             guestTypes: listGuestTypes,
             guests: listGuests,
             groups: listGroups,
-            eventAssign: listEventAssign
+            eventAssign: listEventAssign,
+            Notifications: listNotifications
         });
     } catch (error) {
         await abortTransactions(sessions)

@@ -19,14 +19,6 @@ class SiderDemo extends React.Component {
         this.setState({ collapsed });
     };
 
-    handleClick = (e) => {
-        console.log(e)
-        if (e.key === "3") {
-            return (
-                <Redirect to="/1" />
-            )
-        }
-    }
 
     render() {
         const { collapsed } = this.state;

@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import auth from '../../../router/auth';
 import { trackPromise } from 'react-promise-tracker';
 import { LoadingIndicator } from '../helper/Loading';
+import { AUTH } from '../../env'
 // import MaskGroup from './public/MaskGroup.png';
 class login extends Component {
     constructor(props) {
@@ -27,12 +28,14 @@ class login extends Component {
         data.append("password", this.state.password);
         await trackPromise(Axios.post('/api/users/login', data)
             .then(res => {
-                console.log(res.data)
-                console.log(res.data.data)
                 if (res.data.success === true) {
                     auth.login(res.data.data);
                     if (auth.isAuthenticatedAdmin() === true || auth.isAuthenticatedDoctor() === true || auth.isAuthenticatedPharmacist() === true || auth.isAuthenticatedStaff() === true) {
-                        this.props.history.push("/");
+                        var login = { AUTH }.AUTH
+                        if (login !== '') {
+                            this.props.history.push("/");
+                        }
+
                     }
                     else {
                         this.setState({

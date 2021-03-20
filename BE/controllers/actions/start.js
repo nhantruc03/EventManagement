@@ -1,5 +1,6 @@
 const Actions = require("../../models/actions")
 const ActionAssign = require("../../models/actionAssign")
+const notifications = require("../../models/notifications")
 const { handleBody } = require("./handleBody")
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
@@ -114,6 +115,35 @@ const start = async (req, res) => {
             }
         }
         // done Action Assign
+        // start notification
+        let listNotifications = [];
+        if (!isEmpty(listActionAssign)) {
+            //prepare data
+            let body = [];
+            listActionAssign.map(element => {
+                let temp = {}
+                temp.name = "Phân công"
+                temp.userId = element.userId
+                temp.description = `Bạn được phân công vào công việc ${newDoc[0].name}`
+                temp.actionId = newDoc[0]._id
+                body.push(temp)
+            })
+            //access DB
+            listNotifications = await notifications.insertMany(
+                body,
+                { session: session }
+            )
+
+            if (isEmpty(listNotifications) || listNotifications.length != body.length) {
+                await abortTransactions(sessions);
+                return res.status(406).json({
+                    success: false,
+                    error: "Created failed"
+                });
+            }
+
+        }
+        // done notification
 
         // Success
         await commitTransactions(sessions)
@@ -127,7 +157,8 @@ const start = async (req, res) => {
         return res.status(200).json({
             success: true,
             action: doc,
-            ActionAssign: listActionAssign
+            ActionAssign: listActionAssign,
+            Notifications: listNotifications
         });
     } catch (error) {
         await abortTransactions(sessions)

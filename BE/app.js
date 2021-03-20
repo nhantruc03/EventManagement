@@ -74,6 +74,7 @@ app.use("/api/script-details", require("./routes/scriptDetails"));
 app.use("/api/guests", require("./routes/guests"));
 app.use("/api/guest-types", require("./routes/guestTypes"));
 app.use("/api/faculties", require("./routes/faculties"));
+app.use("/api/notifications", require("./routes/notifications"));
 
 
 app.post("/api/uploads", (req, res) => {

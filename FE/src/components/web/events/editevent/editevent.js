@@ -29,6 +29,8 @@ import EventAssign from "../details/EventAssign/EventAssign";
 import GuestTypeView from "./GuestType/guestTypeView";
 import GuestView from "./Guest/guestView";
 import GroupView from "./Group/groupView";
+import { w3cwebsocket } from 'websocket';
+const client = new w3cwebsocket('ws://localhost:3001');
 const { Option } = Select;
 const formItemLayout = {
     labelCol: {
@@ -81,6 +83,12 @@ class editevent extends Component {
                         listusersforevent: [...this.state.listusersforevent, e],
                         listEventAssign: [...this.state.listEventAssign, res.data.data]
                     })
+
+                    client.send(JSON.stringify({
+                        type: "sendNotification",
+                        notification: res.data.notification
+                    }))
+
                     message.success('Thêm thành công')
                 })
                 .catch(err => {
@@ -96,12 +104,18 @@ class editevent extends Component {
 
     updateEventAssign = (a, b) => {
         console.log('updated', a)
-        let temp_user = this.state.listusersforevent.filter(x => x._id === b)[0];
+
         this.setState({
             listEventAssign: a,
-            listusers: [...this.state.listusers, temp_user],
-            listusersforevent: this.state.listusersforevent.filter(x => x._id !== temp_user._id),
         })
+
+        if (b) {
+            let temp_user = this.state.listusersforevent.filter(x => x._id === b)[0];
+            this.setState({
+                listusers: [...this.state.listusers, temp_user],
+                listusersforevent: this.state.listusersforevent.filter(x => x._id !== temp_user._id),
+            })
+        }
     }
 
     async componentDidMount() {
@@ -298,7 +312,7 @@ class editevent extends Component {
         return (
             <SelectUser
                 canDelete={false}
-                removeuserfromevent={(e) => this.removeuserfromevent(e)}
+                // removeuserfromevent={(e) => this.removeuserfromevent(e)}
                 addusertoevent={(e) => this.addusertoevent(e)}
                 listusers={this.state.listusers}
                 listusersforevent={this.state.listusersforevent}

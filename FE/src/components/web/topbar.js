@@ -61,33 +61,6 @@ class topbar extends Component {
                 </ul>
             )
         }
-        else if (this.state.role === 'staff') {
-            return (
-                <ul className="nav nav-mtd tabs-info z-depth-1">
-                    <li className="nav-item1"><NavLink className="nav-link active" to="/home" >Trang đăng kí</NavLink></li>
-                    <li className="nav-item1"><NavLink className="nav-link active" to="/hoadonkham" >Hóa đơn khám bệnh</NavLink></li>
-                </ul>
-            )
-        }
-        else if (this.state.role === 'doctor') {
-            return (
-                <ul className="nav nav-mtd tabs-info z-depth-1">
-                    <li className="nav-item1"><NavLink className="link top" to="/danhsachbenhnhan" >Hồ sơ khám bệnh</NavLink></li>
-                    <li className="nav-item1"><NavLink className="link top" to="/doctor_listdepartments" >Phòng khám</NavLink></li>
-                </ul>
-            )
-        }
-        else if (this.state.role === 'pharmacist') {
-            return (
-                <ul className="nav nav-mtd tabs-info z-depth-1">
-                    <li className="nav-item1"><NavLink className="link top" to="/listmedicinecategories" >Danh mục thuốc</NavLink></li>
-                    <li className="nav-item1"><NavLink className="link top" to="/listmedicines" >Thuốc</NavLink></li>
-                    <li className="nav-item1"><NavLink className="link top" to="/phongduocsi" >Phòng dược sĩ</NavLink></li>
-                    <li className="nav-item1"><NavLink className="link top" to="/sobanthuoc" >Sổ bán thuốc</NavLink></li>
-                    <li className="nav-item1"><NavLink className="link top" to="/hoadonthuoc" >Hóa đơn thuốc</NavLink></li>
-                </ul>
-            )
-        }
     }
 
     render() {

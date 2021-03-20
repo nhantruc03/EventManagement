@@ -35,8 +35,6 @@ class CalendarSection extends Component {
                 ),
         ]));
 
-        console.log(subActions)
-
         if (subActions !== null) {
             if (this._isMounted) {
                 this.setState({
@@ -68,7 +66,6 @@ class CalendarSection extends Component {
         const listData = this.getListData(value);
         if (listData.length > 0) {
             return (
-                // <div style={{backgroundColor:'green'}}></div>
                 <div style={{ backgroundColor: 'green' }}>
                     <CarryOutOutlined />
                 </div>
@@ -77,7 +74,6 @@ class CalendarSection extends Component {
     }
 
     getMonthData = (value) => {
-        console.log(this.props.listActions)
         let listData = [];
         this.props.listActions.forEach(element => {
             if (moment(element.startDate).month() === value.month() && moment(element.startDate).year() === value.year()) {

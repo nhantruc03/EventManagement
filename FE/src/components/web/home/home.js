@@ -25,7 +25,7 @@ class home extends Component {
         this._isMounted = true;
         const login = localStorage.getItem('login');
         const obj = JSON.parse(login);
-        console.log(obj.id)
+        
         const [events, actions] = await trackPromise(Promise.all([
             axios.post('/api/events/getAll', {}, {
                 headers: {
@@ -44,8 +44,6 @@ class home extends Component {
                     res.data.data
                 ),
         ]));
-
-        console.log(actions)
 
         if (events !== null) {
             if (this._isMounted) {

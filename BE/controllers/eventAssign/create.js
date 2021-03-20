@@ -2,7 +2,7 @@ const EventAssign = require("../../models/eventAssign")
 const { handleBody } = require('./handleBody')
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
-const { isArray, pick, isEmpty } = require("lodash")
+const notifications = require("../../models/notifications")
 const Events = require('../../models/events');
 const create = async (req, res) => {
   let sessions = []
@@ -55,9 +55,7 @@ const create = async (req, res) => {
       { availUser: data },
       { new: true }
     )
-
     // Success
-
     await commitTransactions(sessions)
     const doc = await EventAssign.findOne({ _id: newDoc[0]._id, isDeleted: false })
       .populate("userId")
@@ -66,10 +64,27 @@ const create = async (req, res) => {
       .populate({ path: 'userId', select: 'name phone email' })
       .populate({ path: 'facultyId', select: 'name' })
 
+
+
+    // start notification
+    //prepare data
+    let body_notification = {}
+    body_notification.name = "Phân công"
+    body_notification.userId = newDoc[0].userId
+    body_notification.description = `Bạn được phân công vào sự kiện ${doc.eventId.name}`
+    body_notification.eventId = newDoc[0]._id
+
+    //access DB
+    let created_notification = await notifications.create(
+      body_notification
+    )
+    // done notification
+
     return res.status(200).json({
       success: true,
       data: doc,
-      updated: updated
+      updated: updated,
+      notification: created_notification
     });
   } catch (error) {
     await abortTransactions(sessions);
