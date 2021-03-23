@@ -5,7 +5,6 @@ import Search from '../../../helper/search';
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
 import { AUTH } from '../../../../env'
-import { Message } from '../../../service/renderMessage';
 import Pagination from '../../../helper/Pagination';
 class EventAssign extends Component {
     constructor(props) {

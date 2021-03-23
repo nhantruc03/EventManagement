@@ -29,15 +29,7 @@ class header extends Component {
             currentUser: null,
             modal2Visible: false,
             model: { dondathang: [] },
-            notifications: [
-                {
-                    userId: '5ff04a7ef72aa03a4cb6d8c5',
-                    name: 'Phân công',
-                    description: 'Bạn được phân công vào sự kiện Test',
-                    eventId: '5ff04a7ef72aa03a4cb6d8c5',
-                    status: false
-                },
-            ],
+            notifications: [],
             logout: false
         }
     }
@@ -97,7 +89,6 @@ class header extends Component {
     }
 
     handleButtonClick = (e) => {
-        console.log('click left button', e);
         if (e.key === 'logout') {
             auth.logout();
             this.setState({
@@ -111,11 +102,9 @@ class header extends Component {
     }
 
     setModal2Visible(modal2Visible, val) {
-        console.log(val)
         this.setState({ modal2Visible });
         if (val !== undefined) {
             var temp = this.props.data.find(e => e.ID === val)
-            console.log(temp)
             this.setState({
                 model: temp
             })
@@ -210,7 +199,6 @@ class header extends Component {
     // }
 
     renderNotificationContent = (e) => {
-        console.log(e)
         if (e.eventId) {
             return (
                 <Link to={`/events/${e.eventId}`}>
@@ -262,20 +250,19 @@ class header extends Component {
                 <Redirect to="login" />
             )
         }
-        else if (this.state.currentUser) {
-            return (
-                <Header className="site-layout-background" style={{ padding: 15 }} >
-                    <div className="flex-container-row">
+        return (
+            <Header className="site-layout-background" style={{ padding: 15 }} >
+                <div className="flex-container-row">
 
-                        {/* <div style={{ float: 'right', marginBottom: 20, marginRight: 20, display: 'inline-grid' }}> */}
-                        <div className="flex-row-item-right">
+                    {/* <div style={{ float: 'right', marginBottom: 20, marginRight: 20, display: 'inline-grid' }}> */}
+                    <div className="flex-row-item-right">
 
-                            <Dropdown overlayClassName='dropdown' overlay={this.renderNotifications} placement='bottomRight'>
-                                <Badge count={this.state.notifications.filter(e => e.status === false).length}>
-                                    <Button style={{ border: 'none' }}><BellOutlined /></Button>
-                                </Badge>
-                            </Dropdown>
-
+                        <Dropdown overlayClassName='dropdown' overlay={this.renderNotifications} placement='bottomRight'>
+                            <Badge count={this.state.notifications.filter(e => e.status === false).length}>
+                                <Button style={{ border: 'none' }}><BellOutlined /></Button>
+                            </Badge>
+                        </Dropdown>
+                        {this.state.currentUser ?
                             <Dropdown
                                 overlay={
                                     <Menu onClick={(e) => this.handleButtonClick(e)}>
@@ -291,8 +278,9 @@ class header extends Component {
                                     {this.state.currentUser.name} <Avatar style={{ marginLeft: '10px' }} className="my-2" src={`/api/images/${this.state.currentUser.photoUrl}`} />
                                 </Button>
                             </Dropdown>
-                        </div>
+                            : null}
                     </div>
+                </div>
 
 
 
@@ -311,7 +299,7 @@ class header extends Component {
 
 
 
-                    {/* <Modal
+                {/* <Modal
                         title='Chi tiết đơn mua hàng'
                         centered
                         visible={this.state.modal2Visible}
@@ -323,11 +311,9 @@ class header extends Component {
                          {this.renderModel(this.state.model)}
                     </Modal>  */}
 
-                </Header >
-            );
-        } else {
-            return null
-        }
+            </Header >
+        );
+
 
     }
 }

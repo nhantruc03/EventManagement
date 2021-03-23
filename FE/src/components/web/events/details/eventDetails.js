@@ -16,6 +16,7 @@ import {
     Image,
 } from "antd";
 import {
+    InsertRowAboveOutlined,
     EnvironmentOutlined,
     ClockCircleOutlined,
 } from '@ant-design/icons';
@@ -227,9 +228,9 @@ class eventDetails extends Component {
     render() {
         if (this.state.data) {
             return (
-                <Content style={{ margin: "0 16px" }}>
+                <Content >
                     < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }}>
-                        <div className="flex-container-row" style={{ width: '100%' }}>
+                        <div className="flex-container-row" style={{ width: '100%', padding: '0 10px' }}>
                             <Breadcrumb separator=">">
                                 <Breadcrumb.Item >
                                     <Link to="/events">Sự kiện</Link>
@@ -238,19 +239,19 @@ class eventDetails extends Component {
                                     Chi tiết
                                 </Breadcrumb.Item>
                             </Breadcrumb>
-                            <Button onClick={() => { this.props.history.push(`/editevent/${this.props.match.params.id}`) }} className="flex-row-item-right">Chỉnh sửa</Button>
+                            <Button onClick={() => { this.props.history.push(`/editevent/${this.props.match.params.id}`) }} className="add flex-row-item-right">Chỉnh sửa</Button>
                         </div>
 
 
                     </Row >
 
                     <div className="site-layout-background-main">
-                        <Row>
+                        <Row style={{ height: '95%' }}>
                             <Col sm={24} xl={6} className="event-detail">
-                                <Title className="event-detail-title" level={3}>Hình thức</Title>
+                                <Title className="event-detail-title" level={4}>Hình thức</Title>
                                 {this.state.data.eventTypeId.name}
 
-                                <Title level={3}>Ban tổ chức</Title>
+                                <Title className="event-detail-title" level={4}>Ban tổ chức</Title>
                                 <div className="event-detail-user-container">
                                     <Avatar.Group
                                         maxCount={2}
@@ -261,11 +262,11 @@ class eventDetails extends Component {
                                     <Button className="event-detail-user" onClick={() => this.setModal2Visible(true)}>Xem</Button>
                                 </div>
 
-                                <Title className="event-detail-title" level={3}>Tags</Title>
+                                <Title className="event-detail-title" level={4}>Tags</Title>
                                 {this.state.data.tagId.map((value, key) => <Tag style={{ width: 'auto' }} key={key}>{value.name}</Tag>)}
 
                                 <div className="flex-container-row">
-                                    <Title className="event-detail-title" level={3}>Khách mời</Title>
+                                    <Title className="event-detail-title" level={4}>Khách mời</Title>
                                     <Button className="flex-row-item-right" onClick={() => this.setModal2Visible2(true)}>Chỉnh sửa</Button>
                                 </div>
 
@@ -274,23 +275,33 @@ class eventDetails extends Component {
                                 </Tabs>
                             </Col>
                             <Col sm={24} xl={10} className="event-detail">
-                                <Tag className="event-detail-status" style={{ marginTop: '15px' }}>{this.state.status}</Tag>
-                                <Title level={1}>{this.state.data.name}</Title>
+                                {/* <Tag className="event-detail-status" style={{ marginTop: '15px' }}>{this.state.status}</Tag> */}
+                                <Title style={{ color: '#017567', margin: 'unset' }} level={1}>{this.state.data.name}</Title>
+                                <Title style={{ margin: 'unset' }} level={4}>Mô tả</Title>
                                 {this.state.data.description}
 
                                 <div className="event-detail-time-date-address">
-                                    <ClockCircleOutlined className="event-detail" />  {moment(this.state.data.startTime).format('HH:mm')} - {moment(this.state.data.startDate).format('DD/MM/YYYY')}
-                                    <EnvironmentOutlined className="event-detail right" />  {this.state.data.address}
+                                    <div className="flex-container-row" style={{ justifyContent: 'space-between' }}>
+                                        <div>
+                                            <ClockCircleOutlined className="event-detail" />  {moment(this.state.data.startTime).format('HH:mm')}
+                                        </div>
+                                        <div>
+                                            <InsertRowAboveOutlined /> {moment(this.state.data.startDate).format('DD/MM/YYYY')}
+                                        </div>
+                                    </div>
+                                    <div style={{ marginTop: '10px' }}>
+                                        <EnvironmentOutlined className="event-detail" />  {this.state.data.address}
+                                    </div>
                                 </div>
 
-                                <Title className="event-detail-title" level={3}>Poster</Title>
-                                <Image style={{ maxWidth: '120px' }} src={`/api/images/${this.state.data.posterUrl}`} alt="poster"></Image>
+
+                                <Image style={{ maxWidth: '150px' }} src={`/api/images/${this.state.data.posterUrl}`} alt="poster"></Image>
 
                                 <div className="flex-container-row">
-                                    <Title className="event-detail-title" level={3}>Kịch bản</Title>
+                                    {/* <Title className="event-detail-title" level={3}>Kịch bản</Title> */}
+                                    <Title level={4}>Kịch bản</Title>
                                     <Button className="flex-row-item-right" ><Link to={`/addscripts/${this.props.match.params.id}`}>Thêm</Link></Button>
                                 </div>
-
                                 <ListScripts eventId={this.props.match.params.id} />
                             </Col>
                             <Col sm={24} xl={8} className="event-detail">

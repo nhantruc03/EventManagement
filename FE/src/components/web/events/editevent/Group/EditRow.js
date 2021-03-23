@@ -43,9 +43,9 @@ class EditRow extends Component {
                 layout="vertical"
             >
                 <Row>
-                    <Col span={15}>
+                    <Col span={19} style={{ padding: '0 10px' }}>
                         <Form.Item
-                            wrapperCol={{ sm: 20 }}
+                            wrapperCol={{ sm: 24 }}
                             name="name"
                             hasFeedback
                             rules={[{ required: true, message: 'Cần nhập tên!' }]}
@@ -53,7 +53,7 @@ class EditRow extends Component {
                             <Input placeholder="Nhập tên..." />
                         </Form.Item>
                     </Col>
-                    <Col span={9}>
+                    <Col span={5} style={{ textAlign: 'center' }}>
                         <Button onClick={() => this.cancle()} className="back" >
                             Hủy
                         </Button>

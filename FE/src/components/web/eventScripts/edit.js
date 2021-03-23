@@ -211,10 +211,10 @@ class edit extends Component {
                         </Col>
                     </Row >
 
-                    <div className="site-layout-background-main">
+                    <div className="add-scripts site-layout-background-main">
 
-                        <Row>
-                            <Col sm={24} xl={18}>
+                        <Row style={{ height: '90%' }}>
+                            <Col sm={24} xl={16}>
                                 <Form
                                     name="validate_other"
                                     {...formItemLayout}
@@ -223,7 +223,7 @@ class edit extends Component {
                                     initialValues={this.state}
                                 >
                                     <Row>
-                                        <Col sm={24} lg={8}>
+                                        <Col sm={24} lg={12}>
                                             <Form.Item
                                                 wrapperCol={{ sm: 24 }}
                                                 style={{ width: "90%" }}
@@ -234,7 +234,7 @@ class edit extends Component {
                                                 <Input placeholder="Tên kịch bản..." />
                                             </Form.Item>
                                         </Col>
-                                        <Col sm={24} lg={8}>
+                                        {/* <Col sm={24} lg={8}>
                                             <Form.Item
                                                 wrapperCol={{ sm: 24 }}
                                                 style={{ width: "90%" }}
@@ -243,9 +243,9 @@ class edit extends Component {
                                             >
                                                 <Input disabled={true} />
                                             </Form.Item>
-                                        </Col>
+                                        </Col> */}
 
-                                        <Col sm={24} lg={8}>
+                                        <Col sm={24} lg={12}>
                                             <Form.Item
                                                 wrapperCol={{ sm: 24 }}
                                                 style={{ width: "90%" }}
@@ -283,9 +283,9 @@ class edit extends Component {
                                 <Title style={{ marginTop: '20px' }} level={3}>Kịch bản chính</Title>
                                 <ListScriptDetails onEdit={true} data={this.state.listscriptdetails} onDelete={this.onDeleteDetail} onAdd={this.onAddDetail} onUpdate={this.onUpdateDetail} />
                             </Col>
-                            <Col sm={24} xl={6}>
+                            <Col sm={24} xl={8}>
                                 <Title level={3}>Xem trước</Title>
-                                <ReviewScriptDetail data={this.state.listscriptdetails} />
+                                <ReviewScriptDetail script_name={this.state.name} data={this.state.listscriptdetails} />
                             </Col>
                         </Row>
                     </div>

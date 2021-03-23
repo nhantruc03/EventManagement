@@ -23,26 +23,32 @@ class item extends Component {
         else {
             return (
                 <Row>
-                    <Col span={18}>
+                    <Col span={24}>
                         <Row>
-                            <Col sm={24} md={12}>
+                            <Col sm={24} lg={9} style={{ padding: '0 10px' }}>
                                 <Title level={5}>Mốc thời gian</Title>
-                                <div className="flex-container-row" style={{ width: '50%' }}>
-                                    {moment(this.props.data.time).format("HH:mm")}
-                                    <ClockCircleOutlined className="flex-row-item-right" />
+                                <div className="input-disable">
+                                    <div className="flex-container-row">
+                                        {moment(this.props.data.time).format("HH:mm")}
+                                        <ClockCircleOutlined className="flex-row-item-right" />
+                                    </div>
                                 </div>
                             </Col>
-                            <Col sm={24} md={12}>
+                            <Col sm={24} lg={9} style={{ padding: '0 10px' }}>
                                 <Title level={5}>Tiêu đề</Title>
-                                {this.props.data.name}
+                                <div className="input-disable">
+                                    {this.props.data.name}
+                                </div>
+                            </Col>
+                            <Col sm={24} lg={6} style={{ padding: '50px 0 0 0' }}>
+                                <Button style={{ width: '50%' }} className="back" onClick={() => this.props.onDelete(this.props.data._id)}>Xóa</Button>
+                                <Button style={{ width: '50%' }} className="add" onClick={() => { this.setState({ current: 'edit' }) }}>Sửa</Button>
                             </Col>
                         </Row>
-                        <Title level={5}>Nội dung</Title>
-                        <div style={{ padding: 10 }} dangerouslySetInnerHTML={{ __html: this.props.data.description }} />
-                    </Col>
-                    <Col span={6} style={{ margin: 'auto' }}>
-                        <Button onClick={() => this.props.onDelete(this.props.data._id)}>Xóa</Button>
-                        <Button onClick={() => { this.setState({ current: 'edit' }) }}>Chỉnh sửa</Button>
+                        <div style={{ padding: '0 10px' }}>
+                            <Title level={5}>Nội dung</Title>
+                            <div style={{ padding: 10 }} dangerouslySetInnerHTML={{ __html: this.props.data.description }} />
+                        </div>
                     </Col>
                 </Row>
             )

@@ -2,10 +2,14 @@ import { Layout, Menu } from 'antd';
 import React from 'react';
 import {
     CopyOutlined,
-    PieChartOutlined,
+    HomeOutlined,
+    FireOutlined,
+    FileDoneOutlined,
+    TeamOutlined,
+    
 } from '@ant-design/icons';
 import Title from 'antd/lib/typography/Title';
-import { Link, Redirect, withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 const { Sider } = Layout;
 
 const { SubMenu } = Menu;
@@ -24,19 +28,19 @@ class SiderDemo extends React.Component {
         const { collapsed } = this.state;
         return (
             <Sider width={250} collapsible collapsed={collapsed} onCollapse={this.onCollapse} style={{ backgroundColor: '#002B6D' }}>
-                <Title className="logo" style={{ color: 'white', textAlign: 'center', marginTop: 15 }} level={3}>Event Management!</Title>
-                <Menu theme="dark" selectedKeys={[this.props.location.pathname]} mode="inline" style={{ backgroundColor: '#002B6D' }}>
-                    <Menu.Item key="/" icon={<PieChartOutlined />}>
+                <Title className="logo" level={3}>Event Management!</Title>
+                <Menu selectedKeys={[this.props.location.pathname]} mode="inline" >
+                    <Menu.Item key="/" icon={<HomeOutlined />}>
                         <Link to="/" className="nav-text">Trang chủ</Link>
                     </Menu.Item>
-                    <Menu.Item key="/events" icon={<PieChartOutlined />}>
+                    <Menu.Item key="/events" icon={<FireOutlined />}>
                         <Link to="/events" className="nav-text">Sự kiện</Link>
                     </Menu.Item>
-                    <Menu.Item key="/actions" icon={<PieChartOutlined />}>
+                    <Menu.Item key="/actions" icon={<FileDoneOutlined />}>
                         <Link to="/actions" className="nav-text">Công việc</Link>
                     </Menu.Item>
-                    <Menu.Item key="/calender" icon={<PieChartOutlined />}>
-                        <Link to="/calender" className="nav-text">Lịch</Link>
+                    <Menu.Item key="/calender" icon={<TeamOutlined />}>
+                        <Link to="/calender" className="nav-text">Hồ sơ</Link>
                     </Menu.Item>
                     <SubMenu key="sub1" icon={<CopyOutlined />} title="Admin quản lý">
                         <Menu.Item key="/listusers">

@@ -34,12 +34,12 @@ class TableDataRow extends Component {
         }
         else
             return (<tr className="ant-table-row ant-table-row-level-0">
-                <td className="ant-table-cell">{this.props.data.userId.name}</td>
+                <td style={{ width: '20%' }} className="ant-table-cell">{this.props.data.userId.name}</td>
                 {/* <td>{this.props.data.userId.phone}</td> */}
-                <td className="ant-table-cell">{this.props.data.userId.email}</td>
-                <td className="ant-table-cell">{this.props.data.facultyId ? this.props.data.facultyId.name : null}</td>
-                <td className="ant-table-cell">{this.props.data.roleId ? this.props.data.roleId.name : null}</td>
-                <td className="ant-table-cell">
+                <td style={{ width: '20%' }} className="ant-table-cell">{this.props.data.userId.email}</td>
+                <td style={{ width: '20%' }} className="ant-table-cell">{this.props.data.facultyId ? this.props.data.facultyId.name : null}</td>
+                <td style={{ width: '20%' }} className="ant-table-cell">{this.props.data.roleId ? this.props.data.roleId.name : null}</td>
+                <td style={{ width: '20%' }} className="ant-table-cell">
                     <div className="btn-group">
                         {this.props.canDelete ? <Button onClick={() => this.props.deleteClick(this.props.data._id)} className="back">Xóa</Button> : null}
                         <Button onClick={() => this.editClick()} className="add">Sửa</Button>

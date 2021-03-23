@@ -128,7 +128,7 @@ class addactions extends Component {
                 message.success('Tạo thành công');
 
                 console.log(res.data.Notifications)
-                
+
                 client.send(JSON.stringify({
                     type: "sendListNotifications",
                     notifications: res.data.Notifications
@@ -157,8 +157,8 @@ class addactions extends Component {
                         ref={this.form1}
                     >
                         <Row style={{ marginTop: '20px' }}>
-                            <Col span={24}>
-                                <Title level={5}>Tên sự kiện</Title>
+                            <Col span={24} style={{ padding: '15px' }}>
+                                <Title style={{ color: '#017567' }} level={5}>Tên sự kiện</Title>
                                 <p>{this.props.event.name}</p>
                             </Col>
 

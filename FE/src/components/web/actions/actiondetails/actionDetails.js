@@ -30,6 +30,7 @@ class actionDetails extends Component {
             subActions: [],
             currentSubAction: null,
             modalEditActionVisible: false,
+            currentStatus: '',
         }
     }
 
@@ -159,12 +160,24 @@ class actionDetails extends Component {
         if (action !== null) {
             if (this._isMounted) {
                 console.log(action)
+                let now = moment(new Date().setHours(0, 0, 0, 0))
+                let data_Date = moment(new Date(action.startDate).setHours(0, 0, 0, 0))
+                let temp_status = ''
+                if (data_Date > now) {
+                    temp_status = 'Sắp diễn ra'
+                } else if (data_Date === now) {
+                    temp_status = 'Đang diễn ra'
+                }
+                else {
+                    temp_status = 'Đã diễn ra'
+                }
                 this.setState({
                     data: action,
                     actionAssign: actionAssign.filter(e => e.role === 2),
                     manager: actionAssign.filter(e => e.role === 1)[0],
                     resources: resources,
-                    subActions: subActions
+                    subActions: subActions,
+                    currentStatus: temp_status
                 })
             }
         }
@@ -177,13 +190,14 @@ class actionDetails extends Component {
         return (
             this.state.data.availUser.map((value, key) => {
                 return (
-                    <div className="flex-container-row" key={key}>
-                        <Tooltip title={value.name} placement="top" >
-                            <Avatar src={`/api/images/${value.photoUrl}`} />
-                        </Tooltip >
-                        {value.name}
-                    </div>
-
+                    <Col lg={12} key={key}>
+                        <div className="flex-container-row" >
+                            <Tooltip title={value.name} placement="top" >
+                                <Avatar src={`/api/images/${value.photoUrl}`} />
+                            </Tooltip >
+                            <p style={{ marginLeft: '10px' }} className="black-2 flex-row-item-right">{value.name}</p>
+                        </div>
+                    </Col>
                 )
             })
         )
@@ -263,7 +277,7 @@ class actionDetails extends Component {
             <div style={{ marginTop: '10px' }}>
                 { this.state.subActions.map((e, key) =>
                     <div className="flex-container-row" style={{ marginTop: '10px' }} key={key}>
-                        <Checkbox onChange={this.onChange} checked={e.status} value={e._id} >{e.name}</Checkbox>
+                        <Checkbox className="checkbox" onChange={this.onChange} checked={e.status} style={e.status ? { textDecoration: 'line-through' } : null} value={e._id} >{e.name}</Checkbox>
                         <Button onClick={() => this.setModalEditSubActionVisible(true, e)} className="flex-row-item-right no-border"><EyeOutlined /></Button>
                     </div>
                 )}
@@ -274,7 +288,7 @@ class actionDetails extends Component {
     render() {
         if (this.state.data) {
             return (
-                <Content style={{ margin: "0 16px" }}>
+                <Content className="action-details" style={{ margin: "0 16px" }}>
                     <Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }}>
                         <div className="flex-container-row" style={{ width: '100%' }}>
                             <Breadcrumb separator=">">
@@ -285,22 +299,22 @@ class actionDetails extends Component {
                                     Chi tiết
                             </Breadcrumb.Item>
                             </Breadcrumb>
-                            <Button onClick={() => this.setModalEditActionVisible(true)} className="flex-row-item-right">Chỉnh sửa</Button>
+                            <Button onClick={() => this.setModalEditActionVisible(true)} className="flex-row-item-right add">Chỉnh sửa</Button>
                         </div>
                     </Row >
 
                     <div className="site-layout-background-main">
-                        <Row>
-                            <Col sm={24} xl={6} className="event-detail">
+                        <Row style={{ height: '95%' }}>
+                            <Col sm={24} xl={7} className="event-detail">
                                 <div className="flex-container-row">
-                                    <Title level={3}>Cần làm</Title>
+                                    <Title style={{ color: '#264653' }} level={3}>Cần làm</Title>
                                     <Button onClick={() => this.setModalAddSubActionVisible(true)} className="flex-row-item-right add">Thêm</Button>
                                 </div>
                                 {this.renderSubActions()}
 
 
                                 <div className="flex-container-row" style={{ marginTop: '20px' }}>
-                                    <Title className="event-detail-title" level={3}>File đính kèm</Title>
+                                    <Title style={{ color: '#264653' }} level={3}>File đính kèm</Title>
                                     {/* <Button className="flex-row-item-right add">Thêm</Button> */}
                                     <Upload
                                         className="flex-row-item-right"
@@ -321,53 +335,64 @@ class actionDetails extends Component {
                                 {this.state.resources.map((e, key) => <ResourceCard delete={(e) => this.deleteResources(e)} key={key} resourcePath={this.props.match.params.id} data={e}></ResourceCard>)}
                             </Col>
                             <Col sm={24} xl={10} className="event-detail">
+                                {/* <Title level={3}>Cover</Title> */}
+                                <Image style={{ maxHeight: '200px' }} src={`/api/images/${this.state.data.coverUrl}`}></Image>
+
+                                <Title style={{ color: '#017567' }} level={1}>{this.state.data.name}</Title>
+
                                 <div className="flex-container-row" style={{ width: '80%' }}>
-                                    <Tag className="event-detail-status">{this.state.data.actionTypeId.name}</Tag>
-                                    <p>Bắt đầu: {moment(this.state.data.startTime).format("DD/MM/YYYY")}</p>
-                                    <p className="flex-row-item-right">{this.state.data.priorityId.name}</p>
+                                    {/* <Tag className="event-detail-status">{this.state.data.actionTypeId.name}</Tag> */}
+                                    <Tag className="event-detail-status">{this.state.currentStatus}</Tag>
+                                    <p style={{ color: 'grey' }}>Bắt đầu: {moment(this.state.data.startTime).format("DD/MM/YYYY")}</p>
+                                    {/* <p className="flex-row-item-right">{this.state.data.priorityId.name}</p> */}
                                 </div>
 
-                                <Title level={1}>{this.state.data.name}</Title>
-                                {this.state.data.description}
+                                <Title level={4}>Mô tả</Title>
+                                <p style={{ color: '#001529' }}>{this.state.data.description}</p>
 
-                                <Title className="event-detail-title" level={3}>Sự kiện</Title>
-                                {this.state.data.eventId.name}
+
+
+                                <Title level={4}>Thuộc sự kiện</Title>
+                                <p className="black-2">{this.state.data.eventId.name}</p>
 
                                 <Row>
                                     <Col sm={24} md={10}>
-                                        <Title className="event-detail-title" level={3}>Người quản lý</Title>
-                                        {this.state.manager.userId.name}
+                                        <Title level={4}>Người phụ trách</Title>
+                                        <div className="flex-container-row" >
+                                            <Avatar src={`/api/images/${this.state.manager.userId.photoUrl}`} />
+                                            <p style={{ marginLeft: '10px' }} className="black-2">{this.state.manager.userId.name}</p>
+                                        </div>
                                     </Col>
 
-                                    <Col sm={24} md={8}>
-                                        <div className="vl"></div>
-                                        <Title className="event-detail-title" level={3}>Kết thúc</Title>
+                                    <Col sm={24} md={6} style={{ textAlign: 'center' }}>
+                                        <Title level={4}>Ban</Title>
+                                        <p >{this.state.data.facultyId.name}</p>
+                                    </Col>
+
+                                    <Col sm={24} md={8} style={{ textAlign: 'right' }}>
+                                        <Title level={4}>Hạn chót</Title>
                                         {moment(this.state.data.endDate).format("DD/MM/YYYY")}
-                                    </Col>
-                                    <Col sm={24} md={6}>
-                                        <div className="vl"></div>
-                                        <Title className="event-detail-title" level={3}>Ban</Title>
-                                        <Tag >{this.state.data.facultyId.name}</Tag>
-
                                     </Col>
                                 </Row>
 
-                                <Title className="event-detail-title" level={3}>Phân công</Title>
+                                <Title level={4}>Phân công cho</Title>
                                 <Avatar.Group
-                                    maxCount={3}
+                                    style={{ width: '100%' }}
+                                    maxCount={4}
                                     maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}
                                 >
-                                    {this.renderAvailUser()}
+                                    <Row style={{ width: '100%' }}>
+                                        {this.renderAvailUser()}
+                                    </Row>
                                 </Avatar.Group>
 
-                                <Title level={3}>Cover</Title>
-                                <Image style={{ maxWidth: '150px' }} src={`/api/images/${this.state.data.coverUrl}`}></Image>
 
-                                <Title level={3}>Tags</Title>
+
+                                <Title className="event-detail-title" level={4}>Tags</Title>
                                 {/* <Image style={{ maxWidth: '300px' }} src={`/api/images/${this.state.data.coverUrl}`}></Image> */}
                                 {this.state.data.tagsId.map((e, key) => <Tag style={{ width: 'auto' }} key={key}>{e.name}</Tag>)}
                             </Col>
-                            <Col sm={24} xl={8} className="event-detail">
+                            <Col sm={24} xl={7} className="event-detail">
                                 {/* <div className="vl"></div> */}
                                 <Tabs className="chat-tabs" defaultActiveKey="1" >
                                     <TabPane tab="Bình luận" key="1"><ChatRoom roomId={this.props.match.params.id} /></TabPane>

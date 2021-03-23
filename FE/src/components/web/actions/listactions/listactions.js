@@ -178,11 +178,9 @@ class listactions extends Component {
 
     renderActionsView = (value, keyCol) => {
         return (
-            <Col key={keyCol}>
-                <Title level={4}>{value.name}</Title>
+            <Col sm={24} xl={24 / this.state.currentActions.length} key={keyCol}>
+                <Title level={3}>{value.name}</Title>
                 {this.state.currentActions.map((e, key) => {
-                    console.log(e)
-                    console.log(value)
                     if (e.actionTypeId._id === value._id) {
                         return (
                             <ActionCard data={e} key={key} />
@@ -198,22 +196,18 @@ class listactions extends Component {
     renderView = () => {
         if (this.state.currentEvent) {
             return (
-                <div className="site-layout-background-main">
-                    <div className="flex-container-row" style={{ alignItems: 'unset' }}>
-                        <Row>
-                            {this.state.currentActionTypes.map((e, key) => {
-                                return (
-                                    this.renderActionsView(e, key)
-                                )
-                            })}
-                        </Row>
+                <div className="flex-container-row" style={{ alignItems: 'unset' }}>
+                    <Row>
+                        {this.state.currentActionTypes.map((e, key) => {
+                            return (
+                                this.renderActionsView(e, key)
+                            )
+                        })}
+                    </Row>
 
-                        <Button className="add flex-row-item-right" onClick={() => this.setModalVisible2(true)}>
-                            +
+                    <Button className="add flex-row-item-right" onClick={() => this.setModalVisible2(true)}>
+                        +
                         </Button>
-                    </div>
-
-
                 </div>
             )
 
@@ -229,15 +223,14 @@ class listactions extends Component {
                     <Row style={{ marginLeft: 30, marginRight: 30 }}>
                         <Col span={24}>
                             <Title
-                                style={{ color: "#002140", marginTop: 15 }}
+                                id="home-top-header"
+                                style={{ marginTop: 15 }}
                                 level={3}
                             >
                                 Sự kiện
                             </Title>
                         </Col>
                     </Row>
-
-
                     <Row style={{ marginLeft: 30, marginRight: 30 }}>
                         <Col span={12}>
                             {/* <Search
@@ -262,7 +255,9 @@ class listactions extends Component {
                             </Button>
                         </Col>
                     </Row>
-                    {this.renderView()}
+                    <div style={{ padding: '30px' }}>
+                        {this.renderView()}
+                    </div>
 
 
                     <Modal

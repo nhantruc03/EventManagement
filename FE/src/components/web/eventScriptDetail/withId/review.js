@@ -1,6 +1,7 @@
 import { Timeline } from 'antd';
 import React, { Component } from 'react';
 import moment from 'moment'
+import Title from 'antd/lib/typography/Title';
 class review extends Component {
 
 
@@ -10,7 +11,7 @@ class review extends Component {
                 <div>
                     <strong>{moment(new Date(e.time)).format('HH:mm')}</strong>
                 </div>
-                <div style={{ fontSize: "17px" }}>
+                <div className="timeline-name">
                     {e.name}
                 </div>
             </div>
@@ -44,14 +45,12 @@ class review extends Component {
         )
     }
 
-
-
-
-
     render() {
         return (
-            <div style={{ padding: 20 }}>
+            <div className="timeline-container">
+                <Title level={3}>{this.props.script_name}</Title>
                 <Timeline mode="left">
+                    <Title></Title>
                     {this.renderView()}
                 </Timeline>
             </div>

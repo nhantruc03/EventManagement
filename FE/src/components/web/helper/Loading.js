@@ -5,7 +5,7 @@ export const LoadingIndicator = props => {
   return (
     promiseInProgress &&
     <div className="loading">
-      <Loader color="#10d8d8" type="ThreeDots" height="100" width="100" />
+      <Loader color="#2A9D8F" type="ThreeDots" height="100" width="100" />
     </div>
   )
 }

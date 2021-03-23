@@ -2,9 +2,8 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { AUTH } from '../../env';
 import { trackPromise } from 'react-promise-tracker';
-import { Message } from '../service/renderMessage';
 import { Content } from 'antd/lib/layout/layout';
-import { Breadcrumb, Button, Col, Form, Input, Row, Select } from 'antd';
+import { Breadcrumb, Button, Col, Form, Input, message, Row, Select } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
 import { v1 as uuidv1 } from 'uuid';
@@ -28,7 +27,9 @@ class add extends Component {
             writerId: '',
             listUser: [],
             listscriptdetails: [],
-            data: {}
+            data: {},
+            script_name: ''
+
         }
     }
 
@@ -96,10 +97,10 @@ class add extends Component {
             }
         })
             .then(res => {
-                Message('Tạo thành công', true, this.props);
+                message.success('Tạo thành công');
             })
             .catch(err => {
-                Message('Tạo thất bại', false);
+                message.error('Tạo thất bại');
             }))
     };
 
@@ -140,6 +141,12 @@ class add extends Component {
         })
     }
 
+    onChangeName = (e) => {
+        this.setState({
+            script_name: e.target.value
+        })
+    }
+
     render() {
         return (
             <Content style={{ margin: "0 16px" }}>
@@ -159,10 +166,9 @@ class add extends Component {
                     </Col>
                 </Row >
 
-                <div className="site-layout-background-main">
-
+                <div className="add-scripts site-layout-background-main">
                     <Row>
-                        <Col sm={24} xl={18}>
+                        <Col sm={24} xl={16}>
                             <Form
                                 name="validate_other"
                                 {...formItemLayout}
@@ -171,7 +177,7 @@ class add extends Component {
                                 initialValues={this.state.data}
                             >
                                 <Row>
-                                    <Col sm={24} lg={8}>
+                                    <Col sm={24} lg={12}>
                                         <Form.Item
                                             wrapperCol={{ sm: 24 }}
                                             style={{ width: "90%" }}
@@ -179,10 +185,10 @@ class add extends Component {
                                             label="Tên kịch bản"
                                             rules={[{ required: true, message: 'Cần nhập tên tên kịch bản' }]}
                                         >
-                                            <Input placeholder="Tên kịch bản..." />
+                                            <Input onChange={this.onChangeName} placeholder="Tên kịch bản..." />
                                         </Form.Item>
                                     </Col>
-                                    <Col sm={24} lg={8}>
+                                    {/* <Col sm={24} lg={8}>
                                         <Form.Item
                                             wrapperCol={{ sm: 24 }}
                                             style={{ width: "90%" }}
@@ -191,9 +197,9 @@ class add extends Component {
                                         >
                                             <Input disabled={true} />
                                         </Form.Item>
-                                    </Col>
+                                    </Col> */}
 
-                                    <Col sm={24} lg={8}>
+                                    <Col sm={24} lg={12}>
                                         <Form.Item
                                             wrapperCol={{ sm: 24 }}
                                             style={{ width: "90%" }}
@@ -231,9 +237,9 @@ class add extends Component {
                             <Title style={{ marginTop: '20px' }} level={3}>Kịch bản chính</Title>
                             <ListScriptDetails data={this.state.listscriptdetails} onDelete={this.onDeleteDetail} onAdd={this.onAddDetail} onUpdate={this.onUpdateDetail} />
                         </Col>
-                        <Col sm={24} xl={6}>
+                        <Col sm={24} xl={8}>
                             <Title level={3}>Xem trước</Title>
-                            <ReviewScriptDetail data={this.state.listscriptdetails} />
+                            <ReviewScriptDetail script_name={this.state.script_name} data={this.state.listscriptdetails} />
                         </Col>
                     </Row>
 

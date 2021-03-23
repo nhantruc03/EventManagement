@@ -16,7 +16,7 @@ class edit extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data:{description:''}
+            data: { description: '' }
         }
     }
 
@@ -32,7 +32,7 @@ class edit extends Component {
             '_id': this.props.data._id,
             'noinfo': false
         }
-        
+
         this.props.onUpdate(data)
         this.props.onClose()
     }
@@ -64,12 +64,12 @@ class edit extends Component {
                 {...formItemLayout}
                 onFinish={(e) => this.onFinish(e)}
                 layout="vertical"
-                initialValues={ this.state.data}
+                initialValues={this.state.data}
             >
                 <Row>
-                    <Col span={18}>
+                    <Col span={24}>
                         <Row>
-                            <Col sm={24} md={12}>
+                            <Col sm={24} lg={9}>
                                 <Title level={5}>Mốc thời gian</Title>
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
@@ -80,7 +80,7 @@ class edit extends Component {
                                     <TimePicker format="HH:mm" placeholder="Chọn giờ..." />
                                 </Form.Item>
                             </Col>
-                            <Col sm={24} md={12}>
+                            <Col sm={24} lg={9}>
                                 <Title level={5}>Tiêu đề</Title>
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
@@ -91,25 +91,24 @@ class edit extends Component {
                                     <Input placeholder="Tên kịch bản..." />
                                 </Form.Item>
                             </Col>
+                            <Col sm={24} lg={6} style={{ padding: '45px 0 0 0' }}>
+                                <Button style={{ width: '50%' }} onClick={this.onClose} className="back">Hủy</Button>
+                                <Button style={{ width: '50%' }} htmlType="submit" className="add">Lưu</Button>
+
+                            </Col>
                         </Row>
                         <Title level={5}>Nội dung</Title>
                         <Form.Item
                             wrapperCol={{ sm: 24 }}
-                            style={{ width: "90%" }}
+                            style={{ width: "100%" }}
                             name="description"
                             rules={[{ required: true, message: 'Cần nhập mô tả kịch bản' }]}
                         >
                             <ReactQuill theme="snow" />
                         </Form.Item>
                     </Col>
-                    <Col span={6} style={{ margin: 'auto' }}>
-                        <Form.Item wrapperCol={{ span: 24, offset: 9 }}>
-                            <Button onClick={this.onClose} className="back">Hủy</Button>
-                            <Button htmlType="submit" className="add">Lưu</Button>
-                        </Form.Item>
-                    </Col>
                 </Row>
-            </Form>
+            </Form >
         )
     }
 

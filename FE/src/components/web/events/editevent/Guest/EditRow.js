@@ -65,9 +65,9 @@ class EditRow extends Component {
                 layout="vertical"
             >
                 <Row>
-                    <Col span={3}>
+                    <Col span={5} style={{ padding: '0 10px' }}>
                         <Form.Item
-                            wrapperCol={{ sm: 20 }}
+                            wrapperCol={{ sm: 24 }}
                             name="name"
                             hasFeedback
                             rules={[{ required: true, message: 'Cần nhập tên!' }]}
@@ -75,9 +75,9 @@ class EditRow extends Component {
                             <Input placeholder="Nhập tên..." />
                         </Form.Item>
                     </Col>
-                    <Col span={5}>
+                    <Col span={5} style={{ padding: '0 10px' }}>
                         <Form.Item
-                            wrapperCol={{ sm: 20 }}
+                            wrapperCol={{ sm: 24 }}
                             name="phone"
                             hasFeedback
                             rules={[{ required: true, message: 'Cần nhập số điện thoại!' }, { min: 10, message: 'Số điện thoại phải có ít nhất 10 chữ số' }]}
@@ -85,9 +85,9 @@ class EditRow extends Component {
                             <Input placeholder="Nhập số điện thoại" />
                         </Form.Item>
                     </Col>
-                    <Col span={5}>
+                    <Col span={5} style={{ padding: '0 10px' }}>
                         <Form.Item
-                            wrapperCol={{ sm: 20 }}
+                            wrapperCol={{ sm: 24 }}
                             name="email"
                             hasFeedback
                             rules={[{ required: true, type: 'email', message: 'Cần nhập email!' }]}
@@ -95,9 +95,9 @@ class EditRow extends Component {
                             <Input placeholder="Nhập email" />
                         </Form.Item>
                     </Col>
-                    <Col span={7}>
+                    <Col span={5} style={{ padding: '0 10px' }}>
                         <Form.Item
-                            wrapperCol={{ sm: 20 }}
+                            wrapperCol={{ sm: 24 }}
                             name="guestTypeId"
                             hasFeedback
                             rules={[{ required: true, message: 'Cần chọn loại khách mời!' }]}
@@ -107,7 +107,7 @@ class EditRow extends Component {
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={4}>
+                    <Col span={4} style={{ textAlign: 'center' }}>
                         <Button onClick={() => this.cancle()} className="back" >
                             Hủy
                         </Button>

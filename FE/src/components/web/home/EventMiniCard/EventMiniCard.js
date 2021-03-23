@@ -12,7 +12,7 @@ class EventMiniCard extends Component {
                         hoverable
                     >
                         <div className="flex-container-row">
-                            <img style={{ maxWidth: '100px' }} src={`/api/images/${this.props.data.posterUrl}`} alt="event posterUrl"></img>
+                            <img style={{ maxWidth: '129px' }} src={`/api/images/${this.props.data.posterUrl}`} alt="event posterUrl"></img>
                             <div style={{ display: 'grid', marginLeft: '10px' }}>
                                 <Title className="cut-text" level={3}>{this.props.data.name}</Title>
 
@@ -31,7 +31,7 @@ class EventMiniCard extends Component {
                                     </div>
                                 </Row>
 
-                                <p style={{ textDecoration: 'underline' }} className="flex-row-item-right">Xem chi tiết</p>
+                                <p id="home-link-in-card" className="flex-row-item-right">Xem chi tiết</p>
                             </div>
                         </div>
                     </Card>

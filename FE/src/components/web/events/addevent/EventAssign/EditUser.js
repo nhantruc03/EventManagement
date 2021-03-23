@@ -71,9 +71,9 @@ class EditUser extends Component {
                 layout="vertical"
             >
                 <Row>
-                    <Col span={5}>
+                    <Col span={5} style={{ padding: '0 10px' }}>
                         <Form.Item
-                            wrapperCol={{ sm: 20 }}
+                            wrapperCol={{ sm: 24 }}
                             name="name"
                             hasFeedback
                             rules={[{ required: true, message: 'Cần nhập tên!' }]}
@@ -82,19 +82,9 @@ class EditUser extends Component {
                             <Input disabled={true} placeholder="Nhập tên..." />
                         </Form.Item>
                     </Col>
-                    {/* <Col span={5}>
+                    <Col span={5} style={{ padding: '0 10px' }}>
                         <Form.Item
-                            wrapperCol={{ sm: 20 }}
-                            name="phone"
-                            hasFeedback
-                            rules={[{ required: true, message: 'Cần nhập số điện thoại!' }, { min: 10, message: 'Số điện thoại phải có ít nhất 10 chữ số' }]}
-                        >
-                            <Input disabled={true} placeholder="Nhập số điện thoại" />
-                        </Form.Item>
-                    </Col> */}
-                    <Col span={5}>
-                        <Form.Item
-                            wrapperCol={{ sm: 20 }}
+                            wrapperCol={{ sm: 24 }}
                             name="email"
                             hasFeedback
                             rules={[{ required: true, type: 'email', message: 'Cần nhập email!' }]}
@@ -102,31 +92,31 @@ class EditUser extends Component {
                             <Input disabled={true} placeholder="Nhập email" />
                         </Form.Item>
                     </Col>
-                    <Col span={5}>
+                    <Col span={5} style={{ padding: '0 10px' }}>
                         <Form.Item
-                            wrapperCol={{ sm: 20 }}
+                            wrapperCol={{ sm: 24 }}
                             name="facultyId"
                             hasFeedback
-                            rules={[{ required: true, message: 'Cần chọn loại khách mời!' }]}
+                            rules={[{ required: true, message: 'Cần chọn ban!' }]}
                         >
-                            <Select placeholder="Chọn loại khách mời">
+                            <Select placeholder="Chọn ban">
                                 {this.props.listFaculty.map((e) => <Option key={e._id}>{e.name}</Option>)}
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={5}>
+                    <Col span={5} style={{ padding: '0 10px' }}>
                         <Form.Item
-                            wrapperCol={{ sm: 20 }}
+                            wrapperCol={{ sm: 24 }}
                             name="roleId"
                             hasFeedback
-                            rules={[{ required: true, message: 'Cần chọn loại khách mời!' }]}
+                            rules={[{ required: true, message: 'Cần chọn vị trí!' }]}
                         >
-                            <Select placeholder="Chọn loại khách mời">
+                            <Select placeholder="Chọn vị trí">
                                 {this.props.listRole.map((e) => <Option key={e._id}>{e.name}</Option>)}
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={4}>
+                    <Col span={4} style={{ textAlign: 'center' }}>
                         <Button onClick={() => this.cancle()} className="back" >
                             Hủy
                         </Button>

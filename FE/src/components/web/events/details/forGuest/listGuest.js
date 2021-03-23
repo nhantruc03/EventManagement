@@ -87,7 +87,6 @@ class listGuest extends Component {
             <div>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <Search multi={true} target={["name", "phone", "email"]} data={this.state.data} getSearchData={(e) => this.getSearchData1(e)} />
-                    <Button style={{ marginLeft: 'auto' }} onClick={() => this.updateGuest()}>Chỉnh sửa</Button>
                 </div>
                 <Table
                     columns={this.state.columnsTable1}
