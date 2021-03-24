@@ -32,11 +32,21 @@ wsServer.on('request', function (request) {
   clients[userID] = connection;
   connection.on('message', function (message) {
     if (message.type === 'utf8') {
+      const dataFromClient = JSON.parse(message.utf8Data);
+      if (dataFromClient.type === 'videocall') {
+        console.log(dataFromClient.roomId)
+        console.log(dataFromClient.userId)
+        
+      }
       for (key in clients) {
         clients[key].sendUTF(message.utf8Data);
       }
     }
   })
+
+  connection.on('close', function (connection) {
+    delete clients[userID];
+  });
 })
 // about WebSocket
 
@@ -110,9 +120,9 @@ app.post("/api/upload-resources/:id", (req, res) => {
   const uniqueSuffix = Date.now()
   let filename = uniqueSuffix + '-' + req.files.file.name;
   // Use the mv() method to place the file somewhere on your server
-  if (!fs.existsSync(`./resources/${req.params.id}`)){
+  if (!fs.existsSync(`./resources/${req.params.id}`)) {
     fs.mkdirSync(`./resources/${req.params.id}`);
-}
+  }
   sampleFile.mv(`./resources/${req.params.id}/` + filename, function (err) {
     if (err)
       return res.status(500).send(err);

@@ -16,6 +16,7 @@ import {
     message,
     Breadcrumb,
     Image,
+    Tabs,
 } from "antd";
 import {
     UploadOutlined,
@@ -32,6 +33,7 @@ import GroupView from "./Group/groupView";
 import { w3cwebsocket } from 'websocket';
 const client = new w3cwebsocket('ws://localhost:3001');
 const { Option } = Select;
+const { TabPane } = Tabs;
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -355,7 +357,7 @@ class editevent extends Component {
                                     <Form.Item
                                         wrapperCol={{ sm: 24 }}
                                         name="eventTypeId"
-                                        label={<Title level={4}>Hình thức</Title>}
+                                        label={<Title className="normalLabel" level={4}>Hình thức</Title>}
                                         hasFeedback
                                         rules={[{ required: true, message: 'Cần chọn hình thức sự kiện!' }]}
                                     >
@@ -367,7 +369,7 @@ class editevent extends Component {
                                     <Form.Item
                                         wrapperCol={{ sm: 24 }}
                                         name="tagId"
-                                        label={<Title level={4}>Tags</Title>}
+                                        label={<Title className="normalLabel" level={4}>Tags</Title>}
                                         hasFeedback
                                     // rules={[{ message: 'Cần chọn ban tổ chức!' }]}
                                     >
@@ -384,59 +386,7 @@ class editevent extends Component {
                                             {this.state.listtags.map((e, key) => <Option key={e._id}>{e.name}</Option>)}
                                         </Select>
                                     </Form.Item>
-                                </Col>
-                                <Col className="event-col" sm={12} lg={6}>
-                                    <Form.Item
-                                        wrapperCol={{ sm: 24 }}
-                                        name="name"
-                                        label={<Title className="normalLabel" level={4}>Tên sự kiện</Title>}
-                                        rules={[{ required: true, message: 'Cần nhập tên sự kiện' }]}
-                                    >
-                                        <Input placeholder="Tên sự kiện..." />
-                                    </Form.Item>
 
-                                    <Form.Item
-                                        wrapperCol={{ sm: 24 }}
-                                        name="description"
-                                        label={<Title className="normalLabel" level={4}>Thông tin</Title>}
-                                        rules={[{ required: true, message: 'Cần nhập thông tin' }]}
-                                    >
-                                        <Input.TextArea rows={4} placeholder="Eg.mô tả yêu cầu" />
-                                    </Form.Item>
-                                </Col>
-                                <Col className="event-col" sm={12} lg={6}>
-                                    <Row >
-                                        <Col span={12}>
-                                            <Form.Item
-                                                wrapperCol={{ sm: 22 }}
-                                                label={<Title className="normalLabel" level={4}>Ngày</Title>}
-                                                rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
-                                                name="startDate"
-                                            >
-                                                <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày bắt đầu..." />
-                                            </Form.Item>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Form.Item
-                                                wrapperCol={{ sm: 24 }}
-                                                label={<Title className="normalLabel" level={4}>Giờ</Title>}
-                                                rules={[{ required: true, message: 'Cần chọn giờ bắt đầu!' }]}
-                                                name="startTime"
-                                            >
-                                                <TimePicker format="HH:mm" placeholder="Chọn giờ..." />
-                                            </Form.Item>
-                                        </Col>
-                                    </Row>
-                                    <Form.Item
-                                        wrapperCol={{ sm: 24 }}
-                                        name="address"
-                                        label={<Title className="normalLabel" level={4}>Địa điểm</Title>}
-                                        rules={[{ required: true, message: 'Cần nhập địa điểm' }]}
-                                    >
-                                        <Input placeholder="Địa điểm..." />
-                                    </Form.Item>
-                                </Col>
-                                <Col className="event-col" sm={12} lg={6}>
                                     <Title className="normalLabel" level={4}>Ảnh đại diện hiện tại</Title>
                                     <div style={{ widht: '100%', textAlign: 'center' }}>
                                         <Image style={{ maxWidth: '110px' }} src={`/api/images/${this.state.data.posterUrl}`}></Image>
@@ -478,25 +428,97 @@ class editevent extends Component {
                                         </Upload>
                                     </Form.Item>
                                 </Col>
-                                <Col span={24}>
-                                    <div style={{ textAlign: 'center' }}>
-                                        <div >
-                                            <Button
-                                                onClick={this.goBack}
-                                                className="back"
-                                                style={{ marginRight: 20 }}
+                                <Col className="event-col" sm={12} lg={6}>
+                                    <Form.Item
+                                        wrapperCol={{ sm: 24 }}
+                                        name="name"
+                                        label={<Title className="normalLabel" level={4}>Tên sự kiện</Title>}
+                                        rules={[{ required: true, message: 'Cần nhập tên sự kiện' }]}
+                                    >
+                                        <Input placeholder="Tên sự kiện..." />
+                                    </Form.Item>
+
+                                    <Form.Item
+                                        wrapperCol={{ sm: 24 }}
+                                        name="description"
+                                        label={<Title className="normalLabel" level={4}>Thông tin</Title>}
+                                        rules={[{ required: true, message: 'Cần nhập thông tin' }]}
+                                    >
+                                        <Input.TextArea rows={5} placeholder="Eg.mô tả yêu cầu" />
+                                    </Form.Item>
+
+                                    <Row >
+                                        <Col span={12}>
+                                            <Form.Item
+                                                wrapperCol={{ sm: 22 }}
+                                                label={<Title className="normalLabel" level={4}>Ngày</Title>}
+                                                rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
+                                                name="startDate"
                                             >
-                                                Hủy
-                                        </Button>
-                                            <Button htmlType="submit" className="add" >
-                                                Tạo mới
-                                        </Button>
-                                        </div>
-                                    </div>
+                                                <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày bắt đầu..." />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col span={12}>
+                                            <Form.Item
+                                                wrapperCol={{ sm: 24 }}
+                                                label={<Title className="normalLabel" level={4}>Giờ</Title>}
+                                                rules={[{ required: true, message: 'Cần chọn giờ bắt đầu!' }]}
+                                                name="startTime"
+                                            >
+                                                <TimePicker format="HH:mm" placeholder="Chọn giờ..." />
+                                            </Form.Item>
+                                        </Col>
+                                    </Row>
+                                    <Form.Item
+                                        wrapperCol={{ sm: 24 }}
+                                        name="address"
+                                        label={<Title className="normalLabel" level={4}>Địa điểm</Title>}
+                                        rules={[{ required: true, message: 'Cần nhập địa điểm' }]}
+                                    >
+                                        <Input placeholder="Địa điểm..." />
+                                    </Form.Item>
+                                    <Row>
+                                        <Col span={24} style={{ marginTop: '20px' }}>
+                                            <div style={{ textAlign: 'center' }}>
+                                                <div >
+                                                    <Button
+                                                        onClick={this.goBack}
+                                                        className="back"
+                                                        style={{ marginRight: 20 }}
+                                                    >
+                                                        Hủy
+                                                    </Button>
+                                                    <Button htmlType="submit" className="add" >
+                                                        Cập nhật
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </Col>
+                                    </Row>
                                 </Col>
+                                <Col className="event-col" sm={24} lg={12}>
+                                    <Tabs defaultActiveKey="1" >
+                                        <TabPane tab='Ban tổ chức' key={1}>
+                                            <EventAssign onAddClick={() => this.setModal2Visible(true)} canDelete={true} update={this.updateEventAssign} eventId={this.props.match.params.id} listRole={this.state.listRole} listFaculty={this.state.listFaculty} data={this.state.listEventAssign}
+                                                availUser={this.state.listusersforevent}
+                                            />
+                                        </TabPane>
+                                        <TabPane tab='Loại khách mời' key={2}>
+                                            <GuestTypeView canDelete={true} eventId={this.props.match.params.id} update={this.updatelistguesttype} data={this.state.listguesttype} />
+                                        </TabPane>
+                                        <TabPane tab='Khách mời' key={3}>
+                                            <GuestView canDelete={true} data={this.state.listguest} listguesttype={this.state.listguesttype} update={this.updateguest} />
+                                        </TabPane>
+                                        <TabPane tab='Phòng hội thoại' key={4}>
+                                            <GroupView canDelete={true} eventId={this.props.match.params.id} update={this.updatelistgroup} data={this.state.listgroups}></GroupView>
+                                        </TabPane>
+
+                                    </Tabs>
+                                </Col>
+
                             </Row>
                         </Form>
-                        <Row>
+                        {/* <Row>
                             <Col sm={24} lg={12} style={{ padding: 10 }}>
                                 <div >
                                     <Title level={4}>Phân công</Title>
@@ -526,7 +548,7 @@ class editevent extends Component {
                                     <GuestView canDelete={true} data={this.state.listguest} listguesttype={this.state.listguesttype} update={this.updateguest} />
                                 </div>
                             </Col>
-                        </Row>
+                        </Row> */}
                     </div>
 
                     <Modal

@@ -36,7 +36,7 @@ class ChatRoom extends Component {
         client.onopen = () => {
             console.log('Connect to ws')
         }
-
+        
         client.onmessage = (message) => {
             const dataFromServer = JSON.parse(message.data);
             if (dataFromServer.type === "sendMessage") {
