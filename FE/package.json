@@ -24,6 +24,8 @@
     "react-to-target-auto-scroll": "^1.0.5",
     "redux": "^4.0.5",
     "simple-peer": "^9.10.0",
+    "streamsaver": "^2.0.5",
+    "styled-components": "^5.2.1",
     "web-vitals": "^0.2.4",
     "websocket": "^1.0.33"
   },

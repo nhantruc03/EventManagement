@@ -25,7 +25,9 @@ const getUniqueID = () => {
 const wsServer = new webSocketServer({
   httpServer: server
 });
+const users = {};
 
+const socketToRoom = {};
 wsServer.on('request', function (request) {
   var userID = getUniqueID();
   const connection = request.accept(null, request.origin);
@@ -33,18 +35,100 @@ wsServer.on('request', function (request) {
   connection.on('message', function (message) {
     if (message.type === 'utf8') {
       const dataFromClient = JSON.parse(message.utf8Data);
-      if (dataFromClient.type === 'videocall') {
-        console.log(dataFromClient.roomId)
-        console.log(dataFromClient.userId)
-        
-      }
-      for (key in clients) {
-        clients[key].sendUTF(message.utf8Data);
+      switch (dataFromClient.type) {
+        case 'join room':
+          const roomID = dataFromClient.message
+          if (users[roomID]) {
+            const length = users[roomID].length;
+            if (length === 4) {
+              let result = JSON.stringify({
+                type: 'room full'
+              })
+              for (key in clients) {
+                clients[key].sendUTF(result);
+              }
+              break;
+            }
+            users[roomID].push(userID);
+          } else {
+            users[roomID] = [userID];
+          }
+          socketToRoom[userID] = roomID;
+          const usersInThisRoom = users[roomID].filter(id => id !== userID);
+          let result = JSON.stringify({
+            type: 'all users',
+            message: usersInThisRoom,
+            currentId: userID
+          })
+          for (key in clients) {
+            if (key === userID) {
+              clients[key].sendUTF(result);
+            }
+
+          }
+          break;
+        case 'sending signal':
+          let userToSignal = dataFromClient.message.userToSignal
+          let signal = dataFromClient.message.signal
+          let callerID = dataFromClient.message.callerID
+          let result2 = JSON.stringify({
+            type: 'user joined',
+            message: {
+              signal: signal,
+              callerID: callerID
+            }
+          })
+          for (key in clients) {
+            if (key === userToSignal) {
+              clients[key].sendUTF(result2);
+            }
+          }
+          break;
+        case 'returning signal':
+          let signal2 = dataFromClient.message.signal
+          let callerID2 = dataFromClient.message.callerID
+          let result3 = JSON.stringify({
+            type: 'receiving returned signal',
+            message: {
+              signal: signal2,
+              id: userID
+            }
+          })
+          for (key in clients) {
+            if (key === callerID2) {
+              clients[key].sendUTF(result3);
+            }
+          }
+          break;
+        default:
+          for (key in clients) {
+            clients[key].sendUTF(message.utf8Data);
+          }
+          break;
       }
     }
   })
 
   connection.on('close', function (connection) {
+    const roomID = socketToRoom[userID];
+    let room = users[roomID];
+    if (room) {
+      console.log('leaver', userID)
+      let result = JSON.stringify({
+        type: 'user disconnected',
+        message: userID
+      })
+
+      room = room.filter(id => id !== userID);
+      users[roomID] = room;
+      room.forEach(e => {
+        clients[e].sendUTF(result);
+      })
+      // for (key in clients) {
+      //   clients[key].sendUTF(result);
+
+      // }
+    }
     delete clients[userID];
   });
 })

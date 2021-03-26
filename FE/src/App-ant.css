@@ -1112,7 +1112,7 @@ label {
 .action-details, .action-details a{
   color: #868686;
   font-weight: 500;
-  font-size: 14px;
+  /* font-size: 14px; */
   line-height: 120%;
 }
 
@@ -1179,4 +1179,74 @@ label {
 
 .checkbox span{
   color: #000000;
+}
+
+.ant-spin-dot-item {
+  background-color: #2A9D8F;
+}
+
+.sidepanel  {
+  width: 35%;
+  z-index: 1;
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+.sidepanel a {
+  transition: 0.3s;
+}
+
+.sidepanel a:hover {
+  color: #f1f1f1;
+}
+
+.sidepanel .closebtn {
+  /* position: absolute; */
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+}
+
+.openbtn {
+  color: #2A9D8F;
+  font-size: 20px;
+  cursor: pointer;
+  border: none;
+}
+
+.openbtn:hover {
+  background-color:#2A9D8F;
+  color: #fff;
+}
+
+.video-container{
+  position: relative;
+  padding: 20px;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  margin: auto;
+  flex-wrap: wrap;
+  background-color: #444;
+  
+}
+
+
+.styled-video{
+  height: 40%;
+  width: 50%;
+}
+
+
+.video-controller {
+  width: fit-content;
+  position: absolute;
+  left: 50%;
+  bottom: 50px;
+  transform: translate(-50%, -50%);
+  visibility: hidden;
+}
+
+.video-container:hover .video-controller {
+  visibility: visible;
 }

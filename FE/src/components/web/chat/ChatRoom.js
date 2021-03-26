@@ -3,10 +3,12 @@ import React, { Component } from 'react';
 import { w3cwebsocket } from 'websocket';
 import ChatMessage from './ChatMessage';
 import {
-    SendOutlined
+    VideoCameraOutlined,
+    SendOutlined,
 } from '@ant-design/icons';
 import { trackPromise } from 'react-promise-tracker';
 import Loader from 'react-loader-spinner';
+import { Link } from 'react-router-dom';
 const client = new w3cwebsocket('ws://localhost:3001');
 class ChatRoom extends Component {
     constructor(props) {
@@ -41,14 +43,13 @@ class ChatRoom extends Component {
             }
 
             client.onmessage = (message) => {
+                console.log('received a message')
                 const dataFromServer = JSON.parse(message.data);
                 if (dataFromServer.type === "sendMessage") {
                     if (dataFromServer.roomId === this.props.roomId) {
-                        // console.log(dataFromServer.message)
                         this.setState({
                             messages: [...this.state.messages, dataFromServer.message]
                         })
-                        // this.refs.messagesEnd.scrollIntoView({ behavior: 'smooth' });
                         if (this.chatbox.current !== null) {
                             this.chatbox.current.scrollTo({ top: this.chatbox.current.scrollHeight, behavior: 'smooth' })
                         }
@@ -61,13 +62,11 @@ class ChatRoom extends Component {
             this.setState({
                 currentUser: obj.id
             })
-
             await this.getData();
-        }
 
-        // this.refs.messagesEnd.scrollIntoView({ behavior: 'smooth' });
-        if (this.chatbox.current !== null) {
-            this.chatbox.current.scrollTo({ top: this.chatbox.current.scrollHeight, behavior: 'smooth' })
+            if (this.chatbox.current !== null) {
+                this.chatbox.current.scrollTo({ top: this.chatbox.current.scrollHeight, behavior: 'smooth' })
+            }
         }
     }
 
@@ -102,14 +101,10 @@ class ChatRoom extends Component {
             message
         }))
 
-        // await this.getData();
-
         this.setState({
             formValue: ''
         })
 
-        // this.refs.messagesEnd.scrollIntoView({ behavior: 'smooth' });
-        // this.chatbox.current.scrollTop = this.chatbox.current.scrollHeight
         if (this.chatbox.current !== null) {
             this.chatbox.current.scrollTo({ top: this.chatbox.current.scrollHeight, behavior: 'smooth' })
         }
@@ -135,10 +130,7 @@ class ChatRoom extends Component {
                             page: this.state.page + 1,
                             messages: [...temp.reverse(), ...this.state.messages]
                         })
-                    }
-
-                    )
-
+                    })
             }
         }
     }
@@ -160,7 +152,7 @@ class ChatRoom extends Component {
     render() {
         return (
             <div className="section">
-                <div ref={this.chatbox} className="ChatBox" onScroll={this.handleScroll}>
+                <div ref={this.chatbox} style={this.props.style} className="ChatBox" onScroll={this.handleScroll}>
                     <div style={{ width: '100%', textAlign: 'center' }}>
                         {this.state.onLoadMore ? <Loader color="#10d8d8" type="ThreeDots" height="20" width="30" /> : null}
                     </div>
@@ -168,12 +160,14 @@ class ChatRoom extends Component {
                     {this.renderMessage()}
                     <span ref="messagesEnd"></span>
                 </div>
-                <form className="chat-form" onSubmit={this.sendMessage}>
-                    <input className="input-chat" value={this.state.formValue} onChange={(e) => this.setFormValue(e.target.value)} placeholder="Hãy chia sẻ ý kiến của bạn" />
-                    {/* <button className="chat-button" type="submit" disabled={!this.state.formValue}>🕊️</button> */}
-                    <button className="chat-button" type="submit" disabled={!this.state.formValue}><SendOutlined /></button>
-                </form>
-            </div>
+                <div className="flex-container-row">
+                    <form className="chat-form" onSubmit={this.sendMessage}>
+                        <input className="input-chat" value={this.state.formValue} onChange={(e) => this.setFormValue(e.target.value)} placeholder="Hãy chia sẻ ý kiến của bạn" />
+                        <button className="chat-button"><Link to={`/event-videocall/${this.props.roomId}`} style={{ color: 'black' }} ><VideoCameraOutlined /></Link></button>
+                        <button className="chat-button" type="submit" disabled={!this.state.formValue}><SendOutlined /></button>
+                    </form>
+                </div>
+            </div >
         );
     }
 }

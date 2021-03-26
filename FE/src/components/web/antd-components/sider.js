@@ -27,7 +27,7 @@ class SiderDemo extends React.Component {
     render() {
         const { collapsed } = this.state;
         return (
-            <Sider width={250} collapsible collapsed={collapsed} onCollapse={this.onCollapse} style={{ backgroundColor: '#002B6D' }}>
+            <Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse} style={{ backgroundColor: '#002B6D' }}>
                 <Title className="logo" level={3}>Event Management!</Title>
                 <Menu selectedKeys={[this.props.location.pathname]} mode="inline" >
                     <Menu.Item key="/" icon={<HomeOutlined />}>
