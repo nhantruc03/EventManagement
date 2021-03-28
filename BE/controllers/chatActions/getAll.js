@@ -21,7 +21,7 @@ const getAll = async (req, res) => {
         .sort({ 'createdAt': -1 })
         .skip(limit * (page - 1))
         .limit(limit)
-        .populate({ path: 'userId', select: 'photoUrl' })
+        .populate({ path: 'userId', select: 'name photoUrl' })
     }
     return res.status(200).json({
       success: true,

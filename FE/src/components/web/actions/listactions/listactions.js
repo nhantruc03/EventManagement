@@ -6,7 +6,8 @@ import AddAction from '../addactions/addactions'
 import { trackPromise } from 'react-promise-tracker';
 import { AUTH } from '../../../env'
 import axios from 'axios';
-import ActionCard from './actionCard';
+import Search from "../../helper/search";
+import ActionColumn from './actionColumn';
 const { Option } = Select;
 const formItemLayout = {
     labelCol: {
@@ -26,7 +27,8 @@ class listactions extends Component {
             currentEvent: null,
             currentActionTypes: [],
             currentFaculties: null,
-            currentActions: []
+            currentActions: [],
+            temp_data: []
         }
     }
 
@@ -171,15 +173,18 @@ class listactions extends Component {
             this.setState({
                 currentActionTypes: actionTypes,
                 currentFaculties: falcuties,
-                currentActions: actions
+                currentActions: actions,
+                temp_data: actions
             })
         }
     }
 
     renderActionsView = (value, keyCol) => {
+        let temp_listActions = this.state.currentActions.filter(e => e.actionTypeId._id === value._id)
         return (
-            <Col sm={24} xl={24 / this.state.currentActions.length} key={keyCol}>
-                <Title level={3}>{value.name}</Title>
+            <Col sm={24} xl={24 / this.state.currentActionTypes.length} key={keyCol}>
+                <ActionColumn title={value.name} listActions={temp_listActions} />
+                {/* <Title level={3}>{value.name}</Title>
                 {this.state.currentActions.map((e, key) => {
                     if (e.actionTypeId._id === value._id) {
                         return (
@@ -188,7 +193,7 @@ class listactions extends Component {
                     } else {
                         return null
                     }
-                })}
+                })} */}
             </Col>
         )
     }
@@ -207,7 +212,7 @@ class listactions extends Component {
 
                     <Button className="add flex-row-item-right" onClick={() => this.setModalVisible2(true)}>
                         +
-                        </Button>
+                    </Button>
                 </div>
             )
 
@@ -216,43 +221,63 @@ class listactions extends Component {
         }
     }
 
+    getSearchData = (data) => {
+        console.log('data', data)
+        this.setState({
+            currentActions: data
+        })
+    }
+
     render() {
         if (this.state.events !== null) {
             return (
                 <Content style={{ margin: "0 16px" }}>
                     <Row style={{ marginLeft: 30, marginRight: 30 }}>
-                        <Col span={24}>
+                        <div style={{ width: '100%' }} className="flex-container-row">
                             <Title
                                 id="home-top-header"
                                 style={{ marginTop: 15 }}
-                                level={3}
+                                level={2}
                             >
-                                Sự kiện
+                                Công việc
                             </Title>
-                        </Col>
+                            <div className="flex-row-item-right">
+                                <div className="flex-container-row">
+                                    <Search
+                                        target={["name", "description"]}
+                                        multi={true}
+                                        data={this.state.temp_data}
+                                        getSearchData={(e) => this.getSearchData(e)}
+                                    />
+                                    <Button disabled={this.state.currentEvent ? false : true} className="add" style={{ marginLeft: '20px' }} onClick={() => this.setModalVisible(true)}>
+                                        Thêm công việc
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
                     </Row>
                     <Row style={{ marginLeft: 30, marginRight: 30 }}>
-                        <Col span={12}>
-                            {/* <Search
-                                target="tieude"
-                                data={this.props.data}
-                                getSearchData={(e) => this.getSearchData(e)}
-                            /> */}
-                            <Select
-                                showSearch
-                                style={{ width: '100%' }}
-                                onChange={this.onchangeEvent}
-                                filterOption={(input, option) =>
-                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                }
-                            >
-                                {this.state.events.map((e) => <Option key={e._id}>{e.name}</Option>)}
-                            </Select>
-                        </Col>
-                        <Col span={12}>
-                            <Button disabled={this.state.currentEvent ? false : true} className="add" style={{ float: "right" }} onClick={() => this.setModalVisible(true)}>
-                                Thêm công việc
-                            </Button>
+                        <Col span={24}>
+                            <div className="flex-container-row action-select-event">
+                                <Title
+                                    id="home-top-header"
+                                    style={{ marginTop: 15 }}
+                                    level={3}
+                                >
+                                    Sự kiện
+                                </Title>
+                                <Select
+                                    className="flex-row-item-right"
+                                    showSearch
+                                    style={{ width: '80%' }}
+                                    onChange={this.onchangeEvent}
+                                    filterOption={(input, option) =>
+                                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                    }
+                                >
+                                    {this.state.events.map((e) => <Option key={e._id}>{e.name}</Option>)}
+                                </Select>
+                            </div>
                         </Col>
                     </Row>
                     <div style={{ padding: '30px' }}>
@@ -284,7 +309,7 @@ class listactions extends Component {
                     >
                         {this.renderModel2()}
                     </Modal>
-                </Content>
+                </Content >
             );
         }
         else {

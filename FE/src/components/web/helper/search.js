@@ -40,8 +40,7 @@ class ss extends Component {
         return (
             <Row >
                 <Col >
-                    <Search placeholder="Tìm kiếm" style={{ width: '100%', marginBottom: 15, borderTopLeftRadius: '10px' }} onChange={(e) => this.onChange(e)}></Search>
-
+                    <Search placeholder="Tìm kiếm..." style={{ width: '100%', borderTopLeftRadius: '10px' }} onChange={(e) => this.onChange(e)}></Search>
                 </Col>
 
             </Row>

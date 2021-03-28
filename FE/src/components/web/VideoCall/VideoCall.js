@@ -23,7 +23,7 @@ class VideoCall extends Component {
         this.state = {
             peers: [],
             peersRef: [],
-            video: true,
+            video: false,
             audio: true,
             stream: null
         }
@@ -194,17 +194,31 @@ class VideoCall extends Component {
     }
 
     stopVideo = () => {
+        let temp_video = !this.state.video
         let temp = this.state.stream
-        temp.getVideoTracks()[0].enabled = !(temp.getVideoTracks()[0].enabled);
+        if (temp.getVideoTracks()[0]) {
+            temp.getVideoTracks()[0].enabled = !(temp.getVideoTracks()[0].enabled);
+        } else {
+            try {
+                navigator.mediaDevices.getUserMedia({ video: temp_video ? videoConstraints : false, audio: this.state.audio }).then(stream => {
+                    temp = stream
+                })
+            }
+            catch (err) {
+                console.log(err)
+            }
+        }
         this.setState({
-            stream: temp
+            stream: temp,
+            video: !this.state.video
         })
     }
     stopAudio = () => {
         let temp = this.state.stream;
         temp.getAudioTracks()[0].enabled = !(temp.getAudioTracks()[0].enabled);
         this.setState({
-            stream: temp
+            stream: temp,
+            audio: !this.state.audio
         })
     }
 
@@ -212,9 +226,6 @@ class VideoCall extends Component {
     render() {
         return (
             <div className="video-container">
-                {/* <Button onClick={this.stopVideo}>video</Button>
-                <Button onClick={this.stopAudio}>audio</Button> */}
-                {/* <div style={{ width: '100%', height: '80%' }}></div> */}
                 <video className="styled-video" ref={this.userVideo} muted={true} autoPlay playsInline />
                 {
                     this.state.peers.map((peer, index) => {
@@ -225,12 +236,13 @@ class VideoCall extends Component {
                 }
 
                 <div className="video-controller">
-                    <Button className="openbtn" onClick={this.stopVideo}><VideoCameraOutlined /></Button>
-                    <Button className="openbtn" onClick={this.stopAudio}><SoundOutlined /></Button>
-                    <Button className="openbtn" onClick={this.props.changeStatusChatRoom}><MessageOutlined /></Button>
+                    <Button className="openbtn" onClick={this.stopVideo}>{this.state.video ? null : <div className="red-slash" />}<VideoCameraOutlined /></Button>
+                    <Button className="openbtn" onClick={this.stopAudio}>{this.state.audio ? null : <div className="red-slash" />}<SoundOutlined /></Button>
+                    <Button className="openbtn" onClick={this.props.changeStatusChatRoom}>{this.props.StatusChatRoom ? null : <div className="red-slash" />}<MessageOutlined /></Button>
                 </div>
             </div >
         );
+
     }
 }
 

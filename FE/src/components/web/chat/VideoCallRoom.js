@@ -23,12 +23,10 @@ class VideoCallRoom extends Component {
         })
     }
     openNav = () => {
-        // document.getElementById("mySidepanel").style.width = "250px";
         this.mySidepanel.current.style.width = "35%"
     }
 
     closeNav = () => {
-        // document.getElementById("mySidepanel").style.width = "0";
         this.mySidepanel.current.style.width = "0"
     }
     mySidepanel = React.createRef()
@@ -55,7 +53,7 @@ class VideoCallRoom extends Component {
                         <div className="flex-container-row" style={{ width: '100%', alignItems: 'unset' }}>
                             <VideoCall StatusChatRoom={this.state.currentChat} changeStatusChatRoom={this.onChange} roomId={this.props.match.params.id} />
                             {/* <Button className="flex-row-item-right openbtn" onClick={}><CommentOutlined /> </Button> */}
-                            <div style={{ height: '100%', padding: '10px' }} ref={this.mySidepanel} id="mySidepanel" className="sidepanel">
+                            <div style={{ height: '100%', padding: '10px', maxHeight: '890px' }} ref={this.mySidepanel} id="mySidepanel" className="sidepanel">
                                 <Tabs className="chat-tabs" defaultActiveKey="1" >
                                     <TabPane style={{ paddingBottom: '20px' }} tab="Kênh chat" key={1}>
                                         <ChatRoom style={{ maxHeight: 'unset' }} roomId={this.props.match.params.id} />

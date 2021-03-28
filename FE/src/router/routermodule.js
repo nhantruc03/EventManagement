@@ -13,6 +13,7 @@ import { AppRoute } from './AppRoute';
 
 import trangchu from '../components/web/home/home';
 import thongtincanhan from '../components/web/thongtincanhan/thongtincanhan';
+import updatePass from '../components/web/thongtincanhan/updatePass';
 
 import addusers from '../components/web/users/add';
 import editusers from '../components/web/users/edit';
@@ -62,12 +63,13 @@ class router extends Component {
             <div>
                 <SecureRouteStaff exact path="/" component={trangchu} layout={Page} />
 
-              
+
 
                 <AppRoute exact path="/login" component={login} layout={loginpage} />
                 <AppRoute exact path="/khongcoquyen" component={loginfail} layout={Page} />
 
                 <SecureRouteStaff exact path="/thongtincanhan" component={thongtincanhan} layout={Page} />
+                <SecureRouteStaff exact path="/updatePassword" component={updatePass} layout={Page} />
 
                 <SecureRouteAdmin exact path="/listusers" component={users} layout={Page} />
                 <SecureRouteAdmin exact path="/addusers" component={addusers} layout={Page} />
@@ -101,7 +103,7 @@ class router extends Component {
                 <SecureRouteAdmin exact path="/events/:id" component={eventDetails} layout={Page} />
                 <SecureRouteAdmin exact path="/editevent/:id" component={editevent} layout={Page} />
                 <SecureRouteAdmin exact path="/addevents" component={addevents} layout={Page} />
-                
+
                 <SecureRouteAdmin exact path="/addscripts/:id" component={addscripts} layout={Page} />
                 <SecureRouteAdmin exact path="/editscripts/:id" component={editscripts} layout={Page} />
 

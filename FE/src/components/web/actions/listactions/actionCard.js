@@ -36,9 +36,6 @@ class actionCard extends Component {
     async componentDidMount() {
         this._isMounted = true;
 
-        // const login = localStorage.getItem('login');
-        // const obj = JSON.parse(login);
-
         const [subActions, resources] = await trackPromise(Promise.all([
             axios.post('/api/sub-actions/getAll', { actionId: this.props.data._id }, {
                 headers: {
@@ -72,6 +69,12 @@ class actionCard extends Component {
                     totalSubAction: subActions,
                     resources: resources
                 })
+
+                let temp = {
+                    _id: this.props.data._id,
+                    total: subActions.length
+                }
+                this.props.addTotalSubOfAction(temp)
             }
         }
     }
@@ -105,7 +108,7 @@ class actionCard extends Component {
                                 <p >{this.state.completeSubAction.length}/{this.state.totalSubAction.length}</p>
                             </div>
                         </Row>
-{/* 
+                        {/* 
                         <div className="flex-container-row" style={{ marginTop: '10px' }}>
                             <div>Độ ưu tiên</div>
                             <div className="flex-row-item-right">{this.props.data.priorityId.name}</div>

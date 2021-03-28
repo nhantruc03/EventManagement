@@ -18,7 +18,10 @@ const chatActions = new Schema(
         },
         text: {
             type: String,
-            required: true,
+            index: true
+        },
+        resourceUrl: {
+            type: String,
             index: true
         },
         isDeleted: {

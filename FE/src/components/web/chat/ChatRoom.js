@@ -3,12 +3,14 @@ import React, { Component } from 'react';
 import { w3cwebsocket } from 'websocket';
 import ChatMessage from './ChatMessage';
 import {
+    UploadOutlined,
     VideoCameraOutlined,
     SendOutlined,
 } from '@ant-design/icons';
 import { trackPromise } from 'react-promise-tracker';
 import Loader from 'react-loader-spinner';
 import { Link } from 'react-router-dom';
+import { Upload } from 'antd';
 const client = new w3cwebsocket('ws://localhost:3001');
 class ChatRoom extends Component {
     constructor(props) {
@@ -76,24 +78,51 @@ class ChatRoom extends Component {
 
     sendMessage = async (e) => {
         e.preventDefault();
-        // console.log(e)
 
         const login = localStorage.getItem('login');
         const obj = JSON.parse(login);
-        // console.log(obj)
-        // console.log('adfasfsaf')
+
         var message = {
             text: this.state.formValue,
-            userID: { _id: obj.id, photoUrl: obj.photoUrl },
+            userID: { _id: obj.id, name: obj.name, photoUrl: obj.photoUrl },
             groupID: this.props.roomId
         }
-        // console.log(message)
-        // await this.props.firestore.collection('chats').doc(this.props.roomId).collection('messages').add(message)
+
         await axios.post('/api/chat-message', message)
             .then((res) => {
                 console.log(res.data.data)
             })
-        // console.log(temp)
+
+
+        client.send(JSON.stringify({
+            type: "sendMessage",
+            roomId: this.props.roomId,
+            message
+        }))
+
+        this.setState({
+            formValue: ''
+        })
+
+        if (this.chatbox.current !== null) {
+            this.chatbox.current.scrollTo({ top: this.chatbox.current.scrollHeight, behavior: 'smooth' })
+        }
+    }
+
+    sendResources = async (e) => {
+        const login = localStorage.getItem('login');
+        const obj = JSON.parse(login);
+
+        var message = {
+            resourceUrl: e.url,
+            userID: { _id: obj.id, photoUrl: obj.photoUrl, name: obj.name },
+            groupID: this.props.roomId
+        }
+
+        await axios.post('/api/chat-message', message)
+            .then((res) => {
+                console.log(res.data.data)
+            })
 
         client.send(JSON.stringify({
             type: "sendMessage",
@@ -117,11 +146,7 @@ class ChatRoom extends Component {
                 this.setState({
                     onLoadMore: true
                 })
-                // console.log(this.state.onLoadMore)
-                // const temp = await axios.post('/api/chat-message/getAll?page=1&limit=15', { groupID: this.props.roomId })
-                // .then((res) =>
-                //     res.data.data
-                // )
+
                 await axios.post(`/api/chat-message/getAll?page=${this.state.page + 1}&limit=15`, { groupID: this.props.roomId })
                     .then((res) => {
                         const temp = res.data.data;
@@ -164,6 +189,21 @@ class ChatRoom extends Component {
                     <form className="chat-form" onSubmit={this.sendMessage}>
                         <input className="input-chat" value={this.state.formValue} onChange={(e) => this.setFormValue(e.target.value)} placeholder="Hãy chia sẻ ý kiến của bạn" />
                         <button className="chat-button"><Link to={`/event-videocall/${this.props.roomId}`} style={{ color: 'black' }} ><VideoCameraOutlined /></Link></button>
+                        <Upload
+                            className="flex-row-item-right"
+                            fileList={this.state.fileList}
+                            action={`/api/upload-resources/${this.props.roomId}`}
+                            showUploadList={false}
+                            onChange={(info) => {
+                                // file.status is empty when beforeUpload return false
+                                if (info.file.status === 'done') {
+                                    this.sendResources(info.file.response)
+                                }
+                            }}
+                            maxCount={1}
+                        >
+                            <button onClick={(e) => { e.preventDefault() }} className="chat-button"><UploadOutlined /></button>
+                        </Upload>
                         <button className="chat-button" type="submit" disabled={!this.state.formValue}><SendOutlined /></button>
                     </form>
                 </div>

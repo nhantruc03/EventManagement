@@ -30,7 +30,8 @@ class header extends Component {
             modal2Visible: false,
             model: { dondathang: [] },
             notifications: [],
-            logout: false
+            logout: false,
+            info_pass: false
         }
     }
 
@@ -93,6 +94,15 @@ class header extends Component {
             auth.logout();
             this.setState({
                 logout: true
+            })
+        }
+        else if (e.key === 'info') {
+            this.setState({
+                info: true
+            })
+        } else if (e.key === 'info-pass') {
+            this.setState({
+                info_pass: true
             })
         }
     }
@@ -247,74 +257,69 @@ class header extends Component {
     render() {
         if (this.state.logout) {
             return (
-                <Redirect to="login" />
+                <Redirect to="/login" />
             )
         }
-        return (
-            <Header className="site-layout-background" style={{ padding: 15 }} >
-                <div className="flex-container-row">
+        else if (this.state.info) {
+            return (
+                <Redirect to="/thongtincanhan" />
+            )
+        }
+        else if (this.state.info_pass) {
+            return (
+                <Redirect to="/updatePassword" />
+            )
+        }
+        else {
 
-                    {/* <div style={{ float: 'right', marginBottom: 20, marginRight: 20, display: 'inline-grid' }}> */}
-                    <div className="flex-row-item-right">
+            return (
+                <Header className="site-layout-background" style={{ padding: 15 }} >
+                    <div className="flex-container-row">
+                        {/* <div style={{ float: 'right', marginBottom: 20, marginRight: 20, display: 'inline-grid' }}> */}
+                        <div className="flex-row-item-right">
 
-                        <Dropdown overlayClassName='dropdown' overlay={this.renderNotifications} placement='bottomRight'>
-                            <Badge count={this.state.notifications.filter(e => e.status === false).length}>
-                                <Button style={{ border: 'none' }}><BellOutlined /></Button>
-                            </Badge>
-                        </Dropdown>
-                        {this.state.currentUser ?
-                            <Dropdown
-                                overlay={
-                                    <Menu onClick={(e) => this.handleButtonClick(e)}>
-                                        <Menu.Item key="1" icon={<UserOutlined />}>
-                                            Thông tin cá nhân
-                                        </Menu.Item>
-                                        <Menu.Item key="logout" icon={<UserOutlined />}>
-                                            Đăng xuất
-                                        </Menu.Item>
-                                    </Menu>
-                                }>
-                                <Button id="button-account" >
-                                    {this.state.currentUser.name} <Avatar style={{ marginLeft: '10px' }} className="my-2" src={`/api/images/${this.state.currentUser.photoUrl}`} />
-                                </Button>
+                            <Dropdown overlayClassName='dropdown' overlay={this.renderNotifications} placement='bottomRight'>
+                                <Badge count={this.state.notifications.filter(e => e.status === false).length}>
+                                    <Button style={{ border: 'none' }}><BellOutlined /></Button>
+                                </Badge>
                             </Dropdown>
-                            : null}
+                            {this.state.currentUser ?
+                                <Dropdown
+                                    overlay={
+                                        <Menu onClick={(e) => this.handleButtonClick(e)}>
+                                            <Menu.Item key="info" icon={<UserOutlined />}>
+                                                Thông tin cá nhân
+                                            </Menu.Item>
+                                            <Menu.Item key="info-pass" icon={<UserOutlined />}>
+                                                Cập nhật mật khẩu
+                                            </Menu.Item>
+                                            <Menu.Item key="logout" icon={<UserOutlined />}>
+                                                Đăng xuất
+                                            </Menu.Item>
+                                        </Menu>
+                                    }>
+                                    <Button id="button-account" >
+                                        {this.state.currentUser.name} <Avatar style={{ marginLeft: '10px' }} className="my-2" src={`/api/images/${this.state.currentUser.photoUrl}`} />
+                                    </Button>
+                                </Dropdown>
+                                : null}
+                        </div>
                     </div>
-                </div>
+                    {/* <Modal
+                            title='Chi tiết đơn mua hàng'
+                            centered
+                            visible={this.state.modal2Visible}
+                            onOk={() => this.setModal2Visible(false)}
+                            onCancel={() => this.setModal2Visible(false)}
+                            width='30%'
+                            footer={false}
+                        >
+                             {this.renderModel(this.state.model)}
+                        </Modal>  */}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                {/* <Modal
-                        title='Chi tiết đơn mua hàng'
-                        centered
-                        visible={this.state.modal2Visible}
-                        onOk={() => this.setModal2Visible(false)}
-                        onCancel={() => this.setModal2Visible(false)}
-                        width='30%'
-                        footer={false}
-                    >
-                         {this.renderModel(this.state.model)}
-                    </Modal>  */}
-
-            </Header >
-        );
-
-
+                </Header >
+            );
+        }
     }
 }
 
