@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import auth from '../../../router/auth';
 import { trackPromise } from 'react-promise-tracker';
 import { LoadingIndicator } from '../helper/Loading';
-import { AUTH } from '../../env'
+// import { AUTH } from '../../env'
 // import MaskGroup from './public/MaskGroup.png';
 class login extends Component {
     constructor(props) {
@@ -31,8 +31,8 @@ class login extends Component {
                 if (res.data.success === true) {
                     auth.login(res.data.data);
                     if (auth.isAuthenticatedAdmin() === true || auth.isAuthenticatedDoctor() === true || auth.isAuthenticatedPharmacist() === true || auth.isAuthenticatedStaff() === true) {
-                        var login = { AUTH }.AUTH
-                        if (login !== '') {
+                        var login = localStorage.getItem('login');
+                        if (login !== null) {
                             this.props.history.push("/");
                         }
 

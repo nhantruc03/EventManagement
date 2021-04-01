@@ -50,7 +50,7 @@ class edit extends Component {
                 )
         ]))
         const [event, scriptdetails] = await trackPromise(Promise.all([
-            Axios.get('/api/events/' + script.eventId, {
+            Axios.get('/api/events/' + script.eventId._id, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }

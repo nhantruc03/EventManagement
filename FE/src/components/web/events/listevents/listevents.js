@@ -15,7 +15,8 @@ class listevents extends Component {
             data_future: [],
             data_past: [],
             data_ongoing: [],
-            SearchData: []
+            SearchData: [],
+            currentUser: JSON.parse(localStorage.getItem('login'))
         }
     }
 
@@ -103,11 +104,15 @@ class listevents extends Component {
                             getSearchData={(e) => this.getSearchData(e)}
                         />
                     </Col>
-                    <Col span={12}>
-                        <Button className="add" style={{ float: "right" }}>
-                            <Link to="/addevents">Thêm sự kiện</Link>
-                        </Button>
-                    </Col>
+                    {this.state.currentUser.role === 'Admin' ?
+                        <Col span={12}>
+                            <Button className="add" style={{ float: "right" }}>
+                                <Link to="/addevents">Thêm sự kiện</Link>
+                            </Button>
+                        </Col>
+                        : null
+                    }
+
                 </Row>
 
                 <Row>

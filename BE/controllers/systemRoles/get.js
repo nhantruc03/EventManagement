@@ -1,13 +1,10 @@
-const Scripts = require('../../models/scripts')
+const systemRoles = require('../../models/systemRoles')
 
 const get = async (req, res) => {
   try {
     const query = { _id: req.params.id, isDeleted: false }
 
-    const doc = await Scripts.findOne(query)
-      .populate({ path: 'eventId', select: 'startDate startTime' })
-      .populate({ path: 'writerId', select: 'name' })
-      .populate({ path: 'forId', select: 'name' })
+    const doc = await systemRoles.findOne(query)
 
     return res.status(200).json({
       success: true,

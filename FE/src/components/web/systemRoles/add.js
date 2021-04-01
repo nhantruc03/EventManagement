@@ -16,7 +16,7 @@ const formItemLayout = {
 };
 class add extends Component {
     onSubmit = async (e) => {
-        await trackPromise(Axios.post('/api/event-types', e, {
+        await trackPromise(Axios.post('/api/system-roles', e, {
             headers: {
                 'Authorization': { AUTH }.AUTH
             }
@@ -41,10 +41,10 @@ class add extends Component {
                 < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }}>
                     <Breadcrumb separator=">">
                         <Breadcrumb.Item >
-                            <Link to="/events">Sự kiện</Link>
+                            <Link to="/listsystemroles">Danh sách</Link>
                         </Breadcrumb.Item>
                         <Breadcrumb.Item>
-                            Thêm mới sự kiện
+                            Chỉnh sửa quyền
                             </Breadcrumb.Item>
                     </Breadcrumb>
                 </Row>
@@ -58,11 +58,11 @@ class add extends Component {
                         <Form.Item
                             wrapperCol={{ sm: 24 }}
                             name="name"
-                            label={<Title level={4}>Tên hình thức sự kiện</Title>}
+                            label={<Title level={4}>Tên quyền</Title>}
                             hasFeedback
-                            rules={[{ required: true, message: 'Cần nhập tên hình thức sự kiện!' }]}
+                            rules={[{ required: true, message: 'Cần nhập tên quyền!' }]}
                         >
-                            <Input placeholder="Nhập tên hình thức sự kiện..."></Input>
+                            <Input placeholder="Nhập tên quyền..."></Input>
                         </Form.Item>
                         <br></br>
                         <Form.Item wrapperCol={{ span: 24, offset: 9 }}>

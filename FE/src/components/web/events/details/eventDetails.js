@@ -46,6 +46,7 @@ class eventDetails extends Component {
             listRole: [],
             listFaculty: [],
             listGroups: [],
+            currentUser: JSON.parse(localStorage.getItem('login'))
         }
     }
 
@@ -239,7 +240,10 @@ class eventDetails extends Component {
                                     Chi tiết
                                 </Breadcrumb.Item>
                             </Breadcrumb>
-                            <Button onClick={() => { this.props.history.push(`/editevent/${this.props.match.params.id}`) }} className="add flex-row-item-right">Chỉnh sửa</Button>
+                            {this.state.currentUser.role === 'Admin' ?
+                                <Button onClick={() => { this.props.history.push(`/editevent/${this.props.match.params.id}`) }} className="add flex-row-item-right">Chỉnh sửa</Button>
+                                : null
+                            }
                         </div>
 
 

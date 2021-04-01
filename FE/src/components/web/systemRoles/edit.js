@@ -24,7 +24,7 @@ class edit extends Component {
 
     onSubmit = async (e) => {
         await trackPromise(
-            Axios.put('/api/event-types/' + this.props.match.params.id, e, {
+            Axios.put('/api/system-roles/' + this.props.match.params.id, e, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
@@ -34,7 +34,7 @@ class edit extends Component {
                     // Message('Sửa thành công', true, this.props);
                 })
                 .catch(err => {
-                    message.error('Cập nhật thành công')
+                    message.error('Cập nhật thất bại')
                     // Message('Sửa thất bại', false);
                 }))
     }
@@ -48,7 +48,7 @@ class edit extends Component {
     async componentDidMount() {
         this._isMounted = true;
         const [data] = await trackPromise(Promise.all([
-            Axios.get('/api/event-types/' + this.props.match.params.id, {
+            Axios.get('/api/system-roles/' + this.props.match.params.id, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
@@ -100,11 +100,11 @@ class edit extends Component {
                             <Form.Item
                                 wrapperCol={{ sm: 24 }}
                                 name="name"
-                                label={<Title level={4}>Tên hình thức sự kiện</Title>}
+                                label={<Title level={4}>Tên quyền</Title>}
                                 hasFeedback
-                                rules={[{ required: true, message: 'Cần nhập tên hình thức sự kiện!' }]}
+                                rules={[{ required: true, message: 'Cần nhập tên quyền!' }]}
                             >
-                                <Input placeholder="Nhập tên tags..."></Input>
+                                <Input placeholder="Nhập tên quyền..."></Input>
                             </Form.Item>
                             <br></br>
                             <Form.Item wrapperCol={{ span: 24, offset: 9 }}>

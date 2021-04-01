@@ -662,7 +662,7 @@ ul, li {
 
 
 .ChatBox {
-  max-height: 680px;
+  max-height: 670px;
   height: 100%;
   overflow-y: auto;
   display: flex;
@@ -1272,4 +1272,30 @@ label {
 
 .flex-container-column .ant-checkbox-wrapper + .ant-checkbox-wrapper {
   margin-left: unset;
+}
+
+
+.ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-tail::after{
+ background-color:  #2A9D8F !important;
+}
+
+.scrips-view .ant-steps-item-finish .ant-steps-item-icon {
+  border-color: #2A9D8F;
+}
+
+.scrips-view svg{
+  fill:#2A9D8F;
+}
+
+.scrips-view .ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title  {
+  color: #2A9D8F !important;
+}
+.scrips-view .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title  {
+  color: #2A9D8F !important;
+  font-weight: bold;
+}
+.scrips-view .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-description {
+  /* color: #2A9D8F !important; */
+  font-weight: bold;
+  font-size: large;
 }

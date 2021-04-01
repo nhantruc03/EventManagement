@@ -5,6 +5,13 @@ import { trackPromise } from 'react-promise-tracker';
 import { Button, Table, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
+import {
+    ToolOutlined,
+    CloseOutlined,
+    ZoomInOutlined,
+
+} from '@ant-design/icons';
+
 import moment from 'moment'
 class list extends Component {
     constructor(props) {
@@ -38,11 +45,16 @@ class list extends Component {
                         <div className="btn-group">
                             <Tooltip title="Chỉnh sửa" arrow>
                                 <Link to={`/editscripts/${e}`} >
-                                    <Button className="add">Sửa</Button>
+                                    <Button className="add"><ToolOutlined /></Button>
                                 </Link>
                             </Tooltip>
                             <Tooltip title="Xóa" arrow>
-                                <Button onClick={() => this.deleteClick(e)} className="back" > Xóa</Button>
+                                <Button onClick={() => this.deleteClick(e)} className="add" ><CloseOutlined /></Button>
+                            </Tooltip>
+                            <Tooltip title="Xem" arrow>
+                                <Link to={`/viewscripts/${e}`} >
+                                    <Button className="add" ><ZoomInOutlined /></Button>
+                                </Link>
                             </Tooltip>
                         </div>
                 }

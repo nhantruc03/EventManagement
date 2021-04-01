@@ -31,14 +31,14 @@ class list extends Component {
 
     renderAction = (e) =>
         <div className="center">
-            <Button className="add"><Link to={`/editroles/${e._id}`}>Sửa</Link></Button >
+            <Button className="add"><Link to={`/editsystemroles/${e._id}`}>Sửa</Link></Button >
             <Button className="back" onClick={() => this.onDelete(e)}>Xoá</Button>
         </div>
 
     async componentDidMount() {
         this._isMounted = true;
         const [users] = await trackPromise(Promise.all([
-            Axios.post('/api/roles/getAll', {}, {
+            Axios.post('/api/system-roles/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
@@ -72,7 +72,7 @@ class list extends Component {
 
     onDelete = async (e) => {
         await trackPromise(
-            Axios.delete("/api/roles/" + e._id, {
+            Axios.delete("/api/system-roles/" + e._id, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
@@ -93,7 +93,7 @@ class list extends Component {
                 <div className="flex-container-row">
                     <Search target="name" data={this.state.data} getSearchData={(e) => this.getSearchData(e)} />
                     <Button className="flex-row-item-right add">
-                        <Link to={`/addroles`} >
+                        <Link to={`/addsystemroles`} >
                             <div className="btn btn-createnew">Tạo mới</div>
                         </Link>
                     </Button>
