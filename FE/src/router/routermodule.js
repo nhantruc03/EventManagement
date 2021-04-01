@@ -59,8 +59,7 @@ import editscripts from '../components/web/eventScripts/edit'
 import listactions from '../components/web/actions/listactions/listactions'
 import actiondetails from '../components/web/actions/actiondetails/actionDetails'
 
-import event_videocall from '../components/web/chat/VideoCallRoom'
-import action_videocall from '../components/web/actions/actiondetails/chat/VideoCallRoom'
+import videocall from '../components/web/chat/VideoCallRoom'
 
 class router extends Component {
     render() {
@@ -121,8 +120,8 @@ class router extends Component {
                 <SecureRouteAdmin exact path="/actions" component={listactions} layout={Page} />
                 <SecureRouteAdmin exact path="/actions/:id" component={actiondetails} layout={Page} />
 
-                <SecureRouteAdmin exact path="/event-videocall/:id" component={event_videocall} layout={Page} />
-                <SecureRouteAdmin exact path="/action-videocall/:id" component={action_videocall} layout={Page} />
+                <SecureRouteAdmin exact path="/videocall/:id" component={videocall} layout={Page} />
+                
                 {/* <SecureRouteAdmin exact path="/actions/:id" component={eventDetails} layout={Page} />
                 <SecureRouteAdmin exact path="/editactions/:id" component={editevent} layout={Page} /> */}
                 {/* <SecureRouteAdmin exact path="/addactions" component={addactions} layout={Page} /> */}

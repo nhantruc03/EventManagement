@@ -4,13 +4,12 @@ const Schema = mongoose.Schema;
 
 const ChatMessages = new Schema(
     {
-        groupID: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "groups",
+        roomId: {
+            type: String,
             index: true,
             required: true
         },
-        userID: {
+        userId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "users",
             index: true,

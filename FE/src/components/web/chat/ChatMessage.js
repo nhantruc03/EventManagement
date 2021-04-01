@@ -55,8 +55,8 @@ class ChatMessage extends Component {
   render() {
     return (
       <div className={`message ${this.props.messageClass}`}>
-        <Tooltip title={this.props.message.userID.name} placement="top">
-          <img className="img-chat" alt="avatar" src={this.props.message.userID.photoUrl ? `/api/images/${this.props.message.userID.photoUrl}` : 'https://thumbs.dreamstime.com/b/creative-vector-illustration-default-avatar-profile-placeholder-isolated-background-art-design-grey-photo-blank-template-mo-118823351.jpg'} />
+        <Tooltip title={this.props.message.userId.name} placement="top">
+          <img className="img-chat" alt="avatar" src={this.props.message.userId.photoUrl ? `/api/images/${this.props.message.userId.photoUrl}` : 'https://thumbs.dreamstime.com/b/creative-vector-illustration-default-avatar-profile-placeholder-isolated-background-art-design-grey-photo-blank-template-mo-118823351.jpg'} />
         </Tooltip>
         {this.renderMessage()}
       </div>

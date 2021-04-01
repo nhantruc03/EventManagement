@@ -6,7 +6,7 @@ import { trackPromise } from 'react-promise-tracker';
 import { Link } from 'react-router-dom';
 import { AUTH } from '../../env'
 import ReviewScriptDetail from './review'
-import ChatRoom from './chat/ChatRoom';
+import ChatRoom from '../chat/ChatRoom';
 const { TabPane } = Tabs
 class view extends Component {
     constructor(props) {

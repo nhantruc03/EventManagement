@@ -7,7 +7,7 @@ import { trackPromise } from 'react-promise-tracker';
 import { Link } from 'react-router-dom';
 import { AUTH } from '../../../env'
 import moment from 'moment';
-import ChatRoom from './chat/ChatRoom';
+import ChatRoom from '../../chat/ChatRoom';
 import {
     UploadOutlined,
     EyeOutlined
@@ -395,7 +395,7 @@ class actionDetails extends Component {
                             <Col sm={24} xl={7} className="event-detail">
                                 {/* <div className="vl"></div> */}
                                 <Tabs className="chat-tabs" defaultActiveKey="1" >
-                                    <TabPane tab="Bình luận" key="1"><ChatRoom roomId={this.props.match.params.id} /></TabPane>
+                                    <TabPane tab="Bình luận" key="1"><ChatRoom videocall={true} roomId={this.props.match.params.id} /></TabPane>
                                 </Tabs>
                             </Col>
                         </Row>

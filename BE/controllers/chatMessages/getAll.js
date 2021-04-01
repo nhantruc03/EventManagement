@@ -7,21 +7,21 @@ const getAll = async (req, res) => {
 
   try {
     const query = {
-      ...pick(req.body, "groupID"),
+      ...pick(req.body, "roomId"),
       isDeleted: false
     }
 
     let docs;
     if (!page || !limit) {
       docs = await ChatMessages.find(query)
-        .populate({ path: 'userID', select: 'name photoUrl' })
+        .populate({ path: 'userId', select: 'name photoUrl' })
     }
     else {
       docs = await ChatMessages.find(query)
         .sort({ 'createdAt': -1 })
         .skip(limit * (page - 1))
         .limit(limit)
-        .populate({ path: 'userID', select: 'name photoUrl' })
+        .populate({ path: 'userId', select: 'name photoUrl' })
     }
     return res.status(200).json({
       success: true,

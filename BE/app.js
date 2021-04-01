@@ -163,8 +163,6 @@ app.use("/api/system-roles", require("./routes/systemRoles"));
 app.use("/api/credentials", require("./routes/credentials"));
 app.use("/api/groups", require("./routes/groups"));
 app.use("/api/chat-message", require("./routes/chatMessages"));
-app.use("/api/chat-actions", require("./routes/chatActions"));
-app.use("/api/chat-scripts", require("./routes/chatScripts"));
 app.use("/api/scripts", require("./routes/scripts"));
 app.use("/api/script-details", require("./routes/scriptDetails"));
 app.use("/api/guests", require("./routes/guests"));

@@ -27,8 +27,7 @@ class ChatRoom extends Component {
         }
     }
     getData = async () => {
-        console.log('getdata')
-        const temp = await trackPromise(axios.post('/api/chat-message/getAll?page=1&limit=15', { groupID: this.props.roomId })
+        const temp = await trackPromise(axios.post('/api/chat-message/getAll?page=1&limit=15', { roomId: this.props.roomId })
             .then((res) =>
                 res.data.data
             ))
@@ -45,7 +44,6 @@ class ChatRoom extends Component {
             }
 
             client.onmessage = (message) => {
-                console.log('received a message')
                 const dataFromServer = JSON.parse(message.data);
                 if (dataFromServer.type === "sendMessage") {
                     if (dataFromServer.roomId === this.props.roomId) {
@@ -84,14 +82,11 @@ class ChatRoom extends Component {
 
         var message = {
             text: this.state.formValue,
-            userID: { _id: obj.id, name: obj.name, photoUrl: obj.photoUrl },
-            groupID: this.props.roomId
+            userId: { _id: obj.id, name: obj.name, photoUrl: obj.photoUrl },
+            roomId: this.props.roomId
         }
 
         await axios.post('/api/chat-message', message)
-            .then((res) => {
-                console.log(res.data.data)
-            })
 
 
         client.send(JSON.stringify({
@@ -115,14 +110,11 @@ class ChatRoom extends Component {
 
         var message = {
             resourceUrl: e.url,
-            userID: { _id: obj.id, photoUrl: obj.photoUrl, name: obj.name },
-            groupID: this.props.roomId
+            userId: { _id: obj.id, photoUrl: obj.photoUrl, name: obj.name },
+            roomId: this.props.roomId
         }
 
         await axios.post('/api/chat-message', message)
-            .then((res) => {
-                console.log(res.data.data)
-            })
 
         client.send(JSON.stringify({
             type: "sendMessage",
@@ -140,14 +132,13 @@ class ChatRoom extends Component {
     }
 
     handleScroll = async (e) => {
-        console.log(e)
         if (e.target.scrollTop === 0) {
             if (!this.state.onLoadMore) {
                 this.setState({
                     onLoadMore: true
                 })
 
-                await axios.post(`/api/chat-message/getAll?page=${this.state.page + 1}&limit=15`, { groupID: this.props.roomId })
+                await axios.post(`/api/chat-message/getAll?page=${this.state.page + 1}&limit=15`, { roomId: this.props.roomId })
                     .then((res) => {
                         const temp = res.data.data;
                         this.setState({
@@ -169,7 +160,7 @@ class ChatRoom extends Component {
     renderMessage = () => {
         return (
             this.state.messages.map((msg, index) => (
-                <ChatMessage key={index} messageClass={msg.userID._id === this.state.currentUser ? 'sent' : 'received'} message={msg} />
+                <ChatMessage key={index} messageClass={msg.userId._id === this.state.currentUser ? 'sent' : 'received'} message={msg} />
             ))
         )
     }
@@ -187,8 +178,12 @@ class ChatRoom extends Component {
                 </div>
                 <div className="flex-container-row">
                     <form className="chat-form" onSubmit={this.sendMessage}>
-                        <input className="input-chat" value={this.state.formValue} onChange={(e) => this.setFormValue(e.target.value)} placeholder="Hãy chia sẻ ý kiến của bạn" />
-                        <button className="chat-button"><Link to={`/event-videocall/${this.props.roomId}`} style={{ color: 'black' }} ><VideoCameraOutlined /></Link></button>
+                        {this.props.videocall ?
+                            <>
+                                <input className="input-chat" value={this.state.formValue} onChange={(e) => this.setFormValue(e.target.value)} placeholder="Hãy chia sẻ ý kiến của bạn" />
+                                <button className="chat-button"><Link to={`/videocall/${this.props.roomId}`} style={{ color: 'black' }} ><VideoCameraOutlined /></Link></button>
+                            </>
+                            : null}
                         <Upload
                             className="flex-row-item-right"
                             fileList={this.state.fileList}

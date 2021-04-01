@@ -1,9 +1,0 @@
-Lưu tài nguyên: lưu file, hình ảnh
-
-duplicate sự kiện, tạo sự kiện dựa trên 1 sự kiễn cũ
-
-tập trung vào khoa.
-
-tương tác, hội họp
-
-login bằng email
