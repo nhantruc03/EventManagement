@@ -175,7 +175,7 @@ app.post("/api/uploads", (req, res) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send('No files were uploaded.');
   }
-  // console.log(req)
+  
   let sampleFile = req.files.file;
   let extension = mime.extension(sampleFile.mimetype);
   const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
@@ -197,9 +197,9 @@ app.post("/api/upload-resources/:id", (req, res) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send('No files were uploaded.');
   }
-  // console.log(req)
+  
   let sampleFile = req.files.file;
-  console.log(req.files.file)
+
   let extension = mime.extension(sampleFile.mimetype);
   const uniqueSuffix = Date.now()
   let filename = uniqueSuffix + '-' + req.files.file.name;
@@ -219,11 +219,10 @@ app.post("/api/upload-resources/:id", (req, res) => {
 })
 
 // Connect DB then start server
-mongoose
-  .connect(
-    `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.rc4jh.mongodb.net/dbOne?retryWrites=true&w=majority`,
-    { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }
-  )
+mongoose.connect(
+  `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.rc4jh.mongodb.net/dbOne?retryWrites=true&w=majority`,
+  { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }
+)
   .then(() => {
     console.log("Database connected successfully");
     server.listen(port, () => {
