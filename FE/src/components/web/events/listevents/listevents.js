@@ -23,7 +23,7 @@ class listevents extends Component {
     async componentDidMount() {
         this._isMounted = true;
         const [events] = await trackPromise(Promise.all([
-            axios.post('/api/events/getAll', {}, {
+            axios.post('/api/events/getAll', { isClone: false }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }

@@ -19,13 +19,11 @@ const Scripts = new Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "users",
             index: true,
-            required: true
         },
         forId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "users",
             index: true,
-            required: true
         },
         isDeleted: {
             type: Boolean,

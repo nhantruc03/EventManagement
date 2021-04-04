@@ -52,12 +52,25 @@ import eventDetails from '../components/web/events/details/eventDetails'
 import addevents from '../components/web/events/addevent/addevents'
 import editevent from '../components/web/events/editevent/editevent'
 
-import addscripts from '../components/web/eventScripts/add'
+import eventClones from '../components/web/eventClones/listeventClones/listeventClones'
+// import eventcloneDetails from '../components/web/eventClones/details/eventcloneDetails'
+import addeventClones from '../components/web/eventClones/addeventClones/addeventclones'
+import editeventClones from '../components/web/eventClones/editeventClones/editeventClones'
+
+
 import viewscripts from '../components/web/eventScripts/view'
+import addscripts from '../components/web/eventScripts/add'
 import editscripts from '../components/web/eventScripts/edit'
+
+import viewscriptsForClone from '../components/web/eventScripts/forClone/view'
+import addscriptsForClone from '../components/web/eventScripts/forClone/add'
+import editscriptsForClone from '../components/web/eventScripts/forClone/edit'
 
 import listactions from '../components/web/actions/listactions/listactions'
 import actiondetails from '../components/web/actions/actiondetails/actionDetails'
+
+import listactionsForClone from '../components/web/actions/forClone/listactions/listactions'
+import actiondetailsForClone from '../components/web/actions/forClone/actiondetails/actionDetails'
 
 import videocall from '../components/web/chat/VideoCallRoom'
 
@@ -112,13 +125,25 @@ class router extends Component {
                 <SecureRouteAdmin exact path="/editevent/:id" component={editevent} layout={Page} />
                 <SecureRouteAdmin exact path="/addevents" component={addevents} layout={Page} />
 
+                <SecureRouteAdmin exact path="/eventclones" component={eventClones} layout={Page} />
+                {/* <SecureRouteAdmin exact path="/eventclones/:id" component={eventcloneDetails} layout={Page} /> */}
+                <SecureRouteAdmin exact path="/eventclones/:id" component={editeventClones} layout={Page} />
+                {/* <SecureRouteAdmin exact path="/editevent/:id" component={editevent} layout={Page} /> */}
+                <SecureRouteAdmin exact path="/addeventclones" component={addeventClones} layout={Page} />
+
                 <SecureRouteAdmin exact path="/addscripts/:id" component={addscripts} layout={Page} />
                 <SecureRouteAdmin exact path="/editscripts/:id" component={editscripts} layout={Page} />
                 <SecureRouteAdmin exact path="/viewscripts/:id" component={viewscripts} layout={Page} />
 
+                <SecureRouteAdmin exact path="/viewscriptsclone/:id" component={viewscriptsForClone} layout={Page} />
+                <SecureRouteAdmin exact path="/addscriptsclone/:id" component={addscriptsForClone} layout={Page} />
+                <SecureRouteAdmin exact path="/editscriptsclone/:id" component={editscriptsForClone} layout={Page} />
+
 
                 <SecureRouteAdmin exact path="/actions" component={listactions} layout={Page} />
                 <SecureRouteAdmin exact path="/actions/:id" component={actiondetails} layout={Page} />
+                <SecureRouteAdmin exact path="/actionsclone" component={listactionsForClone} layout={Page} />
+                <SecureRouteAdmin exact path="/actionsclone/:id" component={actiondetailsForClone} layout={Page} />
 
                 <SecureRouteAdmin exact path="/videocall/:id" component={videocall} layout={Page} />
                 

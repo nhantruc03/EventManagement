@@ -46,8 +46,8 @@ class SiderDemo extends React.Component {
                     <Menu.Item key="/actions" icon={<FileDoneOutlined />}>
                         <Link to="/actions" className="nav-text">Công việc</Link>
                     </Menu.Item>
-                    <Menu.Item key="/calender" icon={<TeamOutlined />}>
-                        <Link to="/calender" className="nav-text">Hồ sơ</Link>
+                    <Menu.Item key="/eventclones" icon={<TeamOutlined />}>
+                        <Link to="/eventclones" className="nav-text">Hồ sơ</Link>
                     </Menu.Item>
                     {this.state.currentUser.role === "Admin" ?
                         <SubMenu key="sub1" icon={<CopyOutlined />} title="Admin quản lý">

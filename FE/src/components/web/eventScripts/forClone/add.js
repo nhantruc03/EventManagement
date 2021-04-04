@@ -1,16 +1,15 @@
 import Axios from 'axios';
 import React, { Component } from 'react';
-import { AUTH } from '../../env';
+import { AUTH } from '../../../env';
 import { trackPromise } from 'react-promise-tracker';
 import { Content } from 'antd/lib/layout/layout';
-import { Breadcrumb, Button, Col, Form, Input, message, Row, Select } from 'antd';
+import { Breadcrumb, Button, Col, Form, Input, message, Row } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
 import { v1 as uuidv1 } from 'uuid';
-import ListScriptDetails from '../eventScriptDetail/list'
-import ReviewScriptDetail from '../eventScriptDetail/withoutId/review'
+import ListScriptDetails from '../../eventScriptDetail/list'
+import ReviewScriptDetail from '../../eventScriptDetail/withoutId/review'
 
-const { Option } = Select;
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -23,8 +22,6 @@ class add extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            writerName: '',
-            writerId: '',
             listUser: [],
             listscriptdetails: [],
             data: {},
@@ -40,42 +37,12 @@ class add extends Component {
     }
 
     UNSAFE_componentWillMount() {
-        const login = localStorage.getItem('login');
-        const obj = JSON.parse(login);
         this.setState({
             data: {
                 name: null,
-                writerName: obj.name,
-                writerId: obj.id,
                 forId: null,
             }
         })
-    }
-
-    async componentDidMount() {
-        this._isMounted = true;
-        const [event] = await trackPromise(Promise.all([
-            Axios.get('/api/events/' + this.props.match.params.id, {
-                headers: {
-                    'Authorization': { AUTH }.AUTH
-                }
-            })
-                .then((res) =>
-                    res.data.data
-                )
-        ]));
-
-        if (event !== null) {
-            if (this._isMounted) {
-                this.setState({
-                    listUser: event.availUser
-                })
-            }
-        }
-    }
-
-    componentWillUnmount() {
-        this._isMounted = false;
     }
 
     goBack = () => {
@@ -85,7 +52,6 @@ class add extends Component {
     onFinish = async (values) => {
         let data = {
             ...values,
-            'writerId': this.props.forClone ? undefined : this.state.data.writerId,
             'listscriptdetails': this.state.listscriptdetails,
             'eventId': this.props.match.params.id
         }
@@ -192,7 +158,7 @@ class add extends Component {
                                 initialValues={this.state.data}
                             >
                                 <Row>
-                                    <Col sm={24} lg={12}>
+                                    <Col sm={24} lg={24}>
                                         <Form.Item
                                             wrapperCol={{ sm: 24 }}
                                             style={{ width: "90%" }}
@@ -202,28 +168,6 @@ class add extends Component {
                                         >
                                             <Input onChange={this.onChangeName} placeholder="Tên kịch bản..." />
                                         </Form.Item>
-                                    </Col>
-                                    
-                                    <Col sm={24} lg={12}>
-                                        <Form.Item
-                                            wrapperCol={{ sm: 24 }}
-                                            style={{ width: "90%" }}
-                                            name="forId"
-                                            label="Dành cho"
-                                            rules={[{ required: true, message: 'Cần đối tượng thực hiện' }]}
-                                        >
-                                            <Select
-                                                showSearch
-                                                placeholder=""
-                                                optionFilterProp="children"
-                                                filterOption={(input, option) =>
-                                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                                }
-                                            >
-                                                {this.state.listUser.map((e) => <Option key={e._id}>{e.name}</Option>)}
-                                            </Select>
-                                        </Form.Item>
-
                                     </Col>
                                 </Row>
                                 <div style={{ marginTop: '30px', textAlign: 'center' }}>

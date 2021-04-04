@@ -1,13 +1,12 @@
-import { Avatar, Breadcrumb, Button, Checkbox, Col, Image, message, Modal, Row, Tabs, Tag, Tooltip, Upload } from 'antd';
+import { Avatar, Breadcrumb, Button, Checkbox, Col, Image, message, Modal, Row, Tag, Tooltip, Upload } from 'antd';
 import { Content } from 'antd/lib/layout/layout';
 import Title from 'antd/lib/typography/Title';
 import axios from 'axios';
 import React, { Component } from 'react';
 import { trackPromise } from 'react-promise-tracker';
 import { Link } from 'react-router-dom';
-import { AUTH } from '../../../env'
+import { AUTH } from '../../../../env'
 import moment from 'moment';
-import ChatRoom from '../../chat/ChatRoom';
 import {
     UploadOutlined,
     EyeOutlined
@@ -16,7 +15,6 @@ import ResourceCard from './resourceCard/resourceCard';
 import AddSubAction from './subActions/add'
 import EditSubAction from './subActions/edit'
 import EditAction from './editAction/editAction'
-const { TabPane } = Tabs;
 class actionDetails extends Component {
     constructor(props) {
         super(props)
@@ -78,19 +76,17 @@ class actionDetails extends Component {
         this.setModalEditSubActionVisible(false)
     }
 
-    updateAction = (action, manager, actionAssign) => {
+    updateAction = (action) => {
         // console.log(e)
         this.setState({
             data: action,
-            manager: manager,
-            actionAssign: actionAssign
         })
         this.setModalEditActionVisible(false)
     }
 
     renderModalEditAction = () => {
         return (
-            <EditAction data={this.state.data} manager={this.state.manager} update={(action, manager, actionAssign) => this.updateAction(action, manager, actionAssign)} />
+            <EditAction data={this.state.data} manager={this.state.manager} update={(action) => this.updateAction(action)} />
         )
     }
 
@@ -305,7 +301,7 @@ class actionDetails extends Component {
 
                     <div className="site-layout-background-main">
                         <Row style={{ height: '95%' }}>
-                            <Col sm={24} xl={7} className="event-detail">
+                            <Col sm={24} xl={10} className="event-detail">
                                 <div className="flex-container-row">
                                     <Title style={{ color: '#264653' }} level={3}>Cần làm</Title>
                                     <Button onClick={() => this.setModalAddSubActionVisible(true)} className="flex-row-item-right add">Thêm</Button>
@@ -334,7 +330,7 @@ class actionDetails extends Component {
                                 </div>
                                 {this.state.resources.map((e, key) => <ResourceCard delete={(e) => this.deleteResources(e)} key={key} resourcePath={this.props.match.params.id} data={e}></ResourceCard>)}
                             </Col>
-                            <Col sm={24} xl={10} className="event-detail">
+                            <Col sm={24} xl={14} className="event-detail">
                                 {/* <Title level={3}>Cover</Title> */}
                                 <Image style={{ maxHeight: '200px' }} src={`/api/images/${this.state.data.coverUrl}`}></Image>
 
@@ -356,47 +352,21 @@ class actionDetails extends Component {
                                 <p className="black-2">{this.state.data.eventId.name}</p>
 
                                 <Row>
-                                    <Col sm={24} md={10}>
-                                        <Title level={4}>Người phụ trách</Title>
-                                        <div className="flex-container-row" >
-                                            {this.state.manager ? <Avatar src={`/api/images/${this.state.manager.userId.photoUrl}`} /> : null}
-                                            {this.state.manager ? <p style={{ marginLeft: '10px' }} className="black-2">{this.state.manager.userId.name}</p> : null}
-                                        </div>
-                                    </Col>
 
-                                    <Col sm={24} md={6} style={{ textAlign: 'center' }}>
+                                    <Col sm={24} md={12} >
                                         <Title level={4}>Ban</Title>
                                         <p >{this.state.data.facultyId.name}</p>
                                     </Col>
 
-                                    <Col sm={24} md={8} style={{ textAlign: 'right' }}>
+                                    <Col sm={24} md={12} style={{ textAlign: 'right' }}>
                                         <Title level={4}>Hạn chót</Title>
                                         {moment(this.state.data.endDate).format("DD/MM/YYYY")}
                                     </Col>
                                 </Row>
 
-                                <Title level={4}>Phân công cho</Title>
-                                <Avatar.Group
-                                    style={{ width: '100%' }}
-                                    maxCount={4}
-                                    maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}
-                                >
-                                    <Row style={{ width: '100%' }}>
-                                        {this.renderAvailUser()}
-                                    </Row>
-                                </Avatar.Group>
-
-
-
                                 <Title className="event-detail-title" level={4}>Tags</Title>
                                 {/* <Image style={{ maxWidth: '300px' }} src={`/api/images/${this.state.data.coverUrl}`}></Image> */}
                                 {this.state.data.tagsId.map((e, key) => <Tag style={{ width: 'auto' }} key={key}>{e.name}</Tag>)}
-                            </Col>
-                            <Col sm={24} xl={7} className="event-detail">
-                                {/* <div className="vl"></div> */}
-                                <Tabs className="chat-tabs" defaultActiveKey="1" >
-                                    <TabPane tab="Bình luận" key="1"><ChatRoom videocall={true} roomId={this.props.match.params.id} /></TabPane>
-                                </Tabs>
                             </Col>
                         </Row>
                     </div>

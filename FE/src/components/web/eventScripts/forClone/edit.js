@@ -1,16 +1,15 @@
 import Axios from 'axios';
 import React, { Component } from 'react';
-import { AUTH } from '../../env';
+import { AUTH } from '../../../env';
 import { trackPromise } from 'react-promise-tracker';
 import { Content } from 'antd/lib/layout/layout';
-import { Breadcrumb, Button, Col, Form, Input, message, Row, Select } from 'antd';
+import { Breadcrumb, Button, Col, Form, Input, message, Row } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
 import { v1 as uuidv1 } from 'uuid';
-import ListScriptDetails from '../eventScriptDetail/list'
-import ReviewScriptDetail from '../eventScriptDetail/withId/review'
+import ListScriptDetails from '../../eventScriptDetail/list'
+import ReviewScriptDetail from '../../eventScriptDetail/withId/review'
 
-const { Option } = Select;
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -23,9 +22,6 @@ class edit extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            writerName: '',
-            writerId: '',
-            listUser: [],
             listscriptdetails: [],
             data: null
         }
@@ -48,15 +44,7 @@ class edit extends Component {
                     res.data.data
                 )
         ]))
-        const [event, scriptdetails] = await trackPromise(Promise.all([
-            Axios.get('/api/events/' + script.eventId._id, {
-                headers: {
-                    'Authorization': { AUTH }.AUTH
-                }
-            })
-                .then((res) =>
-                    res.data.data
-                ),
+        const [scriptdetails] = await trackPromise(Promise.all([
             Axios.post('/api/script-details/getAll', { scriptId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -67,14 +55,10 @@ class edit extends Component {
                 ),
         ]));
 
-        if (event !== null && script !== null && scriptdetails !== null) {
+        if (script !== null && scriptdetails !== null) {
             if (this._isMounted) {
                 this.setState({
-                    listUser: event.availUser,
                     name: script.name,
-                    writerName: script.writerId.name,
-                    writerId: script.writerId._id,
-                    forId: script.forId._id,
                     listscriptdetails: scriptdetails.sort((a, b) => {
                         let temp_a = new Date(a.time).setFullYear(1, 1, 1);
                         let temp_b = new Date(b.time).setFullYear(1, 1, 1);
@@ -96,7 +80,6 @@ class edit extends Component {
     onFinish = async (values) => {
         let data = {
             ...values,
-            'writerId': this.state.data.writerId,
             'listscriptdetails': this.state.listscriptdetails,
             // 'eventId': this.props.match.params.id
         }
@@ -200,7 +183,7 @@ class edit extends Component {
                         <Col span={8}>
                             <Breadcrumb separator=">">
                                 <Breadcrumb.Item >
-                                    <Link to="/events">Sự kiện</Link>
+                                    <Link to="/eventclones">Sự kiện</Link>
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item onClick={this.goBack}>
                                     Chi tiết
@@ -224,7 +207,7 @@ class edit extends Component {
                                     initialValues={this.state}
                                 >
                                     <Row>
-                                        <Col sm={24} lg={12}>
+                                        <Col sm={24} lg={24}>
                                             <Form.Item
                                                 wrapperCol={{ sm: 24 }}
                                                 style={{ width: "90%" }}
@@ -234,38 +217,6 @@ class edit extends Component {
                                             >
                                                 <Input placeholder="Tên kịch bản..." />
                                             </Form.Item>
-                                        </Col>
-                                        {/* <Col sm={24} lg={8}>
-                                            <Form.Item
-                                                wrapperCol={{ sm: 24 }}
-                                                style={{ width: "90%" }}
-                                                name="writerName"
-                                                label="Người viết"
-                                            >
-                                                <Input disabled={true} />
-                                            </Form.Item>
-                                        </Col> */}
-
-                                        <Col sm={24} lg={12}>
-                                            <Form.Item
-                                                wrapperCol={{ sm: 24 }}
-                                                style={{ width: "90%" }}
-                                                name="forId"
-                                                label="Dành cho"
-                                                rules={[{ required: true, message: 'Cần đối tượng thực hiện' }]}
-                                            >
-                                                <Select
-                                                    showSearch
-                                                    placeholder=""
-                                                    optionFilterProp="children"
-                                                    filterOption={(input, option) =>
-                                                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                                    }
-                                                >
-                                                    {this.state.listUser.map((e) => <Option key={e._id}>{e.name}</Option>)}
-                                                </Select>
-                                            </Form.Item>
-
                                         </Col>
                                     </Row>
                                     <div style={{ marginTop: '30px', textAlign: 'center' }}>
