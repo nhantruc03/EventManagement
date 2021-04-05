@@ -8,6 +8,8 @@ import {
     InboxOutlined
 } from "@ant-design/icons";
 import Dragger from 'antd/lib/upload/Dragger';
+import { w3cwebsocket } from 'websocket';
+const client = new w3cwebsocket('ws://localhost:3001');
 const { Step } = Steps;
 const { Option } = Select;
 const steps = [
@@ -41,6 +43,9 @@ class addactions extends Component {
 
     async componentDidMount() {
         this._isMounted = true;
+
+
+
         const [tags, priorities] = await trackPromise(Promise.all([
             axios.post('/api/action-tags/getAll', {}, {
                 headers: {
@@ -121,8 +126,14 @@ class addactions extends Component {
         })
             .then(res => {
                 message.success('Tạo thành công');
-                // this.form1.current.resetFields();
-                // this.form2.current.resetFields();
+
+                console.log(res.data.Notifications)
+
+                client.send(JSON.stringify({
+                    type: "sendListNotifications",
+                    notifications: res.data.Notifications
+                }))
+
                 this.props.done(res.data.action)
             })
             .catch(err => {
@@ -146,8 +157,8 @@ class addactions extends Component {
                         ref={this.form1}
                     >
                         <Row style={{ marginTop: '20px' }}>
-                            <Col span={24}>
-                                <Title level={5}>Tên sự kiện</Title>
+                            <Col span={24} style={{ padding: '15px' }}>
+                                <Title style={{ color: '#017567' }} level={5}>Tên sự kiện</Title>
                                 <p>{this.props.event.name}</p>
                             </Col>
 

@@ -1,7 +1,7 @@
 const { pick } = require("lodash")
 const { isEmpty } = require("lodash");
 const handleBody = (body) => {
-  if (isEmpty(body.name) || isEmpty(body.startDate) || isEmpty(body.startTime) || isEmpty(body.address) || isEmpty(body.posterUrl) || isEmpty(body.eventTypeId) || isEmpty(body.description)) {
+  if (isEmpty(body.name) || isEmpty(body.address) || isEmpty(body.posterUrl) || isEmpty(body.eventTypeId) || isEmpty(body.description)) {
     return {
       error: "Missing fields!"
     }
@@ -18,7 +18,8 @@ const handleBody = (body) => {
         "availUser",
         "tagId",
         "eventTypeId",
-        "description"
+        "description",
+        "isClone"
         // "faculties"
       )
     }

@@ -14,6 +14,7 @@ const update = async (req, res) => {
     // const role = await Credentials
     //   .findOne({ userId: req.user._id, isDeleted: false })
     //   .populate({ path: 'roleId', select: 'name' })
+    
     if (user.roleId.name !== "Admin" && req.user._id !== req.params.id) {
       return res.status(406).json({
         success: false,

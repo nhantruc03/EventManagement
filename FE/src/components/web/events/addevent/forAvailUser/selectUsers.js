@@ -42,10 +42,10 @@ class selectUsers extends Component {
     addusertoevent = async (e) => {
         await this.props.addusertoevent(e);
 
-        this.setState({
-            SearchData1: this.state.SearchData1.filter(x => x._id !== e._id),
-            SearchData2: [...this.state.SearchData2, e]
-        })
+        // this.setState({
+        //     SearchData1: this.state.SearchData1.filter(x => x._id !== e._id),
+        //     SearchData2: [...this.state.SearchData2, e]
+        // })
     }
 
     removeuserfromevent = (e) => {
@@ -56,6 +56,13 @@ class selectUsers extends Component {
         })
     }
 
+    UNSAFE_componentWillReceiveProps(e){
+        console.log(e)
+        this.setState({
+            SearchData1: e.listusers,
+            SearchData2: e.listusersforevent,
+        })
+    }
 
     componentDidMount() {
         this.setState({

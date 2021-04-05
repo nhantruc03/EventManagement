@@ -2,9 +2,8 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { AUTH } from '../../env';
 import { trackPromise } from 'react-promise-tracker';
-import { Message } from '../service/renderMessage';
 import { Content } from 'antd/lib/layout/layout';
-import { Breadcrumb, Button, Col, Form, Input, Row, Select } from 'antd';
+import { Breadcrumb, Button, Col, Form, Input, message, Row, Select } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
 import { v1 as uuidv1 } from 'uuid';
@@ -50,7 +49,7 @@ class edit extends Component {
                 )
         ]))
         const [event, scriptdetails] = await trackPromise(Promise.all([
-            Axios.get('/api/events/' + script.eventId, {
+            Axios.get('/api/events/' + script.eventId._id, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
@@ -99,20 +98,22 @@ class edit extends Component {
             ...values,
             'writerId': this.state.data.writerId,
             'listscriptdetails': this.state.listscriptdetails,
-            'eventId': this.props.match.params.id
+            // 'eventId': this.props.match.params.id
         }
 
         console.log('Received values of form: ', data);
-        await trackPromise(Axios.post('/api/scripts/start', data, {
+        await trackPromise(Axios.put('/api/scripts/'+ this.props.match.params.id, data, {
             headers: {
                 'Authorization': { AUTH }.AUTH
             }
         })
             .then(res => {
-                Message('Tạo thành công', true, this.props);
+                // Message('Tạo thành công', true, this.props);
+                message.success("Cập nhật thành công")
             })
             .catch(err => {
-                Message('Tạo thất bại', false);
+                // Message('Tạo thất bại', false);
+                message.error("Cập nhật thất bại")
             }))
     };
 
@@ -211,10 +212,10 @@ class edit extends Component {
                         </Col>
                     </Row >
 
-                    <div className="site-layout-background-main">
+                    <div className="add-scripts site-layout-background-main">
 
-                        <Row>
-                            <Col sm={24} xl={18}>
+                        <Row style={{ height: '90%' }}>
+                            <Col sm={24} xl={16}>
                                 <Form
                                     name="validate_other"
                                     {...formItemLayout}
@@ -223,7 +224,7 @@ class edit extends Component {
                                     initialValues={this.state}
                                 >
                                     <Row>
-                                        <Col sm={24} lg={8}>
+                                        <Col sm={24} lg={12}>
                                             <Form.Item
                                                 wrapperCol={{ sm: 24 }}
                                                 style={{ width: "90%" }}
@@ -234,7 +235,7 @@ class edit extends Component {
                                                 <Input placeholder="Tên kịch bản..." />
                                             </Form.Item>
                                         </Col>
-                                        <Col sm={24} lg={8}>
+                                        {/* <Col sm={24} lg={8}>
                                             <Form.Item
                                                 wrapperCol={{ sm: 24 }}
                                                 style={{ width: "90%" }}
@@ -243,9 +244,9 @@ class edit extends Component {
                                             >
                                                 <Input disabled={true} />
                                             </Form.Item>
-                                        </Col>
+                                        </Col> */}
 
-                                        <Col sm={24} lg={8}>
+                                        <Col sm={24} lg={12}>
                                             <Form.Item
                                                 wrapperCol={{ sm: 24 }}
                                                 style={{ width: "90%" }}
@@ -283,9 +284,9 @@ class edit extends Component {
                                 <Title style={{ marginTop: '20px' }} level={3}>Kịch bản chính</Title>
                                 <ListScriptDetails onEdit={true} data={this.state.listscriptdetails} onDelete={this.onDeleteDetail} onAdd={this.onAddDetail} onUpdate={this.onUpdateDetail} />
                             </Col>
-                            <Col sm={24} xl={6}>
+                            <Col sm={24} xl={8}>
                                 <Title level={3}>Xem trước</Title>
-                                <ReviewScriptDetail data={this.state.listscriptdetails} />
+                                <ReviewScriptDetail script_name={this.state.name} data={this.state.listscriptdetails} />
                             </Col>
                         </Row>
                     </div>

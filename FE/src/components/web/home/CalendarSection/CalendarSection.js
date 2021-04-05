@@ -35,8 +35,6 @@ class CalendarSection extends Component {
                 ),
         ]));
 
-        console.log(subActions)
-
         if (subActions !== null) {
             if (this._isMounted) {
                 this.setState({
@@ -54,8 +52,6 @@ class CalendarSection extends Component {
         let listData = [];
 
         this.state.listSubActions.forEach(element => {
-            // if (newelement.startDate)
-            // console.log('date subaction', element.startDate)
             if (moment(element.startDate).toDate().setHours(0, 0, 0, 0) === value.toDate().setHours(0, 0, 0, 0)) {
                 listData.push(element)
             }
@@ -68,8 +64,7 @@ class CalendarSection extends Component {
         const listData = this.getListData(value);
         if (listData.length > 0) {
             return (
-                // <div style={{backgroundColor:'green'}}></div>
-                <div style={{ backgroundColor: 'green' }}>
+                <div style={{ backgroundColor: '#2A9D8F' }}>
                     <CarryOutOutlined />
                 </div>
             );
@@ -77,7 +72,6 @@ class CalendarSection extends Component {
     }
 
     getMonthData = (value) => {
-        console.log(this.props.listActions)
         let listData = [];
         this.props.listActions.forEach(element => {
             if (moment(element.startDate).month() === value.month() && moment(element.startDate).year() === value.year()) {
@@ -91,7 +85,7 @@ class CalendarSection extends Component {
         const listData = this.getMonthData(value);
         if (listData.length > 0) {
             return (
-                <div style={{ backgroundColor: 'green' }}>
+                <div style={{ backgroundColor: '#2A9D8F' }}>
                     <CarryOutOutlined />
                 </div>
             )
@@ -161,7 +155,6 @@ class CalendarSection extends Component {
         if (this.state.listSubActions) {
             return (
                 <div className="calender-section">
-
                     <Title level={3}>Lịch</Title>
                     <Calendar onPanelChange={this.onPanelChange} onSelect={this.onSelect} fullscreen={false} dateCellRender={this.dateCellRender} monthCellRender={this.monthCellRender} />
 
@@ -169,7 +162,6 @@ class CalendarSection extends Component {
                     <div className="calender-subaction-section">
                         {this.renderCurrentSubAction()}
                     </div>
-
                 </div>
             );
         } else {

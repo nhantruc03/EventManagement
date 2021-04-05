@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import TableData from '../../addevent/EventAssign/TableData';
-import { Button, Col, Row } from 'antd';
+import { Button, Col, message, Row } from 'antd';
 import Search from '../../../helper/search';
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
 import { AUTH } from '../../../../env'
-import { Message } from '../../../service/renderMessage';
 import Pagination from '../../../helper/Pagination';
 class EventAssign extends Component {
     constructor(props) {
@@ -50,11 +49,13 @@ class EventAssign extends Component {
                     }
                 });
                 this.props.update(temp_data);
-                Message('Sửa thành công', true);
+                // Message('Sửa thành công', true);
+                message.success('Sửa thành công')
 
             })
             .catch(err => {
-                Message('Sửa thất bại', false);
+                // Message('Sửa thất bại', false);
+                message.error('Sửa thất bại')
             }))
 
     }
@@ -92,10 +93,12 @@ class EventAssign extends Component {
                     })
                     this.props.update(temp, res.data.data.userId)
 
-                    Message('Xóa thành công', true);
+                    // Message('Xóa thành công', true);
+                    message.success('Xóa thành công')
                 })
                 .catch(err => {
-                    Message('Xóa thất bại', false);
+                    // Message('Xóa thất bại', false);
+                    message.success('Xóa thất bại')
                 }))
     }
 

@@ -2,9 +2,8 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { AUTH } from '../../env'
 import { trackPromise } from 'react-promise-tracker';
-import { Message } from '../service/renderMessage';
 import { Content } from 'antd/lib/layout/layout';
-import { Breadcrumb, Button, Form, Input, Row } from 'antd';
+import { Breadcrumb, Button, Form, Input, message, Row } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
 const formItemLayout = {
@@ -31,10 +30,12 @@ class edit extends Component {
                 }
             })
                 .then(res => {
-                    Message('Sửa thành công', true, this.props);
+                    message.success('Cập nhật thành công')
+                    // Message('Sửa thành công', true, this.props);
                 })
                 .catch(err => {
-                    Message('Sửa thất bại', false);
+                    message.error('Cập nhật thành công')
+                    // Message('Sửa thất bại', false);
                 }))
     }
 

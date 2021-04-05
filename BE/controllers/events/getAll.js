@@ -1,3 +1,4 @@
+const { pick } = require('lodash')
 const Events = require('../../models/events')
 
 const getAll = async (req, res) => {
@@ -5,7 +6,11 @@ const getAll = async (req, res) => {
   const limit = Number(req.query.limit) // limit docs per page
 
   try {
-    const query = { isDeleted: false }
+    // const query = { isDeleted: false }
+    const query = {
+      ...pick(req.body, "isClone"),
+      isDeleted: false
+    }
 
     let docs;
     if (!page || !limit) {

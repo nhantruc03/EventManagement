@@ -25,12 +25,11 @@ class TableData extends Component {
                         <table className="table table-striped table-hover">
                             <thead className="ant-table-thead">
                                 <tr>
-                                    <th className="ant-table-cell">Tên</th>
-                                    {/* <th>Điện thoại</th> */}
-                                    <th className="ant-table-cell">Email</th>
-                                    <th className="ant-table-cell">Ban</th>
-                                    <th className="ant-table-cell">Vị trí</th>
-                                    <th className="ant-table-cell" style={{ width: '150px' }}>Thao tác</th>
+                                    <th style={{ width: '20%' }} className="ant-table-cell">Tên</th>
+                                    <th style={{ width: '20%' }} className="ant-table-cell">Email</th>
+                                    <th style={{ width: '20%' }} className="ant-table-cell">Ban</th>
+                                    <th style={{ width: '20%' }} className="ant-table-cell">Vị trí</th>
+                                    <th style={{ width: '20%' }} className="ant-table-cell">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody className="ant-table-tbody">

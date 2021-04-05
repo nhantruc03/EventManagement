@@ -53,7 +53,7 @@ const start = async (req, res) => {
         // newDoc._id
         // start guest type
         let listScriptDetails = [];
-        if (body_ref.listscriptdetails) {
+        if (!isEmpty(body_ref.listscriptdetails)) {
             //prepare data
             let body = [];
             body_ref.listscriptdetails.map(element => {

@@ -2,8 +2,7 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { AUTH } from '../../env';
 import { trackPromise } from 'react-promise-tracker';
-import { Message } from '../service/renderMessage';
-import { Breadcrumb, Button, Form, Input, Row } from 'antd';
+import { Breadcrumb, Button, Form, Input, message, Row } from 'antd';
 import { Link } from 'react-router-dom';
 import { Content } from 'antd/lib/layout/layout';
 import Title from 'antd/lib/typography/Title';
@@ -23,10 +22,12 @@ class add extends Component {
             }
         })
             .then(res => {
-                Message('Tạo thành công', true, this.props);
+                message.success('Tạo thành công')
+                // Message('Tạo thành công', true, this.props);
             })
             .catch(err => {
-                Message('Tạo thất bại', false);
+                message.error('Tạo thất bại')
+                // Message('Tạo thất bại', false);
             }))
     }
 

@@ -56,7 +56,7 @@ class edit extends Component {
                 .then((res) =>
                     res.data.data
                 ),
-            Axios.post('/api/roles/getAll', {}, {
+            Axios.post('/api/system-roles/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }

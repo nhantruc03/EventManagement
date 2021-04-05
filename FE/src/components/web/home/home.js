@@ -25,9 +25,9 @@ class home extends Component {
         this._isMounted = true;
         const login = localStorage.getItem('login');
         const obj = JSON.parse(login);
-        console.log(obj.id)
+
         const [events, actions] = await trackPromise(Promise.all([
-            axios.post('/api/events/getAll', {}, {
+            axios.post('/api/events/getAll', { isClone: false }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
@@ -44,8 +44,6 @@ class home extends Component {
                     res.data.data
                 ),
         ]));
-
-        console.log(actions)
 
         if (events !== null) {
             if (this._isMounted) {
@@ -122,17 +120,18 @@ class home extends Component {
     render() {
         if (this.state.events) {
             return (
-                <Content style={{ margin: "0 16px" }}>
-                    <Title
-                        style={{ marginLeft: 30, color: "#002140", marginTop: 15 }}
-                        level={3}
-                    >
-                        Trang chủ
-                    </Title>
-                    {/* <div className="site-layout-background-main"> */}
-                    <Row style={{ marginLeft: 30, marginRight: 30 }}>
-                        <Col sm={24} xl={16}>
-                            <div style={{ padding: '10px', height: '100%' }}>
+                <Content className="home">
+                    <div style={{ height: '100%' }}>
+                        <div style={{ padding: '10px' }}>
+                            <Title
+                                id="home-top-header"
+                                level={3}
+                            >
+                                Trang chủ
+                                    </Title>
+                        </div>
+                        <Row>
+                            <Col sm={24} xl={16}>
                                 <Row className="status-event-row">
                                     <Col sm={24} md={8}>
                                         <div className="flex-container-row status-event-card">
@@ -166,7 +165,7 @@ class home extends Component {
                                     </Col>
                                 </Row>
                                 <Row>
-                                    <div className="flex-container-row" style={{ width: '100%' }}>
+                                    <div className="flex-container-row" style={{ width: '100%', padding: '0 10px' }}>
                                         <Title level={3}>Sự kiện</Title>
                                         <Link className="flex-row-item-right" to="/events">Xem tất cả</Link>
                                     </div>
@@ -187,7 +186,7 @@ class home extends Component {
                                     </Col>
                                 </Row>
                                 <Row>
-                                    <Col sm={24} lg={12}>
+                                    <Col sm={24} lg={12} style={{ padding: '10px' }}>
                                         <div className="flex-container-row" style={{ width: '100%' }}>
                                             <Title level={3}>Công việc</Title>
                                             <Link className="flex-row-item-right" to="/actions">Xem tất cả</Link>
@@ -200,16 +199,15 @@ class home extends Component {
 
                                     </Col>
                                 </Row>
-                            </div>
-                        </Col>
-                        <Col sm={24} xl={8}>
-                            <div style={{ padding: '10px', height: '100%' }}>
-                                <CalendarSection listActions={this.state.actions} />
-                            </div>
+                            </Col>
+                            <Col sm={24} xl={8}>
+                                <div style={{ padding: '10px', height: '100%' }}>
+                                    <CalendarSection listActions={this.state.actions} />
+                                </div>
 
-                        </Col>
-                    </Row>
-                    {/* </div> */}
+                            </Col>
+                        </Row>
+                    </div>
                 </Content>
             );
         }

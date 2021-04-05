@@ -3,6 +3,7 @@ const EventAssign = require("../../models/eventAssign")
 const GuestTypes = require("../../models/guestTypes")
 const Guests = require("../../models/guests")
 const Groups = require("../../models/groups")
+const notifications = require("../../models/notifications")
 const { handleBody } = require("./handleBody")
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
@@ -12,7 +13,17 @@ const start = async (req, res) => {
     try {
         const query = {
             $or: [
-                { name: req.body.name }
+                {
+                    $and: [
+                        { name: req.body.name },
+                        { isClone: true },
+                    ],
+                    $and: [
+                        { name: req.body.name },
+                        { isClone: false },
+                    ],
+                },
+
             ],
             isDeleted: false
         } // for oldDocs
@@ -57,6 +68,7 @@ const start = async (req, res) => {
         // start Event Assign
         let listEventAssign = [];
         if (body_ref.eventAssigns) {
+            console.log('start 1')
             //prepare data
             let body = [];
             body_ref.eventAssigns.map(element => {
@@ -110,9 +122,40 @@ const start = async (req, res) => {
             }
         }
         // done Event Assign
+        // start notification
+        if (!isEmpty(listEventAssign)) {
+            console.log('start 2')
+            let listNotifications = [];
+            //prepare data
+            let body = [];
+            listEventAssign.map(element => {
+                let temp = {}
+                temp.name = "Phân công"
+                temp.userId = element.userId
+                temp.description = `Bạn được phân công vào sự kiện ${newDoc[0].name}`
+                temp.eventId = newDoc[0]._id
+                body.push(temp)
+            })
+            //access DB
+            listNotifications = await notifications.insertMany(
+                body,
+                { session: session }
+            )
+
+            if (isEmpty(listNotifications) || listNotifications.length != body.length) {
+                await abortTransactions(sessions);
+                return res.status(406).json({
+                    success: false,
+                    error: "Created failed"
+                });
+            }
+
+        }
+        // done notification
         // start guest type
         let listGuestTypes = [];
         if (body_ref.guestTypes) {
+            console.log('start 3')
             //prepare data
             let body = [];
             body_ref.guestTypes.map(element => {
@@ -168,6 +211,7 @@ const start = async (req, res) => {
         // listGuestTypes
         let listGuests = [];
         if (body_ref.guests) {
+            console.log('start 4')
             let body = body_ref.guests.map(element =>
                 pick(element,
                     "name",
@@ -238,6 +282,7 @@ const start = async (req, res) => {
         // start chat room
         let listGroups = [];
         if (body_ref.groups) {
+            console.log('start 5')
             //prepare data
             let body = [];
             body_ref.groups.map(element => {
@@ -298,7 +343,7 @@ const start = async (req, res) => {
             guestTypes: listGuestTypes,
             guests: listGuests,
             groups: listGroups,
-            eventAssign: listEventAssign
+            eventAssign: listEventAssign,
         });
     } catch (error) {
         await abortTransactions(sessions)

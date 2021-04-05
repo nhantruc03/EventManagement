@@ -60,6 +60,12 @@ const Events = new Schema(
                 index: true,
             }
         ],
+        isClone: {
+            type: Boolean,
+            index: true,
+            required: true,
+            default: false,
+        },
         isDeleted: {
             type: Boolean,
             required: true,

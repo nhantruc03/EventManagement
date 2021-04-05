@@ -5,6 +5,7 @@ const get = async (req, res) => {
     const query = { _id: req.params.id, isDeleted: false }
 
     const doc = await Scripts.findOne(query)
+      .populate({ path: 'eventId', select: 'startDate startTime' })
       .populate({ path: 'writerId', select: 'name' })
       .populate({ path: 'forId', select: 'name' })
 

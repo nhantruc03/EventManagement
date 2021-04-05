@@ -9,6 +9,8 @@ import {
 } from "@ant-design/icons";
 import axios from 'axios';
 import moment from 'moment'
+import { w3cwebsocket } from 'websocket';
+const client = new w3cwebsocket('ws://localhost:3001');
 const { Option } = Select;
 const formItemLayout = {
     labelCol: {
@@ -79,6 +81,8 @@ class editAction extends Component {
                 ),
         ]))
 
+        console.log(event)
+
         if (tags !== null && priorities !== null) {
             console.log(event)
             this.setState({
@@ -123,12 +127,28 @@ class editAction extends Component {
     }
 
     onFinish = async (e) => {
-
         let data = {
             ...e,
             coverUrl: this.state.coverUrl,
             eventId: this.props.data.eventId._id,
         }
+        let managerId_change = false
+        if (data.managerId !== this.state.data.managerId) {
+            managerId_change = true
+        }
+        let availUser_change = false
+        if (JSON.stringify(data.availUser) !== JSON.stringify(this.state.data.availUser)) {
+            availUser_change = true
+        }
+
+        data = {
+            ...data,
+            managerId_change: managerId_change,
+            availUser_change: availUser_change,
+        }
+
+
+
         await trackPromise(
             axios.put('/api/actions/' + this.props.data._id, data, {
                 headers: {
@@ -169,6 +189,10 @@ class editAction extends Component {
                         coverUrl: temp_Action.coverUrl
                     })
                     message.success('Cập nhật thành công');
+                    client.send(JSON.stringify({
+                        type: "sendListNotifications",
+                        notifications: res.data.notifications
+                    }))
                     this.props.update(temp_Action, temp_manager, temp_actionAssign)
 
                 })
@@ -176,7 +200,7 @@ class editAction extends Component {
                     console.log(err)
                     message.error('Cập nhật thất bại');
                 }))
-        console.log(data)
+        // console.log(data)
     }
 
     renderView = () => {
@@ -194,7 +218,7 @@ class editAction extends Component {
                     <Row >
                         <Col sm={24} lg={12}>
                             <Row>
-                                <Col span={12}>
+                                <Col span={12} style={{ padding: '0px' }}>
                                     <Form.Item
                                         wrapperCol={{ sm: 24 }}
                                         name="name"
@@ -206,7 +230,7 @@ class editAction extends Component {
 
                                     </Form.Item>
                                 </Col>
-                                <Col span={12}>
+                                <Col span={12} style={{ padding: '0px' }}>
                                     <Form.Item
                                         wrapperCol={{ sm: 24 }}
                                         label="Ban"
@@ -226,7 +250,7 @@ class editAction extends Component {
                                 hasFeedback
                                 rules={[{ required: true, message: 'Cần nhập mô tả công việc!' }]}
                             >
-                                <Input.TextArea rows={4} placeholder="Nhập mô tả công việc..." />
+                                <Input.TextArea rows={9} placeholder="Nhập mô tả công việc..." />
 
                             </Form.Item>
                             <Row>
@@ -251,52 +275,7 @@ class editAction extends Component {
                                     </Form.Item>
                                 </Col>
                             </Row>
-                            <Row>
-                                <Col span={12}>
-                                    <Image style={{ maxWidth: '200px' }} src={`/api/images/${this.state.coverUrl}`}></Image>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item
-                                        wrapperCol={{ sm: 24 }}
-                                        name="coverUrl"
-                                        label={<Title className="normalLabel" level={4}>Ảnh đại diện</Title>}
-                                    // rules={[{ required: true, message: 'Cần tải lên poster' }]}
-                                    >
-                                        <Dragger
-                                            fileList={this.state.fileList}
-                                            action='/api/uploads'
-                                            listType="picture"
-                                            showUploadList={false}
-                                            beforeUpload={file => {
-                                                if (file.type !== 'image/png') {
-                                                    message.error(`${file.name} is not a png file`);
-                                                }
-                                                return file.type === 'image/png';
-                                            }}
-                                            onChange={(info) => {
-                                                // file.status is empty when beforeUpload return false
-                                                if (info.file.status === 'done') {
-                                                    message.success(`${info.file.response.url} file uploaded successfully`);
-                                                    this.setState({
-                                                        coverUrl: info.file.response.url
-                                                    })
 
-                                                }
-                                            }}
-                                            maxCount={1}
-                                        >
-                                            <p className="ant-upload-text">Thả ảnh vào đây hoặc chọn từ trình duyệt</p>
-                                            {/* <p className="ant-upload-hint">
-                                            Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-                                            band files
-                                        </p> */}
-                                            <p className="ant-upload-drag-icon">
-                                                <InboxOutlined />
-                                            </p>
-                                        </Dragger>
-                                    </Form.Item>
-                                </Col>
-                            </Row>
                         </Col>
                         <Col sm={24} lg={12}>
                             <Form.Item
@@ -379,12 +358,59 @@ class editAction extends Component {
                                     {this.state.listPriorities.map((e) => <Option key={e._id}>{e.name}</Option>)}
                                 </Select>
                             </Form.Item>
-                            <div className="flex-container-row" style={{ marginTop: '20px' }}>
-                                <div className="flex-row-item-right">
-                                    <Button htmlType="submit" className="add">Cập nhật</Button>
-                                </div>
-                            </div>
+
                         </Col>
+
+                    </Row>
+                    <Row>
+                        <Col span={12}>
+                            <Image style={{ maxHeight: '170px' }} src={`/api/images/${this.state.coverUrl}`}></Image>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                wrapperCol={{ sm: 24 }}
+                                name="coverUrl"
+                                label={<Title className="normalLabel" level={4}>Ảnh đại diện</Title>}
+                            >
+                                <Dragger
+                                    fileList={this.state.fileList}
+                                    action='/api/uploads'
+                                    listType="picture"
+                                    showUploadList={false}
+                                    beforeUpload={file => {
+                                        if (file.type !== 'image/png') {
+                                            message.error(`${file.name} is not a png file`);
+                                        }
+                                        return file.type === 'image/png';
+                                    }}
+                                    onChange={(info) => {
+                                        // file.status is empty when beforeUpload return false
+                                        if (info.file.status === 'done') {
+                                            message.success(`${info.file.response.url} file uploaded successfully`);
+                                            this.setState({
+                                                coverUrl: info.file.response.url
+                                            })
+
+                                        }
+                                    }}
+                                    maxCount={1}
+                                >
+                                    <p className="ant-upload-text">Thả ảnh vào đây hoặc chọn từ trình duyệt</p>
+                                    <p className="ant-upload-drag-icon">
+                                        <InboxOutlined />
+                                    </p>
+                                </Dragger>
+                            </Form.Item>
+                        </Col>
+                        <div style={{ textAlign: 'center', width: '100%' }}>
+                            <Button style={{ width: '20%' }} htmlType="submit" className="back">Hủy</Button>
+                            <Button style={{ marginLeft: '20px', width: '20%' }} htmlType="submit" className="add">Cập nhật</Button>
+                        </div>
+                        {/* <div className="flex-container-row" style={{ marginTop: '20px' }}>
+                            <div className="flex-row-item-right">
+                                <Button htmlType="submit" className="add">Cập nhật</Button>
+                            </div>
+                        </div> */}
                     </Row>
                 </Form>
             )

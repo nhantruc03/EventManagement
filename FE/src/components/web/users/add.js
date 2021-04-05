@@ -44,7 +44,7 @@ class add extends Component {
     async componentDidMount() {
         this._isMounted = true;
         const [roles] = await trackPromise(Promise.all([
-            Axios.post('/api/roles/getAll', {}, {
+            Axios.post('/api/system-roles/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }

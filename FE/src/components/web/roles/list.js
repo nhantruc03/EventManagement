@@ -93,7 +93,7 @@ class list extends Component {
                 <div className="flex-container-row">
                     <Search target="name" data={this.state.data} getSearchData={(e) => this.getSearchData(e)} />
                     <Button className="flex-row-item-right add">
-                        <Link to={`/addeventtypes`} >
+                        <Link to={`/addroles`} >
                             <div className="btn btn-createnew">Tạo mới</div>
                         </Link>
                     </Button>
