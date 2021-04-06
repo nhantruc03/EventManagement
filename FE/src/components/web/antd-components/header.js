@@ -12,16 +12,6 @@ import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
 const client = new w3cwebsocket('ws://localhost:3001');
 const { Header } = Layout;
-
-// const formItemLayout = {
-//     labelCol: {
-//         span: 6,
-//     },
-//     wrapperCol: {
-//         span: 14,
-//     },
-// };
-
 class header extends Component {
     constructor(props) {
         super(props);
@@ -31,7 +21,9 @@ class header extends Component {
             model: { dondathang: [] },
             notifications: [],
             logout: false,
-            info_pass: false
+            info_pass: false,
+            onNoti: false,
+            notiUrl: ''
         }
     }
 
@@ -77,7 +69,7 @@ class header extends Component {
                         res.data.data
                     )
             ]));
-
+            console.log('notifications', notifications)
             if (notifications !== null) {
                 if (this._isMounted) {
                     this.setState({
@@ -120,105 +112,42 @@ class header extends Component {
             })
         }
     }
-    // formRef = React.createRef();
-    // renderModel = (val) => {
-    //     console.log(this.state.model)
-    //     console.log(val)
-    //     return (
-    //         <Form
-    //             ref={this.formRef}
-    //             name="validate_other"
-    //             {...formItemLayout}
-    //             onFinish={(e) => this.onFinish(e)}
-    //             layout="vertical"
-    //             defaultValue={val}
-    //         >
 
-    //             <Row>
-    //                 <Col span={24}>
-    //                     <Title>Thông tin đơn mua hàng</Title>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Mã đơn hàng">
-    //                         <p className="special">{val.ID}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Người phụ trách">
-    //                         <p className="special">{val.nguoiphutrach}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Tên hàng">
-    //                         <p className="special">{val.tensanpham}</p>
-    //                     </Form.Item>
-    //                 </Col>
+    updateNoti = (e, id, url) => {
+        e.preventDefault()
+        let data = {
+            status: true,
+            _id: id
+        }
+        axios.put('/api/notifications', data, {
+            headers: {
+                'Authorization': { AUTH }.AUTH
+            }
+        })
+            .then((res) =>
+                console.log(res.data.data)
+            )
 
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Số lượng" >
-    //                         <p className="special">{val.soluong}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Đơn giá" >
-    //                         <p className="special">{val.dongia}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Thành tiền" >
-    //                         <p className="special">{val.tongtien}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Ngày nhận hàng" >
-    //                         <p className="special">{val.ngaynhanhang}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Thanh toán" >
-    //                         <p className="special">{val.ngaythanhtoan}</p>
-    //                     </Form.Item>
-    //                 </Col>
 
-    //                 <Col span={24}>
-    //                     <Title>Thông tin nhà cung cấp</Title>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Nhà cung cấp">
-    //                         <p className="special">{val.tennhacungcap}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Email">
-    //                         <p className="special">{val.emailncc}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Số điện thoại">
-    //                         <p className="special">{val.sdtncc}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Người đại diện">
-    //                         <p className="special">{val.nguoidaidien}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //             </Row>
-    //         </Form>
-    //     )
-    // }
+        this.setState({
+            notiUrl: url,
+            onNoti: true
+        })
+    }
 
     renderNotificationContent = (e) => {
         if (e.eventId) {
             return (
-                <Link to={`/events/${e.eventId}`}>
-                    <Tooltip title={
-                        <div>
-                            <p>Sự kiện: {e.name}</p>
-                            <br></br>
-                            <p>Mô tả: {e.description}</p>
-                        </div>
-                    } placement="top">
+                <Link onClick={(x) => this.updateNoti(x, e._id, `/events/${e.eventId}`)} to={'/#'}>
+                    <Tooltip
+                        title={
+                            <div>
+                                <p>Sự kiện: {e.name}</p>
+                                <br></br>
+                                <p>Mô tả: {e.description}</p>
+                            </div>
+                        }
+                        placement="top">
                         <p style={{ fontWeight: 'bold' }} >{e.name}</p>
                         <p className="cut-text">{e.description}</p>
                     </Tooltip>
@@ -227,7 +156,7 @@ class header extends Component {
         }
         else if (e.actionId) {
             return (
-                <Link to={`/actions/${e.actionId}`}>
+                <Link onClick={(x) => this.updateNoti(x, e._id, `/actions/${e.actionId}`)} to={"/#"}>
                     <Tooltip title={
                         <div>
                             <p>Công việc: {e.name}</p>
@@ -254,6 +183,26 @@ class header extends Component {
             </Menu>
         )
     }
+
+    onVisibleChange = (e) => {
+        if (e) {
+            axios.put('/api/notifications', { userId: this.state.currentUser.id, watch: true }, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then((res) =>
+                    res.data.data
+                )
+
+            let temp = this.state.notifications
+            temp.map(e => e.watch = true)
+            this.setState({
+                notifications: temp
+            })
+        }
+    }
+
     render() {
         if (this.state.logout) {
             return (
@@ -270,6 +219,11 @@ class header extends Component {
                 <Redirect to="/updatePassword" />
             )
         }
+        else if (this.state.onNoti) {
+            return (
+                <Redirect to={this.state.notiUrl} />
+            )
+        }
         else {
 
             return (
@@ -278,8 +232,8 @@ class header extends Component {
                         {/* <div style={{ float: 'right', marginBottom: 20, marginRight: 20, display: 'inline-grid' }}> */}
                         <div className="flex-row-item-right">
 
-                            <Dropdown overlayClassName='dropdown' overlay={this.renderNotifications} placement='bottomRight'>
-                                <Badge count={this.state.notifications.filter(e => e.status === false).length}>
+                            <Dropdown onVisibleChange={this.onVisibleChange} overlayClassName='dropdown' overlay={this.renderNotifications} placement='bottomRight'>
+                                <Badge count={this.state.notifications.filter(e => e.watch === false).length}>
                                     <Button style={{ border: 'none' }}><BellOutlined /></Button>
                                 </Badge>
                             </Dropdown>
@@ -305,29 +259,10 @@ class header extends Component {
                                 : null}
                         </div>
                     </div>
-                    {/* <Modal
-                            title='Chi tiết đơn mua hàng'
-                            centered
-                            visible={this.state.modal2Visible}
-                            onOk={() => this.setModal2Visible(false)}
-                            onCancel={() => this.setModal2Visible(false)}
-                            width='30%'
-                            footer={false}
-                        >
-                             {this.renderModel(this.state.model)}
-                        </Modal>  */}
-
                 </Header >
             );
         }
     }
 }
 
-// const mapStateToProps = state => {
-//     return {
-//         data: state.DONMUAHANG
-//     }
-// }
-
-// export default connect(mapStateToProps, null)(header);
 export default header;
