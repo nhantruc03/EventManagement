@@ -208,16 +208,15 @@ class listactions extends Component {
 
     render() {
         return (
-            <Content style={{ margin: "0 16px" }}>
-                <Row style={{ marginLeft: 30, marginRight: 30 }}>
+            <Content>
+                <Row>
                     <div style={{ width: '100%' }} className="flex-container-row">
                         <Title
                             id="home-top-header"
-                            style={{ marginTop: 15 }}
                             level={2}
                         >
                             Công việc
-                            </Title>
+                        </Title>
                         <div className="flex-row-item-right">
                             <div className="flex-container-row">
                                 <Search

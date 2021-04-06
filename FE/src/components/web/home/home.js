@@ -186,7 +186,7 @@ class home extends Component {
                                     </Col>
                                 </Row>
                                 <Row>
-                                    <Col sm={24} lg={12} style={{ padding: '10px' }}>
+                                    <Col sm={24} lg={24} style={{ padding: '10px' }}>
                                         <div className="flex-container-row" style={{ width: '100%' }}>
                                             <Title level={3}>Công việc</Title>
                                             <Link className="flex-row-item-right" to="/actions">Xem tất cả</Link>
@@ -195,9 +195,9 @@ class home extends Component {
                                             {this.renderListAction()}
                                         </div>
                                     </Col>
-                                    <Col sm={24} lg={12}>
+                                    {/* <Col sm={24} lg={12}>
 
-                                    </Col>
+                                    </Col> */}
                                 </Row>
                             </Col>
                             <Col sm={24} xl={8}>

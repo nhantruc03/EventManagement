@@ -50,9 +50,7 @@ class actionColumn extends Component {
     }
 
     renderActions = () => {
-        let temp = this.props.listActions
-        console.log(temp)
-        let temp_listActions = this.applyFilter(temp)
+        let temp_listActions = this.applyFilter(this.props.listActions)
 
         return (
             temp_listActions.map((e) => {
@@ -64,7 +62,7 @@ class actionColumn extends Component {
     }
 
     applyFilter = (list) => {
-        let result = list
+        let result = list.slice()
         console.log(result)
         if (this.state.filter.includes('Tên')) {
             result = result.sort((a, b) => {
@@ -79,7 +77,7 @@ class actionColumn extends Component {
                 let tempA = this.state.totalSubOfAction.filter(e => e._id === a._id)[0]
                 let tempB = this.state.totalSubOfAction.filter(e => e._id === b._id)[0]
 
-                return tempA.total > tempB.total ? 1 : -1
+                return tempA.total < tempB.total ? 1 : -1
             })
         }
 

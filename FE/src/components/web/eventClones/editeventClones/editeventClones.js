@@ -322,7 +322,7 @@ class editevent extends Component {
                         <div className="flex-container-row" style={{ width: '100%', padding: '0 10px' }}>
                             <Breadcrumb separator=">">
                                 <Breadcrumb.Item >
-                                    <Link to="/eventclones">Sự kiện</Link>
+                                    <Link to="/eventclones">Hồ sơ sự kiện</Link>
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
                                     Chi tiết
@@ -337,7 +337,7 @@ class editevent extends Component {
 
                     <div className="site-layout-background-main">
                         <Tabs defaultActiveKey="1" >
-                            <TabPane tab='Thông tin' key={1}>
+                            <TabPane style={{ padding: '0 15px' }} tab='Thông tin' key={1}>
                                 <Row >
                                     <Col sm={24} lg={12}>
                                         <Form
@@ -507,15 +507,10 @@ class editevent extends Component {
                                     </Col>
                                 </Row>
                             </TabPane>
-                            <TabPane tab='Kịch bản' key={2}>
-                                <div className="flex-container-row">
-                                    {/* <Title className="event-detail-title" level={3}>Kịch bản</Title> */}
-                                    <Title level={4}>Kịch bản</Title>
-                                    <Button className="flex-row-item-right" ><Link to={`/addscriptsclone/${this.props.match.params.id}`}>Thêm</Link></Button>
-                                </div>
+                            <TabPane style={{ padding: '0 15px' }} tab='Kịch bản' key={2}>
                                 <ListScripts eventId={this.props.match.params.id} />
                             </TabPane>
-                            <TabPane tab='Công việc' key={3}>
+                            <TabPane style={{ padding: '0 15px' }} tab='Công việc' key={3}>
                                 <ListActionsClone eventId={this.props.match.params.id} />
                             </TabPane>
                         </Tabs>

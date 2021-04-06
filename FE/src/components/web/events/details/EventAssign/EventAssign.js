@@ -121,7 +121,7 @@ class EventAssign extends Component {
     render() {
         return (
             <div >
-                <Row style={{ width: '100%' }}>
+                <Row style={{ marginBottom: '20px' }}>
                     <Col span={20}>
                         <Search targetParent="userId" target="name" data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
                     </Col>

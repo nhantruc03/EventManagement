@@ -281,6 +281,11 @@ class actionDetails extends Component {
         )
     }
 
+    goBack = (e) => {
+        e.preventDefault();
+        this.props.history.goBack();
+    }
+
     render() {
         if (this.state.data) {
             return (
@@ -289,11 +294,14 @@ class actionDetails extends Component {
                         <div className="flex-container-row" style={{ width: '100%' }}>
                             <Breadcrumb separator=">">
                                 <Breadcrumb.Item >
-                                    <Link to="/actions">Danh sách</Link>
+                                    <Link to="/eventclones">Hồ sơ sự kiện</Link>
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
-                                    Chi tiết
-                            </Breadcrumb.Item>
+                                    <Link to="/#" onClick={this.goBack}>Chi tiết</Link>
+                                </Breadcrumb.Item>
+                                <Breadcrumb.Item>
+                                    Công việc
+                                </Breadcrumb.Item>
                             </Breadcrumb>
                             <Button onClick={() => this.setModalEditActionVisible(true)} className="flex-row-item-right add">Chỉnh sửa</Button>
                         </div>

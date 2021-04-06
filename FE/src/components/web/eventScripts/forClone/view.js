@@ -82,10 +82,10 @@ class view extends Component {
                         <div className="flex-container-row" style={{ width: '100%', padding: '0 10px' }}>
                             <Breadcrumb separator=">">
                                 <Breadcrumb.Item >
-                                    <Link to="/events">Sự kiện</Link>
+                                    <Link to="/eventclones">Hồ sơ sự kiện</Link>
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
-                                    <Link to="/#" onClick={this.goBack}>Sự kiện</Link>
+                                    <Link to="/#" onClick={this.goBack}>Chi tiết</Link>
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
                                     Xem kịch bản

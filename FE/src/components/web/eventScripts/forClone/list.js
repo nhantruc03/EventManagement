@@ -2,9 +2,10 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { AUTH } from '../../../env'
 import { trackPromise } from 'react-promise-tracker';
-import { Button, Table, Tooltip } from 'antd';
+import { Button, Row, Table, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
+import Search from "../../helper/search";
 import {
     ToolOutlined,
     CloseOutlined,
@@ -13,6 +14,7 @@ import {
 } from '@ant-design/icons';
 
 import moment from 'moment'
+import { Content } from 'antd/lib/layout/layout';
 class list extends Component {
     constructor(props) {
         super(props);
@@ -40,9 +42,9 @@ class list extends Component {
                     title: 'Hành động',
                     dataIndex: '_id',
                     key: '_id',
-                    width: '30%',
+                    width: '15%',
                     render: (e) =>
-                        <div className="btn-group">
+                        <div className="btn-group" style={{ textAlign: 'center' }}>
                             <Tooltip title="Chỉnh sửa" arrow>
                                 <Link to={`/editscriptsclone/${e}`} >
                                     <Button className="add"><ToolOutlined /></Button>
@@ -116,13 +118,45 @@ class list extends Component {
         return Math.ceil(SearchData.length / this.state.postsPerPage);
     }
 
+    getSearchData = (data) => {
+        this.setState({
+            SearchData: data
+        })
+    }
+
     printData = () => {
         return (
-            <div className='mt-1'>
-                {this.state.data.length > 0 ?
-                    <Table className="scripts" pagination={this.getlistpage(this.state.data) > 1 ? { pageSize: this.state.postsPerPage } : false} showHeader={false} rowKey="_id" columns={this.state.columns} dataSource={this.state.data}></Table> : null
-                }
-            </div>
+            <Content>
+                <Row style={{ marginBottom: '20px' }}>
+                    <div style={{ width: '100%' }} className="flex-container-row">
+                        <Title
+                            id="home-top-header"
+                            level={2}
+                        >
+                            Kịch bản
+                    </Title>
+                        <div className="flex-row-item-right">
+                            <div className="flex-container-row">
+                                <Search
+                                    target={["name"]}
+                                    multi={true}
+                                    data={this.state.data}
+                                    getSearchData={(e) => this.getSearchData(e)}
+                                />
+                                <Button className="add" style={{ marginLeft: '20px' }}>
+                                    <Link to={`/addscriptsclone/${this.props.eventId}`}>Thêm kịch bản</Link>
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </Row>
+
+                <div style={{ padding: '30px' }}>
+                    {this.state.data.length > 0 ?
+                        <Table className="scripts" pagination={this.getlistpage(this.state.SearchData) > 1 ? { pageSize: this.state.postsPerPage } : false} showHeader={false} rowKey="_id" columns={this.state.columns} dataSource={this.state.SearchData}></Table> : null
+                    }
+                </div>
+            </Content>
         )
     }
 
