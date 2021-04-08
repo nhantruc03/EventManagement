@@ -99,6 +99,14 @@ class add extends Component {
                         </Form.Item>
                         <Form.Item
                             wrapperCol={{ sm: 24 }}
+                            name="mssv"
+                            label={<Title level={4}>Mã số sinh viên</Title>}
+                            hasFeedback
+                        >
+                            <Input placeholder="Nhập mã số sinh viên..."></Input>
+                        </Form.Item>
+                        <Form.Item
+                            wrapperCol={{ sm: 24 }}
                             name="email"
                             label={<Title level={4}>Email</Title>}
                             hasFeedback

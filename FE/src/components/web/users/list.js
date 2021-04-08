@@ -19,6 +19,7 @@ class list extends Component {
             SearchData: [],
             columns: [
                 { title: 'Tên', dataIndex: 'name', key: 'name' },
+                { title: 'MSSV', dataIndex: 'mssv', key: 'mssv' },
                 { title: 'Email', dataIndex: 'email', key: 'email' },
                 {
                     title: 'Ngày sinh',

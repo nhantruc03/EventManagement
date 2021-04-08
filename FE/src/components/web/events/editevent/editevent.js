@@ -31,6 +31,7 @@ import GuestTypeView from "./GuestType/guestTypeView";
 import GuestView from "./Guest/guestView";
 import GroupView from "./Group/groupView";
 import { w3cwebsocket } from 'websocket';
+import * as XLSX from 'xlsx'
 const client = new w3cwebsocket('ws://localhost:3001');
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -72,9 +73,8 @@ class editevent extends Component {
             userId: e,
             eventId: this.props.match.params.id,
         }
-
         await trackPromise(
-            axios.post('/api/event-assign', temp_eventAssign, {
+            axios.post('/api/event-assign', [temp_eventAssign], {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
@@ -83,12 +83,45 @@ class editevent extends Component {
                     this.setState({
                         listusers: this.state.listusers.filter(x => x._id !== e._id),
                         listusersforevent: [...this.state.listusersforevent, e],
-                        listEventAssign: [...this.state.listEventAssign, res.data.data]
+                        listEventAssign: [...this.state.listEventAssign, ...res.data.data]
                     })
 
                     client.send(JSON.stringify({
-                        type: "sendNotification",
+                        type: "sendListNotifications",
                         notification: res.data.notification
+                    }))
+
+                    message.success('Thêm thành công')
+                })
+                .catch(err => {
+                    message.error('Thêm thất bại')
+                }))
+    }
+
+    addlistusertoevent = async (data) => {
+        await trackPromise(
+            axios.post('/api/event-assign', data, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then(res => {
+                    let list_resultEA = res.data.data
+                    let list_resultUserId = []
+                    let list_resultUser = []
+                    list_resultEA.forEach(e => {
+                        list_resultUserId.push(e.userId._id)
+                        list_resultUser.push(e.userId)
+                    })
+                    this.setState({
+                        listusers: this.state.listusers.filter(x => !list_resultUserId.includes(x._id)),
+                        listusersforevent: [...this.state.listusersforevent, ...list_resultUser],
+                        listEventAssign: [...this.state.listEventAssign, ...res.data.data]
+                    })
+
+                    client.send(JSON.stringify({
+                        type: "sendListNotifications",
+                        notifications: res.data.notification
                     }))
 
                     message.success('Thêm thành công')
@@ -105,8 +138,6 @@ class editevent extends Component {
     }
 
     updateEventAssign = (a, b) => {
-        console.log('updated', a)
-
         this.setState({
             listEventAssign: a,
         })
@@ -200,7 +231,6 @@ class editevent extends Component {
 
         let guests = []
         if (guesttypes !== null) {
-            console.log(guesttypes)
             let temp_listtypes = []
             guesttypes.forEach(e => {
                 temp_listtypes.push(e._id)
@@ -213,8 +243,6 @@ class editevent extends Component {
                 }).then((res) =>
                     res.data.data
                 ))
-
-            console.log(guests)
         }
 
 
@@ -239,7 +267,6 @@ class editevent extends Component {
                     temp_userForEvent.push(e.userId._id)
                 })
                 let temp_userNotInEvent = users.filter(e => !temp_userForEvent.includes(e._id))
-
                 // prepare state
                 this.setState({
                     listRole: roles,
@@ -277,8 +304,6 @@ class editevent extends Component {
                 'posterUrl': this.state.posterUrl,
             }
         }
-
-        console.log('Received values of form: ', data);
 
         await trackPromise(axios.put('/api/events/' + this.state.data._id, data, {
             headers: {
@@ -321,6 +346,89 @@ class editevent extends Component {
             />
         );
     };
+
+    uploadExcelFile = (file) => {
+        const promise = new Promise((resolve, reject) => {
+
+            const fileReader = new FileReader();
+
+            fileReader.readAsArrayBuffer(file)
+            fileReader.onload = (e) => {
+                const bufferArray = e.target.result
+
+                const wb = XLSX.read(bufferArray, { type: 'buffer' });
+
+                const wsname = wb.SheetNames[0]
+
+                const ws = wb.Sheets[wsname]
+
+                const data = XLSX.utils.sheet_to_json(ws)
+
+                resolve(data)
+            }
+            fileReader.onerror = (err) => {
+                reject(err)
+            }
+        })
+
+        promise.then((result) => {
+            let temp_list_user = []
+            result.forEach(e => {
+                temp_list_user.push(e.mssv.toString())
+            })
+
+            let temp = this.state.listusers.filter(e => temp_list_user.includes(e.mssv))
+            let exist_user = []
+            temp.forEach(e => {
+                exist_user.push(e.mssv)
+            })
+
+            let temp_EventAssign = []
+            result.forEach(e => {
+                if (exist_user.includes(e.mssv.toString())) {
+                    let temp = {
+                        userId: this.getUserByMSSV(e.mssv.toString()),
+                        facultyId: this.getFacultyByName(e.ban),
+                        roleId: this.getRoleByName(e['chức vụ']),
+                        eventId: this.props.match.params.id
+                    }
+                    temp_EventAssign.push(temp)
+                }
+            })
+            // this.updateEventAssign(temp_EventAssign)
+            this.addlistusertoevent(temp_EventAssign)
+        })
+    }
+
+    getUserByMSSV = (mssv) => {
+        let result
+        this.state.listusers.forEach(e => {
+            if (e.mssv === mssv) {
+                result = e._id
+            }
+        })
+        return result
+    }
+
+    getFacultyByName = (name) => {
+        let result
+        this.state.listFaculty.forEach(e => {
+            if (name.toLowerCase() === e.name.toLowerCase()) {
+                result = e._id
+            }
+        })
+        return result
+    }
+
+    getRoleByName = (name) => {
+        let result
+        this.state.listRole.forEach(e => {
+            if (name.toLowerCase() === e.name.toLowerCase()) {
+                result = e._id
+            }
+        })
+        return result
+    }
 
     render() {
         if (this.state.data) {
@@ -506,7 +614,7 @@ class editevent extends Component {
                             <Col className="event-col" sm={24} lg={12}>
                                 <Tabs defaultActiveKey="1" >
                                     <TabPane tab='Ban tổ chức' key={1}>
-                                        <EventAssign onAddClick={() => this.setModal2Visible(true)} canDelete={true} update={this.updateEventAssign} eventId={this.props.match.params.id} listRole={this.state.listRole} listFaculty={this.state.listFaculty} data={this.state.listEventAssign}
+                                        <EventAssign uploadExcelFile={this.uploadExcelFile} onAddClick={() => this.setModal2Visible(true)} canDelete={true} update={this.updateEventAssign} eventId={this.props.match.params.id} listRole={this.state.listRole} listFaculty={this.state.listFaculty} data={this.state.listEventAssign}
                                             availUser={this.state.listusersforevent}
                                         />
                                     </TabPane>

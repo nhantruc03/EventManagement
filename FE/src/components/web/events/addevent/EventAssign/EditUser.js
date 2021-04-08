@@ -16,7 +16,8 @@ class EditUser extends Component {
             _id: this.props.userEditObject.userId._id,
             phone: this.props.userEditObject.userId.phone,
             email: this.props.userEditObject.userId.email,
-            name: this.props.userEditObject.userId.name
+            name: this.props.userEditObject.userId.name,
+            mssv: this.props.userEditObject.userId.mssv,
         }
 
         // values.guestTypeId = values.guestTypeName
@@ -44,6 +45,7 @@ class EditUser extends Component {
     componentDidMount() {
         let data = {
             name: this.props.userEditObject.userId.name,
+            mssv: this.props.userEditObject.userId.mssv,
             phone: this.props.userEditObject.userId.phone,
             email: this.props.userEditObject.userId.email,
             roleId: this.props.userEditObject.roleId ? this.props.userEditObject.roleId._id : null,
@@ -71,7 +73,7 @@ class EditUser extends Component {
                 layout="vertical"
             >
                 <Row>
-                    <Col span={5} style={{ padding: '0 10px' }}>
+                    <Col span={4} style={{ padding: '0 10px' }}>
                         <Form.Item
                             wrapperCol={{ sm: 24 }}
                             name="name"
@@ -82,7 +84,18 @@ class EditUser extends Component {
                             <Input disabled={true} placeholder="Nhập tên..." />
                         </Form.Item>
                     </Col>
-                    <Col span={5} style={{ padding: '0 10px' }}>
+                    <Col span={4} style={{ padding: '0 10px' }}>
+                        <Form.Item
+                            wrapperCol={{ sm: 24 }}
+                            name="mssv"
+                            hasFeedback
+                            rules={[{ required: true, message: 'Cần nhập tên!' }]}
+
+                        >
+                            <Input disabled={true} placeholder="Nhập tên..." />
+                        </Form.Item>
+                    </Col>
+                    <Col span={4} style={{ padding: '0 10px' }}>
                         <Form.Item
                             wrapperCol={{ sm: 24 }}
                             name="email"
@@ -92,7 +105,7 @@ class EditUser extends Component {
                             <Input disabled={true} placeholder="Nhập email" />
                         </Form.Item>
                     </Col>
-                    <Col span={5} style={{ padding: '0 10px' }}>
+                    <Col span={4} style={{ padding: '0 10px' }}>
                         <Form.Item
                             wrapperCol={{ sm: 24 }}
                             name="facultyId"
@@ -104,7 +117,7 @@ class EditUser extends Component {
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={5} style={{ padding: '0 10px' }}>
+                    <Col span={4} style={{ padding: '0 10px' }}>
                         <Form.Item
                             wrapperCol={{ sm: 24 }}
                             name="roleId"

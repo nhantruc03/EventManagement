@@ -23,7 +23,8 @@ const handleBody = (body) => {
         "password",
         "email",
         "roleId",
-        "gender")
+        "gender",
+        "mssv")
     }
   }
 } // for newDoc

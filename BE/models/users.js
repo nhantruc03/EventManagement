@@ -9,6 +9,11 @@ const Users = new Schema(
       required: true,
       index: true
     },
+    mssv:{
+      type: String,
+      index: true,
+      unique: true
+    },
     roleId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "systemroles",

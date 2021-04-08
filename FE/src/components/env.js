@@ -11,7 +11,4 @@ try {
 export { AUTH }
 
 const WebSocketServer = 'ws://localhost:3001'
-// const WebSocketServer = 'ws://backend:3001'
-// const WebSocketServer = 'wss://api-benhvien.herokuapp.com'
 export {WebSocketServer}
-

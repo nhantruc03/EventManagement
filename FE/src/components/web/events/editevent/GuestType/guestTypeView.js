@@ -175,7 +175,7 @@ class guestTypeView extends Component {
                 <TableData deleteClick={(id) => this.deleteClick(id)} canDelete={this.props.canDelete} listFaculty={this.props.listFaculty} listRole={this.props.listRole} edit={(info) => this.edit(info)} data={this.getCurData(this.state.data)} />
                 {this.getlistpage(this.state.data) > 1 ?
                     <Pagination
-                        totalPosts={this.getlistpage(this.state.data)}
+                        totalPosts={this.state.data.length}
                         paginate={(e) => this.paginate(e)}
                         PageSize={this.state.postsPerPage}
                     /> :

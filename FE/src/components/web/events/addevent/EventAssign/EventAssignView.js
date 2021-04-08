@@ -13,6 +13,12 @@ class guestView extends Component {
                     render: (e) => <div>{e.name}</div>
                 },
                 {
+                    title: 'MSSV',
+                    dataIndex: 'userId',
+                    key: 'userId',
+                    render: (e) => <div>{e.mssv}</div>
+                },
+                {
                     title: 'Ban',
                     dataIndex: 'facultyId',
                     key: 'facultyId',

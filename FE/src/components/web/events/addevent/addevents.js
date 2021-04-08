@@ -30,6 +30,7 @@ import AddTagType from "./add_TagType";
 import GuestView from "./forGuest/guestView";
 import EventAssignView from "./EventAssign/EventAssignView";
 import { Link } from "react-router-dom";
+import * as XLSX from 'xlsx'
 const { Option } = Select;
 const { TabPane } = Tabs;
 const formItemLayout = {
@@ -62,6 +63,7 @@ class addevents extends Component {
             listRole: [],
             listFaculty: [],
         }
+        this.selectedFile = React.createRef();
     }
 
     addusertoevent = (e) => {
@@ -175,7 +177,7 @@ class addevents extends Component {
 
 
 
-    
+
     goBack = (e) => {
         e.preventDefault();
         this.props.history.goBack();
@@ -251,6 +253,7 @@ class addevents extends Component {
     renderModel = () => {
         return (
             <SelectUser
+                canDelete={true}
                 removeuserfromevent={(e) => this.removeuserfromevent(e)}
                 addusertoevent={(e) => this.addusertoevent(e)}
                 listusers={this.state.listusers}
@@ -281,6 +284,93 @@ class addevents extends Component {
         this.setModal2Visible3(false)
     }
 
+
+    uploadExcelFile = (file) => {
+        // console.log(e)
+        const promise = new Promise((resolve, reject) => {
+
+            const fileReader = new FileReader();
+
+            fileReader.readAsArrayBuffer(file)
+            fileReader.onload = (e) => {
+                const bufferArray = e.target.result
+
+                const wb = XLSX.read(bufferArray, { type: 'buffer' });
+
+                const wsname = wb.SheetNames[0]
+
+                const ws = wb.Sheets[wsname]
+
+                const data = XLSX.utils.sheet_to_json(ws)
+
+                resolve(data)
+            }
+            fileReader.onerror = (err) => {
+                reject(err)
+            }
+        })
+
+        promise.then((result) => {
+            // console.log('data from excel', result)
+            // result = result
+            console.log(result)
+            let temp_list_user = []
+            result.forEach(e => {
+                temp_list_user.push(e.mssv.toString())
+            })
+
+            let temp = this.state.listusers.filter(e => temp_list_user.includes(e.mssv))
+            let exist_user = []
+            temp.forEach(e => {
+                this.addusertoevent(e)
+                exist_user.push(e.mssv)
+            })
+
+            let temp_EventAssign = []
+            result.forEach(e => {
+                if (exist_user.includes(e.mssv.toString())) {
+                    let temp = {
+                        key: this.getUserByMSSV(e.mssv.toString())._id,
+                        userId: this.getUserByMSSV(e.mssv.toString()),
+                        facultyId: this.getFacultyByName(e.ban),
+                        roleId: this.getRoleByName(e['chức vụ']),
+                    }
+                    temp_EventAssign.push(temp)
+                }
+            })
+            this.updateEventAssign(temp_EventAssign)
+        })
+    }
+    getUserByMSSV = (mssv) => {
+        let result = {}
+
+        this.state.listusersforevent.forEach(e => {
+            if (e.mssv === mssv) {
+                result = e
+            }
+        })
+        return result
+    }
+
+    getFacultyByName = (name) => {
+        let result = {}
+        this.state.listFaculty.forEach(e => {
+            if (name.toLowerCase() === e.name.toLowerCase()) {
+                result = e
+            }
+        })
+        return result
+    }
+
+    getRoleByName = (name) => {
+        let result = {}
+        this.state.listRole.forEach(e => {
+            if (name.toLowerCase() === e.name.toLowerCase()) {
+                result = e
+            }
+        })
+        return result
+    }
 
     render() {
         return (
@@ -344,7 +434,21 @@ class addevents extends Component {
 
                                 <div className="flex-container-row">
                                     <Title level={4}>Phân công</Title>
-                                    <Button className="flex-row-item-right" onClick={() => this.setModal2Visible3(true)} >Phân công</Button>
+                                    <Button className="flex-row-item-right add" onClick={() => this.setModal2Visible3(true)} >Phân công</Button>
+
+                                    <input
+                                        // ref={this.selectedFile}
+                                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                        ref={input => this.selectedFile = input}
+                                        type="file"
+                                        onChange={e => {
+                                            const file = e.target.files[0];
+                                            this.uploadExcelFile(file)
+                                        }}
+                                        style={{ display: 'none' }}
+                                    />
+                                    <Button className="add" onClick={() => this.selectedFile.click()} >Tải lên file</Button>
+
                                 </div>
 
                                 <EventAssignView data={this.state.listEventAssign} />
@@ -527,7 +631,7 @@ class addevents extends Component {
                     visible={this.state.modal2Visible2}
                     onOk={() => this.setModal2Visible2(false)}
                     onCancel={() => this.setModal2Visible2(false)}
-                    width="70%"
+                    width="80%"
                     pagination={false}
                     footer={false}
                 >
@@ -540,7 +644,7 @@ class addevents extends Component {
                     visible={this.state.modal2Visible3}
                     onOk={() => this.setModal2Visible3(false)}
                     onCancel={() => this.setModal2Visible3(false)}
-                    width="70%"
+                    width="80%"
                     pagination={false}
                     footer={false}
                 >
