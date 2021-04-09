@@ -12,99 +12,109 @@ import Icon from "../assets/images/Show.png";
 import { Dimensions } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 import axios from "axios";
+import Url from "../env";
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 
-export default LoginScreen = (navigation) => {
+export default LoginScreen = ({ navigation }) => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(true);
   const [focusInputType, setFocusInputType] = useState();
 
-  const handleSubmitPress = () => {
+  const handleSubmitPress = async () => {
     var data = new FormData();
 
     data.append("username", username);
     data.append("password", password);
-    axios
-      .post("http://192.168.1.5:3001/api/users/login", data)
+    let result = await axios
+      .post(`${Url()}/api/users/login`, data)
       .then((res) => {
-        console.log(res.data);
         if (res.data.success === true) {
-          AsyncStorage.setItem("login", JSON.stringify(res.data));
+          return res.data.data;
         }
       })
       .catch((error) => {
         console.error(error);
       });
+
+    if (result !== undefined) {
+      console.log("result2", result);
+      await AsyncStorage.setItem("login", JSON.stringify(result));
+      navigation.replace("BottomNavigation");
+    }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.h1}>XIN CHÀO</Text>
-      <Text style={styles.h2}>Đăng nhập để tiếp tục</Text>
+      <View style={styles.formcontainer}>
+        <Text style={styles.h1}>XIN CHÀO</Text>
+        <Text style={styles.h2}>Đăng nhập để tiếp tục</Text>
 
-      <View style={{ marginBottom: (H * 21) / 667, marginTop: (H * 59) / 667 }}>
-        <Text style={styles.textBox}>Tên đăng nhập</Text>
-        <View style={styles.boxSection}>
-          <TextInput
-            onFocus={() => setFocusInputType("username")}
-            onBlur={() => setFocusInputType("")}
-            style={
-              focusInputType == "username" ? styles.inputActive : styles.input
-            }
-            placeholder="Nhập tên đăng nhập của bạn"
-            onChangeText={(value) => setUserName(value)}
-            value={username}
-            underlineColorAndroid="transparent"
-            autoCapitalize="none"
-          />
-        </View>
-      </View>
-
-      <View>
-        <Text style={styles.textBox}>Mật khẩu</Text>
-
-        <View style={styles.boxSection}>
-          <TouchableOpacity
-            style={styles.Icon}
-            onPress={() => setShowPassword(!showPassword)}
-          >
-            <Image source={Icon} />
-          </TouchableOpacity>
-
-          <TextInput
-            onFocus={() => setFocusInputType("password")}
-            onBlur={() => setFocusInputType("")}
-            style={
-              focusInputType == "password" ? styles.inputActive : styles.input
-            }
-            placeholder="Nhập mật khẩu của bạn"
-            onChangeText={(value) => setPassword(value)}
-            value={password}
-            secureTextEntry={showPassword}
-            underlineColorAndroid="transparent"
-          />
-        </View>
-      </View>
-
-      <View style={styles.containerBoxSubmit}>
-        <TouchableOpacity
-          onPress={handleSubmitPress}
-          title="Đăng nhập"
-          style={styles.btnSubmit}
-          underlayColor="#fff"
+        <View
+          style={{ marginBottom: (H * 21) / 667, marginTop: (H * 59) / 667 }}
         >
-          <Text style={styles.textSubmit}>Đăng nhập</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <View style={{ flex: 1, height: 1, backgroundColor: "#AAB0B6" }} />
-        <View>
-          <Text style={{ width: 60, textAlign: "center" }}>Hoặc</Text>
+          <Text style={styles.textBox}>Tên đăng nhập</Text>
+          <View style={styles.boxSection}>
+            <TextInput
+              onFocus={() => setFocusInputType("username")}
+              onBlur={() => setFocusInputType("")}
+              style={
+                focusInputType == "username" ? styles.inputActive : styles.input
+              }
+              placeholder="Nhập tên đăng nhập của bạn"
+              onChangeText={(value) => setUserName(value)}
+              value={username}
+              underlineColorAndroid="transparent"
+              autoCapitalize="none"
+            />
+          </View>
         </View>
-        <View style={{ flex: 1, height: 1, backgroundColor: "#AAB0B6" }} />
+
+        <View>
+          <Text style={styles.textBox}>Mật khẩu</Text>
+
+          <View style={styles.boxSection}>
+            <TouchableOpacity
+              style={styles.Icon}
+              onPress={() => setShowPassword(!showPassword)}
+            >
+              <Image source={Icon} />
+            </TouchableOpacity>
+
+            <TextInput
+              onFocus={() => setFocusInputType("password")}
+              onBlur={() => setFocusInputType("")}
+              style={
+                focusInputType == "password" ? styles.inputActive : styles.input
+              }
+              placeholder="Nhập mật khẩu của bạn"
+              onChangeText={(value) => setPassword(value)}
+              value={password}
+              secureTextEntry={showPassword}
+              underlineColorAndroid="transparent"
+            />
+          </View>
+        </View>
+
+        <View style={styles.containerBoxSubmit}>
+          <TouchableOpacity
+            onPress={handleSubmitPress}
+            title="Đăng nhập"
+            style={styles.btnSubmit}
+            underlayColor="#fff"
+          >
+            <Text style={styles.textSubmit}>Đăng nhập</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View style={{ flex: 1, height: 1, backgroundColor: "#AAB0B6" }} />
+          <View>
+            <Text style={{ width: 60, textAlign: "center" }}>Hoặc</Text>
+          </View>
+          <View style={{ flex: 1, height: 1, backgroundColor: "#AAB0B6" }} />
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -114,7 +124,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    margin: 16,
+  },
+  formcontainer: {
+    zIndex: 2,
+    backgroundColor: "#fff",
+    padding: 16,
   },
   h1: {
     marginTop: (H * 12) / 100,
