@@ -5,7 +5,7 @@ import TabView from "../components/Tabs";
 const styles = StyleSheet.create({
   mainlabel: {
     fontSize: 24,
-    fontFamily: "Nunito-Bold",
+    fontFamily: "bold",
   },
 });
 

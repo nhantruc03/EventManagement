@@ -197,11 +197,11 @@ const styles = StyleSheet.create({
     height: (H * 48) / 667,
     backgroundColor: "#2A9D8F",
     borderRadius: 8,
-    padding: (H * 14) / 667,
+    padding: (H * 10) / 667,
   },
   textSubmit: {
+    fontFamily: "bold",
     fontSize: 18,
-    fontWeight: "bold",
     color: "#fff",
     alignItems: "center",
     textAlign: "center",

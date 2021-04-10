@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   toplabel: {
-    fontFamily: "Nunito-Bold",
+    fontFamily: "bold",
     fontSize: 32,
     paddingTop: 16,
     fontWeight: "500",
@@ -39,10 +39,13 @@ const styles = StyleSheet.create({
   carditems: {
     paddingHorizontal: 16,
   },
-  cardImage: {},
+  cardImage: {
+    width: 300,
+    height: 200,
+  },
   titleText: {
     marginVertical: 16,
-    fontFamily: "Nunito-Bold",
+    fontFamily: "bold",
     fontSize: 18,
   },
   datetime: {
@@ -55,7 +58,7 @@ const styles = StyleSheet.create({
   },
   Timecontent: {
     marginLeft: 8,
-    fontFamily: "Nunito-SemiBold",
+    fontFamily: "semibold",
     fontSize: 14,
     color: "#98A1A5",
   },
@@ -69,7 +72,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   Locatecontent: {
-    fontFamily: "Nunito-SemiBold",
+    fontFamily: "semibold",
     fontSize: 14,
     marginLeft: 8,
     color: "#98A1A5",
@@ -182,7 +185,7 @@ export default class Event extends Component {
           tabBarActiveTextColor="#2A9D8F"
           tabBarInactiveTextColor="#AAB0B6"
           tabBarTextStyle={{
-            fontFamily: "Nunito-SemiBold",
+            fontFamily: "semibold",
             marginVertical: 8,
           }}
           tabBarUnderlineStyle={{ backgroundColor: "#2A9D8F" }}
@@ -198,6 +201,7 @@ export default class Event extends Component {
                     time: item.startTime,
                     date: item.startDate,
                     location: item.address,
+                    tag: item.tagId,
                     poster: `${Url()}/api/images/${item.posterUrl}`,
                   })
                 }
@@ -205,8 +209,13 @@ export default class Event extends Component {
                 <EventCard>
                   <Image
                     style={styles.cardImage}
-                    source={{ uri: `${Url()}/api/images/${item.posterUrl}` }}
+                    source={{
+                      uri: `${Url()}/api/images/${item.posterUrl}`,
+                    }}
                   ></Image>
+                  {/* <Image
+                    source={require("../assets/images/TestImg.png")}
+                  ></Image> */}
                   <Text style={styles.titleText}>{item.name}</Text>
                   <View style={styles.datetime}>
                     <Image

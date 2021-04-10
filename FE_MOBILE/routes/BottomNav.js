@@ -11,6 +11,7 @@ import Eventscreen from "../screens/Event";
 import Taskscreen from "../screens/Task";
 import Profilescreen from "../screens/Profile";
 import EventDetail from "../screens/EventDetails";
+import EventDetail2 from "../screens/EventDetails2";
 import { createStackNavigator } from "@react-navigation/stack";
 
 const Tab = createBottomTabNavigator();
@@ -26,6 +27,7 @@ function TabEvent() {
         options={{ headerShown: false }}
       />
       <Stack.Screen name="EventDetails" component={EventDetail} />
+      {/* <Stack.Screen name="EventDetails2" conponent={EventDetail2} /> */}
     </Stack.Navigator>
   );
 }
@@ -46,7 +48,8 @@ export default class BottomNav extends React.Component {
         tabBarOptions={{
           labelStyle: {
             fontSize: 12,
-            fontWeight: "bold",
+
+            fontFamily: "bold",
           },
           activeTintColor: "#2A9D8F",
           inactiveTintColor: "#868686",

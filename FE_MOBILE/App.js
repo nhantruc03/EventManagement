@@ -19,9 +19,9 @@ export default App = () => {
 
   const [loaded] = useFonts({
     regular: require("./assets/fonts/Nunito-Regular.ttf"),
-    "Nunito-Bold": require("./assets/fonts/Nunito-Bold.ttf"),
-    "Nunito-SemiBold": require("./assets/fonts/Nunito-SemiBold.ttf"),
-    "Nunito-Light": require("./assets/fonts/Nunito-Light.ttf"),
+    bold: require("./assets/fonts/Nunito-Bold.ttf"),
+    semibold: require("./assets/fonts/Nunito-SemiBold.ttf"),
+    light: require("./assets/fonts/Nunito-Light.ttf"),
   });
   if (!loaded) {
     return null;
