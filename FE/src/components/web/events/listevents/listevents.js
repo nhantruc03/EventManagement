@@ -61,7 +61,7 @@ class listevents extends Component {
     async componentDidMount() {
         this._isMounted = true;
         let temp = moment(new Date()).format('DD/MM/YYYY')
-        console.log(temp)
+
         const [tags, future_event, ongoing_event, past_event] = await trackPromise(Promise.all([
             axios.post('/api/tags/getAll', {}, {
                 headers: {
@@ -96,10 +96,6 @@ class listevents extends Component {
                     res.data.data
                 ),
         ]));
-
-        console.log('future', future_event)
-        console.log('ongoing', ongoing_event)
-        console.log('past', past_event)
 
         if (future_event !== null && ongoing_event !== null && past_event !== null) {
             if (this._isMounted) {
@@ -179,29 +175,50 @@ class listevents extends Component {
 
                 </Row>
 
-                <Row>
+                <Row style={{ overflowY: 'hidden' }}>
                     {this.state.data_future.length > 0 ?
                         <Col lg={24} xl={8} className="list-events-col">
-                            <Title level={3}>Sắp diễn ra</Title>
-                            {this.state.data_future.map((value, key) =>
-                                <EventCard data={value} key={key} />
-                            )}
+                            <div style={{ padding: '0 20px' }} className="flex-container-row">
+                                <Title level={3}>Sắp diễn ra:</Title>
+                                <div className="flex-row-item-right">
+                                    <Title level={3}>{this.state.data_future.length}</Title>
+                                </div>
+                            </div>
+                            <div className="list-events-col-data">
+                                {this.state.data_future.map((value, key) =>
+                                    <EventCard data={value} key={key} />
+                                )}
+                            </div>
                         </Col> : null
                     }
                     {this.state.data_ongoing.length > 0 ?
                         <Col lg={24} xl={8} className="list-events-col" >
-                            <Title level={3}>Đang diễn ra</Title>
-                            {this.state.data_ongoing.map((value, key) =>
-                                <EventCard data={value} key={key} />
-                            )}
+                            <div style={{ padding: '0 20px' }} className="flex-container-row">
+                                <Title level={3}>Đang diễn ra:</Title>
+                                <div className="flex-row-item-right">
+                                    <Title level={3}>{this.state.data_ongoing.length}</Title>
+                                </div>
+                            </div>
+                            <div className="list-events-col-data">
+                                {this.state.data_ongoing.map((value, key) =>
+                                    <EventCard data={value} key={key} />
+                                )}
+                            </div>
                         </Col> : null
                     }
                     {this.state.data_past.length > 0 ?
                         <Col lg={24} xl={8} className="list-events-col" >
-                            <Title level={3}>Đã diễn ra</Title>
-                            {this.state.data_past.map((value, key) =>
-                                <EventCard data={value} key={key} />
-                            )}
+                            <div style={{ padding: '0 20px' }} className="flex-container-row">
+                                <Title level={3}>Đã diễn ra:</Title>
+                                <div className="flex-row-item-right">
+                                    <Title level={3}>{this.state.data_past.length}</Title>
+                                </div>
+                            </div>
+                            <div className="list-events-col-data">
+                                {this.state.data_past.map((value, key) =>
+                                    <EventCard data={value} key={key} />
+                                )}
+                            </div>
                         </Col> : null
                     }
                 </Row>

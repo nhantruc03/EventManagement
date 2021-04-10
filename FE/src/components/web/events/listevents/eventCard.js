@@ -19,12 +19,10 @@ class eventCard extends Component {
         return (
             <div className="event-card-container">
                 <Link to={`/events/${this.props.data._id}`}>
-                    <Skeleton paragraph={{ rows: 5 }} round={true} title={true} loading={false} active>
                         <Card
                             hoverable
                             className="eventCard"
                             cover={<img className="cover" alt="example" src={`api/images/${this.props.data.posterUrl}`} />}
-
                         >
                             <Tooltip title={this.props.data.description} placement="top">
                                 <Meta title={this.props.data.name} />
@@ -53,9 +51,7 @@ class eventCard extends Component {
                                 </Col>
                             </Row>
                         </Card>
-                    </Skeleton>
                 </Link>
-
             </div>
         );
     }
