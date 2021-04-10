@@ -1,16 +1,52 @@
-const { pick } = require('lodash')
+const { pick, isEmpty } = require('lodash')
 const Events = require('../../models/events')
 
 const getAll = async (req, res) => {
   const page = Number(req.query.page) // page index
   const limit = Number(req.query.limit) // limit docs per page
+  const gt = req.query.gt
+  const lt = req.query.lt
+  const eq = req.query.eq
 
   try {
     // const query = { isDeleted: false }
-    const query = {
-      ...pick(req.body, "isClone"),
-      isDeleted: false
+    let query
+
+    if (!isEmpty(gt)) {
+      query = {
+        ...pick(req.body, "isClone"),
+        startDate: {
+          $gt: new Date(gt)
+        },
+        isDeleted: false
+      }
     }
+    else if (!isEmpty(lt)) {
+      query = {
+        ...pick(req.body, "isClone"),
+        startDate: {
+          $lt: new Date(lt)
+        },
+        isDeleted: false
+      }
+    }
+    else if (!isEmpty(eq)) {
+      query = {
+        ...pick(req.body, "isClone"),
+        startDate: {
+          $eq: new Date(eq)
+        },
+        isDeleted: false
+      }
+    }
+    else {
+      query = {
+        ...pick(req.body, "isClone"),
+        isDeleted: false
+      }
+    }
+
+
 
     let docs;
     if (!page || !limit) {
