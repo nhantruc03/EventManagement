@@ -73,7 +73,8 @@ class edit extends Component {
         this._isMounted = false;
     }
 
-    goBack = () => {
+    goBack = (e) => {
+        e.preventDefault()
         this.props.history.goBack();
     }
 
@@ -85,7 +86,7 @@ class edit extends Component {
         }
 
         console.log('Received values of form: ', data);
-        await trackPromise(Axios.put('/api/scripts/'+ this.props.match.params.id, data, {
+        await trackPromise(Axios.put('/api/scripts/' + this.props.match.params.id, data, {
             headers: {
                 'Authorization': { AUTH }.AUTH
             }
@@ -183,13 +184,13 @@ class edit extends Component {
                         <Col span={8}>
                             <Breadcrumb separator=">">
                                 <Breadcrumb.Item >
-                                    <Link to="/eventclones">Sự kiện</Link>
-                                </Breadcrumb.Item>
-                                <Breadcrumb.Item onClick={this.goBack}>
-                                    Chi tiết
+                                    <Link to="/eventclones">Hồ sơ sự kiện</Link>
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
-                                    Kịch bản
+                                    <Link to="/#" onClick={this.goBack}>Chi tiết</Link>
+                                </Breadcrumb.Item>
+                                <Breadcrumb.Item>
+                                    Sửa kịch bản
                                 </Breadcrumb.Item>
                             </Breadcrumb>
                         </Col>

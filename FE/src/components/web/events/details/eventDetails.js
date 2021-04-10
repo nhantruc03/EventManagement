@@ -333,7 +333,7 @@ class eventDetails extends Component {
                     </Modal>
 
                     <Modal
-                        title="Thêm khách mời"
+                        title="Cập nhật khách mời"
                         centered
                         visible={this.state.modal2Visible2}
                         onOk={() => this.setModal2Visible2(false)}

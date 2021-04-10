@@ -14,7 +14,7 @@ const getAll = async (req, res) => {
         .populate("userId")
         .populate("eventId")
         .populate({ path: 'roleId', select: 'name' })
-        .populate({ path: 'userId', select: 'name phone email' })
+        .populate({ path: 'userId', select: 'name phone email mssv' })
         .populate({ path: 'facultyId', select: 'name' })
     }
     else {
@@ -24,7 +24,7 @@ const getAll = async (req, res) => {
         .populate("userId")
         .populate("eventId")
         .populate({ path: 'roleId', select: 'name' })
-        .populate({ path: 'userId', select: 'name phone email' })
+        .populate({ path: 'userId', select: 'name phone email mssv' })
         .populate({ path: 'facultyId', select: 'name' })
     }
     return res.status(200).json({

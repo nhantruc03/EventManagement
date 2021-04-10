@@ -3,9 +3,9 @@ const { isAdmin } = require("../services/checkAdmin")
 const { authenticateToken } = require("../services/authenticationToken")
 
 const { getAll } = require('../controllers/notifications/getAll')
-const { update } = require('../controllers/guestTypes/update')
+const { update } = require('../controllers/notifications/update')
 
 router.post("/getAll", authenticateToken, isAdmin, getAll)
-router.put("/:id", authenticateToken, isAdmin, update)
+router.put("/", authenticateToken, isAdmin, update)
 
 module.exports = router

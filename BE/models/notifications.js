@@ -30,6 +30,12 @@ const notifications = new Schema(
             index: true,
             required: true,
         },
+        watch: {
+            type: Boolean,
+            required: true,
+            default: false,
+            index: true
+        },
         status: {
             type: Boolean,
             required: true,

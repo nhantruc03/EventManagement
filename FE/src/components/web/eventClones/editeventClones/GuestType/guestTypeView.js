@@ -164,7 +164,7 @@ class guestTypeView extends Component {
     render() {
         return (
             <div >
-                <Row>
+                <Row style={{ marginBottom: '20px' }}>
                     <Col span={20}>
                         <Search target="name" data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
                     </Col>

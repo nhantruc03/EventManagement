@@ -118,32 +118,17 @@ class add extends Component {
             <Content style={{ margin: "0 16px" }}>
                 < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }}>
                     <Col span={8}>
-                        {this.props.forClone ?
-                            <Breadcrumb separator=">">
-                                <Breadcrumb.Item >
-                                    <Link to="/eventclones">Hồ sơ sự kiện</Link>
-                                </Breadcrumb.Item>
-                                <Breadcrumb.Item>
-                                    <Link to={`/eventclones/${this.props.match.params.id}`}>Chi tiết</Link>
-                                </Breadcrumb.Item>
-                                <Breadcrumb.Item>
-                                    Kịch bản
-                          </Breadcrumb.Item>
-                            </Breadcrumb>
-                            :
-                            <Breadcrumb separator=">">
-                                <Breadcrumb.Item >
-                                    <Link to="/events">Sự kiện</Link>
-                                </Breadcrumb.Item>
-                                <Breadcrumb.Item>
-                                    <Link to={`/events/${this.props.match.params.id}`}>Chi tiết</Link>
-                                </Breadcrumb.Item>
-                                <Breadcrumb.Item>
-                                    Kịch bản
+                        <Breadcrumb separator=">">
+                            <Breadcrumb.Item >
+                                <Link to="/eventclones">Hồ sơ sự kiện</Link>
                             </Breadcrumb.Item>
-                            </Breadcrumb>
-                        }
-
+                            <Breadcrumb.Item>
+                                <Link to={`/eventclones/${this.props.match.params.id}`}>Chi tiết</Link>
+                            </Breadcrumb.Item>
+                            <Breadcrumb.Item>
+                                Thêm kịch bản
+                          </Breadcrumb.Item>
+                        </Breadcrumb>
                     </Col>
                 </Row >
 

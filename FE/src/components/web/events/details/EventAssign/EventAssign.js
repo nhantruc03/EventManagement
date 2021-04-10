@@ -15,7 +15,7 @@ class EventAssign extends Component {
             searchKey: '',
             onEditUser: false,
             currentPage: 1,
-            postsPerPage: 5,
+            postsPerPage: 3,
         }
     }
 
@@ -103,14 +103,14 @@ class EventAssign extends Component {
     }
 
     getlistpage = (SearchData) => {
+        // console.log('page', Math.ceil(SearchData.length / this.state.postsPerPage))
         return Math.ceil(SearchData.length / this.state.postsPerPage);
     }
 
     paginate = (pageNumber) => {
-        this.setState(
-            {
-                currentPage: pageNumber
-            });
+        this.setState({
+            currentPage: pageNumber
+        });
     }
     getCurData = (SearchData) => {
         var indexOfLastPost = this.state.currentPage * this.state.postsPerPage;
@@ -118,21 +118,36 @@ class EventAssign extends Component {
         return SearchData.slice(indexOfFirstPost, indexOfLastPost);
 
     }
+
     render() {
         return (
             <div >
-                <Row style={{ width: '100%' }}>
-                    <Col span={20}>
-                        <Search targetParent="userId" target="name" data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
-                    </Col>
-                    <Col span={4}>
-                        <Button className="add" style={{ float: "right" }} onClick={() => this.props.onAddClick()}>Thêm ban tổ chức</Button>
+                <Row style={{ marginBottom: '20px' }}>
+
+                    <Col span={24}>
+                        <div className="flex-container-row">
+                            <Search targetParent="userId" target="name" data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
+
+                            <Button className="flex-row-item-right add" style={{ marginRight: '10px' }} onClick={() => this.props.onAddClick()}>Thêm ban tổ chức</Button>
+                            <input
+                                // ref={this.selectedFile}
+                                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                ref={input => this.selectedFile = input}
+                                type="file"
+                                onChange={e => {
+                                    const file = e.target.files[0];
+                                    this.props.uploadExcelFile(file)
+                                }}
+                                style={{ display: 'none' }}
+                            />
+                            <Button className="add" onClick={() => this.selectedFile.click()} >Tải lên file</Button>
+                        </div>
                     </Col>
                 </Row>
                 <TableData deleteClick={(id) => this.deleteClick(id)} canDelete={this.props.canDelete} listFaculty={this.props.listFaculty} listRole={this.props.listRole} getUserEditInfo={(info) => this.getUserEditInfo(info)} dataUser={this.getCurData(this.state.data)} />
                 {this.getlistpage(this.state.data) > 1 ?
                     <Pagination
-                        totalPosts={this.getlistpage(this.state.data)}
+                        totalPosts={this.state.data.length}
                         paginate={(e) => this.paginate(e)}
                         PageSize={this.state.postsPerPage}
                     /> :

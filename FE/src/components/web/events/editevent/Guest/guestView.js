@@ -144,7 +144,7 @@ class guestView extends Component {
     render() {
         return (
             <div>
-                <Row >
+                <Row style={{ marginBottom: '20px' }}>
                     <Col span={20}>
                         <Search target={["name", "phone", "email"]} multi={true} data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
                     </Col>
@@ -155,7 +155,7 @@ class guestView extends Component {
                 <TableData guestTypeId={this.props.guestTypeId} canDelete={this.props.canDelete} listguesttype={this.props.listguesttype} edit={(info) => this.edit(info)} deleteClick={(id) => this.deleteClick(id)} data={this.state.data} />
                 {this.getlistpage(this.state.data) > 1 ?
                     <Pagination
-                        totalPosts={this.getlistpage(this.state.data)}
+                        totalPosts={this.state.data.length}
                         paginate={(e) => this.paginate(e)}
                         PageSize={this.state.postsPerPage}
                     /> :

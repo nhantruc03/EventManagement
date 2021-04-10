@@ -128,7 +128,7 @@ class home extends Component {
                                 level={3}
                             >
                                 Trang chủ
-                                    </Title>
+                            </Title>
                         </div>
                         <Row>
                             <Col sm={24} xl={16}>
@@ -140,7 +140,6 @@ class home extends Component {
                                                 <p>Sự kiện</p>
                                                 <p>Đang diễn ra</p>
                                             </div>
-                                            {/* <img className="flex-row-item-right" src="/event-ongoing.png" /> */}
                                         </div>
                                     </Col>
                                     <Col sm={24} md={8}>
@@ -150,7 +149,6 @@ class home extends Component {
                                                 <p>Sự kiện</p>
                                                 <p>Sắp diễn ra</p>
                                             </div>
-                                            {/* <img className="flex-row-item-right" src="/event-future.png" /> */}
                                         </div>
                                     </Col>
                                     <Col sm={24} md={8}>
@@ -160,7 +158,6 @@ class home extends Component {
                                                 <p>Sự kiện</p>
                                                 <p>Đã kết thúc</p>
                                             </div>
-                                            {/* <img className="flex-row-item-right" src="/event-done.png" /> */}
                                         </div>
                                     </Col>
                                 </Row>
@@ -186,7 +183,7 @@ class home extends Component {
                                     </Col>
                                 </Row>
                                 <Row>
-                                    <Col sm={24} lg={12} style={{ padding: '10px' }}>
+                                    <Col sm={24} lg={24} style={{ padding: '10px' }}>
                                         <div className="flex-container-row" style={{ width: '100%' }}>
                                             <Title level={3}>Công việc</Title>
                                             <Link className="flex-row-item-right" to="/actions">Xem tất cả</Link>
@@ -194,9 +191,6 @@ class home extends Component {
                                         <div className="home-list-action">
                                             {this.renderListAction()}
                                         </div>
-                                    </Col>
-                                    <Col sm={24} lg={12}>
-
                                     </Col>
                                 </Row>
                             </Col>

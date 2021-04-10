@@ -119,7 +119,7 @@ h4.ant-typography {
   font-size: 16px;
   line-height: 140%;
   text-transform: none;
-  color: #002b6d;
+  color: #2A9D8F;
 }
 
 h3.ant-typography {
@@ -439,7 +439,7 @@ span.ant-tag.site-tag-plus {
 }
 .eventCard .cover{
   text-align: center;
-  max-width: 200px;
+  max-width: 100px;
   margin: auto;
 }
 
@@ -993,7 +993,7 @@ span.ant-badge.ant-dropdown-trigger {
   color: #264653;
 }
 
-.home h3.ant-typography{
+h3.ant-typography{
   color: #264653;
   font-weight: 600;
   font-size: 24px;
@@ -1119,6 +1119,7 @@ label {
 .scripts .ant-table table{
   border: 1px solid #f0f0f0;
   border-radius: 8px;
+  border-spacing: 10px;
 }
 
 .scripts td.ant-table-cell {
@@ -1298,4 +1299,21 @@ label {
   /* color: #2A9D8F !important; */
   font-weight: bold;
   font-size: large;
+}
+
+html {
+  overflow: scroll;
+  overflow-x: hidden;
+}
+::-webkit-scrollbar {
+  width: 0;  /* Remove scrollbar space */
+  background: transparent;  /* Optional: just make scrollbar invisible */
+}
+/* Optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+  background: #FF0000;
+}
+
+.list-events-col{
+  padding: 20px;
 }
