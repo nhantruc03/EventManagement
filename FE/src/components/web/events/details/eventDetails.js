@@ -111,6 +111,9 @@ class eventDetails extends Component {
                     res.data.data
                 ),
         ]));
+
+        console.log(event)
+
         let guests = null
         if (guestTypes !== null) {
 
@@ -202,7 +205,15 @@ class eventDetails extends Component {
         return (
             <Tabs defaultActiveKey="1">
                 <TabPane tab="Danh sách ban tổ chức" key="1"><ListAvailUser listusers={this.state.data.availUser} /></TabPane>
-                <TabPane tab="Phân nhóm" key="2"><EventAssign update={this.updateEventAssign} eventId={this.props.match.params.id} listRole={this.state.listRole} listFaculty={this.state.listFaculty} data={this.state.listEventAssign} /></TabPane>
+                <TabPane tab="Phân nhóm" key="2">
+                    <EventAssign
+                        noBigAction={true}
+                        update={this.updateEventAssign}
+                        eventId={this.props.match.params.id}
+                        listRole={this.state.listRole}
+                        listFaculty={this.state.listFaculty}
+                        data={this.state.listEventAssign} />
+                </TabPane>
             </Tabs>
 
         );
@@ -267,7 +278,7 @@ class eventDetails extends Component {
                                 </div>
 
                                 <Title className="event-detail-title" level={4}>Tags</Title>
-                                {this.state.data.tagId.map((value, key) => <Tag style={{ width: 'auto' }} key={key}>{value.name}</Tag>)}
+                                {this.state.data.tagId.map((value, key) => <Tag style={{ width: 'auto', background: value.background, color: value.color }} key={key}>{value.name}</Tag>)}
 
                                 <div className="flex-container-row">
                                     <Title className="event-detail-title" level={4}>Khách mời</Title>

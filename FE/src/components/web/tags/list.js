@@ -5,7 +5,7 @@ import Search from '../helper/search';
 import { AUTH } from '../../env'
 import { trackPromise } from 'react-promise-tracker';
 import { Content } from 'antd/lib/layout/layout';
-import { Button, Table } from 'antd';
+import { Button, Table, Tag } from 'antd';
 import Title from 'antd/lib/typography/Title';
 
 class list extends Component {
@@ -18,7 +18,10 @@ class list extends Component {
             listPage: [],
             SearchData: [],
             columns: [
-                { title: 'Tên', dataIndex: 'name', key: 'name' },
+                {
+                    title: 'Tên', dataIndex: '', key: 'k',
+                    render: (e) => <Tag style={{ background: e.background, color: `${e.color}` }}>{e.name}</Tag>
+                },
                 {
                     title: 'Hành động',
                     dataIndex: '',

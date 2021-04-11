@@ -127,20 +127,23 @@ class EventAssign extends Component {
                     <Col span={24}>
                         <div className="flex-container-row">
                             <Search targetParent="userId" target="name" data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
-
-                            <Button className="flex-row-item-right add" style={{ marginRight: '10px' }} onClick={() => this.props.onAddClick()}>Thêm ban tổ chức</Button>
-                            <input
-                                // ref={this.selectedFile}
-                                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                                ref={input => this.selectedFile = input}
-                                type="file"
-                                onChange={e => {
-                                    const file = e.target.files[0];
-                                    this.props.uploadExcelFile(file)
-                                }}
-                                style={{ display: 'none' }}
-                            />
-                            <Button className="add" onClick={() => this.selectedFile.click()} >Tải lên file</Button>
+                            {!this.props.noBigAction ?
+                                <>
+                                    <Button className="flex-row-item-right add" style={{ marginRight: '10px' }} onClick={() => this.props.onAddClick()}>Thêm ban tổ chức</Button>
+                                    <input
+                                        // ref={this.selectedFile}
+                                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                        ref={input => this.selectedFile = input}
+                                        type="file"
+                                        onChange={e => {
+                                            const file = e.target.files[0];
+                                            this.props.uploadExcelFile(file)
+                                        }}
+                                        style={{ display: 'none' }}
+                                    />
+                                    <Button className="add" onClick={() => this.selectedFile.click()} >Tải lên file</Button>
+                                </> : null
+                            }
                         </div>
                     </Col>
                 </Row>

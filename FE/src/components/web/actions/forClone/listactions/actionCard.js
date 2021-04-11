@@ -108,16 +108,10 @@ class actionCard extends Component {
                                 <p >{this.state.completeSubAction.length}/{this.state.totalSubAction.length}</p>
                             </div>
                         </Row>
-                        {/* 
-                        <div className="flex-container-row" style={{ marginTop: '10px' }}>
-                            <div>Độ ưu tiên</div>
-                            <div className="flex-row-item-right">{this.props.data.priorityId.name}</div>
-                        </div> */}
-
 
                         <Row className="eventCardFooter">
                             <div style={{ width: '100%' }} className="flex-container-row">
-                                {this.props.data.tagsId.map((value, key) => <Tag style={{ width: 'auto' }} key={key}>{value.name}</Tag>)}
+                                {this.props.data.tagsId.map((value, key) => <Tag style={{ width: 'auto', background: value.background, color: value.color }} key={key}>{value.name}</Tag>)}
                                 <Avatar.Group
                                     className="flex-row-item-right"
                                     maxCount={2}

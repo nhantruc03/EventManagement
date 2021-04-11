@@ -30,12 +30,6 @@ class actionColumn extends Component {
         }
     }
 
-    // componentDidMount() {
-    //     console.log('didmount')
-    //     this.setState({
-    //         data: this.props.listActions
-    //     })
-    // }
     onChange = (checkedValues) => {
         console.log('checked = ', checkedValues);
         this.setState({
@@ -122,7 +116,9 @@ class actionColumn extends Component {
                         <EllipsisOutlined style={{ fontSize: '30px', color: '#2A9D8F' }} />
                     </Dropdown>
                 </div>
-                {this.renderActions()}
+                <div className="list-actions-col-data">
+                    {this.renderActions()}
+                </div>
 
             </>
         );

@@ -184,16 +184,6 @@ class listactions extends Component {
         return (
             <Col sm={24} xl={24 / this.state.currentActionTypes.length} key={keyCol}>
                 <ActionColumn title={value.name} listActions={temp_listActions} />
-                {/* <Title level={3}>{value.name}</Title>
-                {this.state.currentActions.map((e, key) => {
-                    if (e.actionTypeId._id === value._id) {
-                        return (
-                            <ActionCard data={e} key={key} />
-                        )
-                    } else {
-                        return null
-                    }
-                })} */}
             </Col>
         )
     }

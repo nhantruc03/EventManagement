@@ -390,7 +390,7 @@ class actionDetails extends Component {
 
                                 <Title className="event-detail-title" level={4}>Tags</Title>
                                 {/* <Image style={{ maxWidth: '300px' }} src={`/api/images/${this.state.data.coverUrl}`}></Image> */}
-                                {this.state.data.tagsId.map((e, key) => <Tag style={{ width: 'auto' }} key={key}>{e.name}</Tag>)}
+                                {this.state.data.tagsId.map((e, key) => <Tag style={{ width: 'auto', background: e.background, color: e.color }} key={key}>{e.name}</Tag>)}
                             </Col>
                             <Col sm={24} xl={7} className="event-detail">
                                 {/* <div className="vl"></div> */}

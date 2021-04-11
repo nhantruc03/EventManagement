@@ -438,7 +438,8 @@ span.ant-tag.site-tag-plus {
   align-items: center;
 }
 .eventCard .cover{
-  text-align: center;
+  object-fit: cover;
+  max-width: 350px;
   max-width: 200px;
   margin: auto;
 }
@@ -1087,15 +1088,6 @@ li.ant-menu-item.ant-menu-item-only-child a{
   padding: 10px;
 }
 
-#MGM{
-  background: #FFEDE9;
-  color: #CB2900;
-}
-
-#MHX{
-  background: #D9FFEB;
-  color: #017567;
-}
 
 label.ant-form-item-required {
   color: #017567 !important;
@@ -1308,11 +1300,11 @@ label {
   padding: 20px;
 }
 
-.list-events-col-data{
+.list-events-col-data{ 
   max-height: 73vh;
 }
 
-.list-events-col-data {
+.list-events-col-data{
   overflow: scroll;
   overflow-x: hidden;
 }
@@ -1324,3 +1316,25 @@ label {
 .list-events-col-data::-webkit-scrollbar-thumb {
   background: #FF0000;
 }
+
+.list-actions-col-data{ 
+  max-height: 65vh;
+}
+
+.list-actions-col-data{
+  overflow: scroll;
+  overflow-x: hidden;
+}
+.list-actions-col-data::-webkit-scrollbar {
+  width: 0;  /* Remove scrollbar space */
+  background: transparent;  /* Optional: just make scrollbar invisible */
+}
+/* Optional: show position indicator in red */
+.list-actions-col-data::-webkit-scrollbar-thumb {
+  background: #FF0000;
+}
+
+.eventCard a{
+  color: black !important;
+}
+

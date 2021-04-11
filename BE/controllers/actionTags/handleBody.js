@@ -1,7 +1,7 @@
 const { pick } = require("lodash")
 const { isEmpty } = require("lodash");
 const handleBody = (body) => {
-  if(isEmpty(body.name)){
+  if(isEmpty(body.name) || isEmpty(body.background) || isEmpty(body.color)){
     return {
       error: "Missing fields!"
     }
@@ -11,6 +11,8 @@ const handleBody = (body) => {
     body: {
       ...pick(body,
         "name",
+        "background",
+        "color",
         )
     }
   }
