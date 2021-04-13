@@ -20,6 +20,7 @@ class SiderDemo extends React.Component {
         this.state = {
             currentUser: JSON.parse(localStorage.getItem('login'))
         }
+
     }
 
     state = {
@@ -30,11 +31,28 @@ class SiderDemo extends React.Component {
         this.setState({ collapsed });
     };
 
+    getM = () => {
+        const { innerWidth: width, innerHeight: height } = window;
+        console.log(width)
+        return width
+    }
+
 
     render() {
         const { collapsed } = this.state;
         return (
-            <Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse} style={{ backgroundColor: '#002B6D' }}>
+            <Sider
+                breakpoint="sm"
+                collapsedWidth={this.getM() < 576 ? '0' : undefined}
+                collapsible
+                collapsed={collapsed}
+                onCollapse={this.onCollapse}
+                style={{
+                    backgroundColor: '#002B6D',
+                    // overflow: 'auto',
+                    // height: '100vh',
+                    left: 0,
+                }}>
                 <Title className="logo" level={3}>EM!</Title>
                 <Menu selectedKeys={[this.props.location.pathname]} mode="inline" >
                     <Menu.Item key="/" icon={<HomeOutlined />}>

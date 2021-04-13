@@ -106,7 +106,7 @@ class list extends Component {
     printData = () => {
         return (
             <div >
-                <Title level={4}>Danh sách quyền</Title>
+                <Title level={4}>Danh sách người dùng</Title>
                 <div className="flex-container-row">
                     <Search target="name" data={this.state.data} getSearchData={(e) => this.getSearchData(e)} />
                     <Button className="flex-row-item-right add">

@@ -33,7 +33,9 @@ class listAvailUser extends Component {
     render() {
         return (
             <div>
-                <Search multi={true} target={["name", "phone", "email"]} data={this.state.data} getSearchData={(e) => this.getSearchData1(e)} />
+                <div style={{ marginBottom: '20px' }}>
+                    <Search multi={true} target={["name", "phone", "email"]} data={this.state.data} getSearchData={(e) => this.getSearchData1(e)} />
+                </div>
                 <Table
                     columns={this.state.columnsTable1}
                     dataSource={this.state.SearchData1}

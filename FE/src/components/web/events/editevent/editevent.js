@@ -293,9 +293,10 @@ class editevent extends Component {
     };
 
     onFinish = async (values) => {
+        console.log(values['startDate'].toDate())
         let data = {
             ...values,
-            'startDate': values['startDate'].toDate(),
+            'startDate': moment(values['startDate'].toDate()).format('YYYY-MM-DD'),
             'startTime': values['startTime'].toDate(),
         }
         if (this.state.posterUrl !== null) {

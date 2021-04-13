@@ -4,6 +4,12 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 const { Meta } = Card;
 class eventCard extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            showImage: false
+        }
+    }
     renderAvailUser = () => {
         return (
             this.props.data.availUser.map((value, key) => {
@@ -15,6 +21,11 @@ class eventCard extends Component {
             })
         )
     }
+    mouseHover = (value) => {
+        this.setState({
+            showImage: value
+        })
+    }
     render() {
         return (
             <div className="event-card-container">
@@ -22,10 +33,12 @@ class eventCard extends Component {
                 <Card
                     hoverable
                     className="eventCard"
-                    cover={<Image className="cover" alt="example" src={`api/images/${this.props.data.posterUrl}`} />}
+                    cover={this.state.showImage ? <Image className="cover" alt="example" src={`api/images/${this.props.data.posterUrl}`} /> : null}
+                    onMouseEnter={() => this.mouseHover(true)}
+                    onMouseLeave={() => this.mouseHover(false)}
                 >
                     <Link to={`/events/${this.props.data._id}`}>
-                        <Tooltip title={this.props.data.description} placement="top">
+                        <Tooltip title={`Mô tả: ${this.props.data.description}`} placement="bottom">
                             <Meta title={this.props.data.name} />
                         </Tooltip>
 
@@ -42,7 +55,6 @@ class eventCard extends Component {
                                         {this.props.data.tagId.map((value, key) => <Tag style={{ width: 'auto', background: value.background, color: value.color }} key={key}>{value.name}</Tag>)}
                                     </div>
                                     <Avatar.Group
-                                        className="flex-row-item-right"
                                         maxCount={2}
                                         maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}
                                     >

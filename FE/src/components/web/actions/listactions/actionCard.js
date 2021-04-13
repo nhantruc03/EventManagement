@@ -17,7 +17,8 @@ class actionCard extends Component {
         this.state = {
             completeSubAction: [],
             totalSubAction: [],
-            resources: []
+            resources: [],
+            showImage: false
         }
     }
     renderAvailUser = () => {
@@ -77,9 +78,17 @@ class actionCard extends Component {
             }
         }
     }
+
     componentWillUnmount() {
         this._isMounted = false;
     }
+
+    mouseHover = (value) => {
+        this.setState({
+            showImage: value
+        })
+    }
+
     render() {
         return (
             <div className="event-card-container">
@@ -88,8 +97,9 @@ class actionCard extends Component {
                     hoverable
                     className="eventCard"
                     // cover={<img className="cover" alt="example" src={`api/images/${this.props.data.coverUrl}`} />}
-                    cover={<Image className="cover" alt="example" src={`api/images/${this.props.data.coverUrl}`} />}
-
+                    cover={this.state.showImage ? <Image className="cover" alt="example" src={`api/images/${this.props.data.coverUrl}`} /> : null}
+                    onMouseEnter={() => this.mouseHover(true)}
+                    onMouseLeave={() => this.mouseHover(false)}
                 >
                     <Link to={`/actions/${this.props.data._id}`}>
                         <Tooltip title={this.props.data.description} placement="top">

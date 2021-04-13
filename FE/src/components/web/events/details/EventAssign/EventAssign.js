@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import TableData from '../../addevent/EventAssign/TableData';
-import { Button, Col, message, Row } from 'antd';
+import { Button, message } from 'antd';
 import Search from '../../../helper/search';
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
@@ -122,31 +122,26 @@ class EventAssign extends Component {
     render() {
         return (
             <div >
-                <Row style={{ marginBottom: '20px' }}>
-
-                    <Col span={24}>
-                        <div className="flex-container-row">
-                            <Search targetParent="userId" target="name" data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
-                            {!this.props.noBigAction ?
-                                <>
-                                    <Button className="flex-row-item-right add" style={{ marginRight: '10px' }} onClick={() => this.props.onAddClick()}>Thêm ban tổ chức</Button>
-                                    <input
-                                        // ref={this.selectedFile}
-                                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                                        ref={input => this.selectedFile = input}
-                                        type="file"
-                                        onChange={e => {
-                                            const file = e.target.files[0];
-                                            this.props.uploadExcelFile(file)
-                                        }}
-                                        style={{ display: 'none' }}
-                                    />
-                                    <Button className="add" onClick={() => this.selectedFile.click()} >Tải lên file</Button>
-                                </> : null
-                            }
-                        </div>
-                    </Col>
-                </Row>
+                <div className="flex-container-row" style={{ marginBottom: '20px' }}>
+                    <Search targetParent="userId" target="name" data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
+                    {!this.props.noBigAction ?
+                        <>
+                            <Button className="flex-row-item-right add" style={{ marginRight: '10px' }} onClick={() => this.props.onAddClick()}>Thêm ban tổ chức</Button>
+                            <input
+                                // ref={this.selectedFile}
+                                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                ref={input => this.selectedFile = input}
+                                type="file"
+                                onChange={e => {
+                                    const file = e.target.files[0];
+                                    this.props.uploadExcelFile(file)
+                                }}
+                                style={{ display: 'none' }}
+                            />
+                            <Button className="add" onClick={() => this.selectedFile.click()} >Tải lên file</Button>
+                        </> : null
+                    }
+                </div>
                 <TableData deleteClick={(id) => this.deleteClick(id)} canDelete={this.props.canDelete} listFaculty={this.props.listFaculty} listRole={this.props.listRole} getUserEditInfo={(info) => this.getUserEditInfo(info)} dataUser={this.getCurData(this.state.data)} />
                 {this.getlistpage(this.state.data) > 1 ?
                     <Pagination

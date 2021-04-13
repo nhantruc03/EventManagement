@@ -9,6 +9,9 @@ import { AUTH } from '../../../env'
 import axios from 'axios';
 import EventCard from './eventCard';
 import moment from 'moment'
+import {
+    MenuUnfoldOutlined
+} from '@ant-design/icons';
 class listevents extends Component {
     constructor(props) {
         super(props);
@@ -60,7 +63,7 @@ class listevents extends Component {
 
     async componentDidMount() {
         this._isMounted = true;
-        let temp = moment(new Date()).format('DD/MM/YYYY')
+        let temp = moment(new Date()).format('YYYY-MM-DD')
 
         const [tags, future_event, ongoing_event, past_event] = await trackPromise(Promise.all([
             axios.post('/api/tags/getAll', {}, {
@@ -100,6 +103,7 @@ class listevents extends Component {
         if (future_event !== null && ongoing_event !== null && past_event !== null) {
             if (this._isMounted) {
                 // this.getSearchData(events)
+                console.log(future_event)
                 this.setState({
                     data: [...future_event, ...ongoing_event, ...past_event],
                     data_ongoing: ongoing_event,
@@ -156,12 +160,13 @@ class listevents extends Component {
                                 multi={true}
                                 data={this.state.data}
                                 getSearchData={(e) => this.getSearchData(e)}
+                                suffix={
+                                    <Dropdown className="flex-row-item-right" overlay={this.menu} placement="bottomCenter" arrow >
+                                        <MenuUnfoldOutlined />
+                                    </Dropdown>}
                             />
 
-                            <Dropdown className="flex-row-item-right" overlay={this.menu} placement="bottomCenter" arrow >
-                                {/* <EllipsisOutlined style={{ fontSize: '30px', color: '#2A9D8F' }} /> */}
-                                <Button className="add">Theo Tags</Button>
-                            </Dropdown>
+
                         </div>
                     </Col>
                     {this.state.currentUser.role === 'Admin' ?
@@ -176,7 +181,48 @@ class listevents extends Component {
                 </Row>
 
                 <Row style={{ overflowY: 'hidden' }}>
-                    {this.state.data_future.length > 0 ?
+                    <Col xs={24} sm={24} lg={12} xl={8} className="list-events-col">
+                        <div style={{ padding: '0 20px' }} className="flex-container-row">
+                            <Title level={3}>Sắp diễn ra:</Title>
+                            <div className="flex-row-item-right">
+                                <Title level={3}>{this.state.data_future.length}</Title>
+                            </div>
+                        </div>
+                        <div className="list-events-col-data">
+                            {this.state.data_future.map((value, key) =>
+                                <EventCard data={value} key={key} />
+                            )}
+                        </div>
+                    </Col>
+
+                    <Col xs={24} sm={24} lg={12} xl={8} className="list-events-col" >
+                        <div style={{ padding: '0 20px' }} className="flex-container-row">
+                            <Title level={3}>Đang diễn ra:</Title>
+                            <div className="flex-row-item-right">
+                                <Title level={3}>{this.state.data_ongoing.length}</Title>
+                            </div>
+                        </div>
+                        <div className="list-events-col-data">
+                            {this.state.data_ongoing.map((value, key) =>
+                                <EventCard data={value} key={key} />
+                            )}
+                        </div>
+                    </Col>
+
+                    <Col xs={24} sm={24} lg={24} xl={8} className="list-events-col" >
+                        <div style={{ padding: '0 20px' }} className="flex-container-row">
+                            <Title level={3}>Đã diễn ra:</Title>
+                            <div className="flex-row-item-right">
+                                <Title level={3}>{this.state.data_past.length}</Title>
+                            </div>
+                        </div>
+                        <div className="list-events-col-data">
+                            {this.state.data_past.map((value, key) =>
+                                <EventCard data={value} key={key} />
+                            )}
+                        </div>
+                    </Col>
+                    {/* {this.state.data_future.length > 0 ?
                         <Col lg={24} xl={8} className="list-events-col">
                             <div style={{ padding: '0 20px' }} className="flex-container-row">
                                 <Title level={3}>Sắp diễn ra:</Title>
@@ -190,8 +236,8 @@ class listevents extends Component {
                                 )}
                             </div>
                         </Col> : null
-                    }
-                    {this.state.data_ongoing.length > 0 ?
+                    } */}
+                    {/* {this.state.data_ongoing.length > 0 ?
                         <Col lg={24} xl={8} className="list-events-col" >
                             <div style={{ padding: '0 20px' }} className="flex-container-row">
                                 <Title level={3}>Đang diễn ra:</Title>
@@ -205,8 +251,8 @@ class listevents extends Component {
                                 )}
                             </div>
                         </Col> : null
-                    }
-                    {this.state.data_past.length > 0 ?
+                    } */}
+                    {/* {this.state.data_past.length > 0 ?
                         <Col lg={24} xl={8} className="list-events-col" >
                             <div style={{ padding: '0 20px' }} className="flex-container-row">
                                 <Title level={3}>Đã diễn ra:</Title>
@@ -220,7 +266,7 @@ class listevents extends Component {
                                 )}
                             </div>
                         </Col> : null
-                    }
+                    } */}
                 </Row>
 
             </Content>

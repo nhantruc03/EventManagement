@@ -280,7 +280,7 @@ class eventDetails extends Component {
                                 <Title className="event-detail-title" level={4}>Tags</Title>
                                 {this.state.data.tagId.map((value, key) => <Tag style={{ width: 'auto', background: value.background, color: value.color }} key={key}>{value.name}</Tag>)}
 
-                                <div className="flex-container-row">
+                                <div className="flex-container-row" style={{ marginTop: '10px' }}>
                                     <Title className="event-detail-title" level={4}>Khách mời</Title>
                                     <Button className="flex-row-item-right" onClick={() => this.setModal2Visible2(true)}>Chỉnh sửa</Button>
                                 </div>
@@ -312,10 +312,10 @@ class eventDetails extends Component {
 
                                 <Image style={{ maxWidth: '150px' }} src={`/api/images/${this.state.data.posterUrl}`} alt="poster"></Image>
 
-                                <div className="flex-container-row">
+                                <div className="flex-container-row" style={{ marginBottom: '10px' }}>
                                     {/* <Title className="event-detail-title" level={3}>Kịch bản</Title> */}
                                     <Title level={4}>Kịch bản</Title>
-                                    <Button className="flex-row-item-right" ><Link to={`/addscripts/${this.props.match.params.id}`}>Thêm</Link></Button>
+                                    <Button className="flex-row-item-right add" ><Link to={`/addscripts/${this.props.match.params.id}`}>Thêm</Link></Button>
                                 </div>
                                 <ListScripts eventId={this.props.match.params.id} />
                             </Col>

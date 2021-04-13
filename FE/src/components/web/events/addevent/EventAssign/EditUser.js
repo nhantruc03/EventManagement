@@ -1,5 +1,6 @@
 import { Button, Col, Form, Input, Row, Select } from 'antd';
 import React, { Component } from 'react';
+import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 const { Option } = Select;
 const formItemLayout = {
     labelCol: {
@@ -131,10 +132,10 @@ class EditUser extends Component {
                     </Col>
                     <Col span={4} style={{ textAlign: 'center' }}>
                         <Button onClick={() => this.cancle()} className="back" >
-                            Hủy
+                            <CloseOutlined />
                         </Button>
                         <Button htmlType="submit" className="add" >
-                            Lưu
+                            <CheckOutlined />
                         </Button>
                     </Col>
                 </Row>
