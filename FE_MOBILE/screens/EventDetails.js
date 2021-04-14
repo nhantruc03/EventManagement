@@ -9,6 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import moment from "moment";
+
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 
@@ -23,8 +24,8 @@ const styles = StyleSheet.create({
     color: "#2A9D8F",
   },
   posterImg: {
-    width: 200,
-    height: 300,
+    width: 300,
+    height: 200,
   },
   tagContainer: { flex: 2, flexDirection: "row", backgroundColor: "#FFEDE0" },
   tagContent: {
@@ -116,10 +117,15 @@ const styles = StyleSheet.create({
 export default class EventDetail extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      isMounted: false,
+      data: null,
+      status: "",
+    };
   }
   render() {
     const {
+      id,
       name,
       description,
       time,
@@ -128,7 +134,7 @@ export default class EventDetail extends Component {
       poster,
       tag,
     } = this.props.route.params;
-    console.log(poster);
+    console.log(id);
     return (
       <View style={styles.container}>
         <ScrollView style={styles.formContainer}>
@@ -177,7 +183,9 @@ export default class EventDetail extends Component {
             <TouchableOpacity
               style={styles.BtnSubmit}
               title="Xem chi tiết"
-              onPress={() => this.props.navigation.navigate("EventDetails2")}
+              onPress={() =>
+                this.props.navigation.navigate("EventDetail2", { ID: id })
+              }
             >
               <Text style={styles.textSubmit}>Xem chi tiết </Text>
             </TouchableOpacity>

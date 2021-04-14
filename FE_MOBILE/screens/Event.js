@@ -16,7 +16,6 @@ import EventCard from "../components/EventCard";
 import { trackPromise } from "react-promise-tracker";
 import moment from "moment";
 import Url from "../env";
-import Test from "../assets/images/TestImg.png";
 import { Tabs } from "@ant-design/react-native";
 
 const styles = StyleSheet.create({
@@ -85,6 +84,7 @@ export default class Event extends Component {
     this.state = {
       isMounted: false,
       data: [],
+      status: "",
     };
   }
 
@@ -102,8 +102,16 @@ export default class Event extends Component {
         )
         .then((res) => res.data.data)
     );
-
     if (events !== undefined) {
+      let status = "";
+      let today = new Date().setHours(0, 0, 0, 0);
+      if (new Date(events.startDate).setHours(0, 0, 0, 0) > today) {
+        status = "Sắp diễn ra";
+      } else if (new Date(events.startDate).setHours(0, 0, 0, 0) < today) {
+        status = "Đã diễn ra";
+      } else {
+        status = "Đang diễn ra";
+      }
       console.log("events", events);
       // console.log(events[0].name);
       console.log(moment(events[0].startTime).format("HH:MM"));
@@ -121,7 +129,7 @@ export default class Event extends Component {
       { title: "Sắp tới" },
       { title: "Đã xong" },
     ];
-
+    console.log("data", this.state.data);
     return (
       <View style={styles.container}>
         <Text style={styles.toplabel}>Sự kiện</Text>
@@ -147,38 +155,6 @@ export default class Event extends Component {
           }}
           platform="android"
         ></SearchBar>
-        {/* <TabView />
-        <FlatList
-          data={this.state.data}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-            // onPress={() => navigation.navigate("ReviewDetails", item)}
-            >
-              <EventCard>
-                <Image style={styles.cardImage} source={Test}></Image>
-                <Text style={styles.titleText}>{item.name}</Text>
-                <View style={styles.datetime}>
-                  <Image
-                    style={styles.Timeicon}
-                    source={require("../assets/images/TimeIcon.png")}
-                  ></Image>
-                  <Text style={styles.Timecontent}>
-                    {moment(item.startDate).format("DD/MM/YYYY")} -{" "}
-                    {moment(item.startTime).format("HH:MM")}
-                  </Text>
-                </View>
-                <View style={styles.location}>
-                  <Image
-                    style={styles.locateticon}
-                    source={require("../assets/images/Time.png")}
-                  ></Image>
-                  <Text style={styles.Locatecontent}>{item.address}</Text>
-                </View>
-              </EventCard>
-            </TouchableOpacity>
-          )}
-          keyExtractor={(item) => item._id}
-        /> */}
         <Tabs
           style={styles.Tabcontainer}
           tabs={tabs}
@@ -196,6 +172,7 @@ export default class Event extends Component {
               <TouchableOpacity
                 onPress={() =>
                   this.props.navigation.navigate("EventDetails", {
+                    id: item._id,
                     name: item.name,
                     description: item.description,
                     time: item.startTime,

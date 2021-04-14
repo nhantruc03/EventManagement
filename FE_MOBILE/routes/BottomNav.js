@@ -24,10 +24,37 @@ function TabEvent() {
       <Stack.Screen
         name="Events"
         component={Eventscreen}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          headerStyle: {
+            backgroundColor: "#2A9D8F",
+          },
+        }}
       />
-      <Stack.Screen name="EventDetails" component={EventDetail} />
-      {/* <Stack.Screen name="EventDetails2" conponent={EventDetail2} /> */}
+      <Stack.Screen
+        name="EventDetails"
+        component={EventDetail}
+        options={{
+          headerStyle: {
+            backgroundColor: "#2A9D8F",
+          },
+          headerTitleStyle: {},
+          headerBackTitleVisible: false,
+          headerTintColor: "#fff",
+        }}
+      />
+      <Stack.Screen
+        name="EventDetail2"
+        component={EventDetail2}
+        options={{
+          headerStyle: {
+            backgroundColor: "#2A9D8F",
+          },
+          headerTitleStyle: {},
+          headerBackTitleVisible: false,
+          headerTintColor: "#fff",
+        }}
+      />
     </Stack.Navigator>
   );
 }
@@ -76,7 +103,7 @@ export default class BottomNav extends React.Component {
             tabBarVisible: ((route) => {
               const routeName = getFocusedRouteNameFromRoute(route) ?? "";
               console.log(routeName);
-              if (routeName === "EventDetails") {
+              if (routeName === "EventDetails" || "EventnDetail2") {
                 return false;
               }
               return true;
