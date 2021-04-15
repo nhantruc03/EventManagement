@@ -57,17 +57,23 @@ class OrgTab extends Component {
     super(props);
     this.state = {
       data: [],
-      temp: [],
       error: null,
       search: null,
       SearchData1: [],
     };
   }
 
+  UNSAFE_componentWillReceiveProps(e) {
+    // console.log("should update", e);
+    this.setState({
+      data: e.data,
+    });
+  }
+
   componentDidMount() {
+    // console.log("data inside", this.props.data);
     this.setState({
       data: this.props.data,
-      temp: this.props.temp,
     });
   }
   searchFilterFunction = (text) => {
@@ -90,38 +96,14 @@ class OrgTab extends Component {
     });
   };
 
-  render() {
-    console.log("list Organizers", this.state.data);
-    return (
-      <SafeAreaView style={styles.Container}>
-        {/* <Search
-          target="name"
-          targerParent="userId"
-          data={this.state.data}
-          getSearchData={(e) => this.getSearchData1(e)}
-        ></Search> */}
-        <SearchBar
-          placeholder="Tìm kiếm..."
-          containerStyle={{
-            color: "#FFFFF",
-            marginBottom: 8,
-            borderRadius: 12,
-            marginHorizontal: 16,
-            marginTop: 16,
-            height: 64,
-            alignContent: "center",
-            paddingHorizontal: 8,
-          }}
-          platform="android"
-          editable={true}
-          value={this.state.search}
-          onChangeText={(text) => this.searchFilterFunction(text)}
-        ></SearchBar>
+  renderList = () => {
+    if (this.state.data.length > 0) {
+      return (
         <FlatList
           style={styles.ListContainer}
           data={this.state.data}
           renderItem={({ item }) => (
-            <View style={styles.itemContainer} key={item.id}>
+            <View style={styles.itemContainer} key={item._id}>
               <View style={styles.fisrtColumn}>
                 <Image
                   style={styles.AvaImg}
@@ -151,6 +133,37 @@ class OrgTab extends Component {
           ItemSeparatorComponent={() => <View style={styles.seperator} />}
           keyExtractor={(item) => item.id}
         ></FlatList>
+      );
+    }
+  };
+
+  render() {
+    return (
+      <SafeAreaView style={styles.Container}>
+        {/* <Search
+          target="name"
+          targerParent="userId"
+          data={this.state.data}
+          getSearchData={(e) => this.getSearchData1(e)}
+        ></Search> */}
+        <SearchBar
+          placeholder="Tìm kiếm..."
+          containerStyle={{
+            color: "#FFFFF",
+            marginBottom: 8,
+            borderRadius: 12,
+            marginHorizontal: 16,
+            marginTop: 16,
+            height: 64,
+            alignContent: "center",
+            paddingHorizontal: 8,
+          }}
+          platform="android"
+          editable={true}
+          value={this.state.search}
+          onChangeText={(text) => this.searchFilterFunction(text)}
+        ></SearchBar>
+        {this.renderList()}
       </SafeAreaView>
     );
   }

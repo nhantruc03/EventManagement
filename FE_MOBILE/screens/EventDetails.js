@@ -134,7 +134,7 @@ export default class EventDetail extends Component {
       poster,
       tag,
     } = this.props.route.params;
-    console.log(id);
+    // console.log(id);
     return (
       <View style={styles.container}>
         <ScrollView style={styles.formContainer}>

@@ -89,19 +89,17 @@ export default class Event extends Component {
   }
 
   async componentDidMount() {
-    const events = await trackPromise(
-      axios
-        .post(
-          `${Url()}/api/events/getAll`,
-          { isClone: false },
-          {
-            headers: {
-              Authorization: await getToken(),
-            },
-          }
-        )
-        .then((res) => res.data.data)
-    );
+    const events = await axios
+      .post(
+        `${Url()}/api/events/getAll`,
+        { isClone: false },
+        {
+          headers: {
+            Authorization: await getToken(),
+          },
+        }
+      )
+      .then((res) => res.data.data);
     if (events !== undefined) {
       let status = "";
       let today = new Date().setHours(0, 0, 0, 0);
@@ -112,10 +110,10 @@ export default class Event extends Component {
       } else {
         status = "Đang diễn ra";
       }
-      console.log("events", events);
+      // console.log("events", events);
       // console.log(events[0].name);
-      console.log(moment(events[0].startTime).format("HH:MM"));
-      console.log("posterurl", `${Url()}/api/images/${events[0].posterUrl}`);
+      // console.log(moment(events[0].startTime).format("HH:MM"));
+      // console.log("posterurl", `${Url()}/api/images/${events[0].posterUrl}`);
       this.setState({
         data: events,
       });

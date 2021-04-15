@@ -14,6 +14,8 @@ import axios from "axios";
 import Url from "../env";
 import getToken from "../Auth";
 import GuestTab from "../components/GuestTab";
+import LoadingIndicator from "../components/helper/Loading";
+import { normalizeUnits } from "moment";
 
 const styles = StyleSheet.create({
   container: {
@@ -32,82 +34,89 @@ export default class EventDetail2 extends Component {
       listOrganizer: [],
       listGuest: [],
       listguesttype: [],
+      loading: true,
     };
+    this._isMounted = false;
   }
   async componentDidMount() {
     this._isMounted = true;
-    const [guestTypes, listEventAssign] = await trackPromise(
-      Promise.all([
-        axios
-          .post(
-            `${Url()}/api/guest-types/getAll`,
-            { eventId: this.props.route.params.ID },
-            {
-              headers: {
-                Authorization: await getToken(),
-              },
-            }
-          )
-          .then((res) => res.data.data),
-        axios
-          .post(
-            `${Url()}/api/event-assign/getAll`,
-            { eventId: this.props.route.params.ID },
-            {
-              headers: {
-                Authorization: await getToken(),
-              },
-            }
-          )
-          .then((res) => res.data.data),
-      ])
-    );
-    let guests = null;
+
+    const [guestTypes, listEventAssign] = await Promise.all([
+      axios
+        .post(
+          `${Url()}/api/guest-types/getAll`,
+          { eventId: this.props.route.params.ID },
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
+          }
+        )
+        .then((res) => {
+          return res.data.data;
+        }),
+      axios
+        .post(
+          `${Url()}/api/event-assign/getAll`,
+          { eventId: this.props.route.params.ID },
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
+          }
+        )
+        .then((res) => {
+          return res.data.data;
+        }),
+    ]);
+
+    let guests = [];
     if (guestTypes !== null) {
       let listguesttype = [];
       guestTypes.forEach((e) => {
         listguesttype.push(e._id);
       });
 
-      const [temp] = await trackPromise(
-        Promise.all([
-          axios
-            .post(
-              `${Url()}/api/guests/getAll`,
-              { listguesttype: listguesttype },
-              {
-                headers: {
-                  Authorization: await getToken(),
-                },
-              }
-            )
-            .then((res) => res.data.data),
-        ])
-      );
+      const temp = await axios
+        .post(
+          `${Url()}/api/guests/getAll`,
+          { listguesttype: listguesttype },
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
+          }
+        )
+        .then((res) => {
+          return res.data.data;
+        });
       guests = temp;
     }
-    if (this._isMounted) {
-      if (listEventAssign !== undefined) {
-        console.log("Organizer", listEventAssign);
-        // console.log("name", listEventAssign[0].userId.name);
-        this.setState({
-          listOrganizer: listEventAssign,
-        });
-      }
-      if (guestTypes !== null) {
-        console.log("guestypes", guestTypes);
-        this.setState({
-          listguesttype: guestTypes,
-        });
 
-        if (guests !== null) {
-          console.log("guest", guests);
-          this.setState({
-            listGuest: guests,
-          });
-        }
-      }
+    if (this._isMounted) {
+      this.setState({
+        listOrganizer: listEventAssign,
+        listguesttype: guestTypes,
+        listGuest: guests,
+        loading: false,
+      });
     }
+    // if (guestTypes !== null) {
+    //   // console.log("guestypes", guestTypes);
+    //   this.setState({
+    //     listguesttype: guestTypes,
+    //   });
+
+    //   if (guests !== null) {
+    //     // console.log("guest", guests);
+    //     this.setState({
+    //       listGuest: guests,
+    //     });
+    //   }
+    // }
+  }
+  componentWillUnmount() {
+    this._isMounted = false;
   }
   render() {
     const tabs = [
@@ -116,9 +125,9 @@ export default class EventDetail2 extends Component {
       { title: "Hội thoại" },
       { title: "Khách mời" },
     ];
-
     return (
       <View style={styles.container}>
+        {/* <LoadingIndicator /> */}
         <Tabs
           style={styles.Tabcontainer}
           tabs={tabs}
@@ -138,10 +147,7 @@ export default class EventDetail2 extends Component {
             <Text>Content of Third Tab</Text>
           </View>
           <View style={styles}>
-            <GuestTab
-              data={this.state.listGuest}
-              guestTypes={this.state.listguesttype}
-            ></GuestTab>
+            <GuestTab data={this.state.listGuest}></GuestTab>
           </View>
         </Tabs>
       </View>
