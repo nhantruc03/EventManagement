@@ -5,7 +5,7 @@ export default async function getToken() {
     var login = await AsyncStorage.getItem("login");
     var obj = JSON.parse(login);
     AUTH = obj.token;
-    console.log("AUTH", AUTH);
+    // console.log("AUTH", AUTH);
     return AUTH;
   } catch (e) {
     console.log(e);

@@ -12,6 +12,8 @@ import Taskscreen from "../screens/Task";
 import Profilescreen from "../screens/Profile";
 import EventDetail from "../screens/EventDetails";
 import EventDetail2 from "../screens/EventDetails2";
+import scriptdetail from "../screens/scriptdetail";
+import ScriptTab from "../components/ScriptTab";
 import { createStackNavigator } from "@react-navigation/stack";
 
 const Tab = createBottomTabNavigator();
@@ -20,6 +22,7 @@ const Stack = createStackNavigator();
 
 function TabEvent() {
   return (
+    // <EventDetail2></EventDetail2>
     <Stack.Navigator>
       <Stack.Screen
         name="Events"
@@ -32,8 +35,8 @@ function TabEvent() {
         }}
       />
       <Stack.Screen
-        name="EventDetails"
-        component={EventDetail}
+        name="EventDetail2"
+        component={EventDetail2}
         options={{
           headerStyle: {
             backgroundColor: "#2A9D8F",
@@ -44,8 +47,8 @@ function TabEvent() {
         }}
       />
       <Stack.Screen
-        name="EventDetail2"
-        component={EventDetail2}
+        name="scriptdetail"
+        component={scriptdetail}
         options={{
           headerStyle: {
             backgroundColor: "#2A9D8F",
@@ -103,7 +106,7 @@ export default class BottomNav extends React.Component {
             tabBarVisible: ((route) => {
               const routeName = getFocusedRouteNameFromRoute(route) ?? "";
               console.log(routeName);
-              if (routeName === "EventDetails" || "EventnDetail2") {
+              if (routeName === "EventDetail2") {
                 return false;
               }
               return true;

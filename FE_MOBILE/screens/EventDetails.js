@@ -9,6 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import moment from "moment";
+import { SafeAreaView } from "react-native";
 
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
@@ -17,7 +18,7 @@ const Separator = () => <View style={styles.separator} />;
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  formContainer: { padding: 16, zIndex: 2 },
+  formContainer: { padding: 16, zIndex: 3 },
   mainLabel: {
     fontFamily: "bold",
     fontSize: 24,
@@ -123,26 +124,27 @@ export default class EventDetail extends Component {
       status: "",
     };
   }
+
+  componentDidMount() {
+    // this.setstate;
+    console.log(this.props.data);
+    this.setState({
+      data: this.props.data,
+    });
+  }
+
   render() {
-    const {
-      id,
-      name,
-      description,
-      time,
-      date,
-      location,
-      poster,
-      tag,
-    } = this.props.route.params;
-    // console.log(id);
-    return (
-      <View style={styles.container}>
+    if (this.state.data) {
+      return (
         <ScrollView style={styles.formContainer}>
-          <Image style={styles.posterImg} srouce={{ uri: `${poster}` }}></Image>
-          <Text style={styles.mainLabel}>{name}</Text>
-          <Text style={styles.description}>{description}</Text>
+          <Image
+            style={styles.posterImg}
+            srouce={{ uri: `${this.state.data.poster}` }}
+          ></Image>
+          <Text style={styles.mainLabel}>{this.state.data.name}</Text>
+          <Text style={styles.description}>{this.state.data.description}</Text>
           <View>
-            {tag.map((value, key) => (
+            {this.state.data.tag.map((value, key) => (
               <View style={styles.tagContainer} key={key}>
                 <Text style={styles.tagContent}>{value.name}</Text>
               </View>
@@ -157,7 +159,7 @@ export default class EventDetail extends Component {
                   source={require("../assets/images/timesolid.png")}
                 ></Image>
                 <Text style={styles.TimeContent}>
-                  {moment(time).format("HH:MM")}
+                  {moment(this.state.data.time).format("HH:MM")}
                 </Text>
               </View>
               <View style={styles.DateContatiner}>
@@ -166,7 +168,7 @@ export default class EventDetail extends Component {
                   source={require("../assets/images/datesolid.png")}
                 ></Image>
                 <Text style={styles.DateContent}>
-                  {moment(date).format("DD/MM/YYYY")}
+                  {moment(this.state.data.date).format("DD/MM/YYYY")}
                 </Text>
               </View>
             </View>
@@ -175,23 +177,29 @@ export default class EventDetail extends Component {
                 style={styles.locationicon}
                 source={require("../assets/images/locationsolid.png")}
               ></Image>
-              <Text style={styles.locationContent}>{location}</Text>
+              <Text style={styles.locationContent}>
+                {this.state.data.location}
+              </Text>
             </View>
           </View>
 
-          <View style={styles.ViewdetailContainer}>
-            <TouchableOpacity
-              style={styles.BtnSubmit}
-              title="Xem chi tiết"
-              onPress={() =>
-                this.props.navigation.navigate("EventDetail2", { ID: id })
-              }
-            >
-              <Text style={styles.textSubmit}>Xem chi tiết </Text>
-            </TouchableOpacity>
-          </View>
+          {/* <View style={styles.ViewdetailContainer}>
+              <TouchableOpacity
+                style={styles.BtnSubmit}
+                title="Xem chi tiết"
+                onPress={() =>
+                  this.state.navigation.navigate("EventDetail2", {
+                    ID: this.state.data.id,
+                  })
+                }
+              >
+                <Text style={styles.textSubmit}>Xem chi tiết </Text>
+              </TouchableOpacity>
+            </View> */}
         </ScrollView>
-      </View>
-    );
+      );
+    } else {
+      return null;
+    }
   }
 }

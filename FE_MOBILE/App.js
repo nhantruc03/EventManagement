@@ -18,6 +18,7 @@ export default App = () => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   const [loaded] = useFonts({
+    antoutline: require("./assets/fonts/antoutline.ttf"),
     regular: require("./assets/fonts/Nunito-Regular.ttf"),
     bold: require("./assets/fonts/Nunito-Bold.ttf"),
     semibold: require("./assets/fonts/Nunito-SemiBold.ttf"),

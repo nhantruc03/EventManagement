@@ -127,7 +127,7 @@ export default class Event extends Component {
       { title: "Sắp tới" },
       { title: "Đã xong" },
     ];
-    console.log("data", this.state.data);
+    // console.log("data", this.state.data);
     return (
       <View style={styles.container}>
         <Text style={styles.toplabel}>Sự kiện</Text>
@@ -169,7 +169,7 @@ export default class Event extends Component {
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() =>
-                  this.props.navigation.navigate("EventDetails", {
+                  this.props.navigation.navigate("EventDetail2", {
                     id: item._id,
                     name: item.name,
                     description: item.description,
