@@ -103,7 +103,7 @@ class OrgTab extends Component {
           style={styles.ListContainer}
           data={this.state.data}
           renderItem={({ item }) => (
-            <View style={styles.itemContainer} key={item._id}>
+            <View style={styles.itemContainer}>
               <View style={styles.fisrtColumn}>
                 <Image
                   style={styles.AvaImg}
@@ -131,7 +131,7 @@ class OrgTab extends Component {
             </View>
           )}
           ItemSeparatorComponent={() => <View style={styles.seperator} />}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item._id}
         ></FlatList>
       );
     }

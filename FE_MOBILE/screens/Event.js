@@ -168,7 +168,7 @@ export default class Event extends Component {
             data={this.state.data}
             renderItem={({ item }) => (
               <TouchableOpacity
-                onPress={() =>
+                onPress={() => 
                   this.props.navigation.navigate("EventDetail2", {
                     id: item._id,
                     name: item.name,

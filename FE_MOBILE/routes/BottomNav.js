@@ -10,57 +10,70 @@ import Homescreen from "../screens/Home";
 import Eventscreen from "../screens/Event";
 import Taskscreen from "../screens/Task";
 import Profilescreen from "../screens/Profile";
-import EventDetail from "../screens/EventDetails";
 import EventDetail2 from "../screens/EventDetails2";
 import scriptdetail from "../screens/scriptdetail";
-import ScriptTab from "../components/ScriptTab";
+import StackNav from "../routes/StackNav";
 import { createStackNavigator } from "@react-navigation/stack";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { Image } from "react-native";
+import { View } from "react-native";
 
 const Tab = createBottomTabNavigator();
 
 const Stack = createStackNavigator();
 
-function TabEvent() {
-  return (
-    // <EventDetail2></EventDetail2>
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Events"
-        component={Eventscreen}
-        options={{
-          headerShown: false,
-          headerStyle: {
-            backgroundColor: "#2A9D8F",
-          },
-        }}
-      />
-      <Stack.Screen
-        name="EventDetail2"
-        component={EventDetail2}
-        options={{
-          headerStyle: {
-            backgroundColor: "#2A9D8F",
-          },
-          headerTitleStyle: {},
-          headerBackTitleVisible: false,
-          headerTintColor: "#fff",
-        }}
-      />
-      <Stack.Screen
-        name="scriptdetail"
-        component={scriptdetail}
-        options={{
-          headerStyle: {
-            backgroundColor: "#2A9D8F",
-          },
-          headerTitleStyle: {},
-          headerBackTitleVisible: false,
-          headerTintColor: "#fff",
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
+// function TabEvent() {
+//   return (
+//     <Stack.Navigator>
+//       <Stack.Screen
+//         name="Events"
+//         component={Eventscreen}
+//         options={{
+//           headerShown: false,
+//           headerStyle: {
+//             backgroundColor: "#2A9D8F",
+//           },
+//         }}
+//       />
+//       <Stack.Screen
+//         name="EventDetail2"
+//         component={EventDetail2}
+//         options={{
+//           headerStyle: {
+//             backgroundColor: "#2A9D8F",
+//           },
+//           headerTitleStyle: {},
+//           headerBackTitleVisible: false,
+//           headerTintColor: "#fff",
+//         }}
+//       />
+//       <Stack.Screen
+//         name="scriptdetail"
+//         component={scriptdetail}
+//         options={{
+//           headerStyle: {
+//             backgroundColor: "#2A9D8F",
+//           },
+//           headerTitleStyle: {},
+//           headerBackTitleVisible: false,
+//           headerTintColor: "#fff",
+//           headerRight: () => (
+//             <View>
+//               <TouchableOpacity
+//                 onPress={() => {
+//                   this.setState({ visible: true });
+//                 }}
+//                 style={styles.Icon}
+//               >
+//                 <Image source={require("../assets/images/edit.png")} />
+//               </TouchableOpacity>
+//             </View>
+//           ),
+//         }}
+//       />
+//     </Stack.Navigator>
+//   );
+// }
 
 const styles = StyleSheet.create({
   container: {
@@ -69,6 +82,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  // Icon: {
+  //   zIndex: 9,
+  //   right: 16,
+  // },
 });
 
 export default class BottomNav extends React.Component {
@@ -97,7 +114,7 @@ export default class BottomNav extends React.Component {
         />
         <Tab.Screen
           name="Event"
-          component={TabEvent}
+          component={StackNav}
           options={({ route }) => ({
             tabBarLabel: "Sự kiện",
             tabBarIcon: ({ color }) => (
@@ -108,7 +125,7 @@ export default class BottomNav extends React.Component {
               console.log(routeName);
               if (routeName === "EventDetail2") {
                 return false;
-              }
+              } else if (routeName === "scriptdetail") return false;
               return true;
             })(route),
           })}

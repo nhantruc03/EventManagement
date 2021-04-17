@@ -21,6 +21,9 @@ export default class SplashScreen extends Component {
   }
   componentDidMount() {
     setTimeout(() => {
+      AsyncStorage.getItem("login").then((value) =>
+        navigation.replace(value === null ? "Login" : "BottomNav")
+      );
       this.setState({ Loading: true });
       if (this.state.Loading) this.props.navigation.replace("Login");
     }, 1000);

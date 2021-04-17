@@ -19,6 +19,8 @@ import { normalizeUnits } from "moment";
 import Eventdetails from "../screens/EventDetails";
 import ScriptTab from "../components/ScriptTab";
 import { createStackNavigator } from "@react-navigation/stack";
+import { TabView, SceneMap } from "react-native-tab-view";
+import { TabBar } from "react-native-tab-view";
 const Stack = createStackNavigator();
 const styles = StyleSheet.create({
   container: {
@@ -28,6 +30,8 @@ const styles = StyleSheet.create({
     flex: 2,
   },
 });
+
+const initialLayout = { width: Dimensions.get("window").width };
 
 export default class EventDetail2 extends Component {
   constructor(props) {
@@ -41,6 +45,13 @@ export default class EventDetail2 extends Component {
       listguesttype: null,
       listscripts: null,
       loading: true,
+      routes: [
+        { key: "first", title: "First" },
+        { key: "second", title: "Seconsdfasdfd" },
+        { key: "third", title: "Thirdadsfsf" },
+        { key: "fourth", title: "Thirdadsfsf" },
+      ],
+      index: 0,
     };
     this._isMounted = false;
   }
@@ -89,6 +100,22 @@ export default class EventDetail2 extends Component {
       ) : null;
     }
   };
+
+  renderScene = SceneMap({
+    first: <Eventdetails data={this.props.route.params} />,
+    second: this.state.listOrganizer ? (
+      <OrgTab data={this.state.listOrganizer} />
+    ) : null,
+    third: his.state.listscripts ? (
+      <ScriptTab
+        navigation={this.props.navigation}
+        data={this.state.listscripts}
+      />
+    ) : null,
+    fourth: this.state.listGuest ? (
+      <GuestTab data={this.state.listGuest} />
+    ) : null,
+  });
 
   async componentDidMount() {
     this._isMounted = true;
@@ -173,6 +200,28 @@ export default class EventDetail2 extends Component {
     this._isMounted = false;
   }
 
+  renderTabBar = (props) => (
+    <TabBar
+      {...props}
+      indicatorStyle={{ backgroundColor: "#2A9D8F" }}
+      activeColor="#2A9D8F"
+      inactiveColor="#AAB0B6"
+      style={{
+        backgroundColor: "white",
+        paddingVertical: 5,
+        borderBottomWidth: 1,
+        borderBottomColor: "grey",
+      }}
+      scrollEnabled={true}
+    />
+  );
+
+  setIndex = (index) => {
+    this.setState({
+      index,
+    });
+  };
+
   render() {
     const tabs = [
       { title: "Thông tin chung" },
@@ -183,25 +232,31 @@ export default class EventDetail2 extends Component {
     ];
     if (this.props.route.params) {
       return (
-        <View style={{ flex: 1 }}>
-          {/* <LoadingIndicator /> */}
-          <View style={{ flex: 2 }}>
-            <Tabs
-              initialPage={0}
-              tabs={tabs}
-              tabBarActiveTextColor="#2A9D8F"
-              tabBarInactiveTextColor="#AAB0B6"
-              tabBarTextStyle={{
-                fontFamily: "semibold",
-                marginVertical: 8,
-              }}
-              tabBarUnderlineStyle={{ backgroundColor: "#2A9D8F" }}
-            >
-              {/* {this.state.event ?  : null} */}
-              {this.renderContent}
-            </Tabs>
-          </View>
-        </View>
+        // <Tabs
+        //   initialPage={0}
+        //   tabs={tabs}
+        //   tabBarActiveTextColor="#2A9D8F"
+        //   tabBarInactiveTextColor="#AAB0B6"
+        //   tabBarTextStyle={{
+        //     fontFamily: "semibold",
+        //     marginVertical: 8,
+        //   }}
+        //   tabBarUnderlineStyle={{ backgroundColor: "#2A9D8F" }}
+        // >
+        //   {/* {this.state.event ?  : null} */}
+        //   {this.renderContent}
+        // </Tabs>
+        <TabView
+          renderTabBar={this.renderTabBar}
+          navigationState={{
+            index: this.state.index,
+            routes: this.state.routes,
+          }}
+          renderScene={this.renderScene}
+          onIndexChange={this.setIndex}
+          initialLayout={initialLayout}
+          style={styles.container}
+        />
       );
     } else {
       return null;
