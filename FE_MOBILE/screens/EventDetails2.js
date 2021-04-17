@@ -21,6 +21,7 @@ import ScriptTab from "../components/ScriptTab";
 import { createStackNavigator } from "@react-navigation/stack";
 import { TabView, SceneMap } from "react-native-tab-view";
 import { TabBar } from "react-native-tab-view";
+import { Dimensions } from "react-native";
 const Stack = createStackNavigator();
 const styles = StyleSheet.create({
   container: {
@@ -45,77 +46,72 @@ export default class EventDetail2 extends Component {
       listguesttype: null,
       listscripts: null,
       loading: true,
-      routes: [
-        { key: "first", title: "First" },
-        { key: "second", title: "Seconsdfasdfd" },
-        { key: "third", title: "Thirdadsfsf" },
-        { key: "fourth", title: "Thirdadsfsf" },
-      ],
       index: 0,
+      routes: [
+        { key: '1', title: 'Thông tin chung' },
+        { key: '2', title: 'Ban tổ chức' },
+        { key: '3', title: 'Kịch bản' },
+        { key: '4', title: 'Hội thoại' },
+        { key: '5', title: 'Khách mời' },
+      ]
     };
     this._isMounted = false;
+    this.renderScene = SceneMap({
+      1: this.Route1,
+      2: this.Route2,
+      3: this.Route3,
+      4: this.Route4,
+      5: this.Route5,
+    })
   }
+  Route1 = () => (
+    <Eventdetails data={this.props.route.params} />)
+  Route2 = () => (
+    this.state.listOrganizer ? (
+      <OrgTab data={this.state.listOrganizer} />
+    ) : null)
+  Route3 = () => (
+    this.state.listscripts ? (
+      <ScriptTab
+        navigation={this.props.navigation}
+        data={this.state.listscripts}
+      />
+    ) : null)
+  Route4 = () => (
+    this.state.listGuest ? (
+      <GuestTab data={this.state.listGuest} />
+    ) : null)
+  Route5 = () => (
+    <View style={[{ backgroundColor: '#ff4482' }]} />)
 
   renderContent = (tab, index) => {
     const content = this.renderView(index);
     return <View>{content}</View>;
   };
 
-  // test = () => {
-  //   return (
-  //     // <EventDetail2></EventDetail2>
-  //     <Stack.Navigator>
-  //       <Stack.Screen
-  //         name="ScriptTab"
-  //         component={ScriptTab}
-  //         initialParams={this.state.listscripts}
-  //         options={{
-  //           headerShown: false,
-  //           headerStyle: {
-  //             backgroundColor: "#2A9D8F",
-  //           },
-  //         }}
+
+  // renderView = (i) => {
+  //   if (i === 0) {
+  //     return <Eventdetails data={this.props.route.params} />;
+  //   } else if (i === 1) {
+  //     return this.state.listOrganizer ? (
+  //       <OrgTab data={this.state.listOrganizer} />
+  //     ) : null;
+  //   } else if (i === 2) {
+  //     return this.state.listscripts ? (
+  //       <ScriptTab
+  //         navigation={this.props.navigation}
+  //         data={this.state.listscripts}
   //       />
-  //     </Stack.Navigator>
-  //   );
+  //     ) : null;
+  //   } else if (i === 4) {
+  //     return this.state.listGuest ? (
+  //       <GuestTab data={this.state.listGuest} />
+  //     ) : null;
+  //   }
   // };
 
-  renderView = (i) => {
-    if (i === 0) {
-      return <Eventdetails data={this.props.route.params} />;
-    } else if (i === 1) {
-      return this.state.listOrganizer ? (
-        <OrgTab data={this.state.listOrganizer} />
-      ) : null;
-    } else if (i === 2) {
-      return this.state.listscripts ? (
-        <ScriptTab
-          navigation={this.props.navigation}
-          data={this.state.listscripts}
-        />
-      ) : null;
-    } else if (i === 4) {
-      return this.state.listGuest ? (
-        <GuestTab data={this.state.listGuest} />
-      ) : null;
-    }
-  };
 
-  renderScene = SceneMap({
-    first: <Eventdetails data={this.props.route.params} />,
-    second: this.state.listOrganizer ? (
-      <OrgTab data={this.state.listOrganizer} />
-    ) : null,
-    third: his.state.listscripts ? (
-      <ScriptTab
-        navigation={this.props.navigation}
-        data={this.state.listscripts}
-      />
-    ) : null,
-    fourth: this.state.listGuest ? (
-      <GuestTab data={this.state.listGuest} />
-    ) : null,
-  });
 
   async componentDidMount() {
     this._isMounted = true;
@@ -203,14 +199,13 @@ export default class EventDetail2 extends Component {
   renderTabBar = (props) => (
     <TabBar
       {...props}
+      tabStyle={{ width: 'auto' }}
       indicatorStyle={{ backgroundColor: "#2A9D8F" }}
       activeColor="#2A9D8F"
       inactiveColor="#AAB0B6"
       style={{
         backgroundColor: "white",
         paddingVertical: 5,
-        borderBottomWidth: 1,
-        borderBottomColor: "grey",
       }}
       scrollEnabled={true}
     />
@@ -232,20 +227,6 @@ export default class EventDetail2 extends Component {
     ];
     if (this.props.route.params) {
       return (
-        // <Tabs
-        //   initialPage={0}
-        //   tabs={tabs}
-        //   tabBarActiveTextColor="#2A9D8F"
-        //   tabBarInactiveTextColor="#AAB0B6"
-        //   tabBarTextStyle={{
-        //     fontFamily: "semibold",
-        //     marginVertical: 8,
-        //   }}
-        //   tabBarUnderlineStyle={{ backgroundColor: "#2A9D8F" }}
-        // >
-        //   {/* {this.state.event ?  : null} */}
-        //   {this.renderContent}
-        // </Tabs>
         <TabView
           renderTabBar={this.renderTabBar}
           navigationState={{

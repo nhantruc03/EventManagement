@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import moment from "moment";
 import { SafeAreaView } from "react-native";
-
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 
