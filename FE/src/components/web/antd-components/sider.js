@@ -32,6 +32,7 @@ class SiderDemo extends React.Component {
     };
 
     getM = () => {
+        // eslint-disable-next-line
         const { innerWidth: width, innerHeight: height } = window;
         console.log(width)
         return width
