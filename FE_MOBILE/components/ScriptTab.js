@@ -1,8 +1,12 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import axios from "axios";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import moment from "moment";
+import { Modal, Provider } from "@ant-design/react-native";
+import ScriptCreateModal from "../components/ScriptCreateModal";
+
+const H = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
   Container: {
@@ -48,6 +52,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#2A9D8F",
   },
+  btnUpdate: {
+    color: "#fff",
+    height: 48,
+    backgroundColor: "#2A9D8F",
+    borderRadius: 8,
+    padding: 12,
+    margin: 16,
+  },
+  textUpdate: {
+    color: "white",
+    textAlign: "center",
+    fontFamily: "bold",
+    fontSize: 16,
+  },
 });
 
 export default class ScriptTab extends Component {
@@ -55,49 +73,87 @@ export default class ScriptTab extends Component {
     super(props);
     this.state = {
       data: null,
+      visible: false,
     };
   }
 
+  onClose = () => {
+    this.setState({
+      visible: false,
+    });
+  };
   componentDidMount() {
     this.setState({
       data: this.props.data,
     });
   }
+  updateListScript = (e) => {
+    this.setState({
+      data: [...this.state.data, e],
+    });
+    this.props.updateListScript(e);
+  };
 
   render() {
     console.log("data", this.state.data);
     if (this.state.data) {
       return (
-        <FlatList
-          style={styles.ListContainer}
-          data={this.state.data}
-          renderItem={({ item }) => (
+        <Provider>
+          <View>
+            <FlatList
+              height={H * 0.7}
+              style={styles.ListContainer}
+              data={this.state.data}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() =>
+                    this.props.navigation.navigate("scriptdetail", {
+                      id: item._id,
+                      event: this.props.event,
+                    })
+                  }
+                >
+                  <View style={styles.itemContainer}>
+                    <View style={styles.itemForm}>
+                      <Text style={styles.itemFormName}>{item.name}</Text>
+                      <Text style={styles.itemFormFor}>{item.forId.name}</Text>
+                      <Text style={styles.itemFormCreate}>
+                        Tạo lúc: {moment(item.createdAt).format("HH:mm")} |{" "}
+                        {moment(item.createdAt).format("DD/MM/YYY")} bởi{" "}
+                        <Text style={styles.itemFormCreateName}>
+                          {item.writerId ? item.writerId.name : null}
+                        </Text>
+                      </Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item) => item._id}
+            ></FlatList>
             <TouchableOpacity
-              onPress={() =>
-                this.props.navigation.navigate("scriptdetail", {
-                  id: item._id,
-                  startDate: item.eventId.startDate,
-                  startTime: item.eventId.startTime,
-                })
-              }
+              style={styles.btnUpdate}
+              underlayColor="#fff"
+              onPress={() => this.setState({ visible: true })}
             >
-              <View style={styles.itemContainer}>
-                <View style={styles.itemForm}>
-                  <Text style={styles.itemFormName}>{item.name}</Text>
-                  <Text style={styles.itemFormFor}>{item.forId.name}</Text>
-                  <Text style={styles.itemFormCreate}>
-                    Tạo lúc: {moment(item.createdAt).format("HH:mm")} |{" "}
-                    {moment(item.createdAt).format("DD/MM/YYY")} bởi{" "}
-                    <Text style={styles.itemFormCreateName}>
-                      {item.writerId ? item.writerId.name : null}
-                    </Text>
-                  </Text>
-                </View>
-              </View>
+              <Text style={styles.textUpdate}>Tạo mới</Text>
             </TouchableOpacity>
-          )}
-          keyExtractor={(item) => item._id}
-        ></FlatList>
+            <Modal
+              closable
+              maskClosable
+              popup
+              visible={this.state.visible}
+              animationType="slide-up"
+              onClose={this.onClose}
+            >
+              <ScriptCreateModal
+                onClose={this.onClose}
+                scriptId={this.state._id}
+                event={this.props.event}
+                updateListScript={(e) => this.updateListScript(e)}
+              />
+            </Modal>
+          </View>
+        </Provider>
       );
     } else {
       return null;

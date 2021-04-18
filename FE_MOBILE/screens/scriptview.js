@@ -138,6 +138,7 @@ class scriptview extends Component {
       console.log("1 object", this.state.currentScript + 1 === key);
       return (
         <Step
+          key={key}
           title={
             <View style={styles.formContainer}>
               <Text style={styles.timeText}>

@@ -48,12 +48,12 @@ export default class EventDetail2 extends Component {
       loading: true,
       index: 0,
       routes: [
-        { key: '1', title: 'Thông tin chung' },
-        { key: '2', title: 'Ban tổ chức' },
-        { key: '3', title: 'Kịch bản' },
-        { key: '4', title: 'Hội thoại' },
-        { key: '5', title: 'Khách mời' },
-      ]
+        { key: "1", title: "Thông tin chung" },
+        { key: "2", title: "Ban tổ chức" },
+        { key: "3", title: "Kịch bản" },
+        { key: "4", title: "Hội thoại" },
+        { key: "5", title: "Khách mời" },
+      ],
     };
     this._isMounted = false;
     this.renderScene = SceneMap({
@@ -62,33 +62,30 @@ export default class EventDetail2 extends Component {
       3: this.Route3,
       4: this.Route4,
       5: this.Route5,
-    })
+    });
   }
-  Route1 = () => (
-    <Eventdetails data={this.props.route.params} />)
-  Route2 = () => (
+  Route1 = () => <Eventdetails data={this.props.route.params} />;
+  Route2 = () =>
     this.state.listOrganizer ? (
       <OrgTab data={this.state.listOrganizer} />
-    ) : null)
-  Route3 = () => (
+    ) : null;
+  Route3 = () =>
     this.state.listscripts ? (
       <ScriptTab
         navigation={this.props.navigation}
         data={this.state.listscripts}
+        updateListScript={(e) => this.updateListScript(e)}
+        event={this.state.event}
       />
-    ) : null)
-  Route4 = () => (
-    this.state.listGuest ? (
-      <GuestTab data={this.state.listGuest} />
-    ) : null)
-  Route5 = () => (
-    <View style={[{ backgroundColor: '#ff4482' }]} />)
+    ) : null;
+  Route4 = () =>
+    this.state.listGuest ? <GuestTab data={this.state.listGuest} /> : null;
+  Route5 = () => <View style={[{ backgroundColor: "#ff4482" }]} />;
 
   renderContent = (tab, index) => {
     const content = this.renderView(index);
     return <View>{content}</View>;
   };
-
 
   // renderView = (i) => {
   //   if (i === 0) {
@@ -111,12 +108,17 @@ export default class EventDetail2 extends Component {
   //   }
   // };
 
-
+  updateListScript = (e) => {
+    console.log("receive data", e);
+    this.setState({
+      listscripts: [...this.state.listscripts, e],
+    });
+  };
 
   async componentDidMount() {
     this._isMounted = true;
     // console.log(this.props.route.params.id);
-    const [guestTypes, listEventAssign, scripts] = await Promise.all([
+    const [guestTypes, listEventAssign, scripts, event] = await Promise.all([
       axios
         .post(
           `${Url()}/api/guest-types/getAll`,
@@ -156,6 +158,15 @@ export default class EventDetail2 extends Component {
         .then((res) => {
           return res.data.data;
         }),
+      axios
+        .get(`${Url()}/api/events/` + this.props.route.params.id, {
+          headers: {
+            Authorization: await getToken(),
+          },
+        })
+        .then((res) => {
+          return res.data.data;
+        }),
     ]);
 
     let guests = [];
@@ -187,7 +198,7 @@ export default class EventDetail2 extends Component {
         listguesttype: guestTypes,
         listGuest: guests,
         loading: false,
-        event: this.props.route.params,
+        event: event,
         listscripts: scripts,
       });
     }
@@ -199,7 +210,7 @@ export default class EventDetail2 extends Component {
   renderTabBar = (props) => (
     <TabBar
       {...props}
-      tabStyle={{ width: 'auto' }}
+      tabStyle={{ width: "auto" }}
       indicatorStyle={{ backgroundColor: "#2A9D8F" }}
       activeColor="#2A9D8F"
       inactiveColor="#AAB0B6"

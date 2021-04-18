@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet } from "react-native";
+
 import Url from "../env";
 import getToken from "../Auth";
 import axios from "axios";
@@ -21,7 +22,7 @@ import {
   TouchableOpacity,
 } from "react-native-gesture-handler";
 import { Image } from "react-native";
-import ScriptEditModal from "../components/ScriptEditModal";
+import ScriptDetailModal from "../components/ScriptDetailModal";
 
 const Step = Steps.Step;
 
@@ -81,6 +82,16 @@ const styles = StyleSheet.create({
     padding: 16,
     margin: 16,
   },
+  btnAdd: {
+    color: "#fff",
+    height: 40,
+    backgroundColor: "#2A9D8F",
+    borderRadius: 8,
+    padding: 12,
+    margin: 16,
+    alignSelf: "center",
+    left: 130,
+  },
   textUpdate: { color: "white", textAlign: "center" },
   itemContainer: {
     flex: 1,
@@ -118,6 +129,7 @@ class scriptdetail extends Component {
       _id: "",
       visible: false,
       editDetailData: null,
+      addScriptDetails: false,
     };
   }
 
@@ -155,29 +167,21 @@ class scriptdetail extends Component {
         })
         .then((res) => res.data.data),
     ]);
-    const [event, scriptdetails] = await Promise.all([
-      axios
-        .get(`${Url()}/api/events/` + script.eventId._id, {
+    const scriptdetails = await axios
+      .post(
+        `${Url()}/api/script-details/getAll`,
+        { scriptId: this.props.route.params.id },
+        {
           headers: {
             Authorization: await getToken(),
           },
-        })
-        .then((res) => res.data.data),
-      axios
-        .post(
-          `${Url()}/api/script-details/getAll`,
-          { scriptId: this.props.route.params.id },
-          {
-            headers: {
-              Authorization: await getToken(),
-            },
-          }
-        )
-        .then((res) => res.data.data),
-    ]);
+        }
+      )
+      .then((res) => res.data.data);
 
-    if (event !== null && script !== null && scriptdetails !== null) {
+    if (script !== null && scriptdetails !== null) {
       if (this._isMounted) {
+        let event = this.props.route.params.event;
         let temp_listUser = [];
         event.availUser.forEach((e) => {
           let temp = {
@@ -211,14 +215,12 @@ class scriptdetail extends Component {
   }
 
   onChangeForId = (forId) => {
-    console.log("writerId", forId);
     this.setState({
       forId: forId,
     });
   };
 
   onChangeName = (name) => {
-    console.log("name", name);
     this.setState({
       name,
     });
@@ -248,6 +250,36 @@ class scriptdetail extends Component {
       });
   };
 
+  updateListScriptDetails = (temp) => {
+    let temp_list = this.state.listscriptdetails;
+    temp_list.forEach((e) => {
+      if (e._id === temp._id) {
+        e.name = temp.name;
+        e.time = temp.time;
+        e.description = temp.description;
+      }
+    });
+    this.setState({
+      listscriptdetails: temp_list.sort((a, b) => {
+        let temp_a = new Date(a.time).setFullYear(1, 1, 1);
+        let temp_b = new Date(b.time).setFullYear(1, 1, 1);
+        return temp_a > temp_b ? 1 : -1;
+      }),
+    });
+  };
+
+  addListScriptDetails = (temp) => {
+    let temp_list = this.state.listscriptdetails;
+    temp_list.push(temp);
+    this.setState({
+      listscriptdetails: temp_list.sort((a, b) => {
+        let temp_a = new Date(a.time).setFullYear(1, 1, 1);
+        let temp_b = new Date(b.time).setFullYear(1, 1, 1);
+        return temp_a > temp_b ? 1 : -1;
+      }),
+    });
+  };
+
   render() {
     if (!this.state.isLoading) {
       return (
@@ -271,12 +303,6 @@ class scriptdetail extends Component {
             <View style={styles.ScriptNameLabelContainer}>
               <Text style={styles.Label}>Dành cho</Text>
               <View style={styles.Box}>
-                {/* <PickerView
-                onChange={this.onChange}
-                value={this.state.forId}
-                data={this.state.listUser}
-                cascade={false}
-                /> */}
                 <Picker
                   onChange={this.onChangeForId}
                   value={this.state.forId}
@@ -303,7 +329,28 @@ class scriptdetail extends Component {
               <Text style={styles.textUpdate}>Cập nhật</Text>
             </TouchableOpacity>
             <View>
-              <Text style={styles.Label}>Timeline</Text>
+              <View>
+                <Text style={{ zIndex: 9 }}>Timeline</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.btnAdd}
+                underlayColor="#fff"
+                onPress={() =>
+                  this.setState({
+                    visible: true,
+                    editDetailData: {
+                      name: "",
+                      time: new Date(),
+                      description: "",
+                    },
+                    addScriptDetails: true,
+                  })
+                }
+              >
+                <Text style={styles.textUpdate}>+ Thêm</Text>
+              </TouchableOpacity>
+            </View>
+            <View>
               <FlatList
                 data={this.state.listscriptdetails}
                 keyExtractor={(item) => item._id}
@@ -311,7 +358,11 @@ class scriptdetail extends Component {
                   <TouchableOpacity
                     style={styles.itemContainer}
                     onPress={() =>
-                      this.setState({ visible: true, editDetailData: item })
+                      this.setState({
+                        visible: true,
+                        editDetailData: item,
+                        addScriptDetails: false,
+                      })
                     }
                   >
                     <View style={styles.itemForm}>
@@ -335,9 +386,13 @@ class scriptdetail extends Component {
             animationType="slide-up"
             onClose={this.onClose}
           >
-            <ScriptEditModal
+            <ScriptDetailModal
               onClose={this.onClose}
+              add={this.state.addScriptDetails}
               data={this.state.editDetailData}
+              scriptId={this.state._id}
+              updateListScriptDetails={(e) => this.updateListScriptDetails(e)}
+              addListScriptDetails={(e) => this.addListScriptDetails(e)}
             />
           </Modal>
         </Provider>
