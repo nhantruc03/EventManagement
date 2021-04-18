@@ -135,6 +135,52 @@ export default class Event extends Component {
     this._isMounted = false
   }
 
+  renderItem = (item) => {
+    return (
+      <TouchableOpacity
+        onPress={() =>
+          this.props.navigation.navigate("EventDetail2", {
+            id: item._id,
+            name: item.name,
+            description: item.description,
+            time: item.startTime,
+            date: item.startDate,
+            location: item.address,
+            tag: item.tagId,
+            poster: `${Url()}/api/images/${item.posterUrl}`,
+          })
+        }
+      >
+        <EventCard>
+          <Image
+            style={styles.cardImage}
+            source={{
+              uri: `${Url()}/api/images/${item.posterUrl}`,
+            }}
+          ></Image>
+          <Text style={styles.titleText}>{item.name}</Text>
+          <View style={styles.datetime}>
+            <Image
+              style={styles.Timeicon}
+              source={require("../assets/images/TimeIcon.png")}
+            ></Image>
+            <Text style={styles.Timecontent}>
+              {moment(item.startDate).format("DD/MM/YYYY")} -{" "}
+              {moment(item.startTime).format("HH:MM")}
+            </Text>
+          </View>
+          <View style={styles.location}>
+            <Image
+              style={styles.locateticon}
+              source={require("../assets/images/Time.png")}
+            ></Image>
+            <Text style={styles.Locatecontent}>{item.address}</Text>
+          </View>
+        </EventCard>
+      </TouchableOpacity>
+    )
+  }
+
   render() {
     const tabs = [
       { title: "Tất cả" },
@@ -181,190 +227,22 @@ export default class Event extends Component {
         >
           <FlatList
             data={this.state.data}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() =>
-                  this.props.navigation.navigate("EventDetail2", {
-                    id: item._id,
-                    name: item.name,
-                    description: item.description,
-                    time: item.startTime,
-                    date: item.startDate,
-                    location: item.address,
-                    tag: item.tagId,
-                    poster: `${Url()}/api/images/${item.posterUrl}`,
-                  })
-                }
-              >
-                <EventCard>
-                  <Image
-                    style={styles.cardImage}
-                    source={{
-                      uri: `${Url()}/api/images/${item.posterUrl}`,
-                    }}
-                  ></Image>
-                  <Text style={styles.titleText}>{item.name}</Text>
-                  <View style={styles.datetime}>
-                    <Image
-                      style={styles.Timeicon}
-                      source={require("../assets/images/TimeIcon.png")}
-                    ></Image>
-                    <Text style={styles.Timecontent}>
-                      {moment(item.startDate).format("DD/MM/YYYY")} -{" "}
-                      {moment(item.startTime).format("HH:MM")}
-                    </Text>
-                  </View>
-                  <View style={styles.location}>
-                    <Image
-                      style={styles.locateticon}
-                      source={require("../assets/images/Time.png")}
-                    ></Image>
-                    <Text style={styles.Locatecontent}>{item.address}</Text>
-                  </View>
-                </EventCard>
-              </TouchableOpacity>
-            )}
+            renderItem={({ item }) => this.renderItem(item)}
             keyExtractor={(item) => item._id}
           />
           <FlatList
             data={this.state.data_ongoing}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() =>
-                  this.props.navigation.navigate("EventDetail2", {
-                    id: item._id,
-                    name: item.name,
-                    description: item.description,
-                    time: item.startTime,
-                    date: item.startDate,
-                    location: item.address,
-                    tag: item.tagId,
-                    poster: `${Url()}/api/images/${item.posterUrl}`,
-                  })
-                }
-              >
-                <EventCard>
-                  <Image
-                    style={styles.cardImage}
-                    source={{
-                      uri: `${Url()}/api/images/${item.posterUrl}`,
-                    }}
-                  ></Image>
-                  <Text style={styles.titleText}>{item.name}</Text>
-                  <View style={styles.datetime}>
-                    <Image
-                      style={styles.Timeicon}
-                      source={require("../assets/images/TimeIcon.png")}
-                    ></Image>
-                    <Text style={styles.Timecontent}>
-                      {moment(item.startDate).format("DD/MM/YYYY")} -{" "}
-                      {moment(item.startTime).format("HH:MM")}
-                    </Text>
-                  </View>
-                  <View style={styles.location}>
-                    <Image
-                      style={styles.locateticon}
-                      source={require("../assets/images/Time.png")}
-                    ></Image>
-                    <Text style={styles.Locatecontent}>{item.address}</Text>
-                  </View>
-                </EventCard>
-              </TouchableOpacity>
-            )}
+            renderItem={({ item }) => this.renderItem(item)}
             keyExtractor={(item) => item._id}
           />
           <FlatList
             data={this.state.data_future}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() =>
-                  this.props.navigation.navigate("EventDetail2", {
-                    id: item._id,
-                    name: item.name,
-                    description: item.description,
-                    time: item.startTime,
-                    date: item.startDate,
-                    location: item.address,
-                    tag: item.tagId,
-                    poster: `${Url()}/api/images/${item.posterUrl}`,
-                  })
-                }
-              >
-                <EventCard>
-                  <Image
-                    style={styles.cardImage}
-                    source={{
-                      uri: `${Url()}/api/images/${item.posterUrl}`,
-                    }}
-                  ></Image>
-                  <Text style={styles.titleText}>{item.name}</Text>
-                  <View style={styles.datetime}>
-                    <Image
-                      style={styles.Timeicon}
-                      source={require("../assets/images/TimeIcon.png")}
-                    ></Image>
-                    <Text style={styles.Timecontent}>
-                      {moment(item.startDate).format("DD/MM/YYYY")} -{" "}
-                      {moment(item.startTime).format("HH:MM")}
-                    </Text>
-                  </View>
-                  <View style={styles.location}>
-                    <Image
-                      style={styles.locateticon}
-                      source={require("../assets/images/Time.png")}
-                    ></Image>
-                    <Text style={styles.Locatecontent}>{item.address}</Text>
-                  </View>
-                </EventCard>
-              </TouchableOpacity>
-            )}
+            renderItem={({ item }) => this.renderItem(item)}
             keyExtractor={(item) => item._id}
           />
           <FlatList
             data={this.state.data_past}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() =>
-                  this.props.navigation.navigate("EventDetail2", {
-                    id: item._id,
-                    name: item.name,
-                    description: item.description,
-                    time: item.startTime,
-                    date: item.startDate,
-                    location: item.address,
-                    tag: item.tagId,
-                    poster: `${Url()}/api/images/${item.posterUrl}`,
-                  })
-                }
-              >
-                <EventCard>
-                  <Image
-                    style={styles.cardImage}
-                    source={{
-                      uri: `${Url()}/api/images/${item.posterUrl}`,
-                    }}
-                  ></Image>
-                  <Text style={styles.titleText}>{item.name}</Text>
-                  <View style={styles.datetime}>
-                    <Image
-                      style={styles.Timeicon}
-                      source={require("../assets/images/TimeIcon.png")}
-                    ></Image>
-                    <Text style={styles.Timecontent}>
-                      {moment(item.startDate).format("DD/MM/YYYY")} -{" "}
-                      {moment(item.startTime).format("HH:MM")}
-                    </Text>
-                  </View>
-                  <View style={styles.location}>
-                    <Image
-                      style={styles.locateticon}
-                      source={require("../assets/images/Time.png")}
-                    ></Image>
-                    <Text style={styles.Locatecontent}>{item.address}</Text>
-                  </View>
-                </EventCard>
-              </TouchableOpacity>
-            )}
+            renderItem={({ item }) => this.renderItem(item)}
             keyExtractor={(item) => item._id}
           />
         </Tabs>
