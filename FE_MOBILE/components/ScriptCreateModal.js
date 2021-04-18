@@ -1,5 +1,4 @@
 import { Button, Picker } from "@ant-design/react-native";
-import moment from "moment";
 import React, { Component } from "react";
 import {
   View,
@@ -7,24 +6,13 @@ import {
   StyleSheet,
   TextInput,
   KeyboardAvoidingView,
-  Dimensions,
   Platform,
 } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import {
-  actions,
-  getContentCSS,
-  RichEditor,
-  RichToolbar,
-} from "react-native-pell-rich-editor";
 import { ScrollView } from "react-native-gesture-handler";
 import Url from "../env";
 import getToken from "../Auth";
 import axios from "axios";
 import AsyncStorage from "@react-native-community/async-storage";
-
-const W = Dimensions.get("window").width;
-const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   Label: {
     color: "#2A9D8F",
@@ -110,7 +98,7 @@ class ScriptCreateModal extends Component {
       writerId: obj.id,
       eventId: this.state.event._id,
     };
-    console.log("finish data", data);
+    // console.log("finish data", data);
     await axios
       .post(`${Url()}/api/scripts`, data, {
         headers: {
@@ -118,7 +106,7 @@ class ScriptCreateModal extends Component {
         },
       })
       .then((res) => {
-        console.log("result", res.data.data);
+        // console.log("result", res.data.data);
         this.props.updateListScript(res.data.data);
         this.props.onClose();
       });

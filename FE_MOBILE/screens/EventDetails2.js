@@ -1,28 +1,18 @@
 import React, { Component } from "react";
 import {
   View,
-  Text,
   StyleSheet,
-  Button,
-  Image,
-  ScrollView,
 } from "react-native";
-import { Tabs } from "@ant-design/react-native";
 import OrgTab from "../components/OrgTab";
-import { trackPromise } from "react-promise-tracker";
 import axios from "axios";
 import Url from "../env";
 import getToken from "../Auth";
 import GuestTab from "../components/GuestTab";
-import LoadingIndicator from "../components/helper/Loading";
-import { normalizeUnits } from "moment";
 import Eventdetails from "../screens/EventDetails";
 import ScriptTab from "../components/ScriptTab";
-import { createStackNavigator } from "@react-navigation/stack";
 import { TabView, SceneMap } from "react-native-tab-view";
 import { TabBar } from "react-native-tab-view";
 import { Dimensions } from "react-native";
-const Stack = createStackNavigator();
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -65,10 +55,12 @@ export default class EventDetail2 extends Component {
     });
   }
   Route1 = () => <Eventdetails data={this.props.route.params} />;
+
   Route2 = () =>
     this.state.listOrganizer ? (
       <OrgTab data={this.state.listOrganizer} />
     ) : null;
+
   Route3 = () =>
     this.state.listscripts ? (
       <ScriptTab
@@ -78,14 +70,16 @@ export default class EventDetail2 extends Component {
         event={this.state.event}
       />
     ) : null;
-  Route4 = () =>
-    this.state.listGuest ? <GuestTab data={this.state.listGuest} /> : null;
-  Route5 = () => <View style={[{ backgroundColor: "#ff4482" }]} />;
 
-  renderContent = (tab, index) => {
-    const content = this.renderView(index);
-    return <View>{content}</View>;
-  };
+  Route4 = () => <View style={[{ backgroundColor: "#ff4482" }]} />;
+
+  Route5 = () =>
+    this.state.listGuest ? <GuestTab data={this.state.listGuest} /> : null;
+
+  // renderContent = (tab, index) => {
+  //   const content = this.renderView(index);
+  //   return <View>{content}</View>;
+  // };
 
   // renderView = (i) => {
   //   if (i === 0) {
@@ -109,7 +103,7 @@ export default class EventDetail2 extends Component {
   // };
 
   updateListScript = (e) => {
-    console.log("receive data", e);
+    // console.log("receive data", e);
     this.setState({
       listscripts: [...this.state.listscripts, e],
     });

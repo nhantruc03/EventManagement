@@ -131,6 +131,7 @@ class scriptdetail extends Component {
       editDetailData: null,
       addScriptDetails: false,
     };
+    this._isMounted = false
   }
 
   onClose = () => {
@@ -140,6 +141,7 @@ class scriptdetail extends Component {
   };
   // this.setState({ visible: true })
   async componentDidMount() {
+    this._isMounted = true
     this.props.navigation.setOptions({
       headerRight: () => (
         <View style={styles.IconRight}>
@@ -197,21 +199,27 @@ class scriptdetail extends Component {
           return temp_a > temp_b ? 1 : -1;
         });
 
-        this.setState({
-          isLoading: false,
-          listUser_default: event.availUser,
-          listUser: [temp_listUser],
-          _id: script._id,
-          name: script.name,
-          writerName: script.writerId.name,
-          writerId: script.writerId._id,
-          forId: [script.forId._id],
-          listscriptdetails: temp_listscriptdetails,
-          startDate: event.startDate,
-          startTime: event.startTime,
-        });
+        if (this._isMounted) {
+          this.setState({
+            isLoading: false,
+            listUser_default: event.availUser,
+            listUser: [temp_listUser],
+            _id: script._id,
+            name: script.name,
+            writerName: script.writerId.name,
+            writerId: script.writerId._id,
+            forId: [script.forId._id],
+            listscriptdetails: temp_listscriptdetails,
+            startDate: event.startDate,
+            startTime: event.startTime,
+          });
+        }
       }
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false
   }
 
   onChangeForId = (forId) => {
@@ -315,8 +323,8 @@ class scriptdetail extends Component {
                     {!this.state.forId
                       ? "Chọn"
                       : this.state.listUser_default.filter(
-                          (e) => e._id === this.state.forId[0]
-                        )[0].name}
+                        (e) => e._id === this.state.forId[0]
+                      )[0].name}
                   </Text>
                 </Picker>
               </View>
@@ -330,7 +338,7 @@ class scriptdetail extends Component {
             </TouchableOpacity>
             <View>
               <View>
-                <Text style={{ zIndex: 9 }}>Timeline</Text>
+                <Text style={{ zIndex: 9, marginLeft: 10 }}>Timeline</Text>
               </View>
               <TouchableOpacity
                 style={styles.btnAdd}

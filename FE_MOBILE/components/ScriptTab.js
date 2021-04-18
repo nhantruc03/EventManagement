@@ -95,7 +95,7 @@ export default class ScriptTab extends Component {
   };
 
   render() {
-    console.log("data", this.state.data);
+    // console.log("data", this.state.data);
     if (this.state.data) {
       return (
         <Provider>

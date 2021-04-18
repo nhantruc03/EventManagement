@@ -4,12 +4,11 @@ import {
   Text,
   Image,
   StyleSheet,
-  TouchableOpacity,
   Dimensions,
   ScrollView,
 } from "react-native";
 import moment from "moment";
-import { SafeAreaView } from "react-native";
+import Url from "../env";
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 
@@ -27,7 +26,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 200,
   },
-  tagContainer: { flex: 2, flexDirection: "row", backgroundColor: "#FFEDE0" },
+  tagContainer: { flex: 1, flexDirection: "row", },
   tagContent: {
     marginVertical: 4,
     fontFamily: "regular",
@@ -126,7 +125,7 @@ export default class EventDetail extends Component {
 
   componentDidMount() {
     // this.setstate;
-    console.log(this.props.data);
+    console.log('event data', this.props.data);
     this.setState({
       data: this.props.data,
     });
@@ -134,18 +133,23 @@ export default class EventDetail extends Component {
 
   render() {
     if (this.state.data) {
+      console.log(this.state.data.poster)
       return (
         <ScrollView style={styles.formContainer}>
           <Image
             style={styles.posterImg}
-            srouce={{ uri: `${this.state.data.poster}` }}
+            source={{ uri: this.state.data.poster }}
           ></Image>
           <Text style={styles.mainLabel}>{this.state.data.name}</Text>
           <Text style={styles.description}>{this.state.data.description}</Text>
-          <View>
+          <View style={styles.tagContainer}>
             {this.state.data.tag.map((value, key) => (
-              <View style={styles.tagContainer} key={key}>
-                <Text style={styles.tagContent}>{value.name}</Text>
+              <View style={{ backgroundColor: value.background }} key={key}>
+                <Text style={{
+                  marginVertical: 4,
+                  fontFamily: "regular",
+                  fontSize: 16,
+                }}>{value.name}</Text>
               </View>
             ))}
           </View>

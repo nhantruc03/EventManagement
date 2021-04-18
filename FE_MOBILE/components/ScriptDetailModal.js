@@ -8,11 +8,11 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Dimensions,
+  Platform,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {
   actions,
-  getContentCSS,
   RichEditor,
   RichToolbar,
 } from "react-native-pell-rich-editor";
@@ -21,7 +21,6 @@ import Url from "../env";
 import getToken from "../Auth";
 import axios from "axios";
 
-const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   Label: {
@@ -38,6 +37,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 8,
     paddingHorizontal: 4,
+    textAlign: 'center'
   },
 
   PrimaryBtn: {
@@ -58,12 +58,13 @@ class ScriptDetailModal extends Component {
     this.state = {
       data: null,
       richText: React.createRef(),
+      showDateTimePicker: false
     };
     this.ref = React.createRef();
   }
 
   componentDidMount() {
-    console.log(this.props.data.time);
+    // console.log(this.props.data.time);
     this.setState({
       data: this.props.data,
     });
@@ -79,19 +80,27 @@ class ScriptDetailModal extends Component {
   };
 
   onChangeTime = (event, time) => {
-    this.setState({
-      data: {
-        ...this.state.data,
-        time: time,
-      },
-    });
+    if (time != undefined) {
+      this.setState({
+        data: {
+          ...this.state.data,
+          time: time,
+        },
+        showDateTimePicker: Platform.OS === 'ios'
+      });
+    }
+    else{
+      this.setState({
+        showDateTimePicker: Platform.OS === 'ios'
+      });
+    }
   };
   Onchange = (e) => {
     this.setState({
       data: {
         ...this.state.data,
         description: e,
-      },
+      }
     });
   };
 
@@ -117,7 +126,7 @@ class ScriptDetailModal extends Component {
           },
         })
         .then((res) => {
-          console.log(res.data.data[0]);
+          // console.log(res.data.data[0]);
           this.props.addListScriptDetails(res.data.data[0]);
           this.props.onClose();
         })
@@ -136,7 +145,7 @@ class ScriptDetailModal extends Component {
           this.props.onClose();
         });
     }
-    console.log("finish data", data);
+    // console.log("finish data", data);
   };
 
   ref = React.createRef();
@@ -153,16 +162,25 @@ class ScriptDetailModal extends Component {
               <View style={{ paddingVertical: 20, paddingHorizontal: 16 }}>
                 <View styles={styles.ScriptNameContainer}>
                   <Text style={styles.Label}>Thời gian</Text>
-                  <View style={styles.BoxInput}>
-                    <DateTimePicker
-                      value={this.state.data.time}
-                      mode="time"
-                      is24Hour={true}
-                      display="default"
-                      onChange={this.onChangeTime}
-                      timeZoneOffsetInMinutes={0}
-                    />
-                  </View>
+                  {Platform.OS === 'android' ?
+                    < View style={{ textAlign: 'left' }} >
+                      <Button onPress={() => { this.setState({ showDateTimePicker: !this.state.showDateTimePicker }) }}  >
+                        <Text style={{ textAlign: 'left' }}>{moment(this.state.data.time).utcOffset(0).format("HH:mm")}</Text>
+                      </Button>
+                    </View>
+                    : null}
+                  {this.state.showDateTimePicker ?
+                    <View style={styles.BoxInput}>
+                      <DateTimePicker
+                        value={this.state.data.time ? new Date() : this.state.data.time}
+                        mode="time"
+                        is24Hour={true}
+                        display="default"
+                        onChange={this.onChangeTime}
+                        timeZoneOffsetInMinutes={0}
+                      />
+                    </View>
+                    : null}
                 </View>
                 <View styles={styles.ScriptNameContainer}>
                   <Text style={styles.Label}>Tiêu đề</Text>
@@ -218,7 +236,7 @@ class ScriptDetailModal extends Component {
               Lưu
             </Button>
           </View>
-        </KeyboardAvoidingView>
+        </KeyboardAvoidingView >
       );
     } else {
       return null;

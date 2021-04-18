@@ -14,31 +14,86 @@ import moment from "moment";
 import { ActivityIndicator } from "react-native";
 import HTML from "react-native-render-html";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
-import { Image } from "react-native";
-
+import { Image, FlatList } from "react-native";
+import StepIndicator from 'react-native-step-indicator';
 const Step = Steps.Step;
 
+// const styles = StyleSheet.create({
+//   Container: {
+//     marginTop: 16,
+//   },
+//   timeText: { fontFamily: "bold", fontSize: 16, color: "#264653" },
+//   nameText: { fontFamily: "semibold", fontSize: 14, color: "#3A3A3A" },
+//   contentContainer: { paddingRight: 16, marginRight: 16 },
+//   content: { fontFamily: "regular" },
+//   IconRight: { right: 16 },
+//   PrimaryBtn: {
+//     backgroundColor: "#2A9D8F",
+//     borderRadius: 12,
+//     borderColor: "#2A9D8F",
+//     fontFamily: "semibold",
+//   },
+//   input: {
+//     height: 40,
+//     margin: 12,
+//     borderWidth: 1,
+//   },
+// });
 const styles = StyleSheet.create({
-  Container: {
-    marginTop: 16,
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: '#ffffff',
+  },
+  stepIndicator: {
+    // marginVertical: 50,
+    paddingHorizontal: 20,
+  },
+  rowItem: {
+    flex: 3,
+    paddingVertical: 20,
+  },
+  title: {
+    flex: 1,
+    fontSize: 20,
+    color: '#333333',
+    paddingVertical: 16,
+    fontWeight: '600',
+  },
+  body: {
+    flex: 1,
+    fontSize: 15,
+    color: '#606060',
+    lineHeight: 24,
+    marginRight: 8,
   },
   timeText: { fontFamily: "bold", fontSize: 16, color: "#264653" },
   nameText: { fontFamily: "semibold", fontSize: 14, color: "#3A3A3A" },
-  contentContainer: { paddingRight: 16, marginRight: 16 },
-  content: { fontFamily: "regular" },
-  IconRight: { right: 16 },
-  PrimaryBtn: {
-    backgroundColor: "#2A9D8F",
-    borderRadius: 12,
-    borderColor: "#2A9D8F",
-    fontFamily: "semibold",
-  },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-  },
 });
+
+
+const labels = ["Cart", "Delivery Address", "Order Summary", "Payment Method", "Track"];
+const customStyles = {
+  stepIndicatorSize: 30,
+  currentStepIndicatorSize: 40,
+  separatorStrokeWidth: 3,
+  currentStepStrokeWidth: 5,
+  stepStrokeCurrentColor: '#fe7013',
+  separatorFinishedColor: '#2A9D8F',
+  separatorUnFinishedColor: '#aaaaaa',
+  stepIndicatorFinishedColor: '#2A9D8F',
+  stepIndicatorUnFinishedColor: '#aaaaaa',
+  stepIndicatorCurrentColor: '#ffffff',
+  stepIndicatorLabelFontSize: 15,
+  currentStepIndicatorLabelFontSize: 15,
+  stepIndicatorLabelCurrentColor: '#000000',
+  stepIndicatorLabelFinishedColor: '#ffffff',
+  stepIndicatorLabelUnFinishedColor: 'rgba(255,255,255,0.5)',
+  labelColor: '#666666',
+  labelSize: 15,
+  currentStepLabelColor: '#fe7013',
+}
+
 class scriptview extends Component {
   constructor(props) {
     super(props);
@@ -51,7 +106,7 @@ class scriptview extends Component {
       data: null,
       onGoing: false,
       intervalId: null,
-      currentScript: -1,
+      currentScript: 0,
       currentTime: new Date(),
       modalVisible: false,
       visible: false,
@@ -81,7 +136,7 @@ class scriptview extends Component {
       )
       .then((res) => res.data.data);
 
-    console.log("scripp details", scripts_details);
+    // console.log("scripp details", scripts_details.length);
 
     if (scripts_details !== null) {
       if (this._isMounted) {
@@ -130,12 +185,15 @@ class scriptview extends Component {
       }
     });
     if (current !== null) {
-      this.setState({ currentScript: current - 1 });
+      // this.setState({ currentScript: current -1 });
+      this.setState({ currentScript: current });
     }
+    //test
+    // this.setState({ currentScript: this.state.currentScript + 1 });
   };
   renderView2 = () => {
     return this.state.data.map((e, key) => {
-      console.log("1 object", this.state.currentScript + 1 === key);
+      // console.log("1 object", this.state.currentScript + 1 === key);
       return (
         <Step
           key={key}
@@ -162,54 +220,111 @@ class scriptview extends Component {
     });
   };
 
+  onPageChange(position) {
+    this.setState({ currentScript: position });
+  }
+
+  renderPage = (rowData) => {
+    const item = rowData.item;
+    return (
+      <View style={styles.rowItem}>
+        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.timeText}>
+          {item.name}
+        </Text>
+        <HTML source={{ html: item.description }} style={styles.body} />
+      </View>
+    );
+  };
+
+  onViewableItemsChanged = viewableItems => {
+    const visibleItemsCount = viewableItems.viewableItems.length;
+    if (visibleItemsCount !== 0) {
+      this.setState({
+        currentScript: viewableItems.viewableItems[visibleItemsCount - 2].index
+      });
+    }
+  }
+
   render() {
     if (this.state.data) {
+      // console.log(this.state.data.length)
       return (
-        <Provider>
-          <View style={styles.Container}>
-            <Modal
-              closable
-              maskClosable
-              popup
-              visible={this.state.visible}
-              animationType="slide-up"
-              onClose={this.onClose}
-            >
-              <View style={{ paddingVertical: 20, paddingHorizontal: 20 }}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="useless placeholder"
-                ></TextInput>
-                <TextInput
-                  style={styles.input}
-                  placeholder="useless placeholder"
-                ></TextInput>
-                <TextInput
-                  style={styles.input}
-                  placeholder="useless placeholder"
-                ></TextInput>
+        // <Provider>
+        //   <View style={styles.Container}>
+        //     <Modal
+        //       closable
+        //       maskClosable
+        //       popup
+        //       visible={this.state.visible}
+        //       animationType="slide-up"
+        //       onClose={this.onClose}
+        //     >
+        //       <View style={{ paddingVertical: 20, paddingHorizontal: 20 }}>
+        //         <TextInput
+        //           style={styles.input}
+        //           placeholder="useless placeholder"
+        //         ></TextInput>
+        //         <TextInput
+        //           style={styles.input}
+        //           placeholder="useless placeholder"
+        //         ></TextInput>
+        //         <TextInput
+        //           style={styles.input}
+        //           placeholder="useless placeholder"
+        //         ></TextInput>
 
-                <Button
-                  style={styles.PrimaryBtn}
-                  type="primary"
-                  onPress={this.onClose}
-                >
-                  {" "}
-                  Lưu
-                </Button>
-              </View>
-            </Modal>
+        //         <Button
+        //           style={styles.PrimaryBtn}
+        //           type="primary"
+        //           onPress={this.onClose}
+        //         >
+        //           {" "}
+        //           Lưu
+        //         </Button>
+        //       </View>
+        //     </Modal>
 
-            <Steps
-              styles={{ tail_gray: { height: 100 } }}
-              current={this.state.currentScript}
-            >
-              {this.renderView2()}
-            </Steps>
-            {/* <ActivityIndicator size="small" color="#0000ff" /> */}
-            {/* <HTML html={"<h1>Hello world</h1>"} /> */}
+        //     {/* <Steps
+        //       styles={{ tail_gray: { height: 100 } }}
+        //       current={this.state.currentScript}
+        //     >
+        //       {this.renderView2()}
+        //     </Steps> */}
+
+        //     <StepIndicator
+        //       customStyles={customStyles}
+        //       currentPosition={this.state.currentScript}
+        //       labels={labels}
+        //       direction="vertical"
+        //     />
+
+        //   </View>
+        // </Provider>
+        <View style={styles.container}>
+          <View style={styles.stepIndicator}>
+            <StepIndicator
+              customStyles={customStyles}
+              stepCount={this.state.data.length}
+              // stepCount={15}
+              direction="vertical"
+              currentPosition={this.state.currentScript}
+              labels={this.state.data.map((item) =>
+                <View>
+                  <Text style={styles.timeText}>
+                    {moment(item.time).utcOffset(0).format("HH:mm")}
+                  </Text>
+                  <Text style={styles.nameText}>{item.name}</Text>
+                </View>)}
+            />
           </View>
-        </Provider>
+          <FlatList
+            style={{ flexGrow: 1 }}
+            data={this.state.data}
+            renderItem={this.renderPage}
+            keyExtractor={item => item._id}
+          />
+        </View>
       );
     } else {
       return null;

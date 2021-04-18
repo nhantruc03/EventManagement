@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import {
-  Button,
   View,
   Text,
   StyleSheet,
@@ -11,9 +10,7 @@ import {
 import { SearchBar } from "react-native-elements";
 import axios from "axios";
 import getToken from "../Auth";
-import TabView from "../components/Tabs";
 import EventCard from "../components/EventCard";
-import { trackPromise } from "react-promise-tracker";
 import moment from "moment";
 import Url from "../env";
 import { Tabs } from "@ant-design/react-native";

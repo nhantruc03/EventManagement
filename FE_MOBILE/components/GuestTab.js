@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
   },
   checkboxContainer: {
     flexDirection: "row",
+    marginLeft: 'auto',
     marginBottom: 20,
   },
   checkbox: {
@@ -119,10 +120,10 @@ export default class GuestTab extends Component {
         temp_list.length > 0
           ? temp_list[0]
           : {
-              title: item.guestTypeId.name,
-              _id: item.guestTypeId._id,
-              data: [],
-            }; // check cần tạo mới hay đã có trong result
+            title: item.guestTypeId.name,
+            _id: item.guestTypeId._id,
+            data: [],
+          }; // check cần tạo mới hay đã có trong result
 
       if (list.indexOf(temp_O) !== -1) {
         list[list.indexOf(temp_O)].data.push(item);
