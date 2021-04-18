@@ -8,8 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import moment from "moment";
-import Url from "../env";
-const W = Dimensions.get("window").width;
+
 const H = Dimensions.get("window").height;
 
 const Separator = () => <View style={styles.separator} />;
@@ -124,8 +123,6 @@ export default class EventDetail extends Component {
   }
 
   componentDidMount() {
-    // this.setstate;
-    console.log('event data', this.props.data);
     this.setState({
       data: this.props.data,
     });
@@ -133,7 +130,6 @@ export default class EventDetail extends Component {
 
   render() {
     if (this.state.data) {
-      console.log(this.state.data.poster)
       return (
         <ScrollView style={styles.formContainer}>
           <Image
@@ -144,8 +140,9 @@ export default class EventDetail extends Component {
           <Text style={styles.description}>{this.state.data.description}</Text>
           <View style={styles.tagContainer}>
             {this.state.data.tag.map((value, key) => (
-              <View style={{ backgroundColor: value.background }} key={key}>
+              <View style={{ backgroundColor: value.background, marginRight: 10, paddingHorizontal: 10, borderRadius: 16 }} key={key}>
                 <Text style={{
+                  color: value.color,
                   marginVertical: 4,
                   fontFamily: "regular",
                   fontSize: 16,
@@ -185,20 +182,6 @@ export default class EventDetail extends Component {
               </Text>
             </View>
           </View>
-
-          {/* <View style={styles.ViewdetailContainer}>
-              <TouchableOpacity
-                style={styles.BtnSubmit}
-                title="Xem chi tiết"
-                onPress={() =>
-                  this.state.navigation.navigate("EventDetail2", {
-                    ID: this.state.data.id,
-                  })
-                }
-              >
-                <Text style={styles.textSubmit}>Xem chi tiết </Text>
-              </TouchableOpacity>
-            </View> */}
         </ScrollView>
       );
     } else {

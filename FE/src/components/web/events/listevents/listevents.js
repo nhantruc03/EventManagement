@@ -112,39 +112,45 @@ class listevents extends Component {
                     tags: tags
                 })
             }
-          )
-          .then((res) => res.data.data),
-      ])
-    );
+        }
+    }
 
-    if (events !== null) {
-      if (this._isMounted) {
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
+
+
+    getSearchData = (data) => {
+        let list_future = []
+        let list_past = []
+        let list_ongoing = []
         let today = new Date().setHours(0, 0, 0, 0);
-        events.forEach((element) => {
-          if (new Date(element.startDate).setHours(0, 0, 0, 0) > today) {
-            this.setState({
-              data_future: [...this.state.data_future, element],
-            });
-          } else if (new Date(element.startDate).setHours(0, 0, 0, 0) < today) {
-            this.setState({
-              data_past: [...this.state.data_past, element],
-            });
-          } else {
-            this.setState({
-              data_ongoing: [...this.state.data_ongoing, element],
-            });
-          }
+        data.forEach(element => {
+            if (new Date(element.startDate).setHours(0, 0, 0, 0) > today) {
+                list_future = [...list_future, element]
+            } else if (new Date(element.startDate).setHours(0, 0, 0, 0) < today) {
+                list_past = [...list_past, element]
+            } else {
+                list_ongoing = [...list_ongoing, element]
+            }
         });
         this.setState({
-          data: events,
-        });
-      }
+            data_ongoing: list_ongoing,
+            data_past: list_past,
+            data_future: list_future
+        })
     }
-  }
 
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
+    render() {
+        return (
+            <Content style={{ margin: "0 16px" }}>
+                <Title
+                    id="home-top-header"
+                    style={{ marginLeft: 30, color: "#002140", marginTop: 15 }}
+                    level={3}
+                >
+                    Sự kiện
+              </Title>
 
                 <Row style={{ marginLeft: 30, marginRight: 30 }}>
                     <Col span={12}>
@@ -172,16 +178,7 @@ class listevents extends Component {
                         : null
                     }
 
-  render() {
-    return (
-      <Content style={{ margin: "0 16px" }}>
-        <Title
-          id="home-top-header"
-          style={{ marginLeft: 30, color: "#002140", marginTop: 15 }}
-          level={3}
-        >
-          Sự kiện
-        </Title>
+                </Row>
 
                 <Row style={{ overflowY: 'hidden' }}>
                     <Col xs={24} sm={24} lg={12} xl={8} className="list-events-col">
@@ -272,35 +269,9 @@ class listevents extends Component {
                     } */}
                 </Row>
 
-        <Row>
-          {this.state.data_future.length > 0 ? (
-            <Col sm={24} lg={8} style={{ padding: 20 }}>
-              <Title level={3}>Sắp diễn ra</Title>
-              {this.state.data_future.map((value, key) => (
-                <EventCard data={value} key={key} />
-              ))}
-            </Col>
-          ) : null}
-          {this.state.data_ongoing.length > 0 ? (
-            <Col sm={24} lg={8} style={{ padding: 20 }}>
-              <Title level={3}>Đang diễn ra</Title>
-              {this.state.data_ongoing.map((value, key) => (
-                <EventCard data={value} key={key} />
-              ))}
-            </Col>
-          ) : null}
-          {this.state.data_past.length > 0 ? (
-            <Col sm={24} lg={8} style={{ padding: 20 }}>
-              <Title level={3}>Đã diễn ra</Title>
-              {this.state.data_past.map((value, key) => (
-                <EventCard data={value} key={key} />
-              ))}
-            </Col>
-          ) : null}
-        </Row>
-      </Content>
-    );
-  }
+            </Content>
+        );
+    }
 }
 
 export default listevents;
