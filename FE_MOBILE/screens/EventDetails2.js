@@ -13,6 +13,7 @@ import ScriptTab from "../components/ScriptTab";
 import { TabView, SceneMap } from "react-native-tab-view";
 import { TabBar } from "react-native-tab-view";
 import { Dimensions } from "react-native";
+import GroupTab from "../components/GroupTab";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -35,6 +36,7 @@ export default class EventDetail2 extends Component {
       listGuest: null,
       listguesttype: null,
       listscripts: null,
+      listgroups: null,
       loading: true,
       index: 0,
       routes: [
@@ -71,7 +73,7 @@ export default class EventDetail2 extends Component {
       />
     ) : null;
 
-  Route4 = () => <View style={[{ backgroundColor: "#ff4482" }]} />;
+  Route4 = () => this.state.listgroups ? <GroupTab navigation={this.props.navigation} data={this.state.listgroups} /> : null;
 
   Route5 = () =>
     this.state.listGuest ? <GuestTab data={this.state.listGuest} /> : null;
@@ -103,7 +105,6 @@ export default class EventDetail2 extends Component {
   // };
 
   updateListScript = (e) => {
-    // console.log("receive data", e);
     this.setState({
       listscripts: [...this.state.listscripts, e],
     });
@@ -111,8 +112,20 @@ export default class EventDetail2 extends Component {
 
   async componentDidMount() {
     this._isMounted = true;
-    // console.log(this.props.route.params.id);
-    const [guestTypes, listEventAssign, scripts, event] = await Promise.all([
+    const [listgroups, guestTypes, listEventAssign, scripts, event] = await Promise.all([
+      axios
+        .post(
+          `${Url()}/api/groups/getAll`,
+          { eventId: this.props.route.params.id },
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
+          }
+        )
+        .then((res) => {
+          return res.data.data;
+        }),
       axios
         .post(
           `${Url()}/api/guest-types/getAll`,
@@ -188,6 +201,7 @@ export default class EventDetail2 extends Component {
 
     if (this._isMounted) {
       this.setState({
+        listgroups: listgroups,
         listOrganizer: listEventAssign,
         listguesttype: guestTypes,
         listGuest: guests,

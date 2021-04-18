@@ -119,8 +119,6 @@ export default class Event extends Component {
 
     if (future_event !== null && ongoing_event !== null && past_event !== null) {
       if (this._isMounted) {
-        // this.getSearchData(events)
-        console.log(future_event)
         this.setState({
           data: [...future_event, ...ongoing_event, ...past_event],
           data_ongoing: ongoing_event,
@@ -188,7 +186,6 @@ export default class Event extends Component {
       { title: "Sắp tới" },
       { title: "Đã xong" },
     ];
-    // console.log("data", this.state.data);
     return (
       <View style={styles.container}>
         <Text style={styles.toplabel}>Sự kiện</Text>

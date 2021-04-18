@@ -11,6 +11,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Eventscreen from "../screens/Event";
 import EventDetail2 from "../screens/EventDetails2";
 import scriptdetail from "../screens/scriptdetail";
+import ChatRoom from "../screens/ChatRoom";
 // import Modal from "@ant-design/react-native";
 
 import { Button } from "react-native";
@@ -70,6 +71,18 @@ class StackNav extends Component {
         <Stack.Screen
           name="scriptview"
           component={scriptview}
+          options={{
+            headerStyle: {
+              backgroundColor: "#2A9D8F",
+            },
+            headerTitleStyle: {},
+            headerBackTitleVisible: false,
+            headerTintColor: "#fff",
+          }}
+        />
+        <Stack.Screen
+          name="Phòng hội thoại"
+          component={ChatRoom}
           options={{
             headerStyle: {
               backgroundColor: "#2A9D8F",

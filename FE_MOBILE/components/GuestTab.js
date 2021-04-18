@@ -11,7 +11,6 @@ import {
 import Search from "./helper/search";
 import Unchecked from "../assets/images/Unchecked.png";
 import Checked from "../assets/images/Checked.png";
-import { trackPromise } from "react-promise-tracker";
 import axios from "axios";
 import Url from "../env";
 import getToken from "../Auth";

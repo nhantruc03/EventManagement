@@ -11,7 +11,7 @@ import { trackPromise } from 'react-promise-tracker';
 import Loader from 'react-loader-spinner';
 import { Link } from 'react-router-dom';
 import { Upload } from 'antd';
-const client = new w3cwebsocket('ws://localhost:3001');
+const client = new w3cwebsocket(`ws://localhost:3001`);
 class ChatRoom extends Component {
     constructor(props) {
         super(props);
@@ -87,8 +87,12 @@ class ChatRoom extends Component {
         }
 
         await axios.post('/api/chat-message', message)
+            .then(res => {
+                console.log(res.data.data)
+                message._id = res.data.data[0]._id
+            })
 
-
+        console.log(message)
         client.send(JSON.stringify({
             type: "sendMessage",
             roomId: this.props.roomId,

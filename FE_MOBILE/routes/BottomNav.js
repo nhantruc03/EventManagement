@@ -122,11 +122,13 @@ export default class BottomNav extends React.Component {
             ),
             tabBarVisible: ((route) => {
               const routeName = getFocusedRouteNameFromRoute(route) ?? "";
-              console.log(routeName);
-              if (routeName === "EventDetail2") {
-                return false;
-              } else if (routeName === "scriptdetail") return false;
-              return true;
+
+              let temp_list = ["EventDetail2", "scriptdetail", "Phòng hội thoại"]
+              if (temp_list.includes(routeName)) {
+                return false
+              } else {
+                return true
+              }
             })(route),
           })}
         />
