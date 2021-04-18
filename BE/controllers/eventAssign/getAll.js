@@ -11,20 +11,19 @@ const getAll = async (req, res) => {
     let docs;
     if (!page || !limit) {
       docs = await EventAssign.find(query)
-        .populate("userId")
-        .populate("eventId")
-        .populate({ path: "roleId", select: "name" })
-        .populate({ path: "userId", select: "name phone email mssv photoUrl" })
-        .populate({ path: "facultyId", select: "name" });
-    } else {
+        .populate({ path: 'eventId', select: 'name' })
+        .populate({ path: 'roleId', select: 'name' })
+        .populate({ path: 'userId', select: 'name phone email mssv photoUrl' })
+        .populate({ path: 'facultyId', select: 'name' })
+    }
+    else {
       docs = await EventAssign.find(query)
         .skip(limit * (page - 1))
         .limit(limit)
-        .populate("userId")
-        .populate("eventId")
-        .populate({ path: "roleId", select: "name" })
-        .populate({ path: "userId", select: "name phone email mssv photoUrl" })
-        .populate({ path: "facultyId", select: "name" });
+        .populate({ path: 'eventId', select: 'name' })
+        .populate({ path: 'roleId', select: 'name' })
+        .populate({ path: 'userId', select: 'name phone email mssv photoUrl' })
+        .populate({ path: 'facultyId', select: 'name' })
     }
     return res.status(200).json({
       success: true,

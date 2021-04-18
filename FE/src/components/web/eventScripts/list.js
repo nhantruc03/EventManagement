@@ -156,9 +156,7 @@ class list extends Component {
     printData = () => {
         return (
             <div className='mt-1'>
-                {this.state.data.length > 0 ?
-                    <Table className="scripts" pagination={this.getlistpage(this.state.data) > 1 ? { pageSize: this.state.postsPerPage } : false} showHeader={false} rowKey="_id" columns={this.state.columns} dataSource={this.state.data}></Table> : null
-                }
+                <Table className="scripts" pagination={this.getlistpage(this.state.data) > 1 ? { pageSize: this.state.postsPerPage } : false} showHeader={false} rowKey="_id" columns={this.state.columns} dataSource={this.state.data}></Table>
             </div>
         )
     }

@@ -98,9 +98,13 @@ class home extends Component {
     renderEventCard1 = () => {
         return (
             this.state.listForCarousel.slice(0, 2).map((e, key) => {
+                let onGoing = false
+                if (this.state.event_ongoing.includes(e)) {
+                    onGoing = true
+                }
                 return (
-                    <Col key={key} sm={24} xl={12} style={{ padding: '10px' }}>
-                        <EventMiniCard onGoing={true} data={e} key={key} />
+                    <Col key={key} xs={24} sm={24} xl={12} style={{ padding: '10px' }}>
+                        <EventMiniCard onGoing={onGoing} data={e} key={key} />
                     </Col>
                 )
             }))
@@ -108,9 +112,13 @@ class home extends Component {
     renderEventCard2 = () => {
         return (
             this.state.listForCarousel.slice(2, 4).map((e, key) => {
+                let onGoing = false
+                if (this.state.event_ongoing.includes(e)) {
+                    onGoing = true
+                }
                 return (
-                    <Col key={key} sm={24} xl={12} style={{ padding: '10px' }}>
-                        <EventMiniCard onGoing={true} data={e} key={key} />
+                    <Col key={key} xs={24} sm={24} xl={12} style={{ padding: '10px' }}>
+                        <EventMiniCard onGoing={onGoing} data={e} key={key} />
                     </Col>
                 )
             }))
@@ -131,9 +139,9 @@ class home extends Component {
                             </Title>
                         </div>
                         <Row>
-                            <Col sm={24} xl={16}>
+                            <Col xs={24} sm={24} lg={16}>
                                 <Row className="status-event-row">
-                                    <Col sm={24} md={8}>
+                                    <Col xs={24} sm={24} lg={8}>
                                         <div className="flex-container-row status-event-card">
                                             <p className="status-event-number">{this.state.event_ongoing.length}</p>
                                             <div className="status-event-info">
@@ -142,7 +150,7 @@ class home extends Component {
                                             </div>
                                         </div>
                                     </Col>
-                                    <Col sm={24} md={8}>
+                                    <Col xs={24} sm={24} lg={8}>
                                         <div className="flex-container-row status-event-card">
                                             <p className="status-event-number">{this.state.event_future.length}</p>
                                             <div className="status-event-info">
@@ -151,7 +159,7 @@ class home extends Component {
                                             </div>
                                         </div>
                                     </Col>
-                                    <Col sm={24} md={8}>
+                                    <Col xs={24} sm={24} lg={8}>
                                         <div className="flex-container-row status-event-card">
                                             <p className="status-event-number">{this.state.event_past.length}</p>
                                             <div className="status-event-info">
@@ -194,7 +202,7 @@ class home extends Component {
                                     </Col>
                                 </Row>
                             </Col>
-                            <Col sm={24} xl={8}>
+                            <Col xs={24} sm={24} lg={8}>
                                 <div style={{ padding: '10px', height: '100%' }}>
                                     <CalendarSection listActions={this.state.actions} />
                                 </div>

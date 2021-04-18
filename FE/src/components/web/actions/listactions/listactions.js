@@ -182,18 +182,9 @@ class listactions extends Component {
     renderActionsView = (value, keyCol) => {
         let temp_listActions = this.state.currentActions.filter(e => e.actionTypeId._id === value._id)
         return (
-            <Col sm={24} xl={24 / this.state.currentActionTypes.length} key={keyCol}>
+            // <Col sm={24} xl={24 / this.state.currentActionTypes.length} key={keyCol}>
+            <Col sm={24} xl={6} key={keyCol} style={{ padding: '10px 0' }}>
                 <ActionColumn title={value.name} listActions={temp_listActions} />
-                {/* <Title level={3}>{value.name}</Title>
-                {this.state.currentActions.map((e, key) => {
-                    if (e.actionTypeId._id === value._id) {
-                        return (
-                            <ActionCard data={e} key={key} />
-                        )
-                    } else {
-                        return null
-                    }
-                })} */}
             </Col>
         )
     }
@@ -202,13 +193,13 @@ class listactions extends Component {
         if (this.state.currentEvent) {
             return (
                 <div className="flex-container-row" style={{ alignItems: 'unset' }}>
-                    <Row>
+                    <div className="flex-container-row horizontal-container">
                         {this.state.currentActionTypes.map((e, key) => {
                             return (
                                 this.renderActionsView(e, key)
                             )
                         })}
-                    </Row>
+                    </div>
 
                     <Button className="add flex-row-item-right" onClick={() => this.setModalVisible2(true)}>
                         +
@@ -280,7 +271,7 @@ class listactions extends Component {
                             </div>
                         </Col>
                     </Row>
-                    <div style={{ padding: '30px' }}>
+                    <div style={{ padding: '10px 30px' }}>
                         {this.renderView()}
                     </div>
 

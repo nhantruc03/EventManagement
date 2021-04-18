@@ -51,14 +51,14 @@ const getAll = async (req, res) => {
     let docs;
     if (!page || !limit) {
       docs = await Events.find(query)
-        .populate({ path: 'tagId', select: 'name' })
+        .populate({ path: 'tagId', select: 'name background color' })
         .populate({ path: 'availUser', select: 'photoUrl name' })
     }
     else {
       docs = await Events.find(query)
         .skip(limit * (page - 1))
         .limit(limit)
-        .populate({ path: 'tagId', select: 'name' })
+        .populate({ path: 'tagId', select: 'name background color' })
         .populate({ path: 'availUser', select: 'photoUrl name' })
     }
     return res.status(200).json({
@@ -74,3 +74,4 @@ const getAll = async (req, res) => {
 }
 
 module.exports = { getAll }
+

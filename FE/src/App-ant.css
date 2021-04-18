@@ -89,15 +89,15 @@ button.ant-btn.add {
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
-  line-height: 140%;
+  /* line-height: 140%; */
   /* or 22px */
   height: 40px;
   text-align: center;
-  padding: 10px;
+  /* padding: 10px; */
 }
 
 button.ant-btn.back {
-  padding: 10px;
+  /* padding: 10px; */
   border-radius: 6px;
   background-color: #fff;
   color: #2A9D8F;
@@ -105,7 +105,7 @@ button.ant-btn.back {
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
-  line-height: 140%;
+  /* line-height: 140%; */
   /* or 22px */
   border: 2px solid #2A9D8F;
   height: 40px;
@@ -117,7 +117,7 @@ h4.ant-typography {
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
-  line-height: 140%;
+  /* line-height: 140%; */
   text-transform: none;
   color: #2A9D8F;
 }
@@ -126,7 +126,7 @@ h3.ant-typography {
   font-family: Open Sans;
   font-style: normal;
   font-weight: 600px;
-  line-height: 140%;
+  /* line-height: 140%; */
 }
 
 .ant-card {
@@ -140,7 +140,7 @@ span.ant-tag {
   font-weight: normal;
   font-size: 12px;
   text-align: center;
-  line-height: 140%;
+  /* line-height: 140%; */
   border-radius: 14px;
   border: 0px;
   padding: 5px 10px 5px 10px;
@@ -250,7 +250,7 @@ label.ant-form-item-required {
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
-  line-height: 140%;
+  /* line-height: 140%; */
   color: #333333;
 }
 .ant-form-item {
@@ -261,7 +261,7 @@ label {
   font-style: normal !important;
   font-weight: 500 !important;
   font-size: 14px !important;
-  line-height: 140% !important;
+  /* line-height: 140% !important; */
   color: #333333 !important;
 }
 
@@ -313,7 +313,7 @@ label {
   font-style: normal !important;
   font-weight: normal !important;
   font-size: 14px !important;
-  line-height: 140% !important;
+  /* line-height: 140% !important; */
 }
 
 p.special {
@@ -322,7 +322,7 @@ p.special {
   font-style: normal !important;
   font-weight: normal !important;
   font-size: 14px !important;
-  line-height: 140% !important;
+  /* line-height: 140% !important; */
 }
 input[type="radio"]:checked:after {
   width: 15px;
@@ -342,7 +342,7 @@ h1.ant-typography,
   font-family: Open Sans !important;
   font-style: normal !important;
   font-weight: 600 !important;
-  line-height: 140% !important;
+  /* line-height: 140% !important; */
 }
 p.ncc_label {
   font-family: Open Sans;
@@ -367,7 +367,7 @@ span.ncc_content {
   font-style: normal;
   font-weight: normal;
   font-size: 20px;
-  line-height: 140%;
+  /* line-height: 140%; */
   /* identical to box height, or 28px */
 
   text-transform: uppercase;
@@ -378,7 +378,7 @@ span.ncc_content {
   font-style: normal;
   font-weight: normal;
   font-size: 20px;
-  line-height: 140%;
+  /* line-height: 140%; */
   /* identical to box height, or 28px */
 
   text-transform: uppercase;
@@ -438,8 +438,9 @@ span.ant-tag.site-tag-plus {
   align-items: center;
 }
 .eventCard .cover{
-  text-align: center;
-  max-width: 100px;
+  object-fit: cover;
+  max-width: 300px;
+  max-height: 150px;
   margin: auto;
 }
 
@@ -477,7 +478,7 @@ button.ant-btn.event-detail-user {
 }
 
 .ant-col.event-detail {
-  padding: 20px;
+  padding: 0 20px;
 }
 
 span.anticon.event-detail {
@@ -712,6 +713,7 @@ ul, li {
   width: 100%;
   max-width: 600px;
   padding: 20px;
+  padding-top: unset !important;
 }
 
 .add-action-container .ant-steps.ant-steps-horizontal.ant-steps-label-horizontal {
@@ -798,7 +800,7 @@ button.ant-btn {
     font-style: normal;
     font-weight: bold;
     font-size: 56px;
-    line-height: 140%;
+    /* line-height: 140%; */
     /* or 78px */
 
     text-align: center;
@@ -875,7 +877,7 @@ button.ant-btn {
 .calender-section{
   background-color: white;
   box-shadow: 0px 2px 18px rgba(0, 0, 0, 0.08);
-  border-radius: 12px;
+  border-radius: 20px;
   padding: 20px;
   height: 100%;
 }
@@ -946,8 +948,11 @@ button.ant-btn {
 .calender-subaction-section{
   max-height: 310px;
   /* max-height: 300px; */
-  overflow-y: auto;
+  overflow-y: hidden;
   overflow-x: hidden;
+}
+.calender-subaction-section:hover{
+  overflow-y: auto;
 }
 
 .calendar-sub-action a{
@@ -968,6 +973,11 @@ span.ant-badge.ant-dropdown-trigger {
   border: none;
 }
 
+@media (max-width: 768px) {
+  .top-name-user{
+    display: none;
+  }
+}
 
 .ant-dropdown::before {
   top: unset !important;
@@ -982,7 +992,7 @@ span.ant-badge.ant-dropdown-trigger {
   color: #868686;
   font-weight: 600;
   font-size: 14px;
-  line-height: 140%;
+  /* line-height: 140%; */
 }
 
 #home-link-in-card{
@@ -1014,11 +1024,11 @@ h3.ant-typography{
 
 h3.ant-typography.logo{
   text-align: center;
-  margin-top: 15px;
   color: black;
-  
   line-height: 50px;
   vertical-align: top;
+  margin-bottom: unset;
+  height: 60px;
 }
 
 aside.ant-layout-sider.ant-layout-sider-dark.ant-layout-sider-has-trigger {
@@ -1083,18 +1093,9 @@ li.ant-menu-item.ant-menu-item-only-child a{
 }
 
 .event-mini-card-container .ant-card-body{
-  padding: 10px;
+  padding: 10px 20px;
 }
 
-#MGM{
-  background: #FFEDE9;
-  color: #CB2900;
-}
-
-#MHX{
-  background: #D9FFEB;
-  color: #017567;
-}
 
 label.ant-form-item-required {
   color: #017567 !important;
@@ -1301,19 +1302,136 @@ scrips-view
   font-size: large;
 }
 
-html {
+
+
+.list-events-col{
+  padding: 20px;
+}
+
+.list-events-col-data{ 
+  max-height: 73vh;
+}
+
+.list-events-col-data{
   overflow: scroll;
   overflow-x: hidden;
 }
-::-webkit-scrollbar {
+.list-events-col-data::-webkit-scrollbar {
   width: 0;  /* Remove scrollbar space */
   background: transparent;  /* Optional: just make scrollbar invisible */
 }
 /* Optional: show position indicator in red */
-::-webkit-scrollbar-thumb {
+.list-events-col-data::-webkit-scrollbar-thumb {
   background: #FF0000;
 }
 
-.list-events-col{
-  padding: 20px;
+.list-actions-col-data{ 
+  max-height: 63vh;
+  height: 63vh;
+}
+
+.list-actions-col-data{
+  overflow: scroll;
+  overflow-x: hidden;
+}
+.list-actions-col-data::-webkit-scrollbar {
+  width: 0;  /* Remove scrollbar space */
+  background: transparent;  /* Optional: just make scrollbar invisible */
+}
+/* Optional: show position indicator in red */
+.list-actions-col-data::-webkit-scrollbar-thumb {
+  background: #FF0000;
+}
+
+.eventCard a{
+  color: black !important;
+}
+
+.horizontal-container{
+  align-items: unset;
+  overflow-x: hidden;
+
+}
+
+.horizontal-container:hover{
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+
+}
+
+/* .horizontal-container::-webkit-scrollbar {
+  height: 25px;
+}
+.horizontal-container::-webkit-scrollbar-track{
+  margin-top: 20px;
+  background-color: #f1f1f1;
+  border-radius: 20px;
+}
+
+.horizontal-container::-webkit-scrollbar-thumb {
+  background-color: #2A9D8F;
+  border-radius: 20px;
+  border: 6px solid transparent;
+  background-clip: content-box;
+}
+
+.horizontal-container::-webkit-scrollbar-thumb:hover {
+  background-color: #3D8880;
+} */
+::-webkit-scrollbar {
+  height: 25px;
+  width: 17px;
+  bottom: 0px;
+}
+::-webkit-scrollbar-track{
+  background-color: #f1f1f1;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #2A9D8F;
+  border-radius: 20px;
+  border: 6px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #3D8880;
+}
+
+.ant-input-search .ant-input-group .ant-input-affix-wrapper:not(:last-child) {
+  /* border-radius: 16px; */
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+.ant-input-affix-wrapper{
+  padding: 0 11px;
+}
+.ant-input-affix-wrapper input.ant-input{
+  height: 38px;
+}
+
+.ant-table-thead > tr > th, .ant-table-tbody > tr > td, .ant-table tfoot > tr > th, .ant-table tfoot > tr > td {
+  padding: 16px 0;
+}
+
+.ant-card-body {
+  padding: 12px 24px;
+}
+.ant-layout-sider-children {
+  background: white;
+}
+.ant-layout-sider-zero-width-trigger{
+    background: #2A9D8F;
+    opacity: 0.2;
+}
+.ant-layout-sider-zero-width-trigger:hover{
+    /* background: #2A9D8F; */
+    /* display: none; */
+    opacity: 1;
+    transition: opacity 1s linear;
+}
+
+.ant-menu-inline, .ant-menu-vertical, .ant-menu-vertical-left {
+  border-right: unset;
 }

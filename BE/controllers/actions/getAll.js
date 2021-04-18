@@ -14,7 +14,7 @@ const getAll = async (req, res) => {
     if (!page || !limit) {
       docs = await Actions.find(query)
         .populate({ path: 'availUser', select: 'name photoUrl' })
-        .populate({ path: 'tagsId', select: 'name' })
+        .populate({ path: 'tagsId', select: 'name background color' })
         .populate({ path: 'facultyId', select: 'name' })
         .populate({ path: 'priorityId', select: 'name' })
         .populate({ path: 'eventId', select: 'name' })
@@ -26,7 +26,7 @@ const getAll = async (req, res) => {
         .skip(limit * (page - 1))
         .limit(limit)
         .populate({ path: 'availUser', select: 'name photoUrl' })
-        .populate({ path: 'tagsId', select: 'name' })
+        .populate({ path: 'tagsId', select: 'name background color' })
         .populate({ path: 'facultyId', select: 'name' })
         .populate({ path: 'priorityId', select: 'name' })
         .populate({ path: 'eventId', select: 'name' })

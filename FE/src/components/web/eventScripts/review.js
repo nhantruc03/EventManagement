@@ -36,7 +36,7 @@ class review extends Component {
                 data: temp
             })
             if (this.props.onGoing) {
-                let intervalId = setInterval(this.timer, 1000);
+                let intervalId = setInterval(this.timer, 5000);
                 this.setState({
                     intervalId: intervalId,
                 })

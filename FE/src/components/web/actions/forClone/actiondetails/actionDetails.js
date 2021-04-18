@@ -319,7 +319,6 @@ class actionDetails extends Component {
 
                                 <div className="flex-container-row" style={{ marginTop: '20px' }}>
                                     <Title style={{ color: '#264653' }} level={3}>File đính kèm</Title>
-                                    {/* <Button className="flex-row-item-right add">Thêm</Button> */}
                                     <Upload
                                         className="flex-row-item-right"
                                         fileList={this.state.fileList}
@@ -345,10 +344,8 @@ class actionDetails extends Component {
                                 <Title style={{ color: '#017567' }} level={1}>{this.state.data.name}</Title>
 
                                 <div className="flex-container-row" style={{ width: '80%' }}>
-                                    {/* <Tag className="event-detail-status">{this.state.data.actionTypeId.name}</Tag> */}
                                     <Tag className="event-detail-status">{this.state.currentStatus}</Tag>
                                     <p style={{ color: 'grey' }}>Bắt đầu: {moment(this.state.data.startTime).format("DD/MM/YYYY")}</p>
-                                    {/* <p className="flex-row-item-right">{this.state.data.priorityId.name}</p> */}
                                 </div>
 
                                 <Title level={4}>Mô tả</Title>
@@ -373,8 +370,7 @@ class actionDetails extends Component {
                                 </Row>
 
                                 <Title className="event-detail-title" level={4}>Tags</Title>
-                                {/* <Image style={{ maxWidth: '300px' }} src={`/api/images/${this.state.data.coverUrl}`}></Image> */}
-                                {this.state.data.tagsId.map((e, key) => <Tag style={{ width: 'auto' }} key={key}>{e.name}</Tag>)}
+                                {this.state.data.tagsId.map((e, key) => <Tag style={{ width: 'auto', background: e.background, color: e.color }} key={key}>{e.name}</Tag>)}
                             </Col>
                         </Row>
                     </div>

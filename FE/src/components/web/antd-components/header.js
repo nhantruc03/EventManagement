@@ -227,11 +227,9 @@ class header extends Component {
         else {
 
             return (
-                <Header className="site-layout-background" style={{ padding: 15 }} >
-                    <div className="flex-container-row">
-                        {/* <div style={{ float: 'right', marginBottom: 20, marginRight: 20, display: 'inline-grid' }}> */}
-                        <div className="flex-row-item-right">
-
+                <Header className="site-layout-background flex-container-row" >
+                    <div className="flex-row-item-right">
+                        <div className="flex-container-row">
                             <Dropdown onVisibleChange={this.onVisibleChange} overlayClassName='dropdown' overlay={this.renderNotifications} placement='bottomRight'>
                                 <Badge count={this.state.notifications.filter(e => e.watch === false).length}>
                                     <Button style={{ border: 'none' }}><BellOutlined /></Button>
@@ -252,8 +250,10 @@ class header extends Component {
                                             </Menu.Item>
                                         </Menu>
                                     }>
-                                    <Button id="button-account" >
-                                        {this.state.currentUser.name} <Avatar style={{ marginLeft: '10px' }} className="my-2" src={`/api/images/${this.state.currentUser.photoUrl}`} />
+                                    <Button id="button-account">
+                                        <div className="flex-container-row">
+                                            <p className="top-name-user cut-text">{this.state.currentUser.name}</p> <Avatar style={{ marginLeft: '10px' }} className="my-2" src={`/api/images/${this.state.currentUser.photoUrl}`} />
+                                        </div>
                                     </Button>
                                 </Dropdown>
                                 : null}

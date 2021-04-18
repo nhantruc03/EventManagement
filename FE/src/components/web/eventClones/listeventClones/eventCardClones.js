@@ -1,4 +1,4 @@
-import { Avatar, Card, Col, Row, Tag, Tooltip } from 'antd';
+import { Avatar, Card, Col, Image, Row, Tag, Tooltip } from 'antd';
 import React, { Component } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
@@ -18,13 +18,14 @@ class eventCard extends Component {
     render() {
         return (
             <div className="event-card-container">
-                <Link to={`/eventclones/${this.props.data._id}`}>
-                    <Card
-                        hoverable
-                        className="eventCard"
-                        cover={<img className="cover" alt="example" src={`api/images/${this.props.data.posterUrl}`} />}
 
-                    >
+                <Card
+                    hoverable
+                    className="eventCard"
+                    cover={<Image className="cover" alt="example" src={`api/images/${this.props.data.posterUrl}`} />}
+
+                >
+                    <Link to={`/eventclones/${this.props.data._id}`}>
                         <Tooltip title={this.props.data.description} placement="top">
                             <Meta title={this.props.data.name} />
                         </Tooltip>
@@ -37,7 +38,7 @@ class eventCard extends Component {
                         </Row>
                         <Row className="eventCardFooter">
                             <Col span={20}>
-                                {this.props.data.tagId.map((value, key) => <Tag id={value.name} style={{ width: 'auto' }} key={key}>{value.name}</Tag>)}
+                                {this.props.data.tagId.map((value, key) => <Tag id={value.name} style={{ width: 'auto', background: value.background, color: value.color }} key={key}>{value.name}</Tag>)}
                             </Col>
                             <Col span={4}>
                                 <Avatar.Group
@@ -48,9 +49,9 @@ class eventCard extends Component {
                                 </Avatar.Group>
                             </Col>
                         </Row>
-                    </Card>
-                </Link>
-            </div>
+                    </Link>
+                </Card>
+            </div >
         );
     }
 }

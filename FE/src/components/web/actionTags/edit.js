@@ -2,11 +2,11 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { AUTH } from '../../env'
 import { trackPromise } from 'react-promise-tracker';
-import { Message } from '../service/renderMessage';
 import { Content } from 'antd/lib/layout/layout';
-import { Breadcrumb, Button, Form, Input, Row } from 'antd';
+import { Breadcrumb, Button, Col, Form, Input, message, Row, Tag } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
+import ReactAntColorPicker from '@feizheng/react-ant-color-picker';
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -19,7 +19,10 @@ class edit extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: null
+            data: null,
+            background: '',
+            color: '',
+            name: ''
         }
     }
 
@@ -31,10 +34,10 @@ class edit extends Component {
                 }
             })
                 .then(res => {
-                    Message('Sửa thành công', true, this.props);
+                    message.success('Sửa thành công');
                 })
                 .catch(err => {
-                    Message('Sửa thất bại', false);
+                    message.error('Sửa thất bại');
                 }))
     }
 
@@ -62,6 +65,9 @@ class edit extends Component {
             if (this._isMounted) {
                 this.setState({
                     data: data,
+                    background: data.background,
+                    color: data.color,
+                    name: data.name
                 })
             }
         }
@@ -73,6 +79,23 @@ class edit extends Component {
 
     goBack = () => {
         this.props.history.goBack();
+    }
+    onChangeName = (e) => {
+        // console.log(e.target.value)
+        this.setState({
+            name: e.target.value
+        })
+    }
+
+    onChangeBackground = (e) => {
+        this.setState({
+            background: e.target.value
+        })
+    }
+    onChangeColor = (e) => {
+        this.setState({
+            color: e.target.value
+        })
     }
     render() {
         if (this.state.data !== null) {
@@ -96,15 +119,48 @@ class edit extends Component {
                             layout="vertical"
                             initialValues={this.state.data}
                         >
-                            <Form.Item
-                                wrapperCol={{ sm: 24 }}
-                                name="name"
-                                label={<Title level={4}>Tên tags công việc</Title>}
-                                hasFeedback
-                                rules={[{ required: true, message: 'Cần nhập tên tags công việc!' }]}
-                            >
-                                <Input placeholder="Nhập tên tags công việc..."></Input>
-                            </Form.Item>
+                            <Row style={{ padding: '10px' }}>
+                                <Col span={24}>
+                                    <Form.Item
+                                        wrapperCol={{ sm: 24 }}
+                                        name="name"
+                                        label={<Title level={4}>Tên tags</Title>}
+                                        hasFeedback
+                                        rules={[{ required: true, message: 'Cần nhập tên tags công việc!' }]}
+                                    >
+                                        <Input onChange={this.onChangeName} placeholder="Nhập tên tags công việc..."></Input>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                            <Row style={{ marginTop: '20px' }}>
+                                <Col style={{ padding: '10px' }} span={12}>
+                                    <div className="flex-container-row">
+                                        <Tag style={{ background: `${this.state.background}`, color: 'white' }}>{this.state.name}</Tag>
+                                        <Button className="flex-row-item-right">
+                                            <ReactAntColorPicker onChange={this.onChangeBackground} value={this.state.background} label="Màu nền" />
+                                        </Button>
+
+                                    </div>
+                                </Col>
+                                <Col style={{ padding: '10px' }} span={12}>
+                                    <div className="flex-container-row">
+                                        <Tag style={{ background: 'white', color: `${this.state.color}`, border: `1px solid black` }}>{this.state.name}</Tag>
+
+                                        <Button className="flex-row-item-right">
+                                            <ReactAntColorPicker onChange={this.onChangeColor} value={this.state.color} label="Màu chữ" />
+                                        </Button>
+
+                                    </div>
+                                </Col>
+                            </Row>
+                            <Row style={{ marginTop: '20px', width: '100%', textAlign: 'center' }}>
+
+                                <div style={{ width: '50%', margin: '0 auto' }} >
+                                    <Title level={4}>Kết quả</Title>
+                                    <Tag style={{ background: `${this.state.background}`, color: `${this.state.color}` }}>{this.state.name}</Tag>
+                                </div>
+
+                            </Row>
                             <br></br>
                             <Form.Item wrapperCol={{ span: 24, offset: 9 }}>
                                 <Button
