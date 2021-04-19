@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, KeyboardAvoidingView } from "react-native";
 
 import Url from "../env";
 import getToken from "../Auth";
@@ -27,6 +27,16 @@ import ScriptDetailModal from "../components/ScriptDetailModal";
 const Step = Steps.Step;
 
 const styles = StyleSheet.create({
+  Loading: {
+    justifyContent: "center",
+    position: "absolute",
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   Container: {
     marginTop: 16,
   },
@@ -406,7 +416,11 @@ class scriptdetail extends Component {
         </Provider>
       );
     } else {
-      return null;
+      return (
+        <View style={styles.Loading}>
+          <ActivityIndicator size="large" animating></ActivityIndicator>
+        </View>
+      );
     }
   }
 }

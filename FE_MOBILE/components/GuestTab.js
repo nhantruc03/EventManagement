@@ -52,11 +52,8 @@ const styles = StyleSheet.create({
   },
   checkboxContainer: {
     flexDirection: "row",
-    marginLeft: 'auto',
+    marginLeft: "auto",
     marginBottom: 20,
-  },
-  checkbox: {
-    alignSelf: "center",
   },
 });
 
@@ -65,6 +62,7 @@ export default class GuestTab extends Component {
     super(props);
     this.state = {
       data: [],
+      SearchData: [],
     };
   }
 
@@ -88,6 +86,7 @@ export default class GuestTab extends Component {
         });
         this.setState({
           data: temp_data,
+          SearchData: temp_data,
         });
         // this.props.updateGuest(temp_data);
         // console.log("temp_data", temp_data);
@@ -108,21 +107,28 @@ export default class GuestTab extends Component {
   componentDidMount() {
     this.setState({
       data: this.props.data,
+      SearchData: this.props.data,
     });
   }
 
+  getSearchData1 = (data) => {
+    this.setState({
+      SearchData: data,
+    });
+  };
   render() {
     //let temp_listActions = this.applyFilter(this.props.sectionListData);
+    console.log(this.state.data);
     let result = this.state.data.reduce((list, item) => {
       let temp_list = list.filter((e) => e._id === item.guestTypeId._id); //điều kiện gom nhóm
       let temp_O =
         temp_list.length > 0
           ? temp_list[0]
           : {
-            title: item.guestTypeId.name,
-            _id: item.guestTypeId._id,
-            data: [],
-          }; // check cần tạo mới hay đã có trong result
+              title: item.guestTypeId.name,
+              _id: item.guestTypeId._id,
+              data: [],
+            }; // check cần tạo mới hay đã có trong result
 
       if (list.indexOf(temp_O) !== -1) {
         list[list.indexOf(temp_O)].data.push(item);
@@ -135,7 +141,12 @@ export default class GuestTab extends Component {
 
     return (
       <SafeAreaView>
-        <Search></Search>
+        <Search
+          target="name"
+          targetparent="data"
+          data={this.state.SearchData}
+          getSearchData={(e) => this.getSearchData1(e)}
+        ></Search>
         <SectionList
           sections={result}
           keyExtractor={(item) => item._id}
@@ -150,7 +161,6 @@ export default class GuestTab extends Component {
                 <Text style={styles.itemTextName}>{item.name}</Text>
                 <Text style={styles.itemTextPhone}>{item.phone}</Text>
                 <Text style={styles.itemTextEmail}>{item.email}</Text>
-                <Text>{item.status}</Text>
               </View>
               <View style={styles.checkboxContainer}>
                 <TouchableOpacity onPress={() => this.changeStatus(item)}>

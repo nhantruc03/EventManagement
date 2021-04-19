@@ -17,36 +17,33 @@ import {
 import { Image } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 import ChatMessage from "../components/ChatMessage";
+import { ActivityIndicator } from "@ant-design/react-native";
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
-  Container: {
-    flex: 1,
-    flexDirection: "column",
-  },
-  PrimaryBtn: {
-    backgroundColor: "#2A9D8F",
-    borderRadius: 12,
-    borderColor: "#2A9D8F",
-    fontFamily: "semibold",
-  },
-  inputdisable: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    borderColor: "#DFDFDF",
-    backgroundColor: "#D4D4D4",
-    borderRadius: 8,
+  Loading: {
+    justifyContent: "center",
+    position: "absolute",
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: "center",
     justifyContent: "center",
   },
+  Container: {
+    flex: 1,
+  },
   input: {
-    height: 40,
-    margin: 12,
+    marginHorizontal: 16,
+    marginVertical: 16,
     borderWidth: 1,
     borderColor: "#DFDFDF",
-    backgroundColor: "white",
     borderRadius: 8,
-    paddingHorizontal: 8,
+    height: 40,
+    width: W - 60,
+    backgroundColor: "white",
+    paddingRight: 12,
   },
 });
 const client = new WebSocket("ws://192.168.1.8:3001");
@@ -196,6 +193,7 @@ class ChatRoom extends Component {
       .then((res) => {
         const temp = res.data.data;
         this.setState({
+          isLoading: false,
           refreshing: false,
           page: this.state.page + 1,
           messages: [...temp.reverse(), ...this.state.messages],
@@ -214,70 +212,52 @@ class ChatRoom extends Component {
   render() {
     if (!this.state.isLoading) {
       return (
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{ flex: 1 }}
-        >
-          <View style={styles.Container}>
+        <View style={styles.Container}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "position" : null}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+          >
             <FlatList
               refreshing={this.state.refreshing}
               onRefresh={this.onRefresh}
               ref={this.ref}
-              style={{ paddingHorizontal: 10 }}
+              style={{ paddingHorizontal: 10, height: 530 }}
               data={this.state.messages}
               keyExtractor={(item) => item._id}
               renderItem={(item) => this.renderMessage(item)}
               onContentSizeChange={this.goToEnd}
               onLayout={this.goToEnd}
             />
-            {/* <TextInput
-                        onChangeText={this.setFormValue}
-                        style={
-                            this.state.disable === true
-                                ? styles.input
-                                : styles.inputdisable
-                        }
-                        value={this.state.name}
-                        editable={!this.state.disable}
-                    >
-                    </TextInput> */}
             <View
               style={{
                 flexDirection: "row",
                 justifyContent: "center",
                 alignItems: "center",
-                marginHorizontal: 16,
               }}
             >
               <TextInput
                 onChangeText={this.setFormValue}
-                style={{
-                  flex: 1,
-                  marginHorizontal: 4,
-                  marginVertical: 16,
-                  borderWidth: 1,
-                  borderColor: "#DFDFDF",
-                  borderRadius: 8,
-                  height: 40,
-                  width: W - 16,
-                  backgroundColor: "white",
-                }}
+                style={styles.input}
                 value={this.state.formValue}
                 editable={!this.state.disable}
               />
               <TouchableOpacity
-                style={{}}
+                style={{ right: 16 }}
                 disabled={!this.state.formValue}
                 onPress={() => this.sendMessage()}
               >
                 <Image source={require("../assets/images/Send.png")} />
               </TouchableOpacity>
             </View>
-          </View>
-        </KeyboardAvoidingView>
+          </KeyboardAvoidingView>
+        </View>
       );
     } else {
-      return null;
+      return (
+        <View style={styles.Loading}>
+          <ActivityIndicator size="large" animating></ActivityIndicator>
+        </View>
+      );
     }
   }
 }

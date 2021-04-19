@@ -8,12 +8,15 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Dimensions,
 } from "react-native";
 
 import Url from "../env";
 import getToken from "../Auth";
 import axios from "axios";
 import AsyncStorage from "@react-native-community/async-storage";
+
+const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   Label: {
     color: "#2A9D8F",
@@ -21,7 +24,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   input: {
-    height: 48,
+    height: 40,
     marginVertical: 8,
     marginHorizontal: 0,
     borderWidth: 1,
@@ -118,52 +121,64 @@ class ScriptCreateModal extends Component {
       // console.log(this.richText);
       return (
         <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : ""}
+          behavior={Platform.OS === "ios" ? "position" : ""}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 600 : 0}
         >
-          <View style={{ flex: 1 }}>
-            <View style={{ paddingVertical: 20, paddingHorizontal: 16 }}>
-              <View styles={styles.ScriptNameContainer}>
-                <Text style={styles.Label}>Tên kịch bản</Text>
-                <View style={styles.BoxInput}>
-                  <TextInput
-                    onChangeText={this.onChangeName}
-                    style={styles.input}
-                    value={this.state.data.name}
-                  ></TextInput>
-                </View>
-              </View>
-              <View style={styles.ScriptNameLabelContainer}>
-                <Text style={styles.Label}>Dành cho</Text>
-                <View style={styles.Box}>
-                  <Picker
-                    onChange={this.onChangeForId}
-                    value={this.state.data.forId}
-                    data={this.state.listUser}
-                    cascade={false}
-                    okText="Đồng ý"
-                    dismissText="Thoát"
-                  >
-                    <Text>
-                      {!this.state.forId
-                        ? "Chọn"
-                        : this.state.listUser_default.filter(
-                            (e) => e._id === this.state.forId[0]
-                          )[0].name}
-                    </Text>
-                  </Picker>
-                </View>
-              </View>
+          <View style={{ height: 100, flex: 1 }}>
+            <View>
+              <Text style={styles.Label}>Tên kịch bản</Text>
+
+              <TextInput
+                onChangeText={this.onChangeName}
+                style={styles.input}
+                value={this.state.data.name}
+              ></TextInput>
             </View>
-            <Button
-              type="primary"
-              onPress={this.onFinish}
-              style={styles.PrimaryBtn}
-            >
-              Lưu
-            </Button>
           </View>
         </KeyboardAvoidingView>
+        // <View style={{ flex: 1 }}>
+        //   <TextInput
+        //     onChangeText={this.onChangeName}
+        //     style={styles.input}
+        //     value={this.state.data.name}
+        //   ></TextInput>
+        // </View>
+
+        // <View style={{ flex: 1 }}>
+        //   <View style={{ flex: 1, paddingVertical: 20, paddingHorizontal: 16 }}>
+        //     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "" : ""}>
+
+        //     </KeyboardAvoidingView>
+        //     {/* <View style={styles.ScriptNameLabelContainer}>
+        //         <Text style={styles.Label}>Dành cho</Text>
+        //         <View style={styles.Box}>
+        //           <Picker
+        //             onChange={this.onChangeForId}
+        //             value={this.state.data.forId}
+        //             data={this.state.listUser}
+        //             cascade={false}
+        //             okText="Đồng ý"
+        //             dismissText="Thoát"
+        //           >
+        //             <Text>
+        //               {!this.state.forId
+        //                 ? "Chọn"
+        //                 : this.state.listUser_default.filter(
+        //                     (e) => e._id === this.state.forId[0]
+        //                   )[0].name}
+        //             </Text>
+        //           </Picker>
+        //         </View>
+        //       </View> */}
+        //   </View>
+        //   {/* <Button
+        //       type="primary"
+        //       onPress={this.onFinish}
+        //       style={styles.PrimaryBtn}
+        //     >
+        //       Lưu
+        //     </Button> */}
+        // </View>
       );
     } else {
       return null;

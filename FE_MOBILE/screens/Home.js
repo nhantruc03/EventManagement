@@ -21,18 +21,6 @@ const Homescreen = ({ navigation }) => {
     >
       <Text style={styles.mainlabel}>Home Screen</Text>
 
-      {/* <ReactNative.Text style={{ fontSize: 24 }}>System Font</ReactNative.Text>
-      <ReactNative.Text style={{ fontSize: 24, fontFamily: "Nunito-Bold" }}>
-        Nunito Bold
-      </ReactNative.Text>
-
-      <ReactNative.Text style={{ fontSize: 24, fontFamily: "regular" }}>
-        Nunito Regular
-      </ReactNative.Text>
-      <ReactNative.Text style={{ fontSize: 24, fontFamily: "Nunito-SemiBold" }}>
-        Nunito SemiBold
-      </ReactNative.Text> */}
-
       <Button
         title="Go to Event"
         onPress={() => {

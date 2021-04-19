@@ -6,6 +6,7 @@ import { FlatList } from "react-native-gesture-handler";
 import { SearchBar } from "react-native-elements";
 import Search from "./helper/search";
 import Url from "../env";
+import { ActivityIndicator } from "@ant-design/react-native";
 
 const styles = StyleSheet.create({
   Container: {
@@ -60,39 +61,21 @@ class OrgTab extends Component {
       error: null,
       search: null,
       SearchData1: [],
+      loading: true,
     };
   }
 
-  UNSAFE_componentWillReceiveProps(e) {
-    // console.log("should update", e);
-    this.setState({
-      data: e.data,
-    });
-  }
-
   componentDidMount() {
-    // console.log("data inside", this.props.data);
     this.setState({
+      loading: this.props.loading,
       data: this.props.data,
+      SearchData: this.props.data,
     });
   }
-  searchFilterFunction = (text) => {
-    this.setState({
-      value: text,
-    });
-    const newData = this.props.data.filter((item) => {
-      const itemData = `${item.userId.name.toLowerCase()}`;
-      const textData = text.toLowerCase();
-      return itemData.indexOf(textData) > -1;
-    });
-    this.setState({
-      data: newData,
-    });
-  };
 
   getSearchData1 = (data) => {
     this.setState({
-      SearchData1: data,
+      SearchData: data,
     });
   };
 
@@ -101,7 +84,7 @@ class OrgTab extends Component {
       return (
         <FlatList
           style={styles.ListContainer}
-          data={this.state.data}
+          data={this.state.SearchData}
           renderItem={({ item }) => (
             <View style={styles.itemContainer}>
               <View style={styles.fisrtColumn}>
@@ -140,30 +123,20 @@ class OrgTab extends Component {
   render() {
     return (
       <SafeAreaView style={styles.Container}>
-        {/* <Search
+        <Search
+          targetParent="userId"
           target="name"
-          targerParent="userId"
           data={this.state.data}
           getSearchData={(e) => this.getSearchData1(e)}
-        ></Search> */}
-        <SearchBar
-          placeholder="Tìm kiếm..."
-          containerStyle={{
-            color: "#FFFFF",
-            marginBottom: 8,
-            borderRadius: 12,
-            marginHorizontal: 16,
-            marginTop: 16,
-            height: 64,
-            alignContent: "center",
-            paddingHorizontal: 8,
-          }}
-          platform="android"
-          editable={true}
-          value={this.state.search}
-          onChangeText={(text) => this.searchFilterFunction(text)}
-        ></SearchBar>
-        {this.renderList()}
+        ></Search>
+
+        {this.state.loading ? (
+          <View>
+            <ActivityIndicator size="large" animating></ActivityIndicator>
+          </View>
+        ) : (
+          this.renderList()
+        )}
       </SafeAreaView>
     );
   }

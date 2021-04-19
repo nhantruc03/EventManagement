@@ -15,8 +15,6 @@ import LoginScreen from "./screens/Login";
 const Stack = createStackNavigator();
 
 export default App = () => {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
-
   const [loaded] = useFonts({
     antoutline: require("./assets/fonts/antoutline.ttf"),
     regular: require("./assets/fonts/Nunito-Regular.ttf"),
@@ -28,21 +26,6 @@ export default App = () => {
     return null;
   }
 
-  // useEffect(() => {
-  //   Font.loadAsync({
-  //     regular: require("./assets/fonts/Nunito-Regular.ttf"),
-  //     "Nunito-Bold": require("./assets/fonts/Nunito-Bold.ttf"),
-  //     "Nunito-SemiBold": require("./assets/fonts/Nunito-SemiBold.ttf"),
-  //     "Nunito-Light": require("./assets/fonts/Nunito-Light.ttf"),
-  //   });
-  //   setFontsLoaded(false);
-  // });
-  // if (Loading == true) return <SplashScreen />;
-  // else {
-  //   if (isLoggined == false) return <Auth />;
-  //   else return <BottomNav />;
-  // }
-  // else
   return (
     <NavigationContainer>
       <Stack.Navigator>

@@ -7,13 +7,12 @@ import {
   FlatList,
   Image,
 } from "react-native";
-import { SearchBar } from "react-native-elements";
 import axios from "axios";
 import getToken from "../Auth";
 import EventCard from "../components/EventCard";
 import moment from "moment";
 import Url from "../env";
-import { Tabs } from "@ant-design/react-native";
+import { ActivityIndicator, Tabs } from "@ant-design/react-native";
 import Search from "../components/helper/search";
 const styles = StyleSheet.create({
   container: {
@@ -85,6 +84,7 @@ export default class Event extends Component {
       data_past: [],
       data_future: [],
       status: "",
+      loading: true,
     };
     this._isMounted = false;
   }
@@ -135,6 +135,7 @@ export default class Event extends Component {
     ) {
       if (this._isMounted) {
         this.setState({
+          loading: false,
           data: [...future_event, ...ongoing_event, ...past_event],
           SearchData: [...future_event, ...ongoing_event, ...past_event],
           data_ongoing: ongoing_event,
@@ -246,11 +247,32 @@ export default class Event extends Component {
           }}
           tabBarUnderlineStyle={{ backgroundColor: "#2A9D8F" }}
         >
-          <FlatList
-            data={this.state.SearchData}
-            renderItem={({ item }) => this.renderItem(item)}
-            keyExtractor={(item) => item._id}
-          />
+          {this.state.loading ? (
+            <View
+              style={{
+                justifyContent: "center",
+                position: "absolute",
+                left: 0,
+                top: 0,
+                right: 0,
+                bottom: 0,
+                alignItems: "center",
+              }}
+            >
+              <ActivityIndicator
+                size="large"
+                animating
+                color="#0000ff"
+              ></ActivityIndicator>
+            </View>
+          ) : (
+            <FlatList
+              data={this.state.SearchData}
+              renderItem={({ item }) => this.renderItem(item)}
+              keyExtractor={(item) => item._id}
+            />
+          )}
+
           <FlatList
             data={this.state.data_ongoing}
             renderItem={({ item }) => this.renderItem(item)}

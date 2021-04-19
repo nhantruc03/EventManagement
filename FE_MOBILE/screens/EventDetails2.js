@@ -1,8 +1,5 @@
 import React, { Component } from "react";
-import {
-  View,
-  StyleSheet,
-} from "react-native";
+import { View, StyleSheet } from "react-native";
 import OrgTab from "../components/OrgTab";
 import axios from "axios";
 import Url from "../env";
@@ -14,12 +11,23 @@ import { TabView, SceneMap } from "react-native-tab-view";
 import { TabBar } from "react-native-tab-view";
 import { Dimensions } from "react-native";
 import GroupTab from "../components/GroupTab";
+import { ActivityIndicator } from "@ant-design/react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   Tabcontainer: {
     flex: 2,
+  },
+  Loading: {
+    justifyContent: "center",
+    position: "absolute",
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 
@@ -59,50 +67,48 @@ export default class EventDetail2 extends Component {
   Route1 = () => <Eventdetails data={this.props.route.params} />;
 
   Route2 = () =>
-    this.state.listOrganizer ? (
+    this.state.listOrganizer && !this.state.loading ? (
       <OrgTab data={this.state.listOrganizer} />
-    ) : null;
+    ) : (
+      <View style={styles.Loading}>
+        <ActivityIndicator size="large" animating></ActivityIndicator>
+      </View>
+    );
 
   Route3 = () =>
-    this.state.listscripts ? (
+    this.state.listscripts && !this.state.loading ? (
       <ScriptTab
         navigation={this.props.navigation}
         data={this.state.listscripts}
         updateListScript={(e) => this.updateListScript(e)}
         event={this.state.event}
       />
-    ) : null;
+    ) : (
+      <View style={styles.Loading}>
+        <ActivityIndicator size="large" animating></ActivityIndicator>
+      </View>
+    );
 
-  Route4 = () => this.state.listgroups ? <GroupTab navigation={this.props.navigation} data={this.state.listgroups} /> : null;
+  Route4 = () =>
+    this.state.listgroups && !this.state.loading ? (
+      <GroupTab
+        navigation={this.props.navigation}
+        data={this.state.listgroups}
+      />
+    ) : (
+      <View style={styles.Loading}>
+        <ActivityIndicator size="large" animating></ActivityIndicator>
+      </View>
+    );
 
   Route5 = () =>
-    this.state.listGuest ? <GuestTab data={this.state.listGuest} /> : null;
-
-  // renderContent = (tab, index) => {
-  //   const content = this.renderView(index);
-  //   return <View>{content}</View>;
-  // };
-
-  // renderView = (i) => {
-  //   if (i === 0) {
-  //     return <Eventdetails data={this.props.route.params} />;
-  //   } else if (i === 1) {
-  //     return this.state.listOrganizer ? (
-  //       <OrgTab data={this.state.listOrganizer} />
-  //     ) : null;
-  //   } else if (i === 2) {
-  //     return this.state.listscripts ? (
-  //       <ScriptTab
-  //         navigation={this.props.navigation}
-  //         data={this.state.listscripts}
-  //       />
-  //     ) : null;
-  //   } else if (i === 4) {
-  //     return this.state.listGuest ? (
-  //       <GuestTab data={this.state.listGuest} />
-  //     ) : null;
-  //   }
-  // };
+    this.state.listGuest && !this.state.loading ? (
+      <GuestTab data={this.state.listGuest} />
+    ) : (
+      <View style={styles.Loading}>
+        <ActivityIndicator size="large" animating></ActivityIndicator>
+      </View>
+    );
 
   updateListScript = (e) => {
     this.setState({
@@ -112,7 +118,13 @@ export default class EventDetail2 extends Component {
 
   async componentDidMount() {
     this._isMounted = true;
-    const [listgroups, guestTypes, listEventAssign, scripts, event] = await Promise.all([
+    const [
+      listgroups,
+      guestTypes,
+      listEventAssign,
+      scripts,
+      event,
+    ] = await Promise.all([
       axios
         .post(
           `${Url()}/api/groups/getAll`,
