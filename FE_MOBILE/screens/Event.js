@@ -14,6 +14,7 @@ import EventCard from "../components/EventCard";
 import moment from "moment";
 import Url from "../env";
 import { Tabs } from "@ant-design/react-native";
+import Search from "../components/helper/search";
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#F6F7F8",
@@ -79,6 +80,7 @@ export default class Event extends Component {
     super(props);
     this.state = {
       data: [],
+      SearchData: [],
       data_ongoing: [],
       data_past: [],
       data_future: [],
@@ -88,49 +90,63 @@ export default class Event extends Component {
   }
 
   async componentDidMount() {
-    this._isMounted = true
-    let temp = moment(new Date()).format('YYYY-MM-DD')
+    this._isMounted = true;
+    let temp = moment(new Date()).format("YYYY-MM-DD");
     const [future_event, ongoing_event, past_event] = await Promise.all([
-      axios.post(`${Url()}/api/events/getAll?gt=${temp}`, { isClone: false }, {
-        headers: {
-          'Authorization': await getToken(),
-        }
-      })
-        .then((res) =>
-          res.data.data
-        ),
-      axios.post(`${Url()}/api/events/getAll?eq=${temp}`, { isClone: false }, {
-        headers: {
-          'Authorization': await getToken(),
-        }
-      })
-        .then((res) =>
-          res.data.data
-        ),
-      axios.post(`${Url()}/api/events/getAll?lt=${temp}`, { isClone: false }, {
-        headers: {
-          'Authorization': await getToken(),
-        }
-      })
-        .then((res) =>
-          res.data.data
-        ),
+      axios
+        .post(
+          `${Url()}/api/events/getAll?gt=${temp}`,
+          { isClone: false },
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
+          }
+        )
+        .then((res) => res.data.data),
+      axios
+        .post(
+          `${Url()}/api/events/getAll?eq=${temp}`,
+          { isClone: false },
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
+          }
+        )
+        .then((res) => res.data.data),
+      axios
+        .post(
+          `${Url()}/api/events/getAll?lt=${temp}`,
+          { isClone: false },
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
+          }
+        )
+        .then((res) => res.data.data),
     ]);
 
-    if (future_event !== null && ongoing_event !== null && past_event !== null) {
+    if (
+      future_event !== null &&
+      ongoing_event !== null &&
+      past_event !== null
+    ) {
       if (this._isMounted) {
         this.setState({
           data: [...future_event, ...ongoing_event, ...past_event],
+          SearchData: [...future_event, ...ongoing_event, ...past_event],
           data_ongoing: ongoing_event,
           data_past: past_event,
           data_future: future_event,
-        })
+        });
       }
     }
   }
 
   componentWillUnmount() {
-    this._isMounted = false
+    this._isMounted = false;
   }
 
   renderItem = (item) => {
@@ -176,8 +192,30 @@ export default class Event extends Component {
           </View>
         </EventCard>
       </TouchableOpacity>
-    )
-  }
+    );
+  };
+
+  getSearchData = (data) => {
+    let list_future = [];
+    let list_past = [];
+    let list_ongoing = [];
+    let today = new Date().setHours(0, 0, 0, 0);
+    data.forEach((element) => {
+      if (new Date(element.startDate).setHours(0, 0, 0, 0) > today) {
+        list_future = [...list_future, element];
+      } else if (new Date(element.startDate).setHours(0, 0, 0, 0) < today) {
+        list_past = [...list_past, element];
+      } else {
+        list_ongoing = [...list_ongoing, element];
+      }
+    });
+    this.setState({
+      SearchData: [...list_ongoing, ...list_future, ...list_past],
+      data_ongoing: list_ongoing,
+      data_past: list_past,
+      data_future: list_future,
+    });
+  };
 
   render() {
     const tabs = [
@@ -186,31 +224,17 @@ export default class Event extends Component {
       { title: "Sắp tới" },
       { title: "Đã xong" },
     ];
+    console.log(this.state.data);
     return (
       <View style={styles.container}>
         <Text style={styles.toplabel}>Sự kiện</Text>
         {/* <Text style={styles.toplabel}>{this.state.data.length}</Text> */}
-        <SearchBar
-          placeholder="Tìm kiếm..."
-          containerStyle={{
-            color: "#FFFFF",
-            marginBottom: 8,
-            borderRadius: 12,
-            marginHorizontal: 16,
-            height: 64,
-            alignContent: "center",
-            paddingHorizontal: 8,
-          }}
-          inputContainerStyle={{
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          inputStyle={{
-            alignContent: "center",
-            alignSelf: "center",
-          }}
-          platform="android"
-        ></SearchBar>
+        <Search
+          target={["name", "description"]}
+          multi={true}
+          data={this.state.data}
+          getSearchData={(e) => this.getSearchData(e)}
+        />
         <Tabs
           style={styles.Tabcontainer}
           tabs={tabs}
@@ -223,7 +247,7 @@ export default class Event extends Component {
           tabBarUnderlineStyle={{ backgroundColor: "#2A9D8F" }}
         >
           <FlatList
-            data={this.state.data}
+            data={this.state.SearchData}
             renderItem={({ item }) => this.renderItem(item)}
             keyExtractor={(item) => item._id}
           />

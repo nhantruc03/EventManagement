@@ -5,10 +5,11 @@ import {
   Text,
   StyleSheet,
   TextInput,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+
 import Url from "../env";
 import getToken from "../Auth";
 import axios from "axios";
@@ -117,42 +118,40 @@ class ScriptCreateModal extends Component {
       // console.log(this.richText);
       return (
         <KeyboardAvoidingView
-          keyboardVerticalOffset={Platform.OS === "ios" ? 400 : 0}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : ""}
         >
-          <ScrollView keyboardDismissMode="interactive">
-            <View>
-              <View style={{ paddingVertical: 20, paddingHorizontal: 16 }}>
-                <View styles={styles.ScriptNameContainer}>
-                  <Text style={styles.Label}>Tên kịch bản</Text>
-                  <View style={styles.BoxInput}>
-                    <TextInput
-                      onChangeText={this.onChangeName}
-                      style={styles.input}
-                      value={this.state.data.name}
-                    ></TextInput>
-                  </View>
+          <View style={{ flex: 1 }}>
+            <View style={{ paddingVertical: 20, paddingHorizontal: 16 }}>
+              <View styles={styles.ScriptNameContainer}>
+                <Text style={styles.Label}>Tên kịch bản</Text>
+                <View style={styles.BoxInput}>
+                  <TextInput
+                    onChangeText={this.onChangeName}
+                    style={styles.input}
+                    value={this.state.data.name}
+                  ></TextInput>
                 </View>
-                <View style={styles.ScriptNameLabelContainer}>
-                  <Text style={styles.Label}>Dành cho</Text>
-                  <View style={styles.Box}>
-                    <Picker
-                      onChange={this.onChangeForId}
-                      value={this.state.data.forId}
-                      data={this.state.listUser}
-                      cascade={false}
-                      okText="Đồng ý"
-                      dismissText="Thoát"
-                    >
-                      <Text>
-                        {!this.state.forId
-                          ? "Chọn"
-                          : this.state.listUser_default.filter(
-                              (e) => e._id === this.state.forId[0]
-                            )[0].name}
-                      </Text>
-                    </Picker>
-                  </View>
+              </View>
+              <View style={styles.ScriptNameLabelContainer}>
+                <Text style={styles.Label}>Dành cho</Text>
+                <View style={styles.Box}>
+                  <Picker
+                    onChange={this.onChangeForId}
+                    value={this.state.data.forId}
+                    data={this.state.listUser}
+                    cascade={false}
+                    okText="Đồng ý"
+                    dismissText="Thoát"
+                  >
+                    <Text>
+                      {!this.state.forId
+                        ? "Chọn"
+                        : this.state.listUser_default.filter(
+                            (e) => e._id === this.state.forId[0]
+                          )[0].name}
+                    </Text>
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -163,7 +162,7 @@ class ScriptCreateModal extends Component {
             >
               Lưu
             </Button>
-          </ScrollView>
+          </View>
         </KeyboardAvoidingView>
       );
     } else {

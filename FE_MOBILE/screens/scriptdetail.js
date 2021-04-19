@@ -131,7 +131,7 @@ class scriptdetail extends Component {
       editDetailData: null,
       addScriptDetails: false,
     };
-    this._isMounted = false
+    this._isMounted = false;
   }
 
   onClose = () => {
@@ -141,7 +141,7 @@ class scriptdetail extends Component {
   };
   // this.setState({ visible: true })
   async componentDidMount() {
-    this._isMounted = true
+    this._isMounted = true;
     this.props.navigation.setOptions({
       headerRight: () => (
         <View style={styles.IconRight}>
@@ -219,7 +219,7 @@ class scriptdetail extends Component {
   }
 
   componentWillUnmount() {
-    this._isMounted = false
+    this._isMounted = false;
   }
 
   onChangeForId = (forId) => {
@@ -323,8 +323,8 @@ class scriptdetail extends Component {
                     {!this.state.forId
                       ? "Chọn"
                       : this.state.listUser_default.filter(
-                        (e) => e._id === this.state.forId[0]
-                      )[0].name}
+                          (e) => e._id === this.state.forId[0]
+                        )[0].name}
                   </Text>
                 </Picker>
               </View>

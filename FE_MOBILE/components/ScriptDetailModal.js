@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 8,
     paddingHorizontal: 4,
-    textAlign: 'center'
+    textAlign: "center",
   },
 
   PrimaryBtn: {
@@ -58,7 +58,7 @@ class ScriptDetailModal extends Component {
     this.state = {
       data: null,
       richText: React.createRef(),
-      showDateTimePicker: false
+      showDateTimePicker: false,
     };
     this.ref = React.createRef();
   }
@@ -86,12 +86,11 @@ class ScriptDetailModal extends Component {
           ...this.state.data,
           time: time,
         },
-        showDateTimePicker: Platform.OS === 'ios'
+        showDateTimePicker: Platform.OS === "ios",
       });
-    }
-    else{
+    } else {
       this.setState({
-        showDateTimePicker: Platform.OS === 'ios'
+        showDateTimePicker: Platform.OS === "ios",
       });
     }
   };
@@ -100,7 +99,7 @@ class ScriptDetailModal extends Component {
       data: {
         ...this.state.data,
         description: e,
-      }
+      },
     });
   };
 
@@ -162,17 +161,31 @@ class ScriptDetailModal extends Component {
               <View style={{ paddingVertical: 20, paddingHorizontal: 16 }}>
                 <View styles={styles.ScriptNameContainer}>
                   <Text style={styles.Label}>Thời gian</Text>
-                  {Platform.OS === 'android' ?
-                    < View style={{ textAlign: 'left' }} >
-                      <Button onPress={() => { this.setState({ showDateTimePicker: !this.state.showDateTimePicker }) }}  >
-                        <Text style={{ textAlign: 'left' }}>{moment(this.state.data.time).utcOffset(0).format("HH:mm")}</Text>
+                  {Platform.OS === "android" ? (
+                    <View style={{ textAlign: "left" }}>
+                      <Button
+                        onPress={() => {
+                          this.setState({
+                            showDateTimePicker: !this.state.showDateTimePicker,
+                          });
+                        }}
+                      >
+                        <Text style={{ textAlign: "left" }}>
+                          {moment(this.state.data.time)
+                            .utcOffset(0)
+                            .format("HH:mm")}
+                        </Text>
                       </Button>
                     </View>
-                    : null}
-                  {this.state.showDateTimePicker ?
+                  ) : null}
+                  {this.state.showDateTimePicker || Platform.OS === "ios" ? (
                     <View style={styles.BoxInput}>
                       <DateTimePicker
-                        value={this.state.data.time ? new Date() : this.state.data.time}
+                        value={
+                          this.state.data.time
+                            ? new Date()
+                            : this.state.data.time
+                        }
                         mode="time"
                         is24Hour={true}
                         display="default"
@@ -180,7 +193,7 @@ class ScriptDetailModal extends Component {
                         timeZoneOffsetInMinutes={0}
                       />
                     </View>
-                    : null}
+                  ) : null}
                 </View>
                 <View styles={styles.ScriptNameContainer}>
                   <Text style={styles.Label}>Tiêu đề</Text>
@@ -236,7 +249,7 @@ class ScriptDetailModal extends Component {
               Lưu
             </Button>
           </View>
-        </KeyboardAvoidingView >
+        </KeyboardAvoidingView>
       );
     } else {
       return null;
