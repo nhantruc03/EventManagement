@@ -58,29 +58,29 @@ class ChatMessage extends Component {
             />
           );
         } else {
-          return (
-            <div
-              style={{
-                marginTop: "unset",
-                maxWidth: "150px",
-                marginBottom: "12px",
-              }}
-              className="flex-container-row resource-card"
-            >
-              {this.renderIcon(extension)}
-              <Tooltip title={realName} placement="top">
-                <a
-                  className="cut-text"
-                  target="_blank"
-                  rel="noreferrer"
-                  href={`/api/resources/${this.props.roomId}/${temp_resourceUrl}`}
-                  style={{ marginLeft: "10px" }}
-                >
-                  {realName}
-                </a>
-              </Tooltip>
-            </div>
-          );
+            if (this.props.message.resourceUrl) {
+                let temp_resourceUrl = this.props.message.resourceUrl
+                let extension = temp_resourceUrl.substring(temp_resourceUrl.length - 3, temp_resourceUrl.length)
+                let realName = temp_resourceUrl.substring(14, temp_resourceUrl.length)
+                if (["png", "svg"].includes(extension)) {
+                    return (
+                        <Image style={{ marginBottom: '12px' }} alt="resource" src={`/api/resources/${this.props.roomId}/${temp_resourceUrl}`} />
+                    )
+                } else if (extension === 'mp4') {
+                    return (
+                        <video style={{ marginBottom: '12px' }} alt='resource' src={`/api/resources/${this.props.roomId}/${temp_resourceUrl}`} />
+                    )
+                } else {
+                    return (
+                        <div style={{ marginTop: 'unset', maxWidth: '150px', marginBottom: '12px' }} className="flex-container-row resource-card">
+                            {this.renderIcon(extension)}
+                            <Tooltip title={realName} placement="top" >
+                                <a className="cut-text" target="_blank" rel="noreferrer" href={`/api/resources/${this.props.roomId}/${temp_resourceUrl}`} style={{ marginLeft: '10px' }} >{realName}</a>
+                            </Tooltip>
+                        </div>
+                    )
+                }
+            }
         }
       }
     }
