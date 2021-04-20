@@ -96,9 +96,6 @@ class edit extends Component {
     onFinish = async (values) => {
         let data = {
             ...values,
-            // 'writerId': this.state.data.writerId,
-            // 'listscriptdetails': this.state.listscriptdetails,
-            'eventId': this.props.match.params.id
         }
 
         console.log('Received values of form: ', data);
