@@ -7,7 +7,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { StyleSheet, Text, View } from "react-native";
 
 // Import Screens
-import RegisterScreen from "./screens/Register";
+
 import BottomNav from "./routes/BottomNav";
 import SplashScreen from "./screens/SplashScreen";
 import LoginScreen from "./screens/Login";
@@ -35,14 +35,13 @@ export default App = () => {
           // Hiding header for Splash Screen
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="Login"
           component={LoginScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="BottomNavigation"
+          name="BottomNav"
           component={BottomNav}
           // Hiding header for Navigation Drawer as we will use our custom header
           options={{ headerShown: false }}

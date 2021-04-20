@@ -89,20 +89,29 @@ const styles = StyleSheet.create({
     height: 48,
     backgroundColor: "#2A9D8F",
     borderRadius: 8,
-    padding: 16,
+    justifyContent: "center",
     margin: 16,
   },
   btnAdd: {
     color: "#fff",
-    height: 40,
-    backgroundColor: "#2A9D8F",
+    height: 48,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#2A9D8F",
     borderRadius: 8,
-    padding: 12,
-    margin: 16,
-    alignSelf: "center",
-    left: 130,
+
+    marginBottom: 32,
+    marginHorizontal: 16,
+
+    justifyContent: "center",
   },
-  textUpdate: { color: "white", textAlign: "center" },
+  textUpdate: {
+    fontFamily: "bold",
+    fontSize: 16,
+    color: "white",
+    textAlign: "center",
+  },
+  textAdd: { fontFamily: "bold", color: "#2A9D8F", textAlign: "center" },
   itemContainer: {
     flex: 1,
     flexDirection: "row",
@@ -259,11 +268,13 @@ class scriptdetail extends Component {
       .then((res) => {
         // Message('Tạo thành công', true, this.props);
         // message.success("Cập nhật thành công");
+        alert("Cập nhật kịch bản thành công");
         console.log("update success");
       })
       .catch((err) => {
         // Message('Tạo thất bại', false);
         // message.error("Cập nhật thất bại");
+        alert("Cập nhật kịch bản thất bại");
         console.log("update fails");
       });
   };
@@ -348,25 +359,8 @@ class scriptdetail extends Component {
             </TouchableOpacity>
             <View>
               <View>
-                <Text style={{ zIndex: 9, marginLeft: 10 }}>Timeline</Text>
+                <Text style={styles.Label}>Timeline</Text>
               </View>
-              <TouchableOpacity
-                style={styles.btnAdd}
-                underlayColor="#fff"
-                onPress={() =>
-                  this.setState({
-                    visible: true,
-                    editDetailData: {
-                      name: "",
-                      time: new Date(),
-                      description: "",
-                    },
-                    addScriptDetails: true,
-                  })
-                }
-              >
-                <Text style={styles.textUpdate}>+ Thêm</Text>
-              </TouchableOpacity>
             </View>
             <View>
               <FlatList
@@ -395,6 +389,23 @@ class scriptdetail extends Component {
                 )}
               ></FlatList>
             </View>
+            <TouchableOpacity
+              style={styles.btnAdd}
+              underlayColor="#fff"
+              onPress={() =>
+                this.setState({
+                  visible: true,
+                  editDetailData: {
+                    name: "",
+                    time: new Date(),
+                    description: "",
+                  },
+                  addScriptDetails: true,
+                })
+              }
+            >
+              <Text style={styles.textAdd}>+ Thêm</Text>
+            </TouchableOpacity>
           </View>
           <Modal
             closable

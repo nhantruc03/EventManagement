@@ -4,8 +4,8 @@ import { SafeAreaView, View, Text, Image, StyleSheet } from "react-native";
 
 import { FlatList } from "react-native-gesture-handler";
 import { SearchBar } from "react-native-elements";
-import Search from "./helper/search";
-import Url from "../env";
+import Search from "../helper/search";
+import Url from "../../env";
 import { ActivityIndicator } from "@ant-design/react-native";
 
 const styles = StyleSheet.create({

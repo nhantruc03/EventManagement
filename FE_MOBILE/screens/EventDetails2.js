@@ -1,16 +1,16 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import OrgTab from "../components/OrgTab";
+import OrgTab from "../components/EventTabs/OrgTab";
 import axios from "axios";
 import Url from "../env";
 import getToken from "../Auth";
-import GuestTab from "../components/GuestTab";
+import GuestTab from "../components/EventTabs/GuestTab";
 import Eventdetails from "../screens/EventDetails";
-import ScriptTab from "../components/ScriptTab";
+import ScriptTab from "../components/EventTabs/ScriptTab";
 import { TabView, SceneMap } from "react-native-tab-view";
 import { TabBar } from "react-native-tab-view";
 import { Dimensions } from "react-native";
-import GroupTab from "../components/GroupTab";
+import GroupTab from "../components/EventTabs/GroupTab";
 import { ActivityIndicator } from "@ant-design/react-native";
 const styles = StyleSheet.create({
   container: {
@@ -249,13 +249,6 @@ export default class EventDetail2 extends Component {
   };
 
   render() {
-    const tabs = [
-      { title: "Thông tin chung" },
-      { title: "Ban tổ chức" },
-      { title: "Kịch bản" },
-      { title: "Hội thoại" },
-      { title: "Khách mời" },
-    ];
     if (this.props.route.params) {
       return (
         <TabView

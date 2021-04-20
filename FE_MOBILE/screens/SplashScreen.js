@@ -16,16 +16,17 @@ export default class SplashScreen extends Component {
     super(props);
     this.state = {
       Loading: false,
-      isLoggined: false,
+      isLoggined: "",
     };
   }
   componentDidMount() {
-    setTimeout(() => {
-      AsyncStorage.getItem("login").then((value) =>
-        navigation.replace(value === null ? "Login" : "BottomNav")
-      );
-      this.setState({ Loading: true });
-      if (this.state.Loading) this.props.navigation.replace("Login");
+    setTimeout(async () => {
+      let login = await AsyncStorage.getItem("login");
+      if (login) {
+        this.props.navigation.replace("BottomNav");
+      } else {
+        this.props.navigation.replace("Login");
+      }
     }, 1000);
   }
 

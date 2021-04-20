@@ -7,18 +7,21 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  Keyboard,
 } from "react-native";
 import Icon from "../assets/images/Show.png";
 import { Dimensions } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 import axios from "axios";
 import Url from "../env";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 
 export default LoginScreen = ({ navigation }) => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [isFalse, setIsFalse] = useState(false);
   const [showPassword, setShowPassword] = useState(true);
   const [focusInputType, setFocusInputType] = useState();
 
@@ -36,15 +39,15 @@ export default LoginScreen = ({ navigation }) => {
       })
       .catch((error) => {
         console.error(error);
+        //alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
       });
 
     if (result !== undefined) {
       console.log("result2", result);
       await AsyncStorage.setItem("login", JSON.stringify(result));
       navigation.replace("BottomNavigation");
-    }
+    } else alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
   };
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.formcontainer}>
@@ -52,7 +55,7 @@ export default LoginScreen = ({ navigation }) => {
         <Text style={styles.h2}>Đăng nhập để tiếp tục</Text>
 
         <View
-          style={{ marginBottom: (H * 21) / 667, marginTop: (H * 59) / 667 }}
+          style={{ marginBottom: (H * 21) / 667, marginTop: (H * 48) / 667 }}
         >
           <Text style={styles.textBox}>Tên đăng nhập</Text>
           <View style={styles.boxSection}>
@@ -73,7 +76,6 @@ export default LoginScreen = ({ navigation }) => {
 
         <View>
           <Text style={styles.textBox}>Mật khẩu</Text>
-
           <View style={styles.boxSection}>
             <TouchableOpacity
               style={styles.Icon}

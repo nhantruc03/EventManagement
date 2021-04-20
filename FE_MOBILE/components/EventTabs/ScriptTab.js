@@ -1,16 +1,10 @@
 import React, { Component } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  KeyboardAvoidingView,
-} from "react-native";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import axios from "axios";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import moment from "moment";
 import { Modal, Provider } from "@ant-design/react-native";
-import ScriptCreateModal from "../components/ScriptCreateModal";
+import ScriptCreateModal from "../ScriptCreateModal";
 
 const H = Dimensions.get("window").height;
 
@@ -101,6 +95,10 @@ export default class ScriptTab extends Component {
   };
 
   render() {
+    const footerButtons = [
+      { text: "Cancel", onPress: () => console.log("cancel") },
+      { text: "Ok", onPress: () => console.log("ok") },
+    ];
     // console.log("data", this.state.data);
     if (this.state.data) {
       return (
@@ -143,13 +141,14 @@ export default class ScriptTab extends Component {
             >
               <Text style={styles.textUpdate}>Tạo mới</Text>
             </TouchableOpacity>
+
             <Modal
-              closable
-              maskClosable
-              popup
-              visible={this.state.visible}
-              animationType="slide-up"
+              title="Tạo mới"
+              transparent
               onClose={this.onClose}
+              maskClosable
+              visible={this.state.visible}
+              closable
             >
               <ScriptCreateModal
                 onClose={this.onClose}

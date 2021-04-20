@@ -8,22 +8,12 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import Search from "./helper/search";
-
+import Search from "../helper/search";
 import axios from "axios";
-import Url from "../env";
-import getToken from "../Auth";
+import Url from "../../env";
+import getToken from "../../Auth";
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    marginVertical: 8,
-    marginLeft: 16,
-  },
-  headerText: {
-    fontFamily: "bold",
-    fontSize: 16,
-    color: "#AAB0B6",
-  },
   itemContainer: {
     flex: 1,
     flexDirection: "row",

@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 200,
   },
-  tagContainer: { flex: 1, flexDirection: "row", },
+  tagContainer: { flex: 1, flexDirection: "row" },
   tagContent: {
     marginVertical: 4,
     fontFamily: "regular",
@@ -129,6 +129,7 @@ export default class EventDetail extends Component {
   }
 
   render() {
+    console.log(this.state.data);
     if (this.state.data) {
       return (
         <ScrollView style={styles.formContainer}>
@@ -140,13 +141,25 @@ export default class EventDetail extends Component {
           <Text style={styles.description}>{this.state.data.description}</Text>
           <View style={styles.tagContainer}>
             {this.state.data.tag.map((value, key) => (
-              <View style={{ backgroundColor: value.background, marginRight: 10, paddingHorizontal: 10, borderRadius: 16 }} key={key}>
-                <Text style={{
-                  color: value.color,
-                  marginVertical: 4,
-                  fontFamily: "regular",
-                  fontSize: 16,
-                }}>{value.name}</Text>
+              <View
+                style={{
+                  backgroundColor: value.background,
+                  marginRight: 10,
+                  paddingHorizontal: 10,
+                  borderRadius: 16,
+                }}
+                key={key}
+              >
+                <Text
+                  style={{
+                    color: value.color,
+                    marginVertical: 4,
+                    fontFamily: "regular",
+                    fontSize: 16,
+                  }}
+                >
+                  {value.name}
+                </Text>
               </View>
             ))}
           </View>

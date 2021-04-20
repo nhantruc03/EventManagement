@@ -13,7 +13,11 @@ import {
 import moment from "moment";
 import { ActivityIndicator } from "react-native";
 import HTML from "react-native-render-html";
-import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
+import {
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+} from "react-native-gesture-handler";
 import { Image, FlatList } from "react-native";
 import StepIndicator from "react-native-step-indicator";
 const Step = Steps.Step;
@@ -37,6 +41,7 @@ const styles = StyleSheet.create({
   stepIndicator: {
     // marginVertical: 50,
     paddingHorizontal: 20,
+    maxHeight: 500,
   },
   rowItem: {
     flex: 3,
@@ -56,8 +61,18 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     marginRight: 8,
   },
-  timeText: { fontFamily: "bold", fontSize: 16, color: "#264653" },
-  nameText: { fontFamily: "semibold", fontSize: 14, color: "#3A3A3A" },
+  timeText: {
+    fontFamily: "bold",
+    fontSize: 16,
+    color: "#264653",
+    position: "relative",
+  },
+  nameText: {
+    fontFamily: "semibold",
+    fontSize: 14,
+    color: "#3A3A3A",
+    maxWidth: 64,
+  },
 });
 
 const labels = [
@@ -68,9 +83,9 @@ const labels = [
   "Track",
 ];
 const customStyles = {
-  stepIndicatorSize: 30,
-  currentStepIndicatorSize: 40,
-  separatorStrokeWidth: 3,
+  stepIndicatorSize: 25,
+  currentStepIndicatorSize: 30,
+  separatorStrokeWidth: 2,
   currentStepStrokeWidth: 5,
   stepStrokeCurrentColor: "#fe7013",
   separatorFinishedColor: "#2A9D8F",
@@ -86,6 +101,7 @@ const customStyles = {
   labelColor: "#666666",
   labelSize: 15,
   currentStepLabelColor: "#fe7013",
+  maxHeight: 3750,
 };
 
 class scriptview extends Component {
@@ -249,7 +265,6 @@ class scriptview extends Component {
             <StepIndicator
               customStyles={customStyles}
               stepCount={this.state.data.length}
-              // stepCount={15}
               direction="vertical"
               currentPosition={this.state.currentScript}
               labels={this.state.data.map((item) => (
@@ -263,7 +278,7 @@ class scriptview extends Component {
             />
           </View>
           <FlatList
-            style={{ flexGrow: 1 }}
+            style={{ marginHorizontal: 8, flexGrow: 1 }}
             data={this.state.data}
             renderItem={this.renderPage}
             keyExtractor={(item) => item._id}

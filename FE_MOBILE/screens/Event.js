@@ -225,7 +225,7 @@ export default class Event extends Component {
       { title: "Sắp tới" },
       { title: "Đã xong" },
     ];
-    console.log(this.state.data);
+    //console.log(this.state.data);
     return (
       <View style={styles.container}>
         <Text style={styles.toplabel}>Sự kiện</Text>

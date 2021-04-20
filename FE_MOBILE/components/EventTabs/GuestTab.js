@@ -8,12 +8,12 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import Search from "./helper/search";
-import Unchecked from "../assets/images/Unchecked.png";
-import Checked from "../assets/images/Checked.png";
+import Search from "../helper/search";
+import Unchecked from "../../assets/images/Unchecked.png";
+import Checked from "../../assets/images/Checked.png";
 import axios from "axios";
-import Url from "../env";
-import getToken from "../Auth";
+import Url from "../../env";
+import getToken from "../../Auth";
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -118,8 +118,8 @@ export default class GuestTab extends Component {
   };
   render() {
     //let temp_listActions = this.applyFilter(this.props.sectionListData);
-    console.log(this.state.data);
-    let result = this.state.data.reduce((list, item) => {
+
+    let result = this.state.SearchData.reduce((list, item) => {
       let temp_list = list.filter((e) => e._id === item.guestTypeId._id); //điều kiện gom nhóm
       let temp_O =
         temp_list.length > 0
@@ -138,13 +138,12 @@ export default class GuestTab extends Component {
       }
       return list;
     }, []);
-
     return (
       <SafeAreaView>
         <Search
-          target="name"
-          targetparent="data"
-          data={this.state.SearchData}
+          target={["name", "phone"]}
+          multi={true}
+          data={this.state.data}
           getSearchData={(e) => this.getSearchData1(e)}
         ></Search>
         <SectionList
