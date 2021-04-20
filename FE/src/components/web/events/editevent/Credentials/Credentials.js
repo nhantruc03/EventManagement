@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import TableData from '../../addevent/EventAssign/TableData';
-import { Button, message } from 'antd';
+import TableData from './TableData';
+import { message } from 'antd';
 import Search from '../../../helper/search';
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
@@ -29,8 +29,7 @@ class EventAssign extends Component {
         let data = {
             _id: info._id,
             userId: info.userId._id,
-            roleId: info.roleId._id,
-            facultyId: info.facultyId._id,
+            credentialsId: info.credentialsId,
             eventId: this.props.eventId
         }
 
@@ -44,8 +43,7 @@ class EventAssign extends Component {
                 temp_data.forEach((value) => {
                     if (value.userId._id === info.userId._id) {
                         value.userId = info.userId;
-                        value.roleId = info.roleId;
-                        value.facultyId = info.facultyId;
+                        value.credentialsId = info.credentialsId
                     }
                 });
                 this.props.update(temp_data);
@@ -77,28 +75,10 @@ class EventAssign extends Component {
             data: data
         })
     }
-    deleteClick = async (id) => {
-        await trackPromise(
-            axios.delete('/api/event-assign/' + id, {
-                headers: {
-                    'Authorization': { AUTH }.AUTH
-                }
-            })
-                .then(res => {
 
-                    let temp = this.props.data.filter(e => e._id !== res.data.data._id)
-                    this.setState({
-                        data: temp
-                    })
-                    this.props.update(temp, res.data.data.userId)
-                    message.success('Xóa thành công')
-                })
-                .catch(err => {
-                    message.success('Xóa thất bại')
-                }))
-    }
 
     getlistpage = (SearchData) => {
+        // console.log('page', Math.ceil(SearchData.length / this.state.postsPerPage))
         return Math.ceil(SearchData.length / this.state.postsPerPage);
     }
 
@@ -119,25 +99,8 @@ class EventAssign extends Component {
             <div >
                 <div className="flex-container-row" style={{ marginBottom: '20px' }}>
                     <Search targetParent="userId" target="name" data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
-                    {!this.props.noBigAction ?
-                        <>
-                            <Button className="flex-row-item-right add" style={{ marginRight: '10px' }} onClick={() => this.props.onAddClick()}>Thêm ban tổ chức</Button>
-                            <input
-                                // ref={this.selectedFile}
-                                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                                ref={input => this.selectedFile = input}
-                                type="file"
-                                onChange={e => {
-                                    const file = e.target.files[0];
-                                    this.props.uploadExcelFile(file)
-                                }}
-                                style={{ display: 'none' }}
-                            />
-                            <Button className="add" onClick={() => this.selectedFile.click()} >Tải lên file</Button>
-                        </> : null
-                    }
                 </div>
-                <TableData deleteClick={(id) => this.deleteClick(id)} canDelete={this.props.canDelete} listFaculty={this.props.listFaculty} listRole={this.props.listRole} getUserEditInfo={(info) => this.getUserEditInfo(info)} dataUser={this.getCurData(this.state.data)} />
+                <TableData canDelete={this.props.canDelete} listCredentials={this.props.listCredentials} getUserEditInfo={(info) => this.getUserEditInfo(info)} dataUser={this.getCurData(this.state.data)} />
                 {this.getlistpage(this.state.data) > 1 ?
                     <Pagination
                         totalPosts={this.state.data.length}

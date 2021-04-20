@@ -29,6 +29,9 @@ import GuestView from "./forGuest/guestView";
 import { Link } from "react-router-dom";
 import moment from 'moment';
 import ChatRoom from '../../chat/ChatRoom'
+import * as constants from "../../constant/actions"
+import getPermission from "../../helper/Credentials"
+import checkPermisson from "../../helper/checkPermissions"
 const { TabPane } = Tabs;
 
 class eventDetails extends Component {
@@ -46,7 +49,8 @@ class eventDetails extends Component {
       listRole: [],
       listFaculty: [],
       listGroups: [],
-      currentUser: JSON.parse(localStorage.getItem('login'))
+      currentUser: JSON.parse(localStorage.getItem('login')),
+      currentPermissions: []
     }
   }
 
@@ -112,7 +116,6 @@ class eventDetails extends Component {
         ),
     ]));
 
-    console.log(event)
 
     let guests = null
     if (guestTypes !== null) {
@@ -149,13 +152,17 @@ class eventDetails extends Component {
         } else {
           status = 'Đang diễn ra';
         }
+
+        let permissions = await getPermission(this.props.match.params.id)
+
         this.setState({
           data: event,
           listEventAssign: listEventAssign,
           listRole: roles,
           listFaculty: faculties,
           status: status,
-          listGroups: groups
+          listGroups: groups,
+          currentPermissions: permissions
         })
         if (guestTypes !== null) {
           this.setState({
@@ -205,15 +212,17 @@ class eventDetails extends Component {
     return (
       <Tabs defaultActiveKey="1">
         <TabPane tab="Danh sách ban tổ chức" key="1"><ListAvailUser listusers={this.state.data.availUser} /></TabPane>
-        <TabPane tab="Phân nhóm" key="2">
-          <EventAssign
-            noBigAction={true}
-            update={this.updateEventAssign}
-            eventId={this.props.match.params.id}
-            listRole={this.state.listRole}
-            listFaculty={this.state.listFaculty}
-            data={this.state.listEventAssign} />
-        </TabPane>
+        {checkPermisson(this.state.currentPermissions, constants.QL_BANTOCHUC_PERMISSION) ?
+          <TabPane tab="Phân nhóm" key="2">
+            <EventAssign
+              noBigAction={true}
+              update={this.updateEventAssign}
+              eventId={this.props.match.params.id}
+              listRole={this.state.listRole}
+              listFaculty={this.state.listFaculty}
+              data={this.state.listEventAssign} />
+          </TabPane>
+          : null}
       </Tabs>
 
     );
@@ -251,7 +260,7 @@ class eventDetails extends Component {
                   Chi tiết
                                 </Breadcrumb.Item>
               </Breadcrumb>
-              {this.state.currentUser.role === 'Admin' ?
+              {checkPermisson(this.state.currentPermissions, constants.QL_SUKIEN_PERMISSION) ?
                 <Button onClick={() => { this.props.history.push(`/editevent/${this.props.match.params.id}`) }} className="add flex-row-item-right">Chỉnh sửa</Button>
                 : null
               }
@@ -282,7 +291,9 @@ class eventDetails extends Component {
 
                 <div className="flex-container-row" style={{ marginTop: '10px' }}>
                   <Title className="event-detail-title" level={4}>Khách mời</Title>
-                  <Button className="flex-row-item-right" onClick={() => this.setModal2Visible2(true)}>Chỉnh sửa</Button>
+                  {checkPermisson(this.state.currentPermissions, constants.QL_KHACHMOI_PERMISSION) ?
+                    <Button className="flex-row-item-right" onClick={() => this.setModal2Visible2(true)}>Chỉnh sửa</Button>
+                    : null}
                 </div>
 
                 <Tabs defaultActiveKey="1" >
@@ -315,9 +326,11 @@ class eventDetails extends Component {
                 <div className="flex-container-row" style={{ marginBottom: '10px' }}>
                   {/* <Title className="event-detail-title" level={3}>Kịch bản</Title> */}
                   <Title level={4}>Kịch bản</Title>
-                  <Button className="flex-row-item-right add" ><Link to={`/addscripts/${this.props.match.params.id}`}>Thêm</Link></Button>
+                  {checkPermisson(this.state.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
+                    <Button className="flex-row-item-right add" ><Link to={`/addscripts/${this.props.match.params.id}`}>Thêm</Link></Button>
+                    : null}
                 </div>
-                <ListScripts eventId={this.props.match.params.id} />
+                <ListScripts currentPermissions={this.state.currentPermissions} eventId={this.props.match.params.id} />
               </Col>
               <Col sm={24} xl={8} className="event-detail">
                 {/* <Title className="event-detail-title" level={3}>Phòng hội thoại</Title> */}

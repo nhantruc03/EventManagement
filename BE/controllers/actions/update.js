@@ -4,9 +4,20 @@ const notifications = require('../../models/notifications')
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
 const { pick, isEmpty } = require('lodash')
+const constants = require("../../constants/actions")
+const Permission = require("../../helper/Permissions")
 const update = async (req, res) => {
   let sessions = []
   try {
+    //check permissson
+    const doc = await Actions.findOne({ _id: req.params.id, isDeleted: false })
+    let permissons = await Permission.getPermission(req.body.eventId, req.user._id, req.user.roleId._id)
+    if (!Permission.checkPermission(permissons, constants.QL_CONGVIEC_PERMISSION) && !doc.managerId === req.user._id) {
+      return res.status(406).json({
+        success: false,
+        error: "Permission denied!"
+      })
+    }
     const queryOld = {
       $and: [
         { name: req.body.name },
@@ -29,6 +40,7 @@ const update = async (req, res) => {
         "coverUrl",
         "availUser",
         "actionTypeId",
+        "managerId",
         "managerId_change",
         "availUser_change")
     }

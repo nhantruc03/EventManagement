@@ -74,6 +74,12 @@ const Actions = new Schema(
         require: true
       }
     ],
+    managerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users',
+      index: true,
+      require: true
+    },
     isDeleted: {
       type: Boolean,
       required: true,

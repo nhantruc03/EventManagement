@@ -14,7 +14,8 @@ const handleBody = (body) => {
         "userId",
         "eventId",
         "roleId",
-        "facultyId"
+        "facultyId",
+        "credentialsId"
       )
     }
   }

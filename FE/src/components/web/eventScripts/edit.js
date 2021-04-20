@@ -96,13 +96,13 @@ class edit extends Component {
     onFinish = async (values) => {
         let data = {
             ...values,
-            'writerId': this.state.data.writerId,
-            'listscriptdetails': this.state.listscriptdetails,
-            // 'eventId': this.props.match.params.id
+            // 'writerId': this.state.data.writerId,
+            // 'listscriptdetails': this.state.listscriptdetails,
+            'eventId': this.props.match.params.id
         }
 
         console.log('Received values of form: ', data);
-        await trackPromise(Axios.put('/api/scripts/'+ this.props.match.params.id, data, {
+        await trackPromise(Axios.put('/api/scripts/' + this.props.match.params.id, data, {
             headers: {
                 'Authorization': { AUTH }.AUTH
             }
@@ -149,6 +149,10 @@ class edit extends Component {
                             return temp_a > temp_b ? 1 : -1
                         })
                     })
+                    message.success("Cập nhật chi tiết kịch bản thành công")
+                })
+                .catch(err => {
+                    message.error("Cập nhật chi tiết kịch bản thất bại")
                 })
         )
 
@@ -167,6 +171,10 @@ class edit extends Component {
                     this.setState({
                         listscriptdetails: [...this.state.listscriptdetails, temp]
                     })
+                    message.success("Thêm chi tiết kịch bản thành công")
+                })
+                .catch(err => {
+                    message.error("Thêm chi tiết kịch bản thất bại")
                 })
         )
 
@@ -174,7 +182,7 @@ class edit extends Component {
 
     onDeleteDetail = async (value) => {
         await trackPromise(
-            Axios.delete("/api/script-details/" + value, {
+            Axios.delete("/api/script-details/" + value + `?scriptId=${this.props.match.params.id}`, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
@@ -184,6 +192,10 @@ class edit extends Component {
                     this.setState({
                         listscriptdetails: temp
                     })
+                    message.success("Xóa chi tiết kịch bản thành công")
+                })
+                .catch(err => {
+                    message.error("Xóa chi tiết kịch bản thất bại")
                 })
         )
 

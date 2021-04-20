@@ -32,6 +32,13 @@ const EventAssign = new Schema(
       required: true,
       default: false,
     },
+    credentialsId: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'credentials',
+        index: true,
+      }
+    ],
     isDeleted: {
       type: Boolean,
       required: true,

@@ -32,6 +32,10 @@ import GuestView from "./Guest/guestView";
 import GroupView from "./Group/groupView";
 import { w3cwebsocket } from 'websocket';
 import * as XLSX from 'xlsx'
+import Credentials from "./Credentials/Credentials";
+import * as constants from "../../constant/actions"
+import checkPermission from "../../helper/checkPermissions"
+import getPermission from "../../helper/Credentials"
 const client = new w3cwebsocket('ws://localhost:3001');
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -64,7 +68,9 @@ class editevent extends Component {
             listEventAssign: [],
             listRole: [],
             listFaculty: [],
+            listCredentials: [],
             data: null,
+            currentPermission: []
         }
     }
 
@@ -88,7 +94,7 @@ class editevent extends Component {
 
                     client.send(JSON.stringify({
                         type: "sendListNotifications",
-                        notification: res.data.notification
+                        notifications: res.data.notification
                     }))
 
                     message.success('Thêm thành công')
@@ -153,7 +159,7 @@ class editevent extends Component {
 
     async componentDidMount() {
         this._isMounted = true;
-        const [users, eventTypes, tags, faculties, roles, event, listeventassign, guesttypes, groups] = await trackPromise(Promise.all([
+        const [users, eventTypes, tags, faculties, roles, event, listeventassign, guesttypes, groups, credentials] = await trackPromise(Promise.all([
             axios.post('/api/users/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -225,7 +231,15 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                )
+                ),
+            axios.post('/api/credentials/getAll', {}, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then((res) =>
+                    res.data.data
+                ),
 
         ]));
 
@@ -267,6 +281,8 @@ class editevent extends Component {
                     temp_userForEvent.push(e.userId._id)
                 })
                 let temp_userNotInEvent = users.filter(e => !temp_userForEvent.includes(e._id))
+
+                let permissions = await getPermission(this.props.match.params.id)
                 // prepare state
                 this.setState({
                     listRole: roles,
@@ -279,7 +295,9 @@ class editevent extends Component {
                     listtags: tags,
                     listguesttype: guesttypes,
                     listguest: guests,
-                    listgroups: groups
+                    listgroups: groups,
+                    listCredentials: credentials,
+                    currentPermission: permissions
                 })
             }
         }
@@ -588,6 +606,7 @@ class editevent extends Component {
                                             >
                                                 <Input placeholder="Địa điểm..." />
                                             </Form.Item>
+                                            {checkPermission(this.state.currentPermission, constants.QL_SUKIEN_PERMISSION)}
                                             <Row>
                                                 <Col span={24} style={{ marginTop: '20px' }}>
                                                     <div style={{ textAlign: 'center' }}>
@@ -628,7 +647,9 @@ class editevent extends Component {
                                     <TabPane tab='Phòng hội thoại' key={4}>
                                         <GroupView canDelete={true} eventId={this.props.match.params.id} update={this.updatelistgroup} data={this.state.listgroups}></GroupView>
                                     </TabPane>
-
+                                    <TabPane tab='Phân quyền' key={5}>
+                                        <Credentials canDelete={false} update={this.updateEventAssign} eventId={this.props.match.params.id} listCredentials={this.state.listCredentials} data={this.state.listEventAssign} />
+                                    </TabPane>
                                 </Tabs>
                             </Col>
                         </Row>

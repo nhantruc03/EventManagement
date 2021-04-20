@@ -1,10 +1,24 @@
 const ScriptDetails = require('../../models/scriptDetails')
+const Scripts = require("../../models/scripts")
 const { handleBody } = require('./handleBody')
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
+const constants = require("../../constants/actions")
+const Permission = require("../../helper/Permissions")
 const update = async (req, res) => {
   let sessions = []
   try {
+    //check permission
+    const temp_scriptdetails = await ScriptDetails.findById(req.params.id)
+    const doc = await Scripts.findOne({ _id: temp_scriptdetails.scriptId, isDeleted: false })
+    let permissons = await Permission.getPermission(doc.eventId, req.user._id, req.user.roleId._id)
+    if (!Permission.checkPermission(permissons, constants.QL_KICHBAN_PERMISSION)) {
+      return res.status(406).json({
+        success: false,
+        error: "Permission denied!"
+      })
+    }
+
     const queryOld = {
       $and: [
         { name: req.body.name },

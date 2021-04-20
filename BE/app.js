@@ -146,36 +146,36 @@ app.use('/api/images', express.static('images'));
 app.use('/api/resources', express.static('resources'));
 // Routes
 // app.use("/api/medicines", authenticateToken, require("./routes/medicines"));
-app.use("/api/users", require("./routes/users"));
-app.use("/api/actions", require("./routes/actions"));
-app.use("/api/sub-actions", require("./routes/subActions"));
-app.use("/api/action-tags", require("./routes/actionTags"));
-app.use("/api/action-priorities", require("./routes/actionPriorities"));
-app.use("/api/action-types", require("./routes/actionTypes"));
-app.use("/api/event-types", require("./routes/eventTypes"));
-app.use("/api/events", require("./routes/events"));
-app.use("/api/tags", require("./routes/tags"));
-app.use("/api/action-assign", require("./routes/actionAssign"));
-app.use("/api/action-resources", require("./routes/actionResources"));
-app.use("/api/event-assign", require("./routes/eventAssign"));
-app.use("/api/roles", require("./routes/roles"));
-app.use("/api/system-roles", require("./routes/systemRoles"));
-app.use("/api/credentials", require("./routes/credentials"));
-app.use("/api/groups", require("./routes/groups"));
-app.use("/api/chat-message", require("./routes/chatMessages"));
-app.use("/api/scripts", require("./routes/scripts"));
-app.use("/api/script-details", require("./routes/scriptDetails"));
-app.use("/api/guests", require("./routes/guests"));
-app.use("/api/guest-types", require("./routes/guestTypes"));
-app.use("/api/faculties", require("./routes/faculties"));
-app.use("/api/notifications", require("./routes/notifications"));
+app.use("/api/users", authenticateToken, require("./routes/users"));
+app.use("/api/actions", authenticateToken, require("./routes/actions"));
+app.use("/api/sub-actions", authenticateToken, require("./routes/subActions"));
+app.use("/api/action-tags", authenticateToken, require("./routes/actionTags"));
+app.use("/api/action-priorities", authenticateToken, require("./routes/actionPriorities"));
+app.use("/api/action-types", authenticateToken, require("./routes/actionTypes"));
+app.use("/api/event-types", authenticateToken, require("./routes/eventTypes"));
+app.use("/api/events", authenticateToken, require("./routes/events"));
+app.use("/api/tags", authenticateToken, require("./routes/tags"));
+app.use("/api/action-assign", authenticateToken, require("./routes/actionAssign"));
+app.use("/api/action-resources", authenticateToken, require("./routes/actionResources"));
+app.use("/api/event-assign", authenticateToken, require("./routes/eventAssign"));
+app.use("/api/roles", authenticateToken, require("./routes/roles"));
+app.use("/api/system-roles", authenticateToken, require("./routes/systemRoles"));
+app.use("/api/credentials", authenticateToken, require("./routes/credentials"));
+app.use("/api/groups", authenticateToken, require("./routes/groups"));
+app.use("/api/chat-message", authenticateToken, require("./routes/chatMessages"));
+app.use("/api/scripts", authenticateToken, require("./routes/scripts"));
+app.use("/api/script-details", authenticateToken, require("./routes/scriptDetails"));
+app.use("/api/guests", authenticateToken, require("./routes/guests"));
+app.use("/api/guest-types", authenticateToken, require("./routes/guestTypes"));
+app.use("/api/faculties", authenticateToken, require("./routes/faculties"));
+app.use("/api/notifications", authenticateToken, require("./routes/notifications"));
 
 
 app.post("/api/uploads", (req, res) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send('No files were uploaded.');
   }
-  
+
   let sampleFile = req.files.file;
   let extension = mime.extension(sampleFile.mimetype);
   const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
@@ -197,7 +197,7 @@ app.post("/api/upload-resources/:id", (req, res) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send('No files were uploaded.');
   }
-  
+
   let sampleFile = req.files.file;
 
   let extension = mime.extension(sampleFile.mimetype);

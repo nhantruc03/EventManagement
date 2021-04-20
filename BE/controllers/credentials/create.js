@@ -7,10 +7,7 @@ const create = async (req, res) => {
   let sessions = []
   try {
     const query = {
-      $and: [
-        { roleId: req.body.roleId },
-        { userId: req.body.userId },
-      ],
+      name: req.body.name,
       isDeleted: false
     } // for oldDocs
 

@@ -23,6 +23,10 @@ import addroles from '../components/web/roles/add';
 import editroles from '../components/web/roles/edit';
 import roles from '../components/web/roles/list';
 
+import addcredentials from '../components/web/credentials/add';
+import edicredentials from '../components/web/credentials/edit';
+import credentials from '../components/web/credentials/list';
+
 import addsystemroles from '../components/web/systemRoles/add';
 import editsystemroles from '../components/web/systemRoles/edit';
 import systemroles from '../components/web/systemRoles/list';
@@ -95,6 +99,10 @@ class router extends Component {
                 <SecureRouteAdmin exact path="/listroles" component={roles} layout={Page} />
                 <SecureRouteAdmin exact path="/addroles" component={addroles} layout={Page} />
                 <SecureRouteAdmin exact path="/editroles/:id" component={editroles} layout={Page} />
+
+                <SecureRouteAdmin exact path="/listcredentials" component={credentials} layout={Page} />
+                <SecureRouteAdmin exact path="/addcredentials" component={addcredentials} layout={Page} />
+                <SecureRouteAdmin exact path="/editcredentials/:id" component={edicredentials} layout={Page} />
 
                 <SecureRouteAdmin exact path="/listsystemroles" component={systemroles} layout={Page} />
                 <SecureRouteAdmin exact path="/addsystemroles" component={addsystemroles} layout={Page} />

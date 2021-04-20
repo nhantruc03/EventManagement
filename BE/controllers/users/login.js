@@ -38,6 +38,7 @@ const login = async (req, res) => {
       name: user.name,
       id: user._id,
       role: user.roleId.name,
+      roleId: user.roleId._id,
       photoUrl: user.photoUrl
     }
 
