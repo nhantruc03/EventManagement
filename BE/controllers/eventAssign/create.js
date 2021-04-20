@@ -5,9 +5,22 @@ const { commitTransactions, abortTransactions } = require('../../services/transa
 const notifications = require("../../models/notifications")
 const Events = require('../../models/events');
 const { pick } = require("lodash")
+
+const constants = require("../../constants/actions")
+const Permission = require("../../helper/Permissions")
+
 const create = async (req, res) => {
   let sessions = []
   try {
+    //check permissson
+    let permissons = await Permission.getPermission(req.body.eventId, req.user._id, req.user.roleId._id)
+    if (!Permission.checkPermission(permissons, constants.QL_BANTOCHUC_PERMISSION)) {
+      return res.status(406).json({
+        success: false,
+        error: "Permission denied!"
+      })
+    }
+    // create
     const query = {
       $and: [
         { userId: req.body.userId },
@@ -15,15 +28,6 @@ const create = async (req, res) => {
       ],
       isDeleted: false
     } // for oldDocs
-
-    // Handle data
-    // const { error, body } = handleBody(req.body) // for newDoc
-    // if (error) {
-    //   return res.status(406).json({
-    //     success: false,
-    //     error: error
-    //   })
-    // }
 
     let body = []
     req.body.forEach(element => {

@@ -3,9 +3,19 @@ const { handleBody } = require('./handleBody')
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
 const { pick } = require('lodash')
+const constants = require("../../constants/actions")
+const Permission = require("../../helper/Permissions")
 const update = async (req, res) => {
   let sessions = []
   try {
+    //check permissson
+    let permissons = await Permission.getPermission(req.body.eventId, req.user._id, req.user.roleId._id)
+    if (!Permission.checkPermission(permissons, constants.QL_KHACHMOI_PERMISSION)) {
+      return res.status(406).json({
+        success: false,
+        error: "Permission denied!"
+      })
+    }
     const queryOld = {
       $and: [
         { name: req.body.name },

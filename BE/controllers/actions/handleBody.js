@@ -21,7 +21,8 @@ const handleBody = (body) => {
         "facultyId",
         "coverUrl",
         "availUser",
-        "actionTypeId"
+        "actionTypeId",
+        "managerId"
       )
     }
   }

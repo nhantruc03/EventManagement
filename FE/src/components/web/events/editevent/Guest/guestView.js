@@ -77,7 +77,7 @@ class guestView extends Component {
                     message.success('Xóa thành công');
                 })
                 .catch(err => {
-                    message.success('Xóa thất bại');
+                    message.error('Xóa thất bại');
                 }))
     }
 

@@ -11,6 +11,7 @@ import { trackPromise } from 'react-promise-tracker';
 import Loader from 'react-loader-spinner';
 import { Link } from 'react-router-dom';
 import { Upload } from 'antd';
+import { AUTH } from '../../env'
 const client = new w3cwebsocket('ws://localhost:3001');
 class ChatRoom extends Component {
     constructor(props) {
@@ -27,7 +28,11 @@ class ChatRoom extends Component {
         }
     }
     getData = async () => {
-        const temp = await trackPromise(axios.post('/api/chat-message/getAll?page=1&limit=15', { roomId: this.props.roomId })
+        const temp = await trackPromise(axios.post('/api/chat-message/getAll?page=1&limit=15', { roomId: this.props.roomId }, {
+            headers: {
+                'Authorization': { AUTH }.AUTH
+            }
+        })
             .then((res) =>
                 res.data.data
             ))
@@ -86,7 +91,11 @@ class ChatRoom extends Component {
             roomId: this.props.roomId
         }
 
-        await axios.post('/api/chat-message', message)
+        await axios.post('/api/chat-message', message, {
+            headers: {
+                'Authorization': { AUTH }.AUTH
+            }
+        })
 
 
         client.send(JSON.stringify({
@@ -114,7 +123,11 @@ class ChatRoom extends Component {
             roomId: this.props.roomId
         }
 
-        await axios.post('/api/chat-message', message)
+        await axios.post('/api/chat-message', message, {
+            headers: {
+                'Authorization': { AUTH }.AUTH
+            }
+        })
 
         client.send(JSON.stringify({
             type: "sendMessage",
@@ -138,7 +151,11 @@ class ChatRoom extends Component {
                     onLoadMore: true
                 })
 
-                await axios.post(`/api/chat-message/getAll?page=${this.state.page + 1}&limit=15`, { roomId: this.props.roomId })
+                await axios.post(`/api/chat-message/getAll?page=${this.state.page + 1}&limit=15`, { roomId: this.props.roomId }, {
+                    headers: {
+                        'Authorization': { AUTH }.AUTH
+                    }
+                })
                     .then((res) => {
                         const temp = res.data.data;
                         this.setState({

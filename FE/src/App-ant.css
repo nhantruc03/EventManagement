@@ -1435,3 +1435,7 @@ label {
 .ant-menu-inline, .ant-menu-vertical, .ant-menu-vertical-left {
   border-right: unset;
 }
+
+.btn-group{
+  text-align: center;
+}

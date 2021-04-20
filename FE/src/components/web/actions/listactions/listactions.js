@@ -8,6 +8,9 @@ import { AUTH } from '../../../env'
 import axios from 'axios';
 import Search from "../../helper/search";
 import ActionColumn from './actionColumn';
+import * as constants from "../../constant/actions"
+import checkPermisson from "../../helper/checkPermissions"
+import getPermisson from "../../helper/Credentials"
 const { Option } = Select;
 const formItemLayout = {
     labelCol: {
@@ -28,7 +31,8 @@ class listactions extends Component {
             currentActionTypes: [],
             currentFaculties: null,
             currentActions: [],
-            temp_data: []
+            temp_data: [],
+            currentPermissons: []
         }
     }
 
@@ -51,7 +55,6 @@ class listactions extends Component {
                 }
             })
                 .then((res) => {
-                    console.log(res.data.data)
                     this.setState({
                         currentActionTypes: [...this.state.currentActionTypes, res.data.data]
                     })
@@ -97,7 +100,6 @@ class listactions extends Component {
     }
 
     doneAddAction = (e) => {
-        console.log(e)
         this.setState({
             currentActions: [...this.state.currentActions, e]
         })
@@ -117,8 +119,6 @@ class listactions extends Component {
                 ),
         ]));
 
-        console.log(events)
-
         if (events !== null) {
             if (this._isMounted) {
                 this.setState({
@@ -133,9 +133,7 @@ class listactions extends Component {
     }
 
     onchangeEvent = async (value) => {
-        console.log(value)
         let temp = this.state.events.filter(e => e._id === value)
-        console.log(temp[0])
         this.setState({
             currentEvent: temp[0]
         })
@@ -167,14 +165,15 @@ class listactions extends Component {
                 ),
 
         ]))
-        console.log(actionTypes)
-        console.log('actions', actions)
+
         if (actionTypes !== null && falcuties !== null && actions !== null) {
+            let permissons = await getPermisson(temp[0]._id)
             this.setState({
                 currentActionTypes: actionTypes,
                 currentFaculties: falcuties,
                 currentActions: actions,
-                temp_data: actions
+                temp_data: actions,
+                currentPermissons: permissons
             })
         }
     }
@@ -200,10 +199,11 @@ class listactions extends Component {
                             )
                         })}
                     </div>
-
-                    <Button className="add flex-row-item-right" onClick={() => this.setModalVisible2(true)}>
-                        +
+                    {checkPermisson(this.state.currentPermissons, constants.QL_CONGVIEC_PERMISSION) ?
+                        <Button className="add flex-row-item-right" onClick={() => this.setModalVisible2(true)}>
+                            +
                     </Button>
+                        : null}
                 </div>
             )
 
@@ -213,7 +213,6 @@ class listactions extends Component {
     }
 
     getSearchData = (data) => {
-        console.log('data', data)
         this.setState({
             currentActions: data
         })
@@ -240,9 +239,11 @@ class listactions extends Component {
                                         data={this.state.temp_data}
                                         getSearchData={(e) => this.getSearchData(e)}
                                     />
-                                    <Button disabled={this.state.currentEvent ? false : true} className="add" style={{ marginLeft: '20px' }} onClick={() => this.setModalVisible(true)}>
-                                        Thêm công việc
-                                    </Button>
+                                    {checkPermisson(this.state.currentPermissons, constants.QL_CONGVIEC_PERMISSION) ?
+                                        <Button disabled={this.state.currentEvent ? false : true} className="add" style={{ marginLeft: '20px' }} onClick={() => this.setModalVisible(true)}>
+                                            Thêm công việc
+                                        </Button>
+                                        : null}
                                 </div>
                             </div>
                         </div>

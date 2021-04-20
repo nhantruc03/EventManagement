@@ -9,12 +9,11 @@ const getAll = async (req, res) => {
   const eq = req.query.eq
 
   try {
-    // const query = { isDeleted: false }
     let query
 
     if (!isEmpty(gt)) {
       query = {
-        ...pick(req.body, "isClone"),
+        ...pick(req.body, "isClone", "availUser"),
         startDate: {
           $gt: new Date(gt)
         },
@@ -23,7 +22,7 @@ const getAll = async (req, res) => {
     }
     else if (!isEmpty(lt)) {
       query = {
-        ...pick(req.body, "isClone"),
+        ...pick(req.body, "isClone", "availUser"),
         startDate: {
           $lt: new Date(lt)
         },
@@ -32,7 +31,7 @@ const getAll = async (req, res) => {
     }
     else if (!isEmpty(eq)) {
       query = {
-        ...pick(req.body, "isClone"),
+        ...pick(req.body, "isClone", "availUser"),
         startDate: {
           $eq: new Date(eq)
         },
@@ -41,7 +40,7 @@ const getAll = async (req, res) => {
     }
     else {
       query = {
-        ...pick(req.body, "isClone"),
+        ...pick(req.body, "isClone", "availUser"),
         isDeleted: false
       }
     }

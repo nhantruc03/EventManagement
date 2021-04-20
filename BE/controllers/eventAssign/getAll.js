@@ -6,8 +6,8 @@ const getAll = async (req, res) => {
   const limit = Number(req.query.limit) // limit docs per page
 
   try {
-    const query = { ...pick(req.body, 'eventId'), isDeleted: false }
-    
+    const query = { ...pick(req.body, 'eventId', 'userId'), isDeleted: false }
+
     let docs;
     if (!page || !limit) {
       docs = await EventAssign.find(query)
@@ -15,6 +15,7 @@ const getAll = async (req, res) => {
         .populate({ path: 'roleId', select: 'name' })
         .populate({ path: 'userId', select: 'name phone email mssv photoUrl' })
         .populate({ path: 'facultyId', select: 'name' })
+      // .populate({ path: 'credentialsId', select: 'name' })
     }
     else {
       docs = await EventAssign.find(query)
@@ -24,6 +25,7 @@ const getAll = async (req, res) => {
         .populate({ path: 'roleId', select: 'name' })
         .populate({ path: 'userId', select: 'name phone email mssv photoUrl' })
         .populate({ path: 'facultyId', select: 'name' })
+      // .populate({ path: 'credentialsId', select: 'name' })
     }
     return res.status(200).json({
       success: true,

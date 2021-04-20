@@ -11,8 +11,10 @@ import {
     ZoomInOutlined,
 
 } from '@ant-design/icons';
-
 import moment from 'moment'
+import * as constants from "../constant/actions"
+import checkPermission from "../helper/checkPermissions"
+
 class list extends Component {
     constructor(props) {
         super(props);
@@ -43,59 +45,26 @@ class list extends Component {
                     width: '30%',
                     render: (e) =>
                         <div className="btn-group">
-                            <Tooltip title="Chỉnh sửa" arrow>
-                                <Link to={`/editscripts/${e}`} >
-                                    <Button className="add"><ToolOutlined /></Button>
-                                </Link>
-                            </Tooltip>
-                            <Tooltip title="Xóa" arrow>
-                                <Button onClick={() => this.deleteClick(e)} className="add" ><CloseOutlined /></Button>
-                            </Tooltip>
-                            <Tooltip title="Xem" arrow>
+                            {checkPermission(this.props.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
+                                <>
+                                    <Tooltip title="Chỉnh sửa" arrow>
+                                        <Link to={`/editscripts/${e}`} >
+                                            <Button className="add"><ToolOutlined /></Button>
+                                        </Link>
+                                    </Tooltip>
+                                    <Tooltip title="Xóa" arrow>
+                                        <Button onClick={() => this.deleteClick(e)} className="add" ><CloseOutlined /></Button>
+                                    </Tooltip>
+                                </>
+                                : null}
+                            < Tooltip title="Xem" arrow >
                                 <Link to={`/viewscripts/${e}`} >
                                     <Button className="add" ><ZoomInOutlined /></Button>
                                 </Link>
-                            </Tooltip>
-                        </div>
+                            </Tooltip >
+                        </div >
                 }
             ]
-            // columns: [
-            //     {
-            //         title: 'Tên',
-            //         dataIndex: 'name',
-            //         key: 'name',
-            //     },
-            //     {
-            //         title: 'Người viết',
-            //         dataIndex: 'writerId',
-            //         key: 'writerId',
-            //         render: (e) => <div>{e.name}</div>
-            //     },
-            //     {
-            //         title: 'Dành cho',
-            //         dataIndex: 'forId',
-            //         key: 'forId',
-            //         render: (e) => <div>{e.name}</div>
-            //     },
-            //     {
-            //         title: 'Hành động',
-            //         dataIndex: '_id',
-            //         key: '_id',
-            //         width: '40%',
-            //         render: (e) =>
-            //             <div className="btn-group">
-            //                 <Tooltip title="Chỉnh sửa" arrow>
-            //                     <Link to={`/editscripts/${e}`} >
-            //                         <Button className="add">Sửa</Button>
-            //                     </Link>
-            //                 </Tooltip>
-            //                 <Tooltip title="Xóa" arrow>
-            //                     <Button onClick={() => this.deleteClick(e)} className="back" > Xóa</Button>
-            //                 </Tooltip>
-            //             </div>
-            //     }
-            // ]
-
         }
     }
 
@@ -111,7 +80,6 @@ class list extends Component {
                     res.data.data
                 )
         ]));
-        console.log(scripts)
         if (scripts !== null) {
             if (this._isMounted) {
                 this.setState({
@@ -120,7 +88,6 @@ class list extends Component {
                 })
             }
         }
-
     }
 
     componentWillUnmount() {
@@ -135,7 +102,6 @@ class list extends Component {
     }
 
     deleteClick = async (e) => {
-        console.log(e)
         await trackPromise(
             Axios.delete("/api/scripts/" + e, {
                 headers: {

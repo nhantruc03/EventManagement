@@ -16,6 +16,10 @@ import ResourceCard from './resourceCard/resourceCard';
 import AddSubAction from './subActions/add'
 import EditSubAction from './subActions/edit'
 import EditAction from './editAction/editAction'
+import * as constants from "../../constant/actions"
+import checkPermission from "../../helper/checkPermissions"
+import getPermission from "../../helper/Credentials"
+
 const { TabPane } = Tabs;
 class actionDetails extends Component {
     constructor(props) {
@@ -31,6 +35,8 @@ class actionDetails extends Component {
             currentSubAction: null,
             modalEditActionVisible: false,
             currentStatus: '',
+            currentPermissions: [],
+            currentUser: JSON.parse(localStorage.getItem('login'))
         }
     }
 
@@ -79,7 +85,6 @@ class actionDetails extends Component {
     }
 
     updateAction = (action, manager, actionAssign) => {
-        // console.log(e)
         this.setState({
             data: action,
             manager: manager,
@@ -158,8 +163,8 @@ class actionDetails extends Component {
 
 
         if (action !== null) {
+            console.log(action)
             if (this._isMounted) {
-                console.log(action)
                 let now = moment(new Date().setHours(0, 0, 0, 0))
                 let data_Date = moment(new Date(action.startDate).setHours(0, 0, 0, 0))
                 let temp_status = ''
@@ -171,13 +176,17 @@ class actionDetails extends Component {
                 else {
                     temp_status = 'Đã diễn ra'
                 }
+
+                let permissons = await getPermission(action.eventId._id)
+
                 this.setState({
                     data: action,
                     actionAssign: actionAssign.filter(e => e.role === 2),
                     manager: actionAssign.filter(e => e.role === 1)[0],
                     resources: resources,
                     subActions: subActions,
-                    currentStatus: temp_status
+                    currentStatus: temp_status,
+                    currentPermissions: permissons
                 })
             }
         }
@@ -277,8 +286,16 @@ class actionDetails extends Component {
             <div style={{ marginTop: '10px' }}>
                 { this.state.subActions.map((e, key) =>
                     <div className="flex-container-row" style={{ marginTop: '10px' }} key={key}>
-                        <Checkbox className="checkbox" onChange={this.onChange} checked={e.status} style={e.status ? { textDecoration: 'line-through' } : null} value={e._id} >{e.name}</Checkbox>
-                        <Button onClick={() => this.setModalEditSubActionVisible(true, e)} className="flex-row-item-right no-border"><EyeOutlined /></Button>
+                        {checkPermission(this.state.currentPermissions, constants.QL_CONGVIEC_PERMISSION) || this.state.currentUser.id === this.state.data.managerId ?
+                            <>
+                                <Checkbox className="checkbox" onChange={this.onChange} checked={e.status} style={e.status ? { textDecoration: 'line-through' } : null} value={e._id} >{e.name}</Checkbox>
+                                <Button onClick={() => this.setModalEditSubActionVisible(true, e)} className="flex-row-item-right no-border"><EyeOutlined /></Button>
+                            </> :
+                            <>
+                                <Checkbox disabled={true} className="checkbox" onChange={this.onChange} checked={e.status} style={e.status ? { textDecoration: 'line-through' } : null} value={e._id} >{e.name}</Checkbox>
+                                <Button disabled={true} onClick={() => this.setModalEditSubActionVisible(true, e)} className="flex-row-item-right no-border"><EyeOutlined /></Button>
+                            </>
+                        }
                     </div>
                 )}
             </div>
@@ -299,7 +316,9 @@ class actionDetails extends Component {
                                     Chi tiết
                             </Breadcrumb.Item>
                             </Breadcrumb>
-                            <Button onClick={() => this.setModalEditActionVisible(true)} className="flex-row-item-right add">Chỉnh sửa</Button>
+                            {checkPermission(this.state.currentPermissions, constants.QL_CONGVIEC_PERMISSION) || this.state.currentUser.id === this.state.data.managerId ?
+                                <Button onClick={() => this.setModalEditActionVisible(true)} className="flex-row-item-right add">Chỉnh sửa</Button>
+                                : null}
                         </div>
                     </Row >
 
@@ -308,7 +327,9 @@ class actionDetails extends Component {
                             <Col sm={24} xl={7} className="event-detail">
                                 <div className="flex-container-row">
                                     <Title style={{ color: '#264653' }} level={3}>Cần làm</Title>
-                                    <Button onClick={() => this.setModalAddSubActionVisible(true)} className="flex-row-item-right add">Thêm</Button>
+                                    {checkPermission(this.state.currentPermissions, constants.QL_CONGVIEC_PERMISSION) || this.state.currentUser.id === this.state.data.managerId ?
+                                        <Button onClick={() => this.setModalAddSubActionVisible(true)} className="flex-row-item-right add">Thêm</Button>
+                                        : null}
                                 </div>
                                 {this.renderSubActions()}
 
