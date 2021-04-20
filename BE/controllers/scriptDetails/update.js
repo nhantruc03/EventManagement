@@ -9,7 +9,8 @@ const update = async (req, res) => {
   let sessions = []
   try {
     //check permission
-    const doc = await Scripts.findOne({ _id: req.body.scriptId, isDeleted: false })
+    const temp_scriptdetails = await ScriptDetails.findById(req.params.id)
+    const doc = await Scripts.findOne({ _id: temp_scriptdetails.scriptId, isDeleted: false })
     let permissons = await Permission.getPermission(doc.eventId, req.user._id, req.user.roleId._id)
     if (!Permission.checkPermission(permissons, constants.QL_KICHBAN_PERMISSION)) {
       return res.status(406).json({

@@ -9,7 +9,8 @@ const update = async (req, res) => {
   let sessions = []
   try {
     //check permissson
-    const temp = await GuestTypes.findOne({ _id: req.body.guestTypeId, isDeleted: false })
+    const temp_guest = await Guests.findById(req.params.id)
+    const temp = await GuestTypes.findOne({ _id: temp_guest.guestTypeId, isDeleted: false })
     console.log(temp)
     let permissons = await Permission.getPermission(temp.eventId, req.user._id, req.user.roleId._id)
     if (!Permission.checkPermission(permissons, constants.QL_KHACHMOI_PERMISSION)) {
