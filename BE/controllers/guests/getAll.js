@@ -8,7 +8,7 @@ const getAll = async (req, res) => {
   try {
     var temp = pick(req.body, "listguesttype")
     const query = {
-      guestTypeId: { "$in": temp.listguesttype },
+      guestTypeId: temp.listguesttype,
       isDeleted: false
     }
 

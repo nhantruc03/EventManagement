@@ -31,7 +31,6 @@ class actionColumn extends Component {
     }
 
     onChange = (checkedValues) => {
-        console.log('checked = ', checkedValues);
         this.setState({
             filter: checkedValues
         })
@@ -57,7 +56,6 @@ class actionColumn extends Component {
 
     applyFilter = (list) => {
         let result = list.slice()
-        console.log(result)
         if (this.state.filter.includes('Tên')) {
             result = result.sort((a, b) => {
                 let nameA = a.name.substring(0, 1).toLowerCase();
@@ -79,8 +77,6 @@ class actionColumn extends Component {
             result = result.sort((a, b) => {
                 let tempA = this.getPriority(a.priorityId.name)
                 let tempB = this.getPriority(b.priorityId.name)
-                console.log('a', tempA)
-                console.log('b', tempB)
                 return tempA < tempB ? 1 : -1
             })
         }
@@ -91,7 +87,6 @@ class actionColumn extends Component {
                 return a.facultyId.name < b.facultyId.name ? 1 : -1
             })
         }
-        console.log(result)
         return result
     }
 

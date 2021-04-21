@@ -44,6 +44,7 @@ class ChatRoom extends Component {
     async componentDidMount() {
         this._isMounted = true;
         if (this._isMounted) {
+          
             client.onopen = () => {
                 console.log('Connect to ws')
             }
@@ -97,11 +98,9 @@ class ChatRoom extends Component {
             }
         })
             .then(res => {
-                console.log(res.data.data)
                 message._id = res.data.data[0]._id
             })
 
-        console.log(message)
         client.send(JSON.stringify({
             type: "sendMessage",
             roomId: this.props.roomId,

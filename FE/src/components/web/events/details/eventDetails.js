@@ -64,8 +64,7 @@ class eventDetails extends Component {
 
   async componentDidMount() {
     this._isMounted = true;
-
-    const [event, guestTypes, listEventAssign, faculties, roles, groups] = await trackPromise(Promise.all([
+    const [event, guestTypes, listEventAssign, faculties, roles, groups, permissons] = await trackPromise(Promise.all([
       axios.get('/api/events/' + this.props.match.params.id, {
         headers: {
           'Authorization': { AUTH }.AUTH
@@ -114,18 +113,16 @@ class eventDetails extends Component {
         .then((res) =>
           res.data.data
         ),
+      getPermission(this.props.match.params.id).then(res => res)
+
     ]));
 
-
     let guests = null
-    if (guestTypes !== null) {
+    if (guestTypes !== undefined) {
 
-      let listguesttype = [];
-      guestTypes.forEach(e => {
-        listguesttype.push(e._id)
-      })
+      let listguesttype = guestTypes.reduce((list, e) => { list.push(e._id); return list }, []);
 
-      const [temp] = await trackPromise(Promise.all([
+      const temp = await trackPromise(
         axios.post('/api/guests/getAll', { listguesttype: listguesttype }, {
           headers: {
             'Authorization': { AUTH }.AUTH
@@ -133,44 +130,42 @@ class eventDetails extends Component {
         })
           .then((res) =>
             res.data.data
-          ),
-      ]))
+          )
+      )
       guests = temp;
     }
 
-
-    if (event !== null) {
+    if (event !== undefined) {
       if (this._isMounted) {
 
-        console.log('groups', groups)
-        let status = '';
-        let today = new Date().setHours(0, 0, 0, 0)
-        if (new Date(event.startDate).setHours(0, 0, 0, 0) > today) {
-          status = 'Sắp diễn ra';
-        } else if (new Date(event.startDate).setHours(0, 0, 0, 0) < today) {
-          status = 'Đã diễn ra';
-        } else {
-          status = 'Đang diễn ra';
-        }
+        // let status = '';
+        // let today = new Date().setHours(0, 0, 0, 0)
+        // if (new Date(event.startDate).setHours(0, 0, 0, 0) > today) {
+        //   status = 'Sắp diễn ra';
+        // } else if (new Date(event.startDate).setHours(0, 0, 0, 0) < today) {
+        //   status = 'Đã diễn ra';
+        // } else {
+        //   status = 'Đang diễn ra';
+        // }
 
-        let permissions = await getPermission(this.props.match.params.id)
+        // let permissions = await getPermission(this.props.match.params.id)
+        // console.log(permissons)
 
         this.setState({
           data: event,
           listEventAssign: listEventAssign,
           listRole: roles,
           listFaculty: faculties,
-          status: status,
+          // status: status,
           listGroups: groups,
-          currentPermissions: permissions
+          currentPermissions: permissons
         })
-        if (guestTypes !== null) {
+        if (guestTypes !== undefined) {
           this.setState({
             listguesttype: guestTypes
           })
 
           if (guests !== null) {
-            console.log('guest', guests)
             this.setState({
               listguest: guests
             })

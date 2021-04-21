@@ -34,7 +34,6 @@ class edit extends Component {
             })
                 .then(res => {
                     message.success('Cập nhật thành công');
-                    console.log(res.data.data)
                     this.props.edit(res.data.data)
                 })
                 .catch(err => {
@@ -43,8 +42,6 @@ class edit extends Component {
     }
 
     UNSAFE_componentWillReceiveProps(e) {
-        console.log('startTime',e.data.startTime)
-        console.log('endTime',e.data.endTime)
         this.form.current.setFieldsValue({
             name: e.data.name,
             description: e.data.description,

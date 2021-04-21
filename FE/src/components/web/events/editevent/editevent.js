@@ -159,7 +159,7 @@ class editevent extends Component {
 
     async componentDidMount() {
         this._isMounted = true;
-        const [users, eventTypes, tags, faculties, roles, event, listeventassign, guesttypes, groups, credentials] = await trackPromise(Promise.all([
+        const [users, eventTypes, tags, faculties, roles, event, listeventassign, guesttypes, groups, credentials, permissions] = await trackPromise(Promise.all([
             axios.post('/api/users/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -240,17 +240,18 @@ class editevent extends Component {
                 .then((res) =>
                     res.data.data
                 ),
+            getPermission(this.props.match.params.id)
+                .then(res => res)
 
         ]));
 
         let guests = []
         if (guesttypes !== null) {
-            let temp_listtypes = []
-            guesttypes.forEach(e => {
-                temp_listtypes.push(e._id)
-            })
+
+            let listguesttype = guesttypes.reduce((list, e) => { list.push(e._id); return list }, []);
+
             guests = await trackPromise(
-                axios.post('/api/guests/getAll', { listguesttype: temp_listtypes }, {
+                axios.post('/api/guests/getAll', { listguesttype: listguesttype }, {
                     headers: {
                         'Authorization': { AUTH }.AUTH
                     }
@@ -263,10 +264,8 @@ class editevent extends Component {
         if (users !== null && eventTypes !== null && tags !== null && roles !== null && faculties !== null && event !== null && groups !== null) {
             if (this._isMounted) {
                 // prepare data
-                let temp_tagId = [];
-                event.tagId.forEach(e => {
-                    temp_tagId.push(e._id)
-                })
+                let temp_tagId = event.tagId.reduce((list, e) => { list.push(e._id); return list }, [])
+
                 let data = {
                     ...event,
                     'startTime': moment(event.startTime),
@@ -276,13 +275,10 @@ class editevent extends Component {
                 }
 
 
-                let temp_userForEvent = [];
-                listeventassign.forEach(e => {
-                    temp_userForEvent.push(e.userId._id)
-                })
+                let temp_userForEvent = listeventassign.reduce((list, e) => { list.push(e.userId._id); return list }, [])
+           
                 let temp_userNotInEvent = users.filter(e => !temp_userForEvent.includes(e._id))
 
-                let permissions = await getPermission(this.props.match.params.id)
                 // prepare state
                 this.setState({
                     listRole: roles,

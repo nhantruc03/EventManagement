@@ -95,8 +95,6 @@ class editevent extends Component {
     }
 
     updateEventAssign = (a, b) => {
-        console.log('updated', a)
-
         this.setState({
             listEventAssign: a,
         })

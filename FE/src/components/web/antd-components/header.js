@@ -69,7 +69,7 @@ class header extends Component {
                         res.data.data
                     )
             ]));
-            console.log('notifications', notifications)
+            
             if (notifications !== null) {
                 if (this._isMounted) {
                     this.setState({

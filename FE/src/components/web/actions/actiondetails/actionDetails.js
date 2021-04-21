@@ -95,7 +95,7 @@ class actionDetails extends Component {
 
     renderModalEditAction = () => {
         return (
-            <EditAction data={this.state.data} manager={this.state.manager} update={(action, manager, actionAssign) => this.updateAction(action, manager, actionAssign)} />
+            <EditAction onClose={()=>this.setModalEditActionVisible(false)} data={this.state.data} manager={this.state.manager} update={(action, manager, actionAssign) => this.updateAction(action, manager, actionAssign)} />
         )
     }
 
@@ -163,7 +163,6 @@ class actionDetails extends Component {
 
 
         if (action !== null) {
-            console.log(action)
             if (this._isMounted) {
                 let now = moment(new Date().setHours(0, 0, 0, 0))
                 let data_Date = moment(new Date(action.startDate).setHours(0, 0, 0, 0))

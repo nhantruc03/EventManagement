@@ -32,7 +32,6 @@ class ss extends Component {
         if (e.target.value === "") {
             ketqua = this.props.data
         }
-        console.log(ketqua)
         this.props.getSearchData(ketqua)
 
     }

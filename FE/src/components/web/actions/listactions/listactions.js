@@ -138,7 +138,7 @@ class listactions extends Component {
             currentEvent: temp[0]
         })
 
-        const [actionTypes, falcuties, actions] = await trackPromise(Promise.all([
+        const [actionTypes, falcuties, actions, permissons] = await trackPromise(Promise.all([
             axios.post('/api/action-types/getAll', { eventId: temp[0]._id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -163,11 +163,11 @@ class listactions extends Component {
                 .then((res) =>
                     res.data.data
                 ),
-
+            getPermisson(temp[0]._id)
+                .then(res => res)
         ]))
 
         if (actionTypes !== null && falcuties !== null && actions !== null) {
-            let permissons = await getPermisson(temp[0]._id)
             this.setState({
                 currentActionTypes: actionTypes,
                 currentFaculties: falcuties,
@@ -181,7 +181,6 @@ class listactions extends Component {
     renderActionsView = (value, keyCol) => {
         let temp_listActions = this.state.currentActions.filter(e => e.actionTypeId._id === value._id)
         return (
-            // <Col sm={24} xl={24 / this.state.currentActionTypes.length} key={keyCol}>
             <Col sm={24} xl={6} key={keyCol} style={{ padding: '10px 0' }}>
                 <ActionColumn title={value.name} listActions={temp_listActions} />
             </Col>

@@ -81,10 +81,8 @@ class editAction extends Component {
                 ),
         ]))
 
-        console.log(event)
 
         if (tags !== null && priorities !== null) {
-            console.log(event)
             this.setState({
                 event: event,
                 listTags: tags,
@@ -94,7 +92,6 @@ class editAction extends Component {
             })
         }
         // prepare init data
-        console.log('data', this.props.data)
         let temp_availUser = []
         this.props.data.availUser.forEach(e => {
             temp_availUser.push(e._id)
@@ -160,7 +157,6 @@ class editAction extends Component {
                     let temp_Action = res.data.data
                     let temp_actionAssign = res.data.actionAssign.filter(e => e.role === 2)
                     let temp_manager = res.data.actionAssign.filter(e => e.role === 1)[0]
-                    console.log('temp_manager', temp_manager)
                     // prepare init data
                     let temp_availUser = []
                     temp_Action.availUser.forEach(e => {
@@ -200,7 +196,6 @@ class editAction extends Component {
                     console.log(err)
                     message.error('Cập nhật thất bại');
                 }))
-        // console.log(data)
     }
 
     renderView = () => {
@@ -403,7 +398,7 @@ class editAction extends Component {
                             </Form.Item>
                         </Col>
                         <div style={{ textAlign: 'center', width: '100%' }}>
-                            <Button style={{ width: '20%' }} htmlType="submit" className="back">Hủy</Button>
+                            <Button style={{ width: '20%' }} onClick={this.props.onClose} className="back">Hủy</Button>
                             <Button style={{ marginLeft: '20px', width: '20%' }} htmlType="submit" className="add">Cập nhật</Button>
                         </div>
                         {/* <div className="flex-container-row" style={{ marginTop: '20px' }}>

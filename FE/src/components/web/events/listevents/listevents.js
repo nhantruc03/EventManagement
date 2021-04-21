@@ -47,11 +47,9 @@ class listevents extends Component {
 
 
     onChange = (checkedValues) => {
-        console.log('checked = ', checkedValues);
         let temp
         if (checkedValues.length > 0) {
             temp = this.state.data.filter(e => {
-                console.log(e.tagId.some(x => checkedValues.includes(x._id)))
                 return e.tagId.some(x => checkedValues.includes(x._id))
             })
         } else {
@@ -102,8 +100,6 @@ class listevents extends Component {
 
         if (future_event !== null && ongoing_event !== null && past_event !== null) {
             if (this._isMounted) {
-                // this.getSearchData(events)
-                console.log(future_event)
                 this.setState({
                     data: [...future_event, ...ongoing_event, ...past_event],
                     data_ongoing: ongoing_event,
