@@ -46,6 +46,7 @@ class StackNav extends Component {
           name="EventDetail2"
           component={EventDetail2}
           options={{
+            title: "Chi tiết sự kiện",
             headerStyle: {
               backgroundColor: "#2A9D8F",
             },
@@ -58,6 +59,7 @@ class StackNav extends Component {
           name="scriptdetail"
           component={scriptdetail}
           options={{
+            title: "Chi tiết kịch bản",
             headerStyle: {
               backgroundColor: "#2A9D8F",
             },
@@ -70,6 +72,7 @@ class StackNav extends Component {
           name="scriptview"
           component={scriptview}
           options={{
+            title: "Theo dõi kịch bản",
             headerStyle: {
               backgroundColor: "#2A9D8F",
             },
@@ -82,6 +85,7 @@ class StackNav extends Component {
           name="Phòng hội thoại"
           component={ChatRoom}
           options={{
+            title: "Phòng hội thoại",
             headerStyle: {
               backgroundColor: "#2A9D8F",
             },

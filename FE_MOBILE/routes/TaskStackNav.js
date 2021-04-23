@@ -38,6 +38,7 @@ class TaskStackNav extends Component {
           name="CreateTask"
           component={CreateTask}
           options={{
+            title: "Chi tiết công việc",
             headerStyle: {
               backgroundColor: "#2A9D8F",
             },
@@ -50,6 +51,7 @@ class TaskStackNav extends Component {
           name="TaskDetail"
           component={TaskDetail}
           options={{
+            title: "Chi tiết công việc",
             headerStyle: {
               backgroundColor: "#2A9D8F",
             },

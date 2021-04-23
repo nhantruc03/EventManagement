@@ -217,7 +217,7 @@ class Taskscreen extends Component {
     let temp_listActions = this.state.currentActions.filter(
       (e) => e.actionTypeId._id === route.key
     );
-    console.log(temp_listActions);
+    //console.log(temp_listActions);
     return (
       <View>
         <FlatList
@@ -235,17 +235,19 @@ class Taskscreen extends Component {
       <TouchableOpacity
         onPress={() =>
           this.props.navigation.navigate("TaskDetail", {
-            _id: item._id,
-            name: item.name,
-            description: item.description,
-            time: item.endTime,
-            date: item.endDate,
-            managerId: item.managerId,
-            tags: item.tagsId,
-            user: item.availUser,
-            priority: item.priorityId,
-            faculty: item.facultyId,
-            coverUrl: `${Url()}/api/images/${item.coverUrl}`,
+            data: {
+              _id: item._id,
+              name: item.name,
+              description: item.description,
+              time: item.endTime,
+              date: item.endDate,
+              managerId: item.managerId,
+              tags: item.tagsId,
+              availUser: item.availUser,
+              priority: item.priorityId,
+              faculty: item.facultyId,
+              coverUrl: `${Url()}/api/images/${item.coverUrl}`,
+            },
           })
         }
       >

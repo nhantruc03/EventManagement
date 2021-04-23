@@ -9,6 +9,7 @@ import {
 
 import Url from "../../env";
 import axios from "axios";
+import getToken from "../../Auth";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { Image } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
     paddingRight: 12,
   },
 });
-const client = new WebSocket("ws://192.168.1.6:3001");
+const client = new WebSocket("ws://192.168.1.7:3001");
 class ChatRoom extends Component {
   constructor(props) {
     super(props);
@@ -65,9 +66,17 @@ class ChatRoom extends Component {
 
   getData = async () => {
     const temp = await axios
-      .post(`${Url()}/api/chat-message/getAll?page=1&limit=15`, {
-        roomId: this.props.route.params.id,
-      })
+      .post(
+        `${Url()}/api/chat-message/getAll?page=1&limit=15`,
+        {
+          roomId: this.props.route.params.id,
+        },
+        {
+          headers: {
+            Authorization: await getToken(),
+          },
+        }
+      )
       .then((res) => res.data.data);
     this.setState({
       messages: temp.reverse(),
@@ -140,9 +149,15 @@ class ChatRoom extends Component {
 
     // console.log(message)
 
-    await axios.post(`${Url()}/api/chat-message`, message).then((res) => {
-      message._id = res.data.data[0]._id;
-    });
+    await axios
+      .post(`${Url()}/api/chat-message`, message, {
+        headers: {
+          Authorization: await getToken(),
+        },
+      })
+      .then((res) => {
+        message._id = res.data.data[0]._id;
+      });
 
     client.send(
       JSON.stringify({
@@ -184,9 +199,15 @@ class ChatRoom extends Component {
     await axios
       .post(
         `${Url()}/api/chat-message/getAll?page=${this.state.page + 1}&limit=15`,
-        { roomId: this.props.route.params.id }
+        { roomId: this.props.route.params.id },
+        {
+          headers: {
+            Authorization: await getToken(),
+          },
+        }
       )
       .then((res) => {
+        console.log(res.data);
         const temp = res.data.data;
         this.setState({
           isLoading: false,

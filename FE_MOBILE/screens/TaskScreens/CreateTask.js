@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { View, Text, StyleSheet, TextInput } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Tags from "react-native-tags";
+import Customdatetime from "../../components/helper/datetimepicker";
 
 const styles = StyleSheet.create({
   input: {
@@ -59,7 +60,7 @@ class CreateTask extends Component {
 
   componentDidMount() {
     let event = this.props.route.params.event;
-    console.log("event2", event);
+    //console.log("event2", event);
     let temp_listUser = [];
     event.availUser.forEach((e) => {
       let temp = {
@@ -74,29 +75,50 @@ class CreateTask extends Component {
       listUser: [temp_listUser],
     });
   }
-
-  onChangeForId = (availUser) => {
+  onChangeTime = (name, time) => {
+    // console.log("receive", time);
+    let temp = this.state.data;
+    temp[name] = time;
+    this.setState({
+      data: temp,
+    });
+  };
+  onChangeName = (name) => {
     this.setState({
       data: {
         ...this.state.data,
-        availUser: availUser,
+        name: name,
       },
     });
   };
-  onChangeName() {}
+  onChangeDescrip = (description) => {
+    this.setState({
+      data: {
+        ...this.state.data,
+        description: description,
+      },
+    });
+  };
+  onChangeForId = (forId) => {
+    this.setState({
+      data: {
+        ...this.state.data,
+        forId: forId,
+      },
+    });
+  };
 
   render() {
-    console.log(this.state.listUser_default);
+    //console.log(this.state.listUser_default);
     return (
       <View style={styles.container}>
         <View styles={styles.ScriptNameContainer}>
           <Text style={styles.Label}>Tên công việc</Text>
           <View style={styles.BoxInput}>
             <TextInput
-              //onChangeText={this.onChangeName}
+              onChangeText={this.onChangeName}
               style={styles.input}
-              //value={this.state.name}
-              //editable={this.state.disable}
+              value={this.state.name}
             ></TextInput>
           </View>
           <Text style={styles.Label}>Mô tả công việc</Text>
@@ -104,24 +126,44 @@ class CreateTask extends Component {
             multiline={true}
             numberOfLines={10}
             style={styles.textArea}
+            onChangeText={this.onChangeDescrip}
+            value={this.state.description}
           ></TextInput>
         </View>
+        <Customdatetime
+          containerStyle={styles.ScriptNameContainer}
+          labelStyle={styles.Label}
+          label="NBD"
+          BoxInput={styles.BoxInput}
+          Save={(e) => this.onChangeTime("startDate", e)}
+          data={this.state.data.startDate}
+          mode="date"
+        />
+        <Customdatetime
+          containerStyle={styles.ScriptNameContainer}
+          labelStyle={styles.Label}
+          label="NKT"
+          BoxInput={styles.BoxInput}
+          Save={(e) => this.onChangeTime("endDate", e)}
+          data={this.state.data.startDate}
+          mode="date"
+        />
         <View style={styles.ScriptNameLabelContainer}>
           <Text style={styles.Label}>Phân công cho</Text>
           <View style={styles.Box}>
             <Picker
               onChange={this.onChangeForId}
-              value={this.state.availUser}
+              value={this.state.data.forId}
               data={this.state.listUser}
               cascade={false}
               okText="Đồng ý"
               dismissText="Thoát"
             >
               <Text>
-                {!this.state.availUser
+                {!this.state.forId
                   ? "Chọn"
                   : this.state.listUser_default.filter(
-                      (e) => e._id === this.state.availUser[0]
+                      (e) => e._id === this.state.forId[0]
                     )[0].name}
               </Text>
             </Picker>

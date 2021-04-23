@@ -7,83 +7,29 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import axios from "axios";
 import Url from "../../env";
 import getToken from "../../Auth";
 import { CheckBox } from "react-native-elements";
 import Separator from "../../components/helper/separator";
-import axios from "axios";
-import Checked from "../../assets/images/square_checked.png";
-import UnChecked from "../../assets/images/square_unchecked.png";
 
+import { TabView, SceneMap } from "react-native-tab-view";
+import { TabBar } from "react-native-tab-view";
+import TaskDetailTab from "../../components/TaskTabs/TaskDetailTab";
+import SubTasksTab from "../../components/TaskTabs/SubTasksTab";
+import { ActivityIndicator } from "react-native";
+
+const initialLayout = { width: Dimensions.get("window").width };
 const styles = StyleSheet.create({
+  Tabcontainer: {
+    flex: 2,
+    height: 50,
+  },
   container: { flex: 1, backgroundColor: "#F6F7F8" },
   formContainer: { padding: 16, zIndex: 3 },
-  mainLabel: {
-    fontFamily: "bold",
-    fontSize: 24,
-    color: "#2A9D8F",
-  },
-  avaImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 40,
-  },
-  coverImg: {
-    width: 400,
-    height: 200,
-  },
-  description: {
-    fontFamily: "regular",
-    fontSize: 14,
-    marginTop: 8,
-  },
-  DatetimeContainer: {
-    zIndex: 2,
-    flexDirection: "row",
-  },
-  TimeContainer: {
-    zIndex: 3,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  Timeicon: {
-    position: "relative",
-  },
-  TimeContent: {
-    marginLeft: 8,
-    fontFamily: "semibold",
-    color: "#2A9D8F",
-    fontSize: 20,
-  },
-  DateContatiner: {
-    zIndex: 3,
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: 48,
-  },
-  Dateicon: {
-    position: "relative",
-  },
-  DateContent: {
-    fontFamily: "semibold",
-    color: "#2A9D8F",
-    fontSize: 20,
-    marginLeft: 8,
-  },
-  formLabel: {
-    color: "#5C5C5C",
-    fontFamily: "semibold",
-    fontSize: 16,
-  },
-  tagContainer: { flex: 1, flexDirection: "row", marginTop: 8 },
-  section3: {
-    marginTop: 4,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
   Text: {
     marginLeft: 8,
     fontFamily: "semibold",
@@ -117,20 +63,68 @@ class TaskDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      facultyName: "",
-      subActions: [],
+      subActions: null,
       currentSubAction: null,
-      checked: false,
+      index: 0,
+      loading: false,
+      routes: [
+        { key: "1", title: "Thông tin chung" },
+        { key: "2", title: "Danh sách cần làm" },
+        // { key: "3", title: "Hội thoại" },
+      ],
     };
+    this.renderScene = SceneMap({
+      1: this.Route1,
+      2: this.Route2,
+      // 3: this.Route3,
+    });
   }
+  Route1 = () => <TaskDetailTab data={this.props.route.params.data} />;
+
+  Route2 = () =>
+    this.state.subActions && !this.state.loading ? (
+      <SubTasksTab
+        updateListSubTask={(e) => this.updateListSubTask(e)}
+        data={this.state.subActions}
+        actionId={this.props.route.params.data._id}
+      />
+    ) : (
+      <View style={styles.Loading}>
+        <ActivityIndicator
+          size="large"
+          animating
+          color="#2A9D8F"
+        ></ActivityIndicator>
+      </View>
+    );
+
+  // Route3 = () =>
+  //   this.state.listscripts && !this.state.loading ? (
+  //     <ScriptTab
+  //       navigation={this.props.navigation}
+  //       data={this.state.listscripts}
+  //       updateListScript={(e) => this.updateListScript(e)}
+  //       event={this.state.event}
+  //     />
+  //   ) : (
+  //     <View style={styles.Loading}>
+  //       <ActivityIndicator size="large" animating></ActivityIndicator>
+  //     </View>
+  //   );
+
+  updateListSubTask = (e) => {
+    this.setState({
+      subActions: [...this.state.subActions, e],
+    });
+  };
+
   async componentDidMount() {
-    let faculty = this.props.route.params.faculty;
     this._isMounted = true;
 
     const subActions = await axios
       .post(
         `${Url()}/api/sub-actions/getAll`,
-        { scriptId: this.props.route.params._id },
+        { actionId: this.props.route.params._id },
         {
           headers: {
             Authorization: await getToken(),
@@ -139,11 +133,9 @@ class TaskDetail extends Component {
       )
       .then((res) => res.data.data);
     this.setState({
-      facultyName: faculty.name,
       subActions: subActions,
-      checked: true,
     });
-    console.log(subActions);
+    //console.log(subActions);
   }
 
   changeStatus = async (e) => {
@@ -168,7 +160,7 @@ class TaskDetail extends Component {
           subActions: temp_data,
         });
         // this.props.updateGuest(temp_data);
-        console.log("temp_data", temp_data);
+        //console.log("temp_data", temp_data);
         alert(`Trạng thái của khách mời ${e.name} cập nhật thành công`);
       })
       .catch(() => {
@@ -176,169 +168,41 @@ class TaskDetail extends Component {
       });
   };
 
-  renderItem = (item) => {
-    return (
-      <View>
-        <View style={styles.itemContainer}>
-          <View style={styles.checkboxContainer}>
-            <TouchableOpacity onPress={() => this.changeStatus(item)}>
-              {item.status ? (
-                <Image source={Checked}></Image>
-              ) : (
-                <Image source={UnChecked}></Image>
-              )}
-            </TouchableOpacity>
-            <Text
-              style={
-                item.status
-                  ? styles.itemTextNameDone
-                  : styles.itemTextNameUnDone
-              }
-            >
-              {item.name}
-            </Text>
-          </View>
-        </View>
-      </View>
-    );
+  renderTabBar = (props) => (
+    <TabBar
+      {...props}
+      tabStyle={{ width: "auto" }}
+      indicatorStyle={{ backgroundColor: "#2A9D8F", height: 4 }}
+      activeColor="#2A9D8F"
+      inactiveColor="#AAB0B6"
+      style={{
+        backgroundColor: "F6F7F8",
+        paddingVertical: 5,
+      }}
+      scrollEnabled={true}
+    />
+  );
+  setIndex = (index) => {
+    this.setState({
+      index,
+    });
   };
-
   render() {
     //console.log("faculty", this.state.facultyName);
     return (
-      <ScrollView style={styles.container}>
-        <Image
-          style={styles.coverImg}
-          source={{
-            uri: this.props.route.params.coverUrl,
+      <View style={styles.container}>
+        <TabView
+          renderTabBar={this.renderTabBar}
+          navigationState={{
+            index: this.state.index,
+            routes: this.state.routes,
           }}
-        ></Image>
-        <View style={styles.formContainer}>
-          <Text style={styles.mainLabel}>{this.props.route.params.name}</Text>
-          <View style={styles.tagContainer}>
-            {this.props.route.params.tags.map((value, key) => (
-              <View
-                style={{
-                  backgroundColor: value.background,
-                  marginRight: 10,
-                  paddingHorizontal: 10,
-                  borderRadius: 16,
-                }}
-                key={key}
-              >
-                <Text
-                  style={{
-                    color: value.color,
-                    marginVertical: 4,
-                    fontFamily: "regular",
-                    fontSize: 16,
-                  }}
-                >
-                  {value.name}
-                </Text>
-              </View>
-            ))}
-          </View>
-          <Text style={styles.description}>
-            {this.props.route.params.description}
-          </Text>
-          <Separator />
-          <Text style={styles.formLabel}>Deadline</Text>
-          <View style={styles.DatetimeContainer}>
-            <View style={styles.TimeContainer}>
-              <Image
-                style={styles.Timeicon}
-                source={require("../../assets/images/timesolid.png")}
-              ></Image>
-              <Text style={styles.TimeContent}>
-                {moment(this.props.route.params.time).format("HH:MM")}
-              </Text>
-            </View>
-            <View style={styles.DateContatiner}>
-              <Image
-                style={styles.Dateicon}
-                source={require("../../assets/images/datesolid.png")}
-              ></Image>
-              <Text style={styles.DateContent}>
-                {moment(this.props.route.params.date).format("DD/MM/YYYY")}
-              </Text>
-            </View>
-          </View>
-          <Separator />
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <Text style={styles.formLabel}>Người phân công</Text>
-            <Text style={styles.formLabel}>Ban</Text>
-          </View>
-          <View style={styles.section3}>
-            <View style={styles.managerContainer}>
-              {this.props.route.params.user.map((value, key) => (
-                <View
-                  style={{
-                    borderRadius: 16,
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                  key={key}
-                >
-                  <Image
-                    style={styles.avaImage}
-                    source={{
-                      uri: `${Url()}/api/images/${value.photoUrl}`,
-                    }}
-                  ></Image>
-                  {this.props.route.params.managerId === value.id ? (
-                    <Text style={styles.Text}>{value.name}</Text>
-                  ) : null}
-                </View>
-              ))}
-            </View>
-            <View>
-              <Text style={styles.Text}>{this.state.facultyName}</Text>
-            </View>
-          </View>
-          <Separator />
-          <View style={styles.AssignedUserContainer}>
-            <Text style={styles.formLabel}>Phân công cho</Text>
-            {this.props.route.params.user.map((value, key) => (
-              <View
-                style={{
-                  marginRight: 10,
-                  paddingHorizontal: 10,
-                  borderRadius: 16,
-                }}
-                key={key}
-              >
-                <Image
-                  style={styles.avaImage}
-                  source={{
-                    uri: `${Url()}/api/images/${value.photoUrl}`,
-                  }}
-                ></Image>
-              </View>
-            ))}
-          </View>
-          <Separator />
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <Text style={styles.formLabel}>Todo List</Text>
-            <TouchableOpacity>
-              <Text
-                style={(styles.formLabel, { textDecorationLine: "underline" })}
-              >
-                Add Items +
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <FlatList
-            data={this.state.subActions}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => this.renderItem(item)}
-          />
-        </View>
-      </ScrollView>
+          renderScene={this.renderScene}
+          onIndexChange={this.setIndex}
+          initialLayout={initialLayout}
+          style={styles.Tabcontainer}
+        />
+      </View>
     );
   }
 }

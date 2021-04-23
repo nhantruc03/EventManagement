@@ -22,6 +22,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import Url from "../env";
 import getToken from "../Auth";
 import axios from "axios";
+import Customdatetime from "./helper/datetimepicker";
 
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
@@ -81,21 +82,16 @@ class ScriptDetailModal extends Component {
     });
   };
 
-  onChangeTime = (event, time) => {
-    if (time != undefined) {
-      this.setState({
-        data: {
-          ...this.state.data,
-          time: time,
-        },
-        showDateTimePicker: Platform.OS === "ios",
-      });
-    } else {
-      this.setState({
-        showDateTimePicker: Platform.OS === "ios",
-      });
-    }
+  onChangeTime = (time) => {
+    console.log("receive", time);
+    this.setState({
+      data: {
+        ...this.state.data,
+        time: time,
+      },
+    });
   };
+
   Onchange = (e) => {
     this.setState({
       data: {
@@ -171,40 +167,15 @@ class ScriptDetailModal extends Component {
             bounces={false}
           >
             <View style={{ paddingVertical: 20, paddingHorizontal: 16 }}>
-              <View styles={styles.ScriptNameContainer}>
-                <Text style={styles.Label}>Thời gian</Text>
-                {Platform.OS === "android" ? (
-                  <View style={{ textAlign: "left" }}>
-                    <Button
-                      onPress={() => {
-                        this.setState({
-                          showDateTimePicker: !this.state.showDateTimePicker,
-                        });
-                      }}
-                    >
-                      <Text style={{ textAlign: "left" }}>
-                        {moment(this.state.data.time)
-                          .utcOffset(0)
-                          .format("HH:mm")}
-                      </Text>
-                    </Button>
-                  </View>
-                ) : null}
-                {this.state.showDateTimePicker || Platform.OS === "ios" ? (
-                  <View style={styles.BoxInput}>
-                    <DateTimePicker
-                      value={
-                        this.state.data.time ? new Date() : this.state.data.time
-                      }
-                      mode="time"
-                      is24Hour={true}
-                      display="default"
-                      onChange={this.onChangeTime}
-                      timeZoneOffsetInMinutes={0}
-                    />
-                  </View>
-                ) : null}
-              </View>
+              <Customdatetime
+                containerStyle={styles.ScriptNameContainer}
+                labelStyle={styles.Label}
+                label="Thời gian"
+                BoxInput={styles.BoxInput}
+                Save={(e) => this.onChangeTime(e)}
+                data={this.state.data.time}
+                mode="time"
+              />
               <View styles={styles.ScriptNameContainer}>
                 <Text style={styles.Label}>Tiêu đề</Text>
                 <View style={styles.BoxInput}>
