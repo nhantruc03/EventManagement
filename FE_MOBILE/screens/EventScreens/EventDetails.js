@@ -129,7 +129,6 @@ export default class EventDetail extends Component {
   }
 
   render() {
-    console.log(this.state.data);
     if (this.state.data) {
       return (
         <ScrollView style={styles.formContainer}>
@@ -169,7 +168,7 @@ export default class EventDetail extends Component {
               <View style={styles.TimeContainer}>
                 <Image
                   style={styles.Timeicon}
-                  source={require("../assets/images/timesolid.png")}
+                  source={require("../../assets/images/timesolid.png")}
                 ></Image>
                 <Text style={styles.TimeContent}>
                   {moment(this.state.data.time).format("HH:MM")}
@@ -178,7 +177,7 @@ export default class EventDetail extends Component {
               <View style={styles.DateContatiner}>
                 <Image
                   style={styles.Dateicon}
-                  source={require("../assets/images/datesolid.png")}
+                  source={require("../../assets/images/datesolid.png")}
                 ></Image>
                 <Text style={styles.DateContent}>
                   {moment(this.state.data.date).format("DD/MM/YYYY")}
@@ -188,7 +187,7 @@ export default class EventDetail extends Component {
             <View style={styles.locationContainer}>
               <Image
                 style={styles.locationicon}
-                source={require("../assets/images/locationsolid.png")}
+                source={require("../../assets/images/locationsolid.png")}
               ></Image>
               <Text style={styles.locationContent}>
                 {this.state.data.location}

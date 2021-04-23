@@ -41,46 +41,15 @@ export default class GroupTab extends Component {
     };
   }
 
-  changeStatus = async (e) => {
-    await axios
-      .put(
-        `${Url()}/api/guests/` + e._id,
-        { status: !e.status },
-        {
-          headers: {
-            Authorization: await getToken(),
-          },
-        }
-      )
-      .then(() => {
-        let temp_data = this.state.data;
-        temp_data.forEach((element) => {
-          if (element._id === e._id) {
-            element.status = !e.status;
-          }
-        });
-        this.setState({
-          data: temp_data,
-          SearchData: temp_data,
-        });
-        // this.props.updateGuest(temp_data);
-        // console.log("temp_data", temp_data);
-        alert(`Trạng thái của khách mời ${e.name} cập nhật thành công`);
-      })
-      .catch(() => {
-        alert(`Trạng thái của khách mời ${e.name} cập nhật thất bại`);
-      });
-  };
+  
 
   UNSAFE_componentWillReceiveProps(e) {
-    // console.log("should update", e);
     this.setState({
       data: e.data,
     });
   }
 
   componentDidMount() {
-    // console.log('list groups', this.props.data)
     this.setState({
       data: this.props.data,
       SearchData: this.props.data,

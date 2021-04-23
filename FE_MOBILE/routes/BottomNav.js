@@ -7,73 +7,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
 
 import Homescreen from "../screens/Home";
-import Eventscreen from "../screens/Event";
-import Taskscreen from "../screens/Task";
 import Profilescreen from "../screens/Profile";
-import EventDetail2 from "../screens/EventDetails2";
-import scriptdetail from "../screens/scriptdetail";
 import StackNav from "../routes/StackNav";
+import TaskStackNav from "../routes/TaskStackNav";
 import { createStackNavigator } from "@react-navigation/stack";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { Image } from "react-native";
-import { View } from "react-native";
 
 const Tab = createBottomTabNavigator();
 
 const Stack = createStackNavigator();
-
-// function TabEvent() {
-//   return (
-//     <Stack.Navigator>
-//       <Stack.Screen
-//         name="Events"
-//         component={Eventscreen}
-//         options={{
-//           headerShown: false,
-//           headerStyle: {
-//             backgroundColor: "#2A9D8F",
-//           },
-//         }}
-//       />
-//       <Stack.Screen
-//         name="EventDetail2"
-//         component={EventDetail2}
-//         options={{
-//           headerStyle: {
-//             backgroundColor: "#2A9D8F",
-//           },
-//           headerTitleStyle: {},
-//           headerBackTitleVisible: false,
-//           headerTintColor: "#fff",
-//         }}
-//       />
-//       <Stack.Screen
-//         name="scriptdetail"
-//         component={scriptdetail}
-//         options={{
-//           headerStyle: {
-//             backgroundColor: "#2A9D8F",
-//           },
-//           headerTitleStyle: {},
-//           headerBackTitleVisible: false,
-//           headerTintColor: "#fff",
-//           headerRight: () => (
-//             <View>
-//               <TouchableOpacity
-//                 onPress={() => {
-//                   this.setState({ visible: true });
-//                 }}
-//                 style={styles.Icon}
-//               >
-//                 <Image source={require("../assets/images/edit.png")} />
-//               </TouchableOpacity>
-//             </View>
-//           ),
-//         }}
-//       />
-//     </Stack.Navigator>
-//   );
-// }
 
 const styles = StyleSheet.create({
   container: {
@@ -139,13 +80,23 @@ export default class BottomNav extends React.Component {
         />
         <Tab.Screen
           name="Task"
-          component={Taskscreen}
-          options={{
+          component={TaskStackNav}
+          options={({ route }) => ({
             tabBarLabel: "Công việc",
             tabBarIcon: ({ color }) => (
               <FontAwesomeIcon icon={faHome} size={24} color={color} />
             ),
-          }}
+            tabBarVisible: ((route) => {
+              const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+
+              let temp_list = ["CreateTask"];
+              if (temp_list.includes(routeName)) {
+                return false;
+              } else {
+                return true;
+              }
+            })(route),
+          })}
         />
         <Tab.Screen
           name="Profile"

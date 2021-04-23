@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, KeyboardAvoidingView } from "react-native";
 
-import Url from "../env";
-import getToken from "../Auth";
+import Url from "../../env";
+import getToken from "../../Auth";
 import axios from "axios";
 import {
   Steps,
@@ -12,7 +12,7 @@ import {
   PickerView,
   Picker,
 } from "@ant-design/react-native";
-import Check from "../assets/images/Checked.png";
+import Check from "../../assets/images/Checked.png";
 import moment from "moment";
 import { ActivityIndicator } from "react-native";
 import HTML from "react-native-render-html";
@@ -22,7 +22,7 @@ import {
   TouchableOpacity,
 } from "react-native-gesture-handler";
 import { Image } from "react-native";
-import ScriptDetailModal from "../components/ScriptDetailModal";
+import ScriptDetailModal from "../../components/ScriptDetailModal";
 
 const Step = Steps.Step;
 
@@ -173,7 +173,7 @@ class scriptdetail extends Component {
               })
             }
           >
-            <Image source={require("../assets/images/preview.png")} />
+            <Image source={require("../../assets/images/preview.png")} />
           </TouchableOpacity>
         </View>
       ),
@@ -217,7 +217,7 @@ class scriptdetail extends Component {
           let temp_b = new Date(b.time).setFullYear(1, 1, 1);
           return temp_a > temp_b ? 1 : -1;
         });
-
+        console.log(script);
         if (this._isMounted) {
           this.setState({
             isLoading: false,
@@ -379,7 +379,7 @@ class scriptdetail extends Component {
                   >
                     <View style={styles.itemForm}>
                       <Image
-                        source={require("../assets/images/timesolid.png")}
+                        source={require("../../assets/images/timesolid.png")}
                       />
                       <Text style={styles.textTime}>
                         {moment(item.time).utcOffset(0).format("HH:mm")}

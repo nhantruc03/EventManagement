@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import Url from "../env";
-import getToken from "../Auth";
+import Url from "../../env";
+import getToken from "../../Auth";
 import axios from "axios";
 import {
   Steps,
@@ -128,7 +128,7 @@ class scriptview extends Component {
       headerRight: () => (
         <View style={styles.IconRight}>
           <TouchableOpacity onPress={() => this.setState({ visible: true })}>
-            <Image source={require("../assets/images/edit.png")} />
+            <Image source={require("../../assets/images/edit.png")} />
           </TouchableOpacity>
         </View>
       ),

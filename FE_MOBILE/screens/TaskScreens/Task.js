@@ -2,15 +2,15 @@ import axios from "axios";
 import moment from "moment";
 import React, { Component } from "react";
 import { View, Text, StyleSheet, Dimensions, Image } from "react-native";
-import Url from "../env";
-import getToken from "../Auth";
+import Url from "../../env";
+import getToken from "../../Auth";
 import SearchableDropdown from "react-native-searchable-dropdown";
 import { TabView } from "react-native-tab-view";
 import { TabBar } from "react-native-tab-view";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
-import EventCard from "../components/EventCard";
-import { Modal, Provider } from "@ant-design/react-native";
-import AddActionTypeModal from "../components/AddActionTypeModal";
+import EventCard from "../../components/EventCard";
+import { Button, Modal, Provider } from "@ant-design/react-native";
+import AddActionTypeModal from "../../components/AddActionTypeModal";
 
 const W = Dimensions.get("window").width;
 
@@ -37,6 +37,20 @@ const styles = StyleSheet.create({
     color: "#2A9D8F",
     backgroundColor: "#F6F7F8",
     paddingLeft: 16,
+  },
+  AddBtn: {
+    right: 16,
+    marginTop: 16,
+    paddingHorizontal: 12,
+    height: 34,
+    fontFamily: "bold",
+    backgroundColor: "#2A9D8F",
+    borderColor: "#2A9D8F",
+  },
+  BtnText: {
+    fontFamily: "semibold",
+    fontSize: 16,
+    paddingHorizontal: 16,
   },
   titleText: {
     marginVertical: 16,
@@ -73,6 +87,7 @@ class Taskscreen extends Component {
       currentActionTypes: [],
       selectedItems: {},
       visible: false,
+      chosen: false,
     };
     this._isMounted = false;
   }
@@ -130,7 +145,6 @@ class Taskscreen extends Component {
         this.setState({
           loading: false,
           data: [...future_event, ...ongoing_event, ...past_event],
-          SearchData: [...future_event, ...ongoing_event, ...past_event],
         });
       }
     }
@@ -220,15 +234,18 @@ class Taskscreen extends Component {
     return (
       <TouchableOpacity
         onPress={() =>
-          this.props.navigation.navigate("EventDetail2", {
-            id: item._id,
+          this.props.navigation.navigate("TaskDetail", {
+            _id: item._id,
             name: item.name,
             description: item.description,
-            time: item.startTime,
-            date: item.startDate,
-            location: item.address,
-            tag: item.tagId,
-            poster: `${Url()}/api/images/${item.posterUrl}`,
+            time: item.endTime,
+            date: item.endDate,
+            managerId: item.managerId,
+            tags: item.tagsId,
+            user: item.availUser,
+            priority: item.priorityId,
+            faculty: item.facultyId,
+            coverUrl: `${Url()}/api/images/${item.coverUrl}`,
           })
         }
       >
@@ -243,11 +260,11 @@ class Taskscreen extends Component {
           <View style={styles.datetime}>
             <Image
               style={styles.Timeicon}
-              source={require("../assets/images/timesolid.png")}
+              source={require("../../assets/images/timesolid.png")}
             ></Image>
             <Text style={styles.Timecontent}>
-              {moment(item.startDate).format("DD/MM/YYYY")} -{" "}
-              {moment(item.startTime).format("HH:MM")}
+              {moment(item.endDate).format("DD/MM/YYYY")} -{" "}
+              {moment(item.endTime).format("HH:MM")}
             </Text>
           </View>
           <View>
@@ -381,7 +398,7 @@ class Taskscreen extends Component {
           <TouchableOpacity onPress={() => this.setState({ visible: true })}>
             <Image
               style={{ right: 16, marginTop: 20 }}
-              source={require("../assets/images/Add.png")}
+              source={require("../../assets/images/Add.png")}
             ></Image>
           </TouchableOpacity>
         </View>
@@ -407,14 +424,39 @@ class Taskscreen extends Component {
     return (
       <Provider>
         <View style={styles.container}>
-          <Text style={styles.toplabel}>Công việc</Text>
+          <View
+            style={{
+              marginTop: 12,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Text style={styles.toplabel}>Công việc</Text>
+            {this.state.chosen ? (
+              <Button
+                type="primary"
+                size="small"
+                style={styles.AddBtn}
+                activeStyle={{ color: "white" }}
+                onPress={() =>
+                  this.props.navigation.navigate("CreateTask", {
+                    event: this.state.currentEvent,
+                  })
+                }
+              >
+                <Text style={styles.BtnText}>Tạo mới +</Text>
+              </Button>
+            ) : null}
+          </View>
           <SearchableDropdown
             onItemSelect={(item) => {
               this.setState({ selectedItems: item });
               this.onChangeEvent(item._id);
+              this.setState({ chosen: true });
             }}
             selectedItems={this.state.selectedItems}
-            containerStyle={{ padding: 5 }}
+            containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
             itemStyle={{
               padding: 10,
               marginTop: 2,
@@ -428,7 +470,7 @@ class Taskscreen extends Component {
             items={this.state.data}
             resetValue={false}
             textInputProps={{
-              placeholder: "placeholder",
+              placeholder: "Chọn sự kiện",
               underlineColorAndroid: "transparent",
               style: {
                 padding: 12,

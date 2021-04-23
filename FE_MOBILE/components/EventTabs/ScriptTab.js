@@ -74,6 +74,7 @@ export default class ScriptTab extends Component {
     this.state = {
       data: null,
       visible: false,
+      loading: true,
     };
   }
 
@@ -85,6 +86,7 @@ export default class ScriptTab extends Component {
   componentDidMount() {
     this.setState({
       data: this.props.data,
+      loading: this.props.loading,
     });
   }
   updateListScript = (e) => {

@@ -8,14 +8,12 @@ import {
   Modal,
 } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import Eventscreen from "../screens/Event";
-import EventDetail2 from "../screens/EventDetails2";
-import scriptdetail from "../screens/scriptdetail";
-import ChatRoom from "../screens/ChatRoom";
+import Eventscreen from "../screens/EventScreens/Event";
+import EventDetail2 from "../screens/EventScreens/EventDetails2";
+import scriptdetail from "../screens/EventScreens/scriptdetail";
+import scriptview from "../screens/EventScreens/scriptview";
+import ChatRoom from "../screens/EventScreens/ChatRoom";
 // import Modal from "@ant-design/react-native";
-
-import { Button } from "react-native";
-import scriptview from "../screens/scriptview";
 
 const Stack = createStackNavigator();
 const styles = StyleSheet.create({

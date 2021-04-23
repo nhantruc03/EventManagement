@@ -7,16 +7,12 @@ import {
   Dimensions,
 } from "react-native";
 
-import Url from "../env";
+import Url from "../../env";
 import axios from "axios";
-import {
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-} from "react-native-gesture-handler";
+import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { Image } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
-import ChatMessage from "../components/ChatMessage";
+import ChatMessage from "../../components/ChatMessage";
 import { ActivityIndicator } from "@ant-design/react-native";
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
@@ -46,7 +42,7 @@ const styles = StyleSheet.create({
     paddingRight: 12,
   },
 });
-const client = new WebSocket("ws://192.168.1.8:3001");
+const client = new WebSocket("ws://192.168.1.6:3001");
 class ChatRoom extends Component {
   constructor(props) {
     super(props);
@@ -92,7 +88,7 @@ class ChatRoom extends Component {
               })
             }
           >
-            <Image source={require("../assets/images/preview.png")} />
+            <Image source={require("../../assets/images/preview.png")} />
           </TouchableOpacity>
         </View>
       ),
@@ -246,7 +242,7 @@ class ChatRoom extends Component {
                 disabled={!this.state.formValue}
                 onPress={() => this.sendMessage()}
               >
-                <Image source={require("../assets/images/Send.png")} />
+                <Image source={require("../../assets/images/Send.png")} />
               </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
@@ -255,7 +251,11 @@ class ChatRoom extends Component {
     } else {
       return (
         <View style={styles.Loading}>
-          <ActivityIndicator size="large" animating></ActivityIndicator>
+          <ActivityIndicator
+            size="large"
+            animating
+            color="#2A9D8F"
+          ></ActivityIndicator>
         </View>
       );
     }

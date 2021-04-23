@@ -48,6 +48,7 @@
     "react-native-svg": "12.1.0",
     "react-native-svg-icon": "^0.10.0",
     "react-native-tab-view": "^3.0.1",
+    "react-native-tags": "^2.2.0",
     "react-native-web": "^0.15.5",
     "react-native-webview": "11.0.0",
     "react-native-zss-rich-text-editor": "^1.1.0",

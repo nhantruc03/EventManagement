@@ -124,7 +124,7 @@ class ScriptCreateModal extends Component {
           // console.log("result", res.data.data);
           this.props.updateListScript(res.data.data);
           this.props.onClose();
-          alert("Tạo chi tiết kịch bản thành công");
+          alert("Tạo kịch bản thành công");
         })
         .catch((err) => {
           console.log(err);

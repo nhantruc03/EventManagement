@@ -1,16 +1,16 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import OrgTab from "../components/EventTabs/OrgTab";
+import OrgTab from "../../components/EventTabs/OrgTab";
 import axios from "axios";
-import Url from "../env";
-import getToken from "../Auth";
-import GuestTab from "../components/EventTabs/GuestTab";
-import Eventdetails from "../screens/EventDetails";
-import ScriptTab from "../components/EventTabs/ScriptTab";
+import Url from "../../env";
+import getToken from "../../Auth";
+import GuestTab from "../../components/EventTabs/GuestTab";
+import Eventdetails from "./EventDetails";
+import ScriptTab from "../../components/EventTabs/ScriptTab";
 import { TabView, SceneMap } from "react-native-tab-view";
 import { TabBar } from "react-native-tab-view";
 import { Dimensions } from "react-native";
-import GroupTab from "../components/EventTabs/GroupTab";
+import GroupTab from "../../components/EventTabs/GroupTab";
 import { ActivityIndicator } from "@ant-design/react-native";
 const styles = StyleSheet.create({
   container: {
@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
   },
   Tabcontainer: {
     flex: 2,
+    height: 50,
   },
   Loading: {
     justifyContent: "center",
@@ -71,7 +72,11 @@ export default class EventDetail2 extends Component {
       <OrgTab data={this.state.listOrganizer} />
     ) : (
       <View style={styles.Loading}>
-        <ActivityIndicator size="large" animating></ActivityIndicator>
+        <ActivityIndicator
+          size="large"
+          animating
+          color="#2A9D8F"
+        ></ActivityIndicator>
       </View>
     );
 
@@ -231,11 +236,11 @@ export default class EventDetail2 extends Component {
     <TabBar
       {...props}
       tabStyle={{ width: "auto" }}
-      indicatorStyle={{ backgroundColor: "#2A9D8F" }}
+      indicatorStyle={{ backgroundColor: "#2A9D8F", height: 4 }}
       activeColor="#2A9D8F"
       inactiveColor="#AAB0B6"
       style={{
-        backgroundColor: "white",
+        backgroundColor: "F6F7F8",
         paddingVertical: 5,
       }}
       scrollEnabled={true}
@@ -260,7 +265,7 @@ export default class EventDetail2 extends Component {
           renderScene={this.renderScene}
           onIndexChange={this.setIndex}
           initialLayout={initialLayout}
-          style={styles.container}
+          style={styles.Tabcontainer}
         />
       );
     } else {

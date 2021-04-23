@@ -132,7 +132,7 @@ class OrgTab extends Component {
 
         {this.state.loading ? (
           <View>
-            <ActivityIndicator size="large" animating></ActivityIndicator>
+            <ActivityIndicator size="large" animating color="#2A9D8F"></ActivityIndicator>
           </View>
         ) : (
           this.renderList()

@@ -8,12 +8,12 @@ import {
   Image,
 } from "react-native";
 import axios from "axios";
-import getToken from "../Auth";
-import EventCard from "../components/EventCard";
+import getToken from "../../Auth";
+import EventCard from "../../components/EventCard";
 import moment from "moment";
-import Url from "../env";
+import Url from "../../env";
 import { ActivityIndicator, Tabs } from "@ant-design/react-native";
-import Search from "../components/helper/search";
+import Search from "../../components/helper/search";
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#F6F7F8",
@@ -177,7 +177,7 @@ export default class Event extends Component {
           <View style={styles.datetime}>
             <Image
               style={styles.Timeicon}
-              source={require("../assets/images/TimeIcon.png")}
+              source={require("../../assets/images/TimeIcon.png")}
             ></Image>
             <Text style={styles.Timecontent}>
               {moment(item.startDate).format("DD/MM/YYYY")} -{" "}
@@ -187,7 +187,7 @@ export default class Event extends Component {
           <View style={styles.location}>
             <Image
               style={styles.locateticon}
-              source={require("../assets/images/Time.png")}
+              source={require("../../assets/images/Time.png")}
             ></Image>
             <Text style={styles.Locatecontent}>{item.address}</Text>
           </View>
@@ -262,7 +262,7 @@ export default class Event extends Component {
               <ActivityIndicator
                 size="large"
                 animating
-                color="#0000ff"
+                color="#2A9D8F"
               ></ActivityIndicator>
             </View>
           ) : (
