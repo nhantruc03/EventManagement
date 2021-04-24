@@ -1,5 +1,4 @@
 import { Button } from "@ant-design/react-native";
-import moment from "moment";
 import React, { Component } from "react";
 import {
   View,
@@ -9,10 +8,8 @@ import {
   KeyboardAvoidingView,
   Dimensions,
   Platform,
-  ToastAndroid,
   AlertIOS,
 } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import {
   actions,
   RichEditor,
@@ -67,7 +64,6 @@ class ScriptDetailModal extends Component {
   }
 
   componentDidMount() {
-    // console.log(this.props.data.time);
     this.setState({
       data: this.props.data,
     });
@@ -83,7 +79,6 @@ class ScriptDetailModal extends Component {
   };
 
   onChangeTime = (time) => {
-    console.log("receive", time);
     this.setState({
       data: {
         ...this.state.data,
@@ -149,18 +144,15 @@ class ScriptDetailModal extends Component {
           alert("Cập nhật chi tiết kịch bản thất bại");
         });
     }
-    // console.log("finish data", data);
   };
 
   render() {
     if (this.state.data) {
-      // console.log(this.richText);
       return (
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          {/* <View style={{ maxHeight: H * 0.7 }}> */}
           <ScrollView
             keyboardDismissMode="interactive"
             style={{ flex: 1, maxHeight: H * 0.7 }}

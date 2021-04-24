@@ -52,8 +52,11 @@ class CalendarSection extends Component {
         let listData = [];
 
         this.state.listSubActions.forEach(element => {
-            if (moment(element.startDate).toDate().setHours(0, 0, 0, 0) === value.toDate().setHours(0, 0, 0, 0)) {
-                listData.push(element)
+            if (!element.status) {
+
+                if (moment(element.startDate).toDate().setHours(0, 0, 0, 0) === value.toDate().setHours(0, 0, 0, 0)) {
+                    listData.push(element)
+                }
             }
         });
 
@@ -74,6 +77,7 @@ class CalendarSection extends Component {
     getMonthData = (value) => {
         let listData = [];
         this.props.listActions.forEach(element => {
+
             if (moment(element.startDate).month() === value.month() && moment(element.startDate).year() === value.year()) {
                 listData.push(element)
             }
@@ -148,7 +152,7 @@ class CalendarSection extends Component {
         this.setState({
             mode: mode
         })
-        
+
     }
 
     render() {

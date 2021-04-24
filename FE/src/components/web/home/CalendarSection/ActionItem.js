@@ -8,7 +8,7 @@ class ActionItem extends Component {
         return (
             <div className="calendar-sub-action flex-container-row">
                 <div className="vl-action"></div>
-                <Link to={`/actions/${this.props.data.actionId}`}>
+                <Link to={`/actions/${this.props.data._id}`}>
                     <div style={{ marginLeft: '20px', maxWidth: '100%' }}>
                         <Tooltip title={
                             <div>

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { View, Text, Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
-
+import { Button } from "@ant-design/react-native";
 class datetimepicker extends Component {
   constructor(props) {
     super(props);
@@ -26,10 +26,10 @@ class datetimepicker extends Component {
 
   render() {
     return (
-      <View styles={this.props.containerStyle}>
+      <View style={this.props.containerStyle}>
         <Text style={this.props.labelStyle}>{this.props.label}</Text>
         {Platform.OS === "android" ? (
-          <View style={{ textAlign: "left" }}>
+          <View style={{ textAlign: "left", marginTop: 5 }}>
             <Button
               onPress={() => {
                 this.setState({
@@ -38,7 +38,8 @@ class datetimepicker extends Component {
               }}
             >
               <Text style={{ textAlign: "left" }}>
-                {moment(this.props.data).utcOffset(0).format("HH:mm")}
+
+                {this.props.mode === "time" ? moment(this.props.data).utcOffset(0).format("HH:mm") : moment(this.props.data).utcOffset(0).format("DD/MM/YYYY")}
               </Text>
             </Button>
           </View>
@@ -46,7 +47,7 @@ class datetimepicker extends Component {
         {this.state.showDateTimePicker || Platform.OS === "ios" ? (
           <View style={this.props.BoxInput}>
             <DateTimePicker
-              value={this.props.data ? this.props.data : new Date()}
+              value={this.props.data ? new Date(this.props.data) : new Date()}
               mode={this.props.mode}
               is24Hour={true}
               display="default"

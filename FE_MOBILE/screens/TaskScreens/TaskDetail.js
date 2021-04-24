@@ -1,20 +1,12 @@
-import moment from "moment";
 import React, { Component } from "react";
 import {
   View,
-  Text,
   StyleSheet,
-  Image,
-  FlatList,
-  TouchableOpacity,
   Dimensions,
 } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import axios from "axios";
 import Url from "../../env";
 import getToken from "../../Auth";
-import { CheckBox } from "react-native-elements";
-import Separator from "../../components/helper/separator";
 
 import { TabView, SceneMap } from "react-native-tab-view";
 import { TabBar } from "react-native-tab-view";
@@ -76,7 +68,6 @@ class TaskDetail extends Component {
     this.renderScene = SceneMap({
       1: this.Route1,
       2: this.Route2,
-      // 3: this.Route3,
     });
   }
   Route1 = () => <TaskDetailTab data={this.props.route.params.data} />;
@@ -98,20 +89,6 @@ class TaskDetail extends Component {
       </View>
     );
 
-  // Route3 = () =>
-  //   this.state.listscripts && !this.state.loading ? (
-  //     <ScriptTab
-  //       navigation={this.props.navigation}
-  //       data={this.state.listscripts}
-  //       updateListScript={(e) => this.updateListScript(e)}
-  //       event={this.state.event}
-  //     />
-  //   ) : (
-  //     <View style={styles.Loading}>
-  //       <ActivityIndicator size="large" animating></ActivityIndicator>
-  //     </View>
-  //   );
-
   updateListSubTask = (e) => {
     this.setState({
       subActions: [...this.state.subActions, e],
@@ -124,7 +101,7 @@ class TaskDetail extends Component {
     const subActions = await axios
       .post(
         `${Url()}/api/sub-actions/getAll`,
-        { actionId: this.props.route.params._id },
+        { actionId: this.props.route.params.data._id },
         {
           headers: {
             Authorization: await getToken(),
@@ -135,38 +112,7 @@ class TaskDetail extends Component {
     this.setState({
       subActions: subActions,
     });
-    //console.log(subActions);
   }
-
-  changeStatus = async (e) => {
-    await axios
-      .put(
-        `${Url()}/api/sub-actions/` + e._id,
-        { status: !e.status },
-        {
-          headers: {
-            Authorization: await getToken(),
-          },
-        }
-      )
-      .then(() => {
-        let temp_data = this.state.subActions;
-        temp_data.forEach((element) => {
-          if (element._id === e._id) {
-            element.status = !e.status;
-          }
-        });
-        this.setState({
-          subActions: temp_data,
-        });
-        // this.props.updateGuest(temp_data);
-        //console.log("temp_data", temp_data);
-        alert(`Trạng thái của khách mời ${e.name} cập nhật thành công`);
-      })
-      .catch(() => {
-        alert(`Trạng thái của khách mời ${e.name} cập nhật thất bại`);
-      });
-  };
 
   renderTabBar = (props) => (
     <TabBar
@@ -188,7 +134,6 @@ class TaskDetail extends Component {
     });
   };
   render() {
-    //console.log("faculty", this.state.facultyName);
     return (
       <View style={styles.container}>
         <TabView

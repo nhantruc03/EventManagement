@@ -11,6 +11,7 @@ import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import EventCard from "../../components/EventCard";
 import { Button, Modal, Provider } from "@ant-design/react-native";
 import AddActionTypeModal from "../../components/AddActionTypeModal";
+import { ActivityIndicator } from "react-native";
 
 const W = Dimensions.get("window").width;
 
@@ -151,6 +152,9 @@ class Taskscreen extends Component {
   }
 
   onChangeEvent = async (id) => {
+    this.setState({
+      loading: true
+    })
     const [actionTypes, falcuties, actions] = await Promise.all([
       axios
         .post(
@@ -207,6 +211,7 @@ class Taskscreen extends Component {
       let temp = this.state.data.filter((e) => e._id === id);
       this.setState({
         currentEvent: temp[0],
+        loading: false
       });
     }
     // load actions
@@ -217,7 +222,6 @@ class Taskscreen extends Component {
     let temp_listActions = this.state.currentActions.filter(
       (e) => e.actionTypeId._id === route.key
     );
-    //console.log(temp_listActions);
     return (
       <View>
         <FlatList
@@ -376,38 +380,48 @@ class Taskscreen extends Component {
   };
 
   renderTabView = () => {
-    if (this.state.currentEvent && this.state.currentActionTypes.length > 0) {
-      return (
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            justifyContent: "center",
-            alignContent: "center",
-          }}
-        >
-          <TabView
-            renderTabBar={this.renderTabBar}
-            navigationState={{
-              index: this.state.index,
-              routes: this.state.routes,
+
+    if (!this.state.loading) {
+      if (this.state.currentEvent && this.state.currentActionTypes.length > 0) {
+        return (
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              justifyContent: "center",
+              alignContent: "center",
             }}
-            renderScene={this.renderTask}
-            onIndexChange={this.setIndex}
-            initialLayout={initialLayout}
-            style={styles.Tabcontainer}
-          />
-          <TouchableOpacity onPress={() => this.setState({ visible: true })}>
-            <Image
-              style={{ right: 16, marginTop: 20 }}
-              source={require("../../assets/images/Add.png")}
-            ></Image>
-          </TouchableOpacity>
-        </View>
-      );
+          >
+            <TabView
+              renderTabBar={this.renderTabBar}
+              navigationState={{
+                index: this.state.index,
+                routes: this.state.routes,
+              }}
+              renderScene={this.renderTask}
+              onIndexChange={this.setIndex}
+              initialLayout={initialLayout}
+              style={styles.Tabcontainer}
+            />
+            <TouchableOpacity onPress={() => this.setState({ visible: true })}>
+              <Image
+                style={{ right: 16, marginTop: 20 }}
+                source={require("../../assets/images/Add.png")}
+              ></Image>
+            </TouchableOpacity>
+          </View>
+        );
+      } else {
+        return null;
+      }
     } else {
-      return <View></View>;
+      return (
+        <View>
+          <ActivityIndicator size="large" animating color="#2A9D8F"></ActivityIndicator>
+        </View>
+      )
     }
+
   };
   updateListListActionType = (e) => {
     this.setState({

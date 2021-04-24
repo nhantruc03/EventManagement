@@ -89,7 +89,6 @@ class TaskDetailTab extends Component {
   }
 
   render() {
-    console.log("this data", this.state.data);
     if (this.state.data) {
       return (
         <ScrollView>
