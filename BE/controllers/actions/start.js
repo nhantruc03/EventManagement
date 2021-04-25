@@ -13,11 +13,13 @@ const start = async (req, res) => {
         //check permissson
         let permissons = await Permission.getPermission(req.body.eventId, req.user._id, req.user.roleId._id)
         if (!Permission.checkPermission(permissons, constants.QL_CONGVIEC_PERMISSION)) {
+            
             return res.status(406).json({
                 success: false,
                 error: "Permission denied!"
             })
         }
+        console.log('thỏa điều kiện')
         const query = {
             $and: [
                 { name: req.body.name },
@@ -171,6 +173,7 @@ const start = async (req, res) => {
             Notifications: listNotifications
         });
     } catch (error) {
+        console.log(error.message)
         await abortTransactions(sessions)
         return res.status(500).json({
             success: false,

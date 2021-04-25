@@ -95,7 +95,7 @@ class actionDetails extends Component {
 
     renderModalEditAction = () => {
         return (
-            <EditAction onClose={()=>this.setModalEditActionVisible(false)} data={this.state.data} manager={this.state.manager} update={(action, manager, actionAssign) => this.updateAction(action, manager, actionAssign)} />
+            <EditAction onClose={() => this.setModalEditActionVisible(false)} data={this.state.data} manager={this.state.manager} update={(action, manager, actionAssign) => this.updateAction(action, manager, actionAssign)} />
         )
     }
 
@@ -177,11 +177,11 @@ class actionDetails extends Component {
                 }
 
                 let permissons = await getPermission(action.eventId._id)
-
+                console.log(action.managerId)
                 this.setState({
                     data: action,
                     actionAssign: actionAssign.filter(e => e.role === 2),
-                    manager: actionAssign.filter(e => e.role === 1)[0],
+                    manager: action.managerId,
                     resources: resources,
                     subActions: subActions,
                     currentStatus: temp_status,
@@ -285,7 +285,7 @@ class actionDetails extends Component {
             <div style={{ marginTop: '10px' }}>
                 { this.state.subActions.map((e, key) =>
                     <div className="flex-container-row" style={{ marginTop: '10px' }} key={key}>
-                        {checkPermission(this.state.currentPermissions, constants.QL_CONGVIEC_PERMISSION) || this.state.currentUser.id === this.state.data.managerId ?
+                        {checkPermission(this.state.currentPermissions, constants.QL_CONGVIEC_PERMISSION) || this.state.currentUser.id === this.state.data.managerId._id ?
                             <>
                                 <Checkbox className="checkbox" onChange={this.onChange} checked={e.status} style={e.status ? { textDecoration: 'line-through' } : null} value={e._id} >{e.name}</Checkbox>
                                 <Button onClick={() => this.setModalEditSubActionVisible(true, e)} className="flex-row-item-right no-border"><EyeOutlined /></Button>
@@ -315,7 +315,7 @@ class actionDetails extends Component {
                                     Chi tiết
                             </Breadcrumb.Item>
                             </Breadcrumb>
-                            {checkPermission(this.state.currentPermissions, constants.QL_CONGVIEC_PERMISSION) || this.state.currentUser.id === this.state.data.managerId ?
+                            {checkPermission(this.state.currentPermissions, constants.QL_CONGVIEC_PERMISSION) || this.state.currentUser.id === this.state.data.managerId._id ?
                                 <Button onClick={() => this.setModalEditActionVisible(true)} className="flex-row-item-right add">Chỉnh sửa</Button>
                                 : null}
                         </div>
@@ -326,7 +326,7 @@ class actionDetails extends Component {
                             <Col sm={24} xl={7} className="event-detail">
                                 <div className="flex-container-row">
                                     <Title style={{ color: '#264653' }} level={3}>Cần làm</Title>
-                                    {checkPermission(this.state.currentPermissions, constants.QL_CONGVIEC_PERMISSION) || this.state.currentUser.id === this.state.data.managerId ?
+                                    {checkPermission(this.state.currentPermissions, constants.QL_CONGVIEC_PERMISSION) || this.state.currentUser.id === this.state.data.managerId._id ?
                                         <Button onClick={() => this.setModalAddSubActionVisible(true)} className="flex-row-item-right add">Thêm</Button>
                                         : null}
                                 </div>
@@ -361,10 +361,8 @@ class actionDetails extends Component {
                                 <Title style={{ color: '#017567' }} level={1}>{this.state.data.name}</Title>
 
                                 <div className="flex-container-row" style={{ width: '80%' }}>
-                                    {/* <Tag className="event-detail-status">{this.state.data.actionTypeId.name}</Tag> */}
                                     <Tag className="event-detail-status">{this.state.currentStatus}</Tag>
                                     <p style={{ color: 'grey' }}>Bắt đầu: {moment(this.state.data.startTime).format("DD/MM/YYYY")}</p>
-                                    {/* <p className="flex-row-item-right">{this.state.data.priorityId.name}</p> */}
                                 </div>
 
                                 <Title level={4}>Mô tả</Title>
@@ -379,8 +377,8 @@ class actionDetails extends Component {
                                     <Col sm={24} md={10}>
                                         <Title level={4}>Người phụ trách</Title>
                                         <div className="flex-container-row" >
-                                            {this.state.manager ? <Avatar src={`/api/images/${this.state.manager.userId.photoUrl}`} /> : null}
-                                            {this.state.manager ? <p style={{ marginLeft: '10px' }} className="black-2">{this.state.manager.userId.name}</p> : null}
+                                            {this.state.manager ? <Avatar src={`/api/images/${this.state.manager.photoUrl}`} /> : null}
+                                            {this.state.manager ? <p style={{ marginLeft: '10px' }} className="black-2">{this.state.manager.name}</p> : null}
                                         </div>
                                     </Col>
 

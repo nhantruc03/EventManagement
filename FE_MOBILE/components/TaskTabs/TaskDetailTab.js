@@ -158,26 +158,21 @@ class TaskDetailTab extends Component {
             </View>
             <View style={styles.section3}>
               <View style={styles.managerContainer}>
-                {this.state.data.availUser.map((value, key) =>
-                  this.state.data.managerId === value._id ? (
-                    <View
-                      style={{
-                        borderRadius: 16,
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                      key={key}
-                    >
-                      <Image
-                        style={styles.avaImage}
-                        source={{
-                          uri: `${Url()}/api/images/${value.photoUrl}`,
-                        }}
-                      ></Image>
-                      <Text style={styles.Text}>{value.name}</Text>
-                    </View>
-                  ) : null
-                )}
+                <View
+                  style={{
+                    borderRadius: 16,
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <Image
+                    style={styles.avaImage}
+                    source={{
+                      uri: `${Url()}/api/images/${this.state.data.managerId.photoUrl}`,
+                    }}
+                  ></Image>
+                  <Text style={styles.Text}>{this.state.data.managerId.name}</Text>
+                </View>
               </View>
               <View>
                 <Text style={styles.Text}>{this.state.data.faculty.name}</Text>

@@ -15,6 +15,7 @@ var mime = require('mime');
 // about WebSocket
 const webSocketServer = require('websocket').server;
 const http = require('http');
+const { storeImage } = require('./services/storeimage');
 const server = http.createServer(app);
 const clients = {};
 const getUniqueID = () => {
@@ -172,23 +173,33 @@ app.use("/api/notifications", authenticateToken, require("./routes/notifications
 
 
 app.post("/api/uploads", (req, res) => {
-  if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send('No files were uploaded.');
-  }
+  if (req.body.mobile) {
+    let result = storeImage(req.body.file)
+    if (result) {
+      return res.status(200).json({
+        uploaded: true,
+        url: result
+      });
+    }
+  } else {
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).send('No files were uploaded.');
+    }
 
-  let sampleFile = req.files.file;
-  let extension = mime.extension(sampleFile.mimetype);
-  const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-  let filename = uniqueSuffix + '-image.' + extension;
-  // Use the mv() method to place the file somewhere on your server
-  sampleFile.mv('./images/' + filename, function (err) {
-    if (err)
-      return res.status(500).send(err);
-    res.status(200).json({
-      uploaded: true,
-      url: filename,
+    let sampleFile = req.files.file;
+    let extension = mime.extension(sampleFile.mimetype);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    let filename = uniqueSuffix + '-image.' + extension;
+    // Use the mv() method to place the file somewhere on your server
+    sampleFile.mv('./images/' + filename, function (err) {
+      if (err)
+        return res.status(500).send(err);
+      res.status(200).json({
+        uploaded: true,
+        url: filename,
+      });
     });
-  });
+  }
 })
 
 

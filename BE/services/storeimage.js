@@ -15,12 +15,12 @@ const storeImage = (base64string) => {
         let extension = mime.extension(type);
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
         let filename = uniqueSuffix + '-image.' + extension;
-
         fs.writeFileSync("./images/" + filename, imageBuffer, 'utf8');
         return filename;
     }
     catch (e) {
         console.log(e);
+        return null;
     }
 }
 module.exports = { storeImage };

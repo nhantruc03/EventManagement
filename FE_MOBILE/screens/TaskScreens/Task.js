@@ -86,6 +86,7 @@ class Taskscreen extends Component {
       routes: [],
       currentEvent: {},
       currentActionTypes: [],
+      currentActions: [],
       selectedItems: {},
       visible: false,
       chosen: false,
@@ -234,6 +235,12 @@ class Taskscreen extends Component {
     );
   };
 
+  updateListActions = (e) => {
+    this.setState({
+      currentActions: [...this.state.currentActions, e]
+    })
+  }
+
   renderItem = (item) => {
     return (
       <TouchableOpacity
@@ -269,8 +276,8 @@ class Taskscreen extends Component {
               source={require("../../assets/images/timesolid.png")}
             ></Image>
             <Text style={styles.Timecontent}>
-              {moment(item.endDate).format("DD/MM/YYYY")} -{" "}
-              {moment(item.endTime).format("HH:MM")}
+              {moment(item.startDate).format("DD/MM/YYYY")} -{" "}
+              {moment(item.endDate).format("DD/MM/YYYY")}
             </Text>
           </View>
           <View>
@@ -360,8 +367,7 @@ class Taskscreen extends Component {
       inactiveColor="#AAB0B6"
       style={{
         backgroundColor: "F6F7F8",
-        paddingVertical: 5,
-        width: W * 0.8,
+        width: W * 0.9,
       }}
       labelStyle={{
         fontFamily: "bold",
@@ -386,7 +392,6 @@ class Taskscreen extends Component {
         return (
           <View
             style={{
-              flex: 1,
               flexDirection: "row",
               justifyContent: "center",
               alignContent: "center",
@@ -405,7 +410,7 @@ class Taskscreen extends Component {
             />
             <TouchableOpacity onPress={() => this.setState({ visible: true })}>
               <Image
-                style={{ right: 16, marginTop: 20 }}
+                style={{ marginRight: 10, marginTop: 15 }}
                 source={require("../../assets/images/Add.png")}
               ></Image>
             </TouchableOpacity>
@@ -458,6 +463,7 @@ class Taskscreen extends Component {
                 onPress={() =>
                   this.props.navigation.navigate("CreateTask", {
                     event: this.state.currentEvent,
+                    updateListActions: (e) => this.updateListActions(e)
                   })
                 }
               >
@@ -467,9 +473,8 @@ class Taskscreen extends Component {
           </View>
           <SearchableDropdown
             onItemSelect={(item) => {
-              this.setState({ selectedItems: item });
+              this.setState({ selectedItems: item, chosen: true });
               this.onChangeEvent(item._id);
-              this.setState({ chosen: true });
             }}
             selectedItems={this.state.selectedItems}
             containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}

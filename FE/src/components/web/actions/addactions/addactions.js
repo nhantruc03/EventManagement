@@ -43,9 +43,6 @@ class addactions extends Component {
 
     async componentDidMount() {
         this._isMounted = true;
-
-
-
         const [tags, priorities] = await trackPromise(Promise.all([
             axios.post('/api/action-tags/getAll', {}, {
                 headers: {
@@ -108,7 +105,6 @@ class addactions extends Component {
             data1: data
         })
 
-        console.log('receive data', data)
         this.next()
     }
 
@@ -118,7 +114,6 @@ class addactions extends Component {
             ...e,
         }
 
-        console.log('receive data', data)
         await trackPromise(axios.post('/api/actions/start', data, {
             headers: {
                 'Authorization': { AUTH }.AUTH
@@ -127,7 +122,6 @@ class addactions extends Component {
             .then(res => {
                 message.success('Tạo thành công');
 
-                console.log(res.data.Notifications)
 
                 client.send(JSON.stringify({
                     type: "sendListNotifications",
@@ -234,10 +228,10 @@ class addactions extends Component {
                                         action='/api/uploads'
                                         listType="picture"
                                         beforeUpload={file => {
-                                            if (file.type !== 'image/png') {
+                                            if (file.type !== 'image/png' || file.type !== 'image/jpg') {
                                                 message.error(`${file.name} is not a png file`);
                                             }
-                                            return file.type === 'image/png';
+                                            return (file.type !== 'image/png' || file.type !== 'image/jpg')
                                         }}
                                         onChange={(info) => {
                                             // file.status is empty when beforeUpload return false

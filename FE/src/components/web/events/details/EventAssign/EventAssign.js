@@ -94,7 +94,21 @@ class EventAssign extends Component {
                     message.success('Xóa thành công')
                 })
                 .catch(err => {
-                    message.success('Xóa thất bại')
+                    let list_actions = err.response.data.list_actions.reduce((list, e) => { list.push(e.name); return list }, [])
+                    let list_scripts = err.response.data.list_scripts.reduce((list, e) => { list.push(e.name); return list }, [])
+
+                    if (list_actions.length > 0 || list_scripts.length > 0) {
+                        let error = (
+                            <div>
+                                <p>Xóa thất bại, Người dùng đang được phân công vào các: </p>
+                                {list_actions.length > 0 ? <p>Công việc: {list_actions}</p> : null}
+                                {list_scripts.length > 0 ? <p>Kịch bản: {list_scripts}</p> : null}
+                            </div>
+                        )
+                        message.error(error, 10)
+                    } else {
+                        message.error("Xóa thất bại")
+                    }
                 }))
     }
 

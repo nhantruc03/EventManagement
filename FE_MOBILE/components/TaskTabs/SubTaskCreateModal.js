@@ -49,7 +49,6 @@ class SubTaskCreateModal extends Component {
   }
   componentDidMount() {
     if (!this.props.onAdd) {
-      console.log('didmount', this.props.data)
       this.setState({
         data: this.props.data
       })
@@ -91,7 +90,6 @@ class SubTaskCreateModal extends Component {
         })
         .then((res) => {
           alert("Cập nhật subtask thành công");
-          console.log('updated', res.data.data)
           this.props.onClose();
           this.props.updateToList(res.data.data);
         })
@@ -128,7 +126,6 @@ class SubTaskCreateModal extends Component {
   };
   // startTime | endTime | startDate | endDate
   render() {
-    console.log('render', this.state.data)
     if (this.state.data) {
       return (
         <KeyboardAvoidingView

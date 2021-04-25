@@ -104,7 +104,7 @@ class editAction extends Component {
         let data = {
             ...this.props.data,
             facultyId: this.props.data.facultyId._id,
-            managerId: this.props.manager.userId._id,
+            managerId: this.props.manager._id,
             actionTypeId: this.props.data.actionTypeId._id,
             availUser: temp_availUser,
             tagsId: temp_tagsId,
@@ -156,7 +156,7 @@ class editAction extends Component {
 
                     let temp_Action = res.data.data
                     let temp_actionAssign = res.data.actionAssign.filter(e => e.role === 2)
-                    let temp_manager = res.data.actionAssign.filter(e => e.role === 1)[0]
+                    let temp_manager = res.data.data.managerId
                     // prepare init data
                     let temp_availUser = []
                     temp_Action.availUser.forEach(e => {
@@ -171,7 +171,7 @@ class editAction extends Component {
                     let data = {
                         ...temp_Action,
                         facultyId: temp_Action.facultyId._id,
-                        managerId: temp_manager.userId._id,
+                        managerId: temp_manager._id,
                         actionTypeId: temp_Action.actionTypeId._id,
                         availUser: temp_availUser,
                         tagsId: temp_tagsId,
