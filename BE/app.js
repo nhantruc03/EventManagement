@@ -147,7 +147,7 @@ app.use('/api/images', express.static('images'));
 app.use('/api/resources', express.static('resources'));
 // Routes
 // app.use("/api/medicines", authenticateToken, require("./routes/medicines"));
-app.use("/api/users", authenticateToken, require("./routes/users"));
+app.use("/api/users", require("./routes/users"));
 app.use("/api/actions", authenticateToken, require("./routes/actions"));
 app.use("/api/sub-actions", authenticateToken, require("./routes/subActions"));
 app.use("/api/action-tags", authenticateToken, require("./routes/actionTags"));

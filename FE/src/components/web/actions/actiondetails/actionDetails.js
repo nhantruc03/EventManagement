@@ -108,9 +108,7 @@ class actionDetails extends Component {
         if (this.state.currentSubAction) {
             let data = {
                 ...this.state.currentSubAction,
-                'startDate': moment(this.state.currentSubAction.startDate),
                 'endDate': moment(this.state.currentSubAction.endDate),
-                'startTime': moment(this.state.currentSubAction.startTime),
                 'endTime': moment(this.state.currentSubAction.endTime),
             }
             return (

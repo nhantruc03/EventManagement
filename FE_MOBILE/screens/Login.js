@@ -38,14 +38,13 @@ export default LoginScreen = ({ navigation }) => {
         }
       })
       .catch((error) => {
-        console.error(error);
+        console.log(error.response);
         //alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
       });
 
     if (result !== undefined) {
-      console.log("result2", result);
       await AsyncStorage.setItem("login", JSON.stringify(result));
-      navigation.replace("BottomNavigation");
+      navigation.replace("BottomNav");
     } else alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
   };
   return (

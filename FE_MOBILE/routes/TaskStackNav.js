@@ -38,7 +38,7 @@ class TaskStackNav extends Component {
           name="CreateTask"
           component={CreateTask}
           options={{
-            title: "Chi tiết công việc",
+            title: "Tạo công việc",
             headerStyle: {
               backgroundColor: "#2A9D8F",
             },

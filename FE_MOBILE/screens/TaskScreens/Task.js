@@ -94,6 +94,17 @@ class Taskscreen extends Component {
     this._isMounted = false;
   }
 
+  async componentDidUpdate(prevProps) {
+    if (prevProps.route.params?.data !== this.props.route.params?.data) {
+      const result = this.props.route.params?.data;
+
+      // this._onSelectCountry(result);
+      console.log("didupdate", result);
+      // await this.onChangeEvent(result);
+      this.updateListActions(result);
+    }
+  }
+
   onClose = () => {
     this.setState({
       visible: false,
@@ -154,8 +165,8 @@ class Taskscreen extends Component {
 
   onChangeEvent = async (id) => {
     this.setState({
-      loading: true
-    })
+      loading: true,
+    });
     const [actionTypes, falcuties, actions] = await Promise.all([
       axios
         .post(
@@ -167,7 +178,10 @@ class Taskscreen extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch((err) => {
+          console.log(err.response);
+        }),
       axios
         .post(
           `${Url()}/api/faculties/getAll`,
@@ -178,7 +192,10 @@ class Taskscreen extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch((err) => {
+          console.log(err.response);
+        }),
       axios
         .post(
           `${Url()}/api/actions/getAll`,
@@ -189,10 +206,12 @@ class Taskscreen extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch((err) => {
+          console.log(err.response);
+        }),
     ]);
     if (actionTypes !== null && falcuties !== null && actions !== null) {
-      // { key: "1", title: "Thông tin chung" }
       let temp_routes = [];
       actionTypes.forEach((e) => {
         let temp = {
@@ -201,22 +220,17 @@ class Taskscreen extends Component {
         };
         temp_routes.push(temp);
       });
-
+      let temp = this.state.data.filter((e) => e._id === id);
       this.setState({
         currentActionTypes: actionTypes,
         currentFaculties: falcuties,
         currentActions: actions,
         temp_data: actions,
         routes: temp_routes,
-      });
-      let temp = this.state.data.filter((e) => e._id === id);
-      this.setState({
         currentEvent: temp[0],
-        loading: false
+        loading: false,
       });
     }
-    // load actions
-    // set state actions
   };
 
   renderTask = ({ route }) => {
@@ -237,9 +251,9 @@ class Taskscreen extends Component {
 
   updateListActions = (e) => {
     this.setState({
-      currentActions: [...this.state.currentActions, e]
-    })
-  }
+      currentActions: [...this.state.currentActions, e],
+    });
+  };
 
   renderItem = (item) => {
     return (
@@ -338,25 +352,6 @@ class Taskscreen extends Component {
       </TouchableOpacity>
     );
   };
-  renderList = () => {
-    if (this.state.currentEvent) {
-      return (
-        <TabView
-          renderTabBar={this.renderTabBar}
-          navigationState={{
-            index: this.state.index,
-            routes: this.state.routes,
-          }}
-          renderScene={this.renderScene}
-          onIndexChange={this.setIndex}
-          initialLayout={initialLayout}
-          style={styles.container}
-        />
-      );
-    } else {
-      return <View></View>;
-    }
-  };
 
   renderTabBar = (props) => (
     <TabBar
@@ -386,12 +381,12 @@ class Taskscreen extends Component {
   };
 
   renderTabView = () => {
-
     if (!this.state.loading) {
       if (this.state.currentEvent && this.state.currentActionTypes.length > 0) {
         return (
           <View
             style={{
+              flex: 1,
               flexDirection: "row",
               justifyContent: "center",
               alignContent: "center",
@@ -422,11 +417,14 @@ class Taskscreen extends Component {
     } else {
       return (
         <View>
-          <ActivityIndicator size="large" animating color="#2A9D8F"></ActivityIndicator>
+          <ActivityIndicator
+            size="large"
+            animating
+            color="#2A9D8F"
+          ></ActivityIndicator>
         </View>
-      )
+      );
     }
-
   };
   updateListListActionType = (e) => {
     this.setState({
@@ -463,7 +461,7 @@ class Taskscreen extends Component {
                 onPress={() =>
                   this.props.navigation.navigate("CreateTask", {
                     event: this.state.currentEvent,
-                    updateListActions: (e) => this.updateListActions(e)
+                    navigation: this.props.navigation,
                   })
                 }
               >
@@ -501,7 +499,7 @@ class Taskscreen extends Component {
               },
             }}
             listProps={{
-              nestedScrollEnabled: true,
+              nestedScrollEnabled: false,
             }}
           />
 

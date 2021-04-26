@@ -36,7 +36,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5
   },
   Label: {
-    marginTop: 5
+    marginTop: 5,
+    color: "#2A9D8F",
+    fontFamily: "bold",
+    fontSize: 14,
+  },
+  PrimaryBtn: {
+    fontFamily: "bold",
+    borderColor: "#2A9D8F",
+    backgroundColor: "#2A9D8F",
+    borderRadius: 8,
+    padding: 12,
+    margin: 16,
+    justifyContent: "center",
+    alignContent: "center",
   }
 });
 
@@ -44,7 +57,10 @@ class SubTaskCreateModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: {}
+      data: {
+        endDate: new Date(),
+        endTime: new Date(),
+      }
     };
   }
   componentDidMount() {
@@ -134,16 +150,16 @@ class SubTaskCreateModal extends Component {
         >
           <ScrollView
             keyboardDismissMode="interactive"
-            style={{ maxHeight: H * 0.33, paddingHorizontal: 10, marginVertical: 10 }}
+            style={{ maxHeight: H * 0.5, paddingHorizontal: 10, marginVertical: 10 }}
             bounces={false}
           >
-            <Text> Tên </Text>
+            <Text > Tên </Text>
             <TextInput
               onChangeText={this.onChangeName}
               style={styles.input}
               value={this.state.data.name}
             ></TextInput>
-            <Text> Mô tả </Text>
+            <Text > Mô tả </Text>
             <TextInput
               style={styles.textArea}
               value={this.state.data.description}
@@ -152,15 +168,7 @@ class SubTaskCreateModal extends Component {
               numberOfLines={1}
             ></TextInput>
             <View style={{ flex: 1, flexDirection: "row" }}>
-              <Customdatetime
-                containerStyle={styles.ScriptNameContainer}
-                labelStyle={styles.Label}
-                label="Ngày bắt đầu:"
-                BoxInput={styles.BoxInput}
-                Save={(e) => this.onChangeTime("startDate", e)}
-                data={this.state.data.startDate}
-                mode="date"
-              />
+
               <Customdatetime
                 containerStyle={styles.ScriptNameContainer}
                 labelStyle={styles.Label}
@@ -169,17 +177,6 @@ class SubTaskCreateModal extends Component {
                 Save={(e) => this.onChangeTime("endDate", e)}
                 data={this.state.data.endDate}
                 mode="date"
-              />
-            </View>
-            <View style={{ flex: 1, flexDirection: "row" }}>
-              <Customdatetime
-                containerStyle={styles.ScriptNameContainer}
-                labelStyle={styles.Label}
-                label="Giờ bắt đầu:"
-                BoxInput={styles.BoxInput}
-                Save={(e) => this.onChangeTime("startTime", e)}
-                data={this.state.data.startTime}
-                mode="time"
               />
               <Customdatetime
                 containerStyle={styles.ScriptNameContainer}

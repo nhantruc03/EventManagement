@@ -27,9 +27,7 @@ const update = async (req, res) => {
       ...pick(req.body,
         "actionId",
         "name",
-        "startDate",
         "endDate",
-        "startTime",
         "endTime",
         "description",
         "status"

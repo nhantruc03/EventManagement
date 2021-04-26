@@ -13,7 +13,7 @@ const start = async (req, res) => {
         //check permissson
         let permissons = await Permission.getPermission(req.body.eventId, req.user._id, req.user.roleId._id)
         if (!Permission.checkPermission(permissons, constants.QL_CONGVIEC_PERMISSION)) {
-            
+
             return res.status(406).json({
                 success: false,
                 error: "Permission denied!"
@@ -161,7 +161,7 @@ const start = async (req, res) => {
         await commitTransactions(sessions)
         const doc = await Actions.findOne({ _id: newDoc[0]._id, isDeleted: false })
             .populate({ path: 'availUser', select: 'name photoUrl' })
-            .populate({ path: 'tagsId', select: 'name' })
+            .populate({ path: 'tagsId', select: 'name background color' })
             .populate({ path: 'facultyId', select: 'name' })
             .populate({ path: 'priorityId', select: 'name' })
             .populate({ path: 'eventId', select: 'name' })

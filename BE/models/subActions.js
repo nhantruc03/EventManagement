@@ -15,17 +15,7 @@ const subActions = new Schema(
             required: true,
             index: true
         },
-        startDate: {
-            type: Date,
-            index: true,
-            required: true
-        },
         endDate: {
-            type: Date,
-            index: true,
-            required: true
-        },
-        startTime: {
             type: Date,
             index: true,
             required: true

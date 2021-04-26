@@ -54,7 +54,7 @@ class CalendarSection extends Component {
         this.state.listSubActions.forEach(element => {
             if (!element.status) {
 
-                if (moment(element.startDate).toDate().setHours(0, 0, 0, 0) === value.toDate().setHours(0, 0, 0, 0)) {
+                if (moment(element.endDate).toDate().setHours(0, 0, 0, 0) === value.toDate().setHours(0, 0, 0, 0)) {
                     listData.push(element)
                 }
             }

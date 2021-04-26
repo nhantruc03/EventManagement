@@ -15,6 +15,7 @@ import axios from "axios";
 import Url from "../../env";
 import getToken from "../../Auth";
 
+
 const styles = StyleSheet.create({
   headerContainer: {
     marginVertical: 8,
@@ -125,10 +126,10 @@ export default class GuestTab extends Component {
         temp_list.length > 0
           ? temp_list[0]
           : {
-              title: item.guestTypeId.name,
-              _id: item.guestTypeId._id,
-              data: [],
-            }; // check cần tạo mới hay đã có trong result
+            title: item.guestTypeId.name,
+            _id: item.guestTypeId._id,
+            data: [],
+          }; // check cần tạo mới hay đã có trong result
 
       if (list.indexOf(temp_O) !== -1) {
         list[list.indexOf(temp_O)].data.push(item);

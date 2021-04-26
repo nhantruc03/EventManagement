@@ -22,7 +22,6 @@ class edit extends Component {
         let data = {
             ...e,
             actionId: this.props.actionId,
-            startTime: e['startTime'].toDate(),
             endTime: e['endTime'].toDate(),
         }
 
@@ -45,20 +44,9 @@ class edit extends Component {
         this.form.current.setFieldsValue({
             name: e.data.name,
             description: e.data.description,
-            startDate: e.data.startDate,
             endDate: e.data.endDate,
-            startTime: e.data.startTime,
             endTime: e.data.endTime,
         });
-        // console.log(e.data)
-        // let data = {
-        //     ...e.data,
-        //     startTime: moment(e.data.startTime),
-        //     endTime: moment(e.data.endTime),
-        // }
-        // this.setState({
-        //     data: data
-        // })
     }
 
     componentDidMount() {
@@ -112,36 +100,11 @@ class edit extends Component {
                                 <Col span={12}>
                                     <Form.Item
                                         wrapperCol={{ sm: 24 }}
-                                        label="Ngày bắt đầu"
-                                        rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
-                                        name="startDate"
-                                    >
-                                        <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày bắt đầu..." />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item
-                                        wrapperCol={{ sm: 24 }}
                                         label="Ngày kết thúc"
                                         rules={[{ required: true, message: 'Cần chọn ngày kết thức!' }]}
                                         name="endDate"
                                     >
                                         <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày kết thúc..." />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                        </Col>
-                        <Col span={24}>
-                            <Row>
-                                <Col span={12}>
-                                    <Form.Item
-                                        wrapperCol={{ sm: 24 }}
-                                        label="Giờ bắt đầu"
-                                        rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
-                                        name="startTime"
-                                    >
-                                        {/* <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày bắt đầu..." /> */}
-                                        <TimePicker format="HH:mm" placeholder="Chọn giờ bắt đầu"></TimePicker>
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
@@ -151,7 +114,6 @@ class edit extends Component {
                                         rules={[{ required: true, message: 'Cần chọn ngày kết thức!' }]}
                                         name="endTime"
                                     >
-                                        {/* <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày kết thúc..." /> */}
                                         <TimePicker format="HH:mm" placeholder="Chọn giờ kết thúc"></TimePicker>
                                     </Form.Item>
                                 </Col>

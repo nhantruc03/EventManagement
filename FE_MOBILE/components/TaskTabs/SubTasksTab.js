@@ -1,20 +1,27 @@
-import { Modal, Provider } from "@ant-design/react-native";
+import { Button, Modal, Provider } from "@ant-design/react-native";
 import axios from "axios";
 import React, { Component } from "react";
 import { ActivityIndicator } from "react-native";
 import { Image } from "react-native";
 import { View, Text, StyleSheet } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
-import Checked from "../../assets/images/square_checked.png";
-import UnChecked from "../../assets/images/square_unchecked.png";
+import Checked from "../../assets/images/Checked.png";
+import UnChecked from "../../assets/images/Unchecked.png";
 import getToken from "../../Auth";
 import Url from "../../env";
 import SubTaskCreateModal from "./SubTaskCreateModal";
 
+import Separator from "../helper/separator";
+
 const styles = StyleSheet.create({
   formContainer: { paddingHorizontal: 16, zIndex: 3 },
   formLabel: {
-    color: "#5C5C5C",
+    color: "#264653",
+    fontFamily: "semibold",
+    fontSize: 20,
+  },
+  btnLabel: {
+    color: "white",
     fontFamily: "semibold",
     fontSize: 16,
   },
@@ -22,23 +29,37 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginBottom: 8,
     alignItems: "center",
+
   },
   itemContainer: {
     flex: 2,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
   },
-  itemTextNameDone: {
+  itemTextName: {
     color: "#5C5C5C",
     fontFamily: "semibold",
-    fontSize: 16,
-    textDecorationLine: "line-through",
+    fontSize: 20,
   },
-  itemTextNameUnDone: {
-    color: "#5C5C5C",
+  itemTextDescription: {
+    color: "#BDBDBD",
     fontFamily: "semibold",
     fontSize: 16,
   },
+  AddBtn: {
+    marginTop: 12,
+    height: 34,
+    fontFamily: "bold",
+    backgroundColor: "#2A9D8F",
+    borderColor: "#2A9D8F",
+
+  },
+  viewDetailText: {
+    color: "#2A9D8F",
+    fontFamily: "semibold",
+    textDecorationLine: 'underline'
+  }
 });
 
 class SubTasksTab extends Component {
@@ -105,33 +126,37 @@ class SubTasksTab extends Component {
       <View>
         <View style={styles.itemContainer}>
           <View style={styles.checkboxContainer}>
-            <TouchableOpacity onPress={() => this.changeStatus(item)}>
+            <TouchableOpacity style={{ marginRight: 8, }} onPress={() => this.changeStatus(item)}>
               {item.status ? (
                 <Image source={Checked}></Image>
               ) : (
                 <Image source={UnChecked}></Image>
               )}
             </TouchableOpacity>
+            <View>
+              <Text
+                style={styles.itemTextName}
+              >
+                {item.name}
+              </Text>
+              <Text style={styles.itemTextDescription}>{item.description}</Text>
+            </View>
+
+
+          </View>
+          <View>
             <TouchableOpacity onPress={() => {
               this.setState({
                 addSubTask: false,
                 onEditSubtask: item,
                 visible: true
               })
-            }}>
-              <Text
-                style={
-                  item.status
-                    ? styles.itemTextNameDone
-                    : styles.itemTextNameUnDone
-                }
-              >
-                {item.name}
-              </Text>
-            </TouchableOpacity>
+            }}><Text style={styles.viewDetailText}>Xem chi tiết</Text></TouchableOpacity>
           </View>
         </View>
-      </View>
+        <Separator />
+      </View >
+
     );
   };
   addToList = (e) => {
@@ -167,21 +192,32 @@ class SubTasksTab extends Component {
               style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
-                marginBottom: 10
+                marginBottom: 10,
+                alignItems: "center"
               }}
             >
               <Text style={styles.formLabel}>Danh sách công việc</Text>
-              <TouchableOpacity
+              <Button
+                type="primary"
+                size="small"
+                style={styles.AddBtn}
+                activeStyle={{ color: "white" }}
+                onPress={() => this.setState({ visible: true, addSubTask: true, onEditSubtask: {} })}
+              >
+                <Text style={styles.BtnText}>Tạo mới+</Text>
+              </Button>
+              {/* <TouchableOpacity
+                style={styles.AddBtn}
                 onPress={() => this.setState({ visible: true, addSubTask: true, onEditSubtask: {} })}
               >
                 <Text
                   style={
-                    (styles.formLabel, { textDecorationLine: "underline" })
+                    (styles.btnLabel)
                   }
                 >
                   Thêm +
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
             <FlatList
               data={this.state.data}
@@ -215,7 +251,7 @@ class SubTasksTab extends Component {
               />
             </Modal>
           </View>
-        </Provider>
+        </Provider >
       );
     } else return null;
   }

@@ -17,7 +17,6 @@ class add extends Component {
         let data = {
             ...e,
             actionId: this.props.actionId,
-            startTime: e['startTime'].toDate(),
             endTime: e['endTime'].toDate(),
         }
         await trackPromise(
@@ -77,42 +76,16 @@ class add extends Component {
                             <Col span={12}>
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
-                                    label="Ngày bắt đầu"
-                                    // rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
-                                    name="startDate"
-                                >
-                                    <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày bắt đầu..." />
-                                </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                                <Form.Item
-                                    wrapperCol={{ sm: 24 }}
                                     label="Ngày kết thúc"
-                                    // rules={[{ required: true, message: 'Cần chọn ngày kết thức!' }]}
                                     name="endDate"
                                 >
                                     <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày kết thúc..." />
-                                </Form.Item>
-                            </Col>
-                        </Row>
-                    </Col>
-                    <Col span={24}>
-                        <Row>
-                            <Col span={12}>
-                                <Form.Item
-                                    wrapperCol={{ sm: 24 }}
-                                    label="Giờ bắt đầu"
-                                    // rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
-                                    name="startTime"
-                                >
-                                    <TimePicker format="HH:mm" placeholder="Chọn giờ bắt đầu"></TimePicker>
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
                                     label="Giờ kết thúc"
-                                    // rules={[{ required: true, message: 'Cần chọn ngày kết thức!' }]}
                                     name="endTime"
                                 >
                                     <TimePicker format="HH:mm" placeholder="Chọn giờ kết thúc"></TimePicker>

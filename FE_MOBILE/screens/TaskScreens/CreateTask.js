@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, TextInput } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import Customdatetime from "../../components/helper/datetimepicker";
 import SearchableDropdown from "react-native-searchable-dropdown";
 import Url from "../../env";
@@ -9,6 +9,9 @@ import axios from "axios";
 import { ActivityIndicator } from "react-native";
 import StepIndicator from "react-native-step-indicator";
 import UploadImage from "../../components/helper/UploadImage";
+import { KeyboardAvoidingView } from "react-native";
+import { Button } from "react-native";
+import Swiper from "react-native-swiper";
 const styles = StyleSheet.create({
   input: {
     height: 40,
@@ -51,35 +54,35 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
   },
   ScriptNameContainer: {
-    width: '50%',
-    paddingHorizontal: 5
-  }
+    width: "50%",
+    paddingHorizontal: 5,
+  },
 });
 const customStyles = {
   stepIndicatorSize: 25,
   currentStepIndicatorSize: 30,
   separatorStrokeWidth: 2,
   currentStepStrokeWidth: 3,
-  stepStrokeCurrentColor: '#7eaec4',
+  stepStrokeCurrentColor: "#7eaec4",
   stepStrokeWidth: 3,
-  stepStrokeFinishedColor: '#7eaec4',
-  stepStrokeUnFinishedColor: '#dedede',
-  separatorFinishedColor: '#7eaec4',
-  separatorUnFinishedColor: '#dedede',
-  stepIndicatorFinishedColor: '#7eaec4',
-  stepIndicatorUnFinishedColor: '#ffffff',
-  stepIndicatorCurrentColor: '#ffffff',
+  stepStrokeFinishedColor: "#7eaec4",
+  stepStrokeUnFinishedColor: "#dedede",
+  separatorFinishedColor: "#7eaec4",
+  separatorUnFinishedColor: "#dedede",
+  stepIndicatorFinishedColor: "#7eaec4",
+  stepIndicatorUnFinishedColor: "#ffffff",
+  stepIndicatorCurrentColor: "#ffffff",
   stepIndicatorLabelFontSize: 0,
   currentStepIndicatorLabelFontSize: 0,
-  stepIndicatorLabelCurrentColor: 'transparent',
-  stepIndicatorLabelFinishedColor: 'transparent',
-  stepIndicatorLabelUnFinishedColor: 'transparent',
-  labelColor: '#999999',
+  stepIndicatorLabelCurrentColor: "transparent",
+  stepIndicatorLabelFinishedColor: "transparent",
+  stepIndicatorLabelUnFinishedColor: "transparent",
+  labelColor: "#999999",
   labelSize: 13,
-  currentStepLabelColor: '#7eaec4',
+  currentStepLabelColor: "#7eaec4",
 };
 class CreateTask extends Component {
   constructor(props) {
@@ -106,49 +109,58 @@ class CreateTask extends Component {
       listFaculties: [],
       listActionTypes: [],
       selectedFaculties: {},
-      selectedActionTypes: {}
-    }
+      selectedActionTypes: {},
+      enableScrollViewScroll: true,
+    };
   }
 
   async componentDidMount() {
     const [tags, priorities, faculties, actionstypes] = await Promise.all([
-      axios.post(`${Url()}/api/action-tags/getAll`, {}, {
-        headers: {
-          'Authorization': await getToken()
-        }
-      })
-        .then((res) =>
-          res.data.data
-        ),
-      axios.post(`${Url()}/api/action-priorities/getAll`, {}, {
-        headers: {
-          'Authorization': await getToken()
-        }
-      })
-        .then((res) =>
-          res.data.data
-        ),
-      axios.post(`${Url()}/api/faculties/getAll`,
-        { eventId: this.props.route.params.event._id },
-        {
-          headers: {
-            'Authorization': await getToken()
+      axios
+        .post(
+          `${Url()}/api/action-tags/getAll`,
+          {},
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
           }
-        })
-        .then((res) =>
-          res.data.data
-        ),
-      axios.post(`${Url()}/api/action-types/getAll`,
-        { eventId: this.props.route.params.event._id },
-        {
-          headers: {
-            'Authorization': await getToken()
+        )
+        .then((res) => res.data.data),
+      axios
+        .post(
+          `${Url()}/api/action-priorities/getAll`,
+          {},
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
           }
-        })
-        .then((res) =>
-          res.data.data
-        ),
-    ])
+        )
+        .then((res) => res.data.data),
+      axios
+        .post(
+          `${Url()}/api/faculties/getAll`,
+          { eventId: this.props.route.params.event._id },
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
+          }
+        )
+        .then((res) => res.data.data),
+      axios
+        .post(
+          `${Url()}/api/action-types/getAll`,
+          { eventId: this.props.route.params.event._id },
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
+          }
+        )
+        .then((res) => res.data.data),
+    ]);
 
     if (tags !== undefined && priorities !== undefined) {
       let event = this.props.route.params.event;
@@ -156,45 +168,45 @@ class CreateTask extends Component {
         let temp = {
           id: e._id,
           name: e.name,
-        }
-        list.push(temp)
-        return list
+        };
+        list.push(temp);
+        return list;
       }, []);
 
       let temp_tags = tags.reduce((list, e) => {
         let temp = {
           id: e._id,
           name: e.name,
-        }
-        list.push(temp)
-        return list
+        };
+        list.push(temp);
+        return list;
       }, []);
 
       let temp_priorities = priorities.reduce((list, e) => {
         let temp = {
           id: e._id,
           name: e.name,
-        }
-        list.push(temp)
-        return list
+        };
+        list.push(temp);
+        return list;
       }, []);
 
       let temp_faculties = faculties.reduce((list, e) => {
         let temp = {
           id: e._id,
           name: e.name,
-        }
-        list.push(temp)
-        return list
+        };
+        list.push(temp);
+        return list;
       }, []);
 
       let temp_actiontypes = actionstypes.reduce((list, e) => {
         let temp = {
           id: e._id,
           name: e.name,
-        }
-        list.push(temp)
-        return list
+        };
+        list.push(temp);
+        return list;
       }, []);
 
       this.setState({
@@ -204,8 +216,8 @@ class CreateTask extends Component {
         listPriorities: temp_priorities,
         isLoading: false,
         listFaculties: temp_faculties,
-        listActionTypes: temp_actiontypes
-      })
+        listActionTypes: temp_actiontypes,
+      });
     }
   }
   onChangeTime = (name, time) => {
@@ -234,58 +246,79 @@ class CreateTask extends Component {
   };
 
   onFinish = async () => {
-
     let data = {
       ...this.state.data,
       managerId: this.state.selectedManager.id,
-      availUser: this.state.selectedUsers.reduce((list, e) => { list.push(e.id); return list }, []),
-      tagsId: this.state.selectedTags.reduce((list, e) => { list.push(e.id); return list }, []),
+      availUser: this.state.selectedUsers.reduce((list, e) => {
+        list.push(e.id);
+        return list;
+      }, []),
+      tagsId: this.state.selectedTags.reduce((list, e) => {
+        list.push(e.id);
+        return list;
+      }, []),
       priorityId: this.state.selectedPriorities.id,
       facultyId: this.state.selectedFaculties.id,
       actionTypeId: this.state.selectedActionTypes.id,
-      eventId: this.state.event._id
-    }
+      eventId: this.state.event._id,
+    };
 
     if (this.state.coverUrl !== null) {
       data = {
         ...data,
-        coverUrl: this.state.coverUrl
-      }
+        coverUrl: this.state.coverUrl,
+      };
     }
 
-    console.log(data)
+    console.log(data);
+    // this.props.navigation.goBack();
 
-    await axios.post(`${Url()}/api/actions/start`, data, {
-      headers: {
-        'Authorization': await getToken()
-      }
-    })
-      .then(res => {
-        alert('Tạo thành công');
-
+    await axios
+      .post(`${Url()}/api/actions/start`, data, {
+        headers: {
+          Authorization: await getToken(),
+        },
+      })
+      .then((res) => {
+        alert("Tạo thành công");
 
         // client.send(JSON.stringify({
         //   type: "sendListNotifications",
         //   notifications: res.data.Notifications
         // }))
 
-        this.props.route.params.updateListActions(res.data.action)
+        // this.props.route.params.updateListActions(res.data.action);
+        this.props.navigation.navigate("Task", {
+          data: res.data.action,
+        });
       })
-      .catch(err => {
-        console.log(err.response)
-        // message.error('Tạo thất bại');
-        alert("Tạo thất bại")
-      })
-
-    // this.props.route.params.updateListActions("test")
-  }
+      .catch((err) => {
+        console.log(err.response.data);
+        alert("Tạo thất bại");
+      });
+  };
 
   onStepPress = (position) => {
     this.setState({
-      currentPage: position
-    })
+      currentPage: position,
+    });
   };
 
+  onEnableScroll = (value) => {
+    console.log("scroll", value);
+    this.setState({
+      enableScrollViewScroll: value,
+    });
+  };
+  scrollToView = (e) => {
+    if (e) {
+      e.measure((fx, fy, width, height, px, py) => {
+        let offset = height + py;
+
+        this.scroller.scrollTo({ x: 0, y: offset });
+      });
+    }
+  };
   renderView = () => {
     if (this.state.currentPage === 0) {
       return (
@@ -294,6 +327,9 @@ class CreateTask extends Component {
             <Text style={styles.Label}>Tên công việc</Text>
             <View style={styles.BoxInput}>
               <TextInput
+                onFocus={() => {
+                  this.scroller.scrollTo({ y: 60 });
+                }}
                 onChangeText={this.onChangeName}
                 style={styles.input}
                 value={this.state.data.name}
@@ -308,7 +344,7 @@ class CreateTask extends Component {
               value={this.state.data.description}
             ></TextInput>
           </View>
-          <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: "row" }}>
             <Customdatetime
               containerStyle={styles.ScriptNameContainer}
               labelStyle={styles.Label}
@@ -328,49 +364,64 @@ class CreateTask extends Component {
               mode="date"
             />
           </View>
-          <SearchableDropdown
-            onItemSelect={(item) => {
-              this.setState({
-                selectedFaculties: item
-              });
+
+          <View
+            onFocus={() => this.scrollToView(this.faculty_view)}
+            ref={(e) => {
+              this.faculty_view = e;
             }}
-            selectedItems={this.state.selectedFaculties}
-            containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
-            itemStyle={{
-              padding: 10,
-              marginTop: 2,
-              backgroundColor: "#ddd",
-              borderColor: "#bbb",
-              borderWidth: 1,
-              borderRadius: 5,
-            }}
-            itemTextStyle={{ color: "#222" }}
-            itemsContainerStyle={{ maxHeight: 140 }}
-            items={this.state.listFaculties}
-            resetValue={false}
-            textInputProps={{
-              placeholder: "Chọn ban",
-              underlineColorAndroid: "transparent",
-              style: {
-                padding: 12,
+          >
+            <SearchableDropdown
+              onItemSelect={(item) => {
+                this.setState({
+                  selectedFaculties: item,
+                });
+              }}
+              selectedItems={this.state.selectedFaculties}
+              defaultIndex={this.state.listFaculties.indexOf(this.state.selectedFaculties) !== -1 ? this.state.listFaculties.indexOf(this.state.selectedFaculties) : undefined}
+              containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
+              itemStyle={{
+                padding: 10,
+                marginTop: 2,
+                backgroundColor: "#ddd",
+                borderColor: "#bbb",
                 borderWidth: 1,
-                borderColor: "#ccc",
                 borderRadius: 5,
-              },
-            }}
-            listProps={{
-              nestedScrollEnabled: true,
-            }}
-          />
+              }}
+              itemTextStyle={{ color: "#222" }}
+              itemsContainerStyle={{ maxHeight: 140 }}
+              items={this.state.listFaculties}
+              resetValue={false}
+              textInputProps={{
+                placeholder: "Chọn ban",
+                underlineColorAndroid: "transparent",
+                style: {
+                  padding: 12,
+                  borderWidth: 1,
+                  borderColor: "#ccc",
+                  borderRadius: 5,
+                },
+              }}
+              listProps={{
+                nestedScrollEnabled: true,
+              }}
+            />
+          </View>
 
           <View style={styles.ScriptNameLabelContainer}>
             <Text style={styles.Label}>Ảnh đại diện</Text>
-            <UploadImage Save={(e, b) => { this.setState({ coverUrl: e, coverUrl_localPath: b }) }} localPath={this.state.coverUrl_localPath} />
+            {/* <Button title="akjshdkajshdk" onPress={this.scrollToTop}></Button> */}
+            <UploadImage
+              Save={(e, b) => {
+                this.setState({ coverUrl: e, coverUrl_localPath: b });
+                this.scroller.scrollToEnd({ animated: true })
+              }}
+              localPath={this.state.coverUrl_localPath}
+            />
           </View>
         </View>
-      )
-    }
-    else {
+      );
+    } else {
       return (
         <View>
           <View style={styles.ScriptNameLabelContainer}>
@@ -378,10 +429,11 @@ class CreateTask extends Component {
             <SearchableDropdown
               onItemSelect={(item) => {
                 this.setState({
-                  selectedManager: item
+                  selectedManager: item,
                 });
               }}
               selectedItems={this.state.selectedManager}
+              defaultIndex={this.state.listUser.indexOf(this.state.selectedManager) !== -1 ? this.state.listUser.indexOf(this.state.selectedManager) : undefined}
               containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
               itemStyle={{
                 padding: 10,
@@ -415,14 +467,16 @@ class CreateTask extends Component {
             <View style={styles.Box}>
               <SearchableDropdown
                 multi={true}
-                // chip={true}
+                chip={true}
                 onItemSelect={(item) => {
                   this.setState({
-                    selectedUsers: [...this.state.selectedUsers, item]
+                    selectedUsers: [...this.state.selectedUsers, item],
                   });
                 }}
                 onRemoveItem={(item, index) => {
-                  const items = this.state.selectedUsers.filter((sitem) => sitem.id !== item.id);
+                  const items = this.state.selectedUsers.filter(
+                    (sitem) => sitem.id !== item.id
+                  );
                   this.setState({ selectedUsers: items });
                 }}
                 selectedItems={this.state.selectedUsers}
@@ -455,15 +509,22 @@ class CreateTask extends Component {
               />
             </View>
           </View>
-          <View style={styles.ScriptNameLabelContainer}>
+          <View
+            style={styles.ScriptNameLabelContainer}
+            onFocus={() => this.scrollToView(this.actiontype_view)}
+            ref={(e) => {
+              this.actiontype_view = e;
+            }}
+          >
             <Text style={styles.Label}>Loại công việc</Text>
             <SearchableDropdown
               onItemSelect={(item) => {
                 this.setState({
-                  selectedActionTypes: item
+                  selectedActionTypes: item,
                 });
               }}
               selectedItems={this.state.selectedActionTypes}
+              defaultIndex={this.state.listActionTypes.indexOf(this.state.selectedActionTypes) !== -1 ? this.state.listActionTypes.indexOf(this.state.selectedActionTypes) : undefined}
               containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
               itemStyle={{
                 padding: 10,
@@ -492,15 +553,22 @@ class CreateTask extends Component {
               }}
             />
           </View>
-          <View style={styles.ScriptNameLabelContainer}>
+          <View
+            style={styles.ScriptNameLabelContainer}
+            onFocus={() => this.scrollToView(this.priority_view)}
+            ref={(e) => {
+              this.priority_view = e;
+            }}
+          >
             <Text style={styles.Label}>Độ ưu tiên</Text>
             <SearchableDropdown
               onItemSelect={(item) => {
                 this.setState({
-                  selectedPriorities: item
+                  selectedPriorities: item,
                 });
               }}
               selectedItems={this.state.selectedPriorities}
+              defaultIndex={this.state.listPriorities.indexOf(this.state.selectedPriorities) !== -1 ? this.state.listPriorities.indexOf(this.state.selectedPriorities) : undefined}
               containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
               itemStyle={{
                 padding: 10,
@@ -530,18 +598,26 @@ class CreateTask extends Component {
             />
           </View>
 
-          <View style={styles.ScriptNameLabelContainer}>
+          <View
+            style={styles.ScriptNameLabelContainer}
+            onFocus={() => this.scrollToView(this.tags_view)}
+            ref={(e) => {
+              this.tags_view = e;
+            }}
+          >
             <Text style={styles.Label}>Tags</Text>
             <SearchableDropdown
               multi={true}
-              // chip={true}
+              chip={true}
               onItemSelect={(item) => {
                 this.setState({
-                  selectedTags: [...this.state.selectedTags, item]
+                  selectedTags: [...this.state.selectedTags, item],
                 });
               }}
               onRemoveItem={(item, index) => {
-                const items = this.state.selectedTags.filter((sitem) => sitem.id !== item.id);
+                const items = this.state.selectedTags.filter(
+                  (sitem) => sitem.id !== item.id
+                );
                 this.setState({ selectedTags: items });
               }}
               selectedItems={this.state.selectedTags}
@@ -574,7 +650,6 @@ class CreateTask extends Component {
             />
           </View>
 
-
           <TouchableOpacity
             style={styles.btnUpdate}
             underlayColor="#fff"
@@ -583,32 +658,60 @@ class CreateTask extends Component {
             <Text style={styles.textUpdate}>Xác nhận</Text>
           </TouchableOpacity>
         </View>
-      )
+      );
     }
-  }
+  };
 
   render() {
     if (!this.state.isLoading) {
       return (
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "height" : ""}>
+          <ScrollView
+            ref={(scroller) => {
+              this.scroller = scroller;
+            }}
+            nestedScrollEnabled={true}
+            style={{ marginTop: 10 }}
+            keyboardDismissMode="interactive"
+            keyboardShouldPersistTaps="always"
+          >
+            <View style={{ marginTop: 10 }}>
+              <StepIndicator
+                stepCount={2}
+                customStyles={customStyles}
+                currentPosition={this.state.currentPage}
+                onPress={this.onStepPress}
+                labels={["Thông tin chung", "Thông tin chi tiết"]}
+              />
 
-        <View style={{ marginTop: 10 }}>
-          <StepIndicator
-            stepCount={2}
-            customStyles={customStyles}
-            currentPosition={this.state.currentPage}
-            onPress={this.onStepPress}
-            labels={['Thông tin chung', 'Thông tin chi tiết']}
-          />
-
-          {this.renderView()}
-        </View>
+              {this.renderView()}
+              {/* <Swiper
+                style={{ flexGrow: 1 }}
+                loop={false}
+                index={this.state.currentPage}
+                autoplay={false}
+                showsButtons
+                onIndexChanged={(page) => {
+                  this.setState({
+                    currentPage: page
+                  })
+                }}
+              >
+              </Swiper> */}
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView >
       );
     } else {
       return (
         <View>
-          <ActivityIndicator size="large" animating color="#2A9D8F"></ActivityIndicator>
+          <ActivityIndicator
+            size="large"
+            animating
+            color="#2A9D8F"
+          ></ActivityIndicator>
         </View>
-      )
+      );
     }
   }
 }
