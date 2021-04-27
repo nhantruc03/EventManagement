@@ -10,6 +10,7 @@ import Homescreen from "../screens/Home";
 import Profilescreen from "../screens/Profile";
 import StackNav from "../routes/StackNav";
 import TaskStackNav from "../routes/TaskStackNav";
+import HomeStackNav from "../routes/HomeStackNav";
 import { createStackNavigator } from "@react-navigation/stack";
 
 const Tab = createBottomTabNavigator();
@@ -45,7 +46,7 @@ export default class BottomNav extends React.Component {
       >
         <Tab.Screen
           name="Home"
-          component={Homescreen}
+          component={HomeStackNav}
           options={({ route }) => ({
             tabBarLabel: "Trang chủ",
             tabBarIcon: ({ color }) => (

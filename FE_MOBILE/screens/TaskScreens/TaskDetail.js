@@ -7,7 +7,6 @@ import {
 import axios from "axios";
 import Url from "../../env";
 import getToken from "../../Auth";
-
 import { TabView, SceneMap } from "react-native-tab-view";
 import { TabBar } from "react-native-tab-view";
 import TaskDetailTab from "../../components/TaskTabs/TaskDetailTab";
