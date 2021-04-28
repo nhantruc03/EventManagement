@@ -221,19 +221,21 @@ class Home extends Component {
           status = "Sắp diễn ra"
         }
         return (
-          <TouchableOpacity onPress={() => {
-            this.props.navigation.navigate("EventDetail2", {
-              id: e._id,
-              name: e.name,
-              description: e.description,
-              time: e.startTime,
-              date: e.startDate,
-              location: e.address,
-              tag: e.tagId,
-              poster: `${Url()}/api/images/${e.posterUrl}`,
-            })
-          }
-          }>
+          <TouchableOpacity
+            key={key}
+            onPress={() => {
+              this.props.navigation.navigate("EventDetail2", {
+                id: e._id,
+                name: e.name,
+                description: e.description,
+                time: e.startTime,
+                date: e.startDate,
+                location: e.address,
+                tag: e.tagId,
+                poster: `${Url()}/api/images/${e.posterUrl}`,
+              })
+            }
+            }>
             <View key={key} style={styles.cardContainer}>
               <View style={styles.cardContent}>
                 <Image style={styles.posterImg} source={{ uri: `${Url()}/api/images/${e.posterUrl}` }} />
@@ -324,6 +326,7 @@ class Home extends Component {
               loop={false}
               autoplay={false}
               showsPagination={false}
+
             >
               {this.renderEvents()}
             </Swiper>

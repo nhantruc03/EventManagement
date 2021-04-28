@@ -11,7 +11,7 @@ const handleBody = (body) => {
     body: {
       ...pick(body,
         "name",
-        "startDate",
+        "endTime",
         "endDate",
         "description",
         "eventId",

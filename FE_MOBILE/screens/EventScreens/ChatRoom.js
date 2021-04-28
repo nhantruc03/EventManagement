@@ -8,6 +8,7 @@ import {
 } from "react-native";
 
 import Url from "../../env";
+import WSK from "../../websocket";
 import axios from "axios";
 import getToken from "../../Auth";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
     paddingRight: 12,
   },
 });
-const client = new WebSocket("ws://192.168.1.7:3001");
+const client = new WebSocket(`${WSK()}`);
 class ChatRoom extends Component {
   constructor(props) {
     super(props);
@@ -67,7 +68,7 @@ class ChatRoom extends Component {
   getData = async () => {
     const temp = await axios
       .post(
-        `${Url()}/api/chat-message/getAll?page=1&limit=15`,
+        `${Url()} / api / chat - message / getAll ? page = 1 & limit=15`,
         {
           roomId: this.props.route.params.id,
         },
@@ -150,7 +151,7 @@ class ChatRoom extends Component {
     // console.log(message)
 
     await axios
-      .post(`${Url()}/api/chat-message`, message, {
+      .post(`${Url()} / api / chat - message`, message, {
         headers: {
           Authorization: await getToken(),
         },
@@ -198,7 +199,7 @@ class ChatRoom extends Component {
 
     await axios
       .post(
-        `${Url()}/api/chat-message/getAll?page=${this.state.page + 1}&limit=15`,
+        `${Url()} / api / chat - message / getAll ? page = ${this.state.page + 1} & limit=15`,
         { roomId: this.props.route.params.id },
         {
           headers: {

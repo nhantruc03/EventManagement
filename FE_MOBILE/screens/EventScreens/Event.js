@@ -155,14 +155,7 @@ export default class Event extends Component {
       <TouchableOpacity
         onPress={() =>
           this.props.navigation.navigate("EventDetail2", {
-            id: item._id,
-            name: item.name,
-            description: item.description,
-            time: item.startTime,
-            date: item.startDate,
-            location: item.address,
-            tag: item.tagId,
-            poster: `${Url()}/api/images/${item.posterUrl}`,
+            data: item
           })
         }
       >

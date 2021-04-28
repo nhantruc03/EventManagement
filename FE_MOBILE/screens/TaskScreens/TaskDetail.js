@@ -54,6 +54,8 @@ class TaskDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      data: {},
+      loadingBigObject: true,
       subActions: null,
       currentSubAction: null,
       index: 0,
@@ -69,14 +71,14 @@ class TaskDetail extends Component {
       2: this.Route2,
     });
   }
-  Route1 = () => <TaskDetailTab data={this.props.route.params.data} />;
+  Route1 = () => <TaskDetailTab data={this.state.data} />;
 
   Route2 = () =>
     this.state.subActions && !this.state.loading ? (
       <SubTasksTab
         updateListSubTask={(e) => this.updateListSubTask(e)}
         data={this.state.subActions}
-        actionId={this.props.route.params.data._id}
+        actionId={this.state.data._id}
       />
     ) : (
       <View style={styles.Loading}>
@@ -96,11 +98,27 @@ class TaskDetail extends Component {
 
   async componentDidMount() {
     this._isMounted = true;
-
+    let temp_data = {}
+    if (this.props.route.params.loadBySelf) {
+      const data_loadBySelf = await axios
+        .get(
+          `${Url()}/api/actions/${this.props.route.params.actionId}`,
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
+          }
+        )
+        .then((res) => res.data.data);
+      temp_data = data_loadBySelf
+    } else {
+      temp_data = this.props.route.params.data
+    }
+    console.log(temp_data)
     const subActions = await axios
       .post(
         `${Url()}/api/sub-actions/getAll`,
-        { actionId: this.props.route.params.data._id },
+        { actionId: temp_data._id },
         {
           headers: {
             Authorization: await getToken(),
@@ -110,6 +128,8 @@ class TaskDetail extends Component {
       .then((res) => res.data.data);
     this.setState({
       subActions: subActions,
+      data: temp_data,
+      loadingBigObject: false
     });
   }
 
@@ -133,21 +153,34 @@ class TaskDetail extends Component {
     });
   };
   render() {
-    return (
-      <View style={styles.container}>
-        <TabView
-          renderTabBar={this.renderTabBar}
-          navigationState={{
-            index: this.state.index,
-            routes: this.state.routes,
-          }}
-          renderScene={this.renderScene}
-          onIndexChange={this.setIndex}
-          initialLayout={initialLayout}
-          style={styles.Tabcontainer}
-        />
-      </View>
-    );
+    if (!this.state.loadingBigObject) {
+      return (
+        <View style={styles.container}>
+          <TabView
+            renderTabBar={this.renderTabBar}
+            navigationState={{
+              index: this.state.index,
+              routes: this.state.routes,
+            }}
+            renderScene={this.renderScene}
+            onIndexChange={this.setIndex}
+            initialLayout={initialLayout}
+            style={styles.Tabcontainer}
+          />
+        </View>
+      );
+    }
+    else {
+      return (
+        <View style={styles.Loading}>
+          <ActivityIndicator
+            size="large"
+            animating
+            color="#2A9D8F"
+          ></ActivityIndicator>
+        </View>
+      )
+    }
   }
 }
 

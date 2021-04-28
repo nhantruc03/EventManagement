@@ -55,6 +55,7 @@ export default class EventDetail2 extends Component {
         { key: "4", title: "Hội thoại" },
         { key: "5", title: "Khách mời" },
       ],
+      loadingBigBO: this.props.route.params.loadBySelf ? true : false,
     };
     this._isMounted = false;
     this.renderScene = SceneMap({
@@ -65,7 +66,7 @@ export default class EventDetail2 extends Component {
       5: this.Route5,
     });
   }
-  Route1 = () => <Eventdetails data={this.props.route.params} />;
+  Route1 = () => <Eventdetails data={this.props.route.params.loadBySelf ? this.state.event : this.props.route.params.data} />;
 
   Route2 = () =>
     this.state.listOrganizer && !this.state.loading ? (
@@ -133,7 +134,7 @@ export default class EventDetail2 extends Component {
       axios
         .post(
           `${Url()}/api/groups/getAll`,
-          { eventId: this.props.route.params.id },
+          { eventId: this.props.route.params.data._id },
           {
             headers: {
               Authorization: await getToken(),
@@ -146,7 +147,7 @@ export default class EventDetail2 extends Component {
       axios
         .post(
           `${Url()}/api/guest-types/getAll`,
-          { eventId: this.props.route.params.id },
+          { eventId: this.props.route.params.data._id },
           {
             headers: {
               Authorization: await getToken(),
@@ -159,7 +160,7 @@ export default class EventDetail2 extends Component {
       axios
         .post(
           `${Url()}/api/event-assign/getAll`,
-          { eventId: this.props.route.params.id },
+          { eventId: this.props.route.params.data._id },
           {
             headers: {
               Authorization: await getToken(),
@@ -172,7 +173,7 @@ export default class EventDetail2 extends Component {
       axios
         .post(
           `${Url()}/api/scripts/getAll`,
-          { eventId: this.props.route.params.id },
+          { eventId: this.props.route.params.data._id },
           {
             headers: {
               Authorization: await getToken(),
@@ -183,7 +184,7 @@ export default class EventDetail2 extends Component {
           return res.data.data;
         }),
       axios
-        .get(`${Url()}/api/events/` + this.props.route.params.id, {
+        .get(`${Url()}/api/events/` + this.props.route.params.data._id, {
           headers: {
             Authorization: await getToken(),
           },
@@ -222,9 +223,10 @@ export default class EventDetail2 extends Component {
         listOrganizer: listEventAssign,
         listguesttype: guestTypes,
         listGuest: guests,
-        loading: false,
         event: event,
+        loading: false,
         listscripts: scripts,
+        loadingBigBO: false
       });
     }
   }
@@ -254,7 +256,7 @@ export default class EventDetail2 extends Component {
   };
 
   render() {
-    if (this.props.route.params) {
+    if (!this.state.loadingBigBO) {
       return (
         <TabView
           renderTabBar={this.renderTabBar}
@@ -269,7 +271,15 @@ export default class EventDetail2 extends Component {
         />
       );
     } else {
-      return null;
+      return (
+        <View style={styles.Loading}>
+          <ActivityIndicator
+            size="large"
+            animating
+            color="#2A9D8F"
+          ></ActivityIndicator>
+        </View>
+      );
     }
   }
 }

@@ -260,19 +260,7 @@ class Taskscreen extends Component {
       <TouchableOpacity
         onPress={() =>
           this.props.navigation.navigate("TaskDetail", {
-            data: {
-              _id: item._id,
-              name: item.name,
-              description: item.description,
-              time: item.endTime,
-              date: item.endDate,
-              managerId: item.managerId,
-              tags: item.tagsId,
-              availUser: item.availUser,
-              priority: item.priorityId,
-              faculty: item.facultyId,
-              coverUrl: `${Url()}/api/images/${item.coverUrl}`,
-            },
+            data: item,
           })
         }
       >
@@ -290,8 +278,8 @@ class Taskscreen extends Component {
               source={require("../../assets/images/timesolid.png")}
             ></Image>
             <Text style={styles.Timecontent}>
-              {moment(item.startDate).format("DD/MM/YYYY")} -{" "}
-              {moment(item.endDate).format("DD/MM/YYYY")}
+              {moment(item.endDate).utcOffset(0).format("DD/MM/YYYY")} -{" "}
+              {moment(item.endTime).utcOffset(0).format("HH:mm")}
             </Text>
           </View>
           <View>

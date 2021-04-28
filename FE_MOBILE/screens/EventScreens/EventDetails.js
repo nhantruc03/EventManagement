@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import moment from "moment";
-
+import Url from '../../env'
 const H = Dimensions.get("window").height;
 
 const Separator = () => <View style={styles.separator} />;
@@ -123,6 +123,7 @@ export default class EventDetail extends Component {
   }
 
   componentDidMount() {
+    console.log('event', this.props.data)
     this.setState({
       data: this.props.data,
     });
@@ -134,12 +135,12 @@ export default class EventDetail extends Component {
         <ScrollView style={styles.formContainer}>
           <Image
             style={styles.posterImg}
-            source={{ uri: this.state.data.poster }}
+            source={{ uri: `${Url()}/api/images/${this.state.data.posterUrl}` }}
           ></Image>
           <Text style={styles.mainLabel}>{this.state.data.name}</Text>
           <Text style={styles.description}>{this.state.data.description}</Text>
           <View style={styles.tagContainer}>
-            {this.state.data.tag.map((value, key) => (
+            {this.state.data.tagId.map((value, key) => (
               <View
                 style={{
                   backgroundColor: value.background,
@@ -171,7 +172,7 @@ export default class EventDetail extends Component {
                   source={require("../../assets/images/timesolid.png")}
                 ></Image>
                 <Text style={styles.TimeContent}>
-                  {moment(this.state.data.time).format("HH:MM")}
+                  {moment(this.state.data.startTime).format("HH:MM")}
                 </Text>
               </View>
               <View style={styles.DateContatiner}>
@@ -180,7 +181,7 @@ export default class EventDetail extends Component {
                   source={require("../../assets/images/datesolid.png")}
                 ></Image>
                 <Text style={styles.DateContent}>
-                  {moment(this.state.data.date).format("DD/MM/YYYY")}
+                  {moment(this.state.data.startDate).format("DD/MM/YYYY")}
                 </Text>
               </View>
             </View>
@@ -190,7 +191,7 @@ export default class EventDetail extends Component {
                 source={require("../../assets/images/locationsolid.png")}
               ></Image>
               <Text style={styles.locationContent}>
-                {this.state.data.location}
+                {this.state.data.address}
               </Text>
             </View>
           </View>

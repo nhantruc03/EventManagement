@@ -95,13 +95,13 @@ class TaskDetailTab extends Component {
           <Image
             style={styles.coverImg}
             source={{
-              uri: this.state.data.coverUrl,
+              uri: `${Url()}/api/images/${this.state.data.coverUrl}`,
             }}
           ></Image>
           <View style={styles.formContainer}>
             <Text style={styles.mainLabel}>{this.state.data.name}</Text>
             <View style={styles.tagContainer}>
-              {this.state.data.tags.map((value, key) => (
+              {this.state.data.tagsId.map((value, key) => (
                 <View
                   style={{
                     backgroundColor: value.background,
@@ -136,7 +136,7 @@ class TaskDetailTab extends Component {
                   source={require("../../assets/images/timesolid.png")}
                 ></Image>
                 <Text style={styles.TimeContent}>
-                  {moment(this.state.data.time).format("HH:MM")}
+                  {moment(this.state.data.endTime).utcOffset(0).format("HH:mm")}
                 </Text>
               </View>
               <View style={styles.DateContatiner}>
@@ -145,7 +145,7 @@ class TaskDetailTab extends Component {
                   source={require("../../assets/images/datesolid.png")}
                 ></Image>
                 <Text style={styles.DateContent}>
-                  {moment(this.state.data.date).format("DD/MM/YYYY")}
+                  {moment(this.state.data.endDate).utcOffset(0).format("DD/MM/YYYY")}
                 </Text>
               </View>
             </View>
@@ -175,7 +175,7 @@ class TaskDetailTab extends Component {
                 </View>
               </View>
               <View>
-                <Text style={styles.Text}>{this.state.data.faculty.name}</Text>
+                <Text style={styles.Text}>{this.state.data.facultyId.name}</Text>
               </View>
             </View>
             <Separator />

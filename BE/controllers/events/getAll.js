@@ -52,6 +52,7 @@ const getAll = async (req, res) => {
       docs = await Events.find(query)
         .populate({ path: 'tagId', select: 'name background color' })
         .populate({ path: 'availUser', select: 'photoUrl name' })
+        .populate({ path: 'eventTypeId', select: 'name' })
     }
     else {
       docs = await Events.find(query)
@@ -59,6 +60,7 @@ const getAll = async (req, res) => {
         .limit(limit)
         .populate({ path: 'tagId', select: 'name background color' })
         .populate({ path: 'availUser', select: 'photoUrl name' })
+        .populate({ path: 'eventTypeId', select: 'name' })
     }
     return res.status(200).json({
       success: true,

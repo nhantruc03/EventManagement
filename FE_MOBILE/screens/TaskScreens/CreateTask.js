@@ -12,6 +12,7 @@ import UploadImage from "../../components/helper/UploadImage";
 import { KeyboardAvoidingView } from "react-native";
 import { Button } from "react-native";
 import Swiper from "react-native-swiper";
+import WSK from "../../websocket"
 const styles = StyleSheet.create({
   input: {
     height: 40,
@@ -84,6 +85,8 @@ const customStyles = {
   labelSize: 13,
   currentStepLabelColor: "#7eaec4",
 };
+
+const client = new WebSocket(`${WSK()}`);
 class CreateTask extends Component {
   constructor(props) {
     super(props);
@@ -221,7 +224,6 @@ class CreateTask extends Component {
     }
   }
   onChangeTime = (name, time) => {
-    // console.log("receive", time);
     let temp = this.state.data;
     temp[name] = time;
     this.setState({
@@ -270,8 +272,6 @@ class CreateTask extends Component {
       };
     }
 
-    console.log(data);
-    // this.props.navigation.goBack();
 
     await axios
       .post(`${Url()}/api/actions/start`, data, {
@@ -282,10 +282,10 @@ class CreateTask extends Component {
       .then((res) => {
         alert("Tạo thành công");
 
-        // client.send(JSON.stringify({
-        //   type: "sendListNotifications",
-        //   notifications: res.data.Notifications
-        // }))
+        client.send(JSON.stringify({
+          type: "sendListNotifications",
+          notifications: res.data.Notifications
+        }))
 
         // this.props.route.params.updateListActions(res.data.action);
         this.props.navigation.navigate("Task", {
@@ -305,7 +305,6 @@ class CreateTask extends Component {
   };
 
   onEnableScroll = (value) => {
-    console.log("scroll", value);
     this.setState({
       enableScrollViewScroll: value,
     });
@@ -348,21 +347,22 @@ class CreateTask extends Component {
             <Customdatetime
               containerStyle={styles.ScriptNameContainer}
               labelStyle={styles.Label}
-              label="Ngày bắt đầu"
-              BoxInput={styles.BoxInput}
-              Save={(e) => this.onChangeTime("startDate", e)}
-              data={this.state.data.startDate}
-              mode="date"
-            />
-            <Customdatetime
-              containerStyle={styles.ScriptNameContainer}
-              labelStyle={styles.Label}
               label="Ngày kết thúc"
               BoxInput={styles.BoxInput}
               Save={(e) => this.onChangeTime("endDate", e)}
               data={this.state.data.endDate}
               mode="date"
             />
+            <Customdatetime
+              containerStyle={styles.ScriptNameContainer}
+              labelStyle={styles.Label}
+              label="Giờ kết thúc"
+              BoxInput={styles.BoxInput}
+              Save={(e) => this.onChangeTime("endTime", e)}
+              data={this.state.data.endTime}
+              mode="date"
+            />
+
           </View>
 
           <View

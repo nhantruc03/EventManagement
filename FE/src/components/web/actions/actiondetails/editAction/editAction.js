@@ -108,7 +108,7 @@ class editAction extends Component {
             actionTypeId: this.props.data.actionTypeId._id,
             availUser: temp_availUser,
             tagsId: temp_tagsId,
-            startDate: moment(this.props.data.startDate),
+            endTime: moment(this.props.data.endTime),
             endDate: moment(this.props.data.endDate),
             priorityId: this.props.data.priorityId._id,
             coverUrl: undefined
@@ -175,7 +175,7 @@ class editAction extends Component {
                         actionTypeId: temp_Action.actionTypeId._id,
                         availUser: temp_availUser,
                         tagsId: temp_tagsId,
-                        startDate: moment(temp_Action.startDate),
+                        endTime: moment(temp_Action.endTime),
                         endDate: moment(temp_Action.endDate),
                         priorityId: temp_Action.priorityId._id,
                         coverUrl: undefined
@@ -252,21 +252,21 @@ class editAction extends Component {
                                 <Col span={12}>
                                     <Form.Item
                                         wrapperCol={{ sm: 24 }}
-                                        label="Bắt đầu"
-                                        rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
-                                        name="startDate"
+                                        label="Ngày kết thúc"
+                                        rules={[{ required: true, message: 'Cần chọn ngày kết thức!' }]}
+                                        name="endDate"
                                     >
-                                        <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày bắt đầu..." />
+                                        <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày kết thúc..." />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item
                                         wrapperCol={{ sm: 24 }}
-                                        label="Kết thúc"
-                                        rules={[{ required: true, message: 'Cần chọn ngày kết thức!' }]}
-                                        name="endDate"
+                                        label="Giờ kết thúc"
+                                        rules={[{ required: true, message: 'Cần giờ kết thúc!' }]}
+                                        name="endTime"
                                     >
-                                        <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày kết thúc..." />
+                                        <TimePicker format="HH:mm" placeholder="Chọn giờ kết thúc"></TimePicker>
                                     </Form.Item>
                                 </Col>
                             </Row>

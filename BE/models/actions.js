@@ -40,7 +40,7 @@ const Actions = new Schema(
       required: true,
       index: true
     },
-    startDate: {
+    endTime: {
       type: Date,
       index: true,
       required: true
