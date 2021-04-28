@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Form, Input, message, Row, Select, Steps } from 'antd';
+import { Button, Col, DatePicker, Form, Input, message, Row, Select, Steps, TimePicker } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import axios from 'axios';
 import React, { Component } from 'react';
@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import Dragger from 'antd/lib/upload/Dragger';
 import { w3cwebsocket } from 'websocket';
+import moment from 'moment'
 const client = new w3cwebsocket('ws://localhost:3001');
 const { Step } = Steps;
 const { Option } = Select;
@@ -90,8 +91,8 @@ class addactions extends Component {
     onFinish_Form1 = async (e) => {
         let data = {
             ...e,
-            endTime: e['endTime'].toDate(),
-            endDate: e['endDate'].toDate(),
+            endTime: e.endTime.utc(true).toDate(),
+            endDate: e.endDate.utc(true).toDate(),
             eventId: this.props.event._id
         }
 
@@ -127,8 +128,10 @@ class addactions extends Component {
                     type: "sendListNotifications",
                     notifications: res.data.Notifications
                 }))
-
-                this.props.done(res.data.action)
+                let temp = res.data.action
+                temp.endTime = moment(temp.endTime).utcOffset(0)
+                temp.endDate = moment(temp.endDate).utcOffset(0)
+                this.props.done(temp)
             })
             .catch(err => {
                 console.log(err)

@@ -106,7 +106,6 @@ class addevents extends Component {
     }
 
     updateEventAssign = (e) => {
-        console.log(e)
         this.setState({
             listEventAssign: e
         })
@@ -160,7 +159,6 @@ class addevents extends Component {
 
         if (users !== null && eventTypes !== null && tags !== null && roles !== null && faculties !== null) {
             if (this._isMounted) {
-                console.log(users)
                 this.setState({
                     listRole: roles,
                     listFaculty: faculties,
@@ -196,8 +194,8 @@ class addevents extends Component {
         let data = {
             ...values,
             'availUser': this.state.listusersforevent.reduce((a, o) => { a.push(o._id); return a }, []),
-            'startDate': values['startDate'].format('YYYY-MM-DD'),
-            'startTime': values['startTime'].toDate(),
+            'startDate': values['startDate'].utc(true).toDate(),
+            'startTime': values['startTime'].utc(true).toDate(),
             // .toDate
             'posterUrl': values['posterUrl'].fileList[0].response.url,
             'guestTypes': this.state.listguesttype,
@@ -206,7 +204,6 @@ class addevents extends Component {
             'eventAssigns': temp_listEventAssign
         }
 
-        console.log('Received values of form: ', data);
 
         await trackPromise(axios.post('/api/events/start', data, {
             headers: {
@@ -233,7 +230,6 @@ class addevents extends Component {
 
     updatelistguesttype = (values) => {
         let temp = this.state.listguest.filter(e => values.includes(e.guestTypeName))
-        console.log('after delete', temp)
         this.setState({
             listguesttype: values,
             listguest: temp
@@ -275,7 +271,6 @@ class addevents extends Component {
     }
 
     finishaddguesttype = (values) => {
-        console.log(values)
         values._id = uuidv1();
         this.setState({
             listguesttype: [...this.state.listguesttype, values]
@@ -286,7 +281,6 @@ class addevents extends Component {
 
 
     uploadExcelFile = (file) => {
-        // console.log(e)
         const promise = new Promise((resolve, reject) => {
 
             const fileReader = new FileReader();
@@ -311,9 +305,6 @@ class addevents extends Component {
         })
 
         promise.then((result) => {
-            // console.log('data from excel', result)
-            // result = result
-            console.log(result)
             let temp_list_user = []
             result.forEach(e => {
                 temp_list_user.push(e.mssv.toString())

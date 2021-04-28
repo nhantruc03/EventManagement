@@ -268,8 +268,8 @@ class editevent extends Component {
 
                 let data = {
                     ...event,
-                    'startTime': moment(event.startTime),
-                    'startDate': moment(event.startDate),
+                    'startTime': moment(event.startTime).utcOffset(0),
+                    'startDate': moment(event.startDate).utcOffset(0),
                     'eventTypeId': event.eventTypeId._id,
                     'tagId': temp_tagId
                 }
@@ -310,8 +310,8 @@ class editevent extends Component {
         console.log(values['startDate'].toDate())
         let data = {
             ...values,
-            'startDate': moment(values['startDate'].toDate()).format('YYYY-MM-DD'),
-            'startTime': values['startTime'].toDate(),
+            'startDate': values['startDate'].utc(true).toDate(),
+            'startTime': values['startTime'].utc(true).toDate(),
         }
         if (this.state.posterUrl !== null) {
             data = {

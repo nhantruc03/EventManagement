@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Form, Image, Input, message, Row, Select } from 'antd';
+import { Button, Col, DatePicker, Form, Image, Input, message, Row, Select, TimePicker } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import Dragger from 'antd/lib/upload/Dragger';
 import React, { Component } from 'react';
@@ -108,8 +108,8 @@ class editAction extends Component {
             actionTypeId: this.props.data.actionTypeId._id,
             availUser: temp_availUser,
             tagsId: temp_tagsId,
-            endTime: moment(this.props.data.endTime),
-            endDate: moment(this.props.data.endDate),
+            endTime: moment(this.props.data.endTime).utcOffset(0),
+            endDate: moment(this.props.data.endDate).utcOffset(0),
             priorityId: this.props.data.priorityId._id,
             coverUrl: undefined
         }
@@ -128,7 +128,10 @@ class editAction extends Component {
             ...e,
             coverUrl: this.state.coverUrl,
             eventId: this.props.data.eventId._id,
+            endTime: e.endTime.utc(true).toDate(),
+            endDate: e.endDate.utc(true).toDate()
         }
+        console.log(data)
         let managerId_change = false
         if (data.managerId !== this.state.data.managerId) {
             managerId_change = true
@@ -175,8 +178,8 @@ class editAction extends Component {
                         actionTypeId: temp_Action.actionTypeId._id,
                         availUser: temp_availUser,
                         tagsId: temp_tagsId,
-                        endTime: moment(temp_Action.endTime),
-                        endDate: moment(temp_Action.endDate),
+                        endTime: moment(temp_Action.endTime).utcOffset(0),
+                        endDate: moment(temp_Action.endDate).utcOffset(0),
                         priorityId: temp_Action.priorityId._id,
                         coverUrl: undefined
                     }

@@ -21,7 +21,7 @@ class EventMiniCard extends Component {
                                 <Row >
                                     <div className="flex-container-row">
                                         <img style={{ marginRight: '20px' }} alt="clock icon" src="/clock.png"></img>
-                                        {this.props.onGoing ? "Hôm nay" : moment(this.props.data.startDate).format('DD/MM/YYYY')} - {moment(this.props.data.startTime).format('HH:mm')}
+                                        {this.props.onGoing ? "Hôm nay" : moment(this.props.data.startDate).utcOffset(0).format('DD/MM/YYYY')} - {moment(this.props.data.startTime).utcOffset(0).format('HH:mm')}
                                     </div>
                                 </Row>
                                 <Row >

@@ -3,6 +3,7 @@ import axios from 'axios';
 import React, { Component } from 'react';
 import { trackPromise } from 'react-promise-tracker';
 import { AUTH } from '../../../../env'
+import moment from "moment"
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -12,13 +13,18 @@ const formItemLayout = {
     },
 };
 class add extends Component {
-
+    componentDidMount() {
+        console.log(moment(new Date()).utc(true).toDate())
+    }
     onFinish = async (e) => {
         let data = {
             ...e,
             actionId: this.props.actionId,
-            endTime: e['endTime'].toDate(),
+            endTime: e.endTime.utc(true).toDate(),
+            endDate: e.endDate.utc(true).toDate(),
         }
+
+
         await trackPromise(
             axios.post('/api/sub-actions', data, {
                 headers: {
@@ -28,7 +34,10 @@ class add extends Component {
                 .then(res => {
                     message.success('Tạo thành công');
                     this.form.current.resetFields();
-                    this.props.add(res.data.data)
+                    let temp = res.data.data
+                    temp.endTime = moment(temp.endTime).utcOffset(0)
+                    temp.endDate = moment(temp.endDate).utcOffset(0)
+                    this.props.add(temp)
                 })
                 .catch(err => {
                     console.log(err)

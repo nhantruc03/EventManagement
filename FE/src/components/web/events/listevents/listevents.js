@@ -61,7 +61,7 @@ class listevents extends Component {
 
     async componentDidMount() {
         this._isMounted = true;
-        let temp = moment(new Date()).format('YYYY-MM-DD')
+        let temp = moment(new Date()).utcOffset(0).format('YYYY-MM-DD')
 
         const [tags, future_event, ongoing_event, past_event] = await trackPromise(Promise.all([
             axios.post('/api/tags/getAll', {}, {

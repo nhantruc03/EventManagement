@@ -215,8 +215,8 @@ class editevent extends Component {
                 })
                 let data = {
                     ...event,
-                    'startTime': moment(event.startTime),
-                    'startDate': moment(event.startDate),
+                    'startTime': moment(event.startTime).utcOffset(0),
+                    'startDate': moment(event.startDate).utcOffset(0),
                     'eventTypeId': event.eventTypeId._id,
                     'tagId': temp_tagId
                 }
@@ -256,8 +256,8 @@ class editevent extends Component {
     onFinish = async (values) => {
         let data = {
             ...values,
-            'startDate': values['startDate'].toDate(),
-            'startTime': values['startTime'].toDate(),
+            'startDate': values['startDate'].utc(true).toDate(),
+            'startTime': values['startTime'].utc(true).toDate(),
         }
         if (this.state.posterUrl !== null) {
             data = {

@@ -6,14 +6,14 @@ import { Link } from 'react-router-dom';
 class SubActionItems extends Component {
     renderTime = () => {
         // if (new Datethis.props.data.startDate)
-        if (moment(this.props.data.endDate).toDate().setHours(0, 0, 0, 0) === moment(new Date()).toDate().setHours(0, 0, 0, 0)) {
+        if (moment(this.props.data.endDate).utcOffset(0).toDate().setHours(0, 0, 0, 0) === moment(new Date()).utcOffset(0).toDate().setHours(0, 0, 0, 0)) {
             return (
-                <p>Hạn chót: Hôm nay - {moment(this.props.data.endTime).format('HH:mm')}</p>
+                <p>Hạn chót: Hôm nay - {moment(this.props.data.endTime).utcOffset(0).format('HH:mm')}</p>
             )
         } else {
             return (
                 <div>
-                    <p>Hạn chót: {moment(this.props.data.endDate).format('DD/MM')}-{moment(this.props.data.endTime).format('HH:mm')}</p>
+                    <p>Hạn chót: {moment(this.props.data.endDate).utcOffset(0).format('DD/MM')}-{moment(this.props.data.endTime).utcOffset(0).format('HH:mm')}</p>
                 </div>
             )
         }

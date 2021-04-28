@@ -31,7 +31,7 @@ const update = async (req, res) => {
     let body = {
       ...pick(req.body,
         "name",
-        "startDate",
+        "endTime",
         "endDate",
         "description",
         "priorityId",

@@ -304,10 +304,10 @@ class eventDetails extends Component {
                 <div className="event-detail-time-date-address">
                   <div className="flex-container-row" style={{ justifyContent: 'space-between' }}>
                     <div>
-                      <ClockCircleOutlined className="event-detail" />  {moment(this.state.data.startTime).format('HH:mm')}
+                      <ClockCircleOutlined className="event-detail" />  {moment(this.state.data.startTime).utcOffset(0).format('HH:mm')}
                     </div>
                     <div>
-                      <InsertRowAboveOutlined /> {moment(this.state.data.startDate).format('DD/MM/YYYY')}
+                      <InsertRowAboveOutlined /> {moment(this.state.data.startDate).utcOffset(0).format('DD/MM/YYYY')}
                     </div>
                   </div>
                   <div style={{ marginTop: '10px' }}>

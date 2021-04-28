@@ -31,7 +31,7 @@ class eventCard extends Component {
                         </Tooltip>
 
                         <Row >
-                            <img style={{ marginRight: '20px' }} alt="clock icon" src="/clock.png" />  {moment(this.props.data.startTime).format('HH:mm')} - {moment(this.props.data.startDate).format('DD/MM/YYYY')}
+                            <img style={{ marginRight: '20px' }} alt="clock icon" src="/clock.png" />  {moment(this.props.data.startTime).utcOffset(0).format('HH:mm')} - {moment(this.props.data.startDate).utcOffset(0).format('DD/MM/YYYY')}
                         </Row>
                         <Row >
                             <img style={{ marginRight: '20px' }} alt="location icon" src="/location.png" />  {this.props.data.address}

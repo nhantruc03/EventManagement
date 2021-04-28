@@ -107,7 +107,7 @@ class actionCard extends Component {
                         </Tooltip>
 
                         <Row >
-                            <img style={{ marginRight: '20px' }} alt="clock icon" src="/clock.png" />  {moment(this.props.data.endDate).format('DD/MM/YYYY')} - {moment(this.props.data.endTime).format('HH:mm')}
+                            <img style={{ marginRight: '20px' }} alt="clock icon" src="/clock.png" />  {moment(this.props.data.endDate).utcOffset(0).format('DD/MM/YYYY')} - {moment(this.props.data.endTime).utcOffset(0).format('HH:mm')}
                         </Row>
 
                         <Row>

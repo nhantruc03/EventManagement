@@ -3,6 +3,7 @@ import axios from 'axios';
 import React, { Component } from 'react';
 import { trackPromise } from 'react-promise-tracker';
 import { AUTH } from '../../../../env'
+import moment from "moment"
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -22,7 +23,8 @@ class edit extends Component {
         let data = {
             ...e,
             actionId: this.props.actionId,
-            endTime: e['endTime'].toDate(),
+            endTime: e.endTime.utc(true).toDate(),
+            endDate: e.endDate.utc(true).toDate(),
         }
 
         await trackPromise(
@@ -33,7 +35,10 @@ class edit extends Component {
             })
                 .then(res => {
                     message.success('Cập nhật thành công');
-                    this.props.edit(res.data.data)
+                    let temp = res.data.data
+                    temp.endTime = moment(e.endTime).utcOffset(0)
+                    temp.endDate = moment(e.endDate).utcOffset(0)
+                    this.props.edit(temp)
                 })
                 .catch(err => {
                     message.error('Cập nhật thất bại');

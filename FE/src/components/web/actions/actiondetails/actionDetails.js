@@ -108,8 +108,8 @@ class actionDetails extends Component {
         if (this.state.currentSubAction) {
             let data = {
                 ...this.state.currentSubAction,
-                'endDate': moment(this.state.currentSubAction.endDate),
-                'endTime': moment(this.state.currentSubAction.endTime),
+                'endDate': moment(this.state.currentSubAction.endDate).utcOffset(0),
+                'endTime': moment(this.state.currentSubAction.endTime).utcOffset(0),
             }
             return (
                 <EditSubAction edit={(e) => this.editSubAction(e)} data={data} />
@@ -360,7 +360,7 @@ class actionDetails extends Component {
 
                                 <div className="flex-container-row" style={{ width: '80%' }}>
                                     <Tag className="event-detail-status">{this.state.currentStatus}</Tag>
-                                    <p style={{ color: 'grey' }}>Bắt đầu: {moment(this.state.data.startTime).format("DD/MM/YYYY")}</p>
+                                    {/* <p style={{ color: 'grey' }}>Bắt đầu: {moment(this.state.data.startTime).format("DD/MM/YYYY")}</p> */}
                                 </div>
 
                                 <Title level={4}>Mô tả</Title>
@@ -387,7 +387,7 @@ class actionDetails extends Component {
 
                                     <Col sm={24} md={8} style={{ textAlign: 'right' }}>
                                         <Title level={4}>Hạn chót</Title>
-                                        {moment(this.state.data.endDate).format("DD/MM/YYYY")}
+                                        {moment(this.state.data.endDate).utcOffset(0).format("DD/MM/YYYY")} - {moment(this.state.data.endTime).utcOffset(0).format("HH:mm")} 
                                     </Col>
                                 </Row>
 
