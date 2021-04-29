@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import TaskScreen from "../screens/TaskScreens/Task";
 import CreateTask from "../screens/TaskScreens/CreateTask";
 import TaskDetail from "../screens/TaskScreens/TaskDetail";
+import EditTask from "../screens/TaskScreens/EditTask";
 
 // import Modal from "@ant-design/react-native";
 
@@ -52,6 +53,19 @@ class TaskStackNav extends Component {
           component={TaskDetail}
           options={{
             title: "Chi tiết công việc",
+            headerStyle: {
+              backgroundColor: "#2A9D8F",
+            },
+            headerTitleStyle: {},
+            headerBackTitleVisible: false,
+            headerTintColor: "#fff",
+          }}
+        />
+        <Stack.Screen
+          name="EditTask"
+          component={EditTask}
+          options={{
+            title: "Chỉnh sửa công việc",
             headerStyle: {
               backgroundColor: "#2A9D8F",
             },

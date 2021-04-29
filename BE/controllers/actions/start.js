@@ -161,6 +161,7 @@ const start = async (req, res) => {
         await commitTransactions(sessions)
         const doc = await Actions.findOne({ _id: newDoc[0]._id, isDeleted: false })
             .populate({ path: 'availUser', select: 'name photoUrl' })
+            .populate({ path: 'managerId', select: 'name photoUrl' })
             .populate({ path: 'tagsId', select: 'name background color' })
             .populate({ path: 'facultyId', select: 'name' })
             .populate({ path: 'priorityId', select: 'name' })

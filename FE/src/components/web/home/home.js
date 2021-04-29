@@ -139,9 +139,9 @@ class home extends Component {
                             </Title>
                         </div>
                         <Row>
-                            <Col xs={24} sm={24} lg={16}>
+                            <Col xs={24} sm={24} xl={16}>
                                 <Row className="status-event-row">
-                                    <Col xs={24} sm={24} lg={8}>
+                                    <Col xs={24} sm={24} xl={8}>
                                         <div className="flex-container-row status-event-card">
                                             <p className="status-event-number">{this.state.event_ongoing.length}</p>
                                             <div className="status-event-info">
@@ -150,7 +150,7 @@ class home extends Component {
                                             </div>
                                         </div>
                                     </Col>
-                                    <Col xs={24} sm={24} lg={8}>
+                                    <Col xs={24} sm={24} xl={8}>
                                         <div className="flex-container-row status-event-card">
                                             <p className="status-event-number">{this.state.event_future.length}</p>
                                             <div className="status-event-info">
@@ -159,7 +159,7 @@ class home extends Component {
                                             </div>
                                         </div>
                                     </Col>
-                                    <Col xs={24} sm={24} lg={8}>
+                                    <Col xs={24} sm={24} xl={8}>
                                         <div className="flex-container-row status-event-card">
                                             <p className="status-event-number">{this.state.event_past.length}</p>
                                             <div className="status-event-info">
@@ -175,7 +175,7 @@ class home extends Component {
                                         <Link className="flex-row-item-right" to="/events">Xem tất cả</Link>
                                     </div>
 
-                                    <Col lg={24}>
+                                    <Col xl={24}>
                                         <Carousel autoplay={false}>
                                             <div >
                                                 <Row>
@@ -190,8 +190,8 @@ class home extends Component {
                                         </Carousel>
                                     </Col>
                                 </Row>
-                                <Row>
-                                    <Col sm={24} lg={24} style={{ padding: '10px' }}>
+                                <Row style={{height:'48%'}}>
+                                    <Col sm={24} xl={24} style={{ padding: '10px', height: '100%' }}>
                                         <div className="flex-container-row" style={{ width: '100%' }}>
                                             <Title level={3}>Công việc</Title>
                                             <Link className="flex-row-item-right" to="/actions">Xem tất cả</Link>
@@ -202,7 +202,7 @@ class home extends Component {
                                     </Col>
                                 </Row>
                             </Col>
-                            <Col xs={24} sm={24} lg={8}>
+                            <Col xs={24} sm={24} xl={8}>
                                 <div style={{ padding: '10px', height: '100%' }}>
                                     <CalendarSection listActions={this.state.actions} />
                                 </div>

@@ -89,19 +89,19 @@ class TaskDetailTab extends Component {
   }
 
   render() {
-    if (this.state.data) {
+    if (this.props.data) {
       return (
         <ScrollView>
           <Image
             style={styles.coverImg}
             source={{
-              uri: `${Url()}/api/images/${this.state.data.coverUrl}`,
+              uri: `${Url()}/api/images/${this.props.data.coverUrl}`,
             }}
           ></Image>
           <View style={styles.formContainer}>
-            <Text style={styles.mainLabel}>{this.state.data.name}</Text>
+            <Text style={styles.mainLabel}>{this.props.data.name}</Text>
             <View style={styles.tagContainer}>
-              {this.state.data.tagsId.map((value, key) => (
+              {this.props.data.tagsId.map((value, key) => (
                 <View
                   style={{
                     backgroundColor: value.background,
@@ -125,7 +125,7 @@ class TaskDetailTab extends Component {
               ))}
             </View>
             <Text style={styles.description}>
-              {this.state.data.description}
+              {this.props.data.description}
             </Text>
             <Separator />
             <Text style={styles.formLabel}>Hạn chót</Text>
@@ -136,7 +136,7 @@ class TaskDetailTab extends Component {
                   source={require("../../assets/images/timesolid.png")}
                 ></Image>
                 <Text style={styles.TimeContent}>
-                  {moment(this.state.data.endTime).utcOffset(0).format("HH:mm")}
+                  {moment(this.props.data.endTime).utcOffset(0).format("HH:mm")}
                 </Text>
               </View>
               <View style={styles.DateContatiner}>
@@ -145,7 +145,7 @@ class TaskDetailTab extends Component {
                   source={require("../../assets/images/datesolid.png")}
                 ></Image>
                 <Text style={styles.DateContent}>
-                  {moment(this.state.data.endDate).utcOffset(0).format("DD/MM/YYYY")}
+                  {moment(this.props.data.endDate).utcOffset(0).format("DD/MM/YYYY")}
                 </Text>
               </View>
             </View>
@@ -168,20 +168,20 @@ class TaskDetailTab extends Component {
                   <Image
                     style={styles.avaImage}
                     source={{
-                      uri: `${Url()}/api/images/${this.state.data.managerId.photoUrl}`,
+                      uri: `${Url()}/api/images/${this.props.data.managerId.photoUrl}`,
                     }}
                   ></Image>
-                  <Text style={styles.Text}>{this.state.data.managerId.name}</Text>
+                  <Text style={styles.Text}>{this.props.data.managerId.name}</Text>
                 </View>
               </View>
               <View>
-                <Text style={styles.Text}>{this.state.data.facultyId.name}</Text>
+                <Text style={styles.Text}>{this.props.data.facultyId.name}</Text>
               </View>
             </View>
             <Separator />
             <View style={styles.AssignedUserContainer}>
               <Text style={styles.formLabel}>Phân công cho</Text>
-              {this.state.data.availUser.map((value, key) => (
+              {this.props.data.availUser.map((value, key) => (
                 <View
                   style={{
                     marginRight: 10,

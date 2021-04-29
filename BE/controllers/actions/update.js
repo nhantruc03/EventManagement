@@ -201,7 +201,7 @@ const update = async (req, res) => {
     let new_data = await Actions.findOne({ _id: updated._id, isDeleted: false })
       .populate({ path: 'availUser', select: 'name photoUrl' })
       .populate({ path: 'managerId', select: 'name photoUrl' })
-      .populate({ path: 'tagsId', select: 'name' })
+      .populate({ path: 'tagsId', select: 'name background color' })
       .populate({ path: 'facultyId', select: 'name' })
       .populate({ path: 'priorityId', select: 'name' })
       .populate({ path: 'eventId', select: 'name' })
