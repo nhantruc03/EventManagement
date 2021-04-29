@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, TextInput } from "react-native";
+import { View, Text, StyleSheet, TextInput, Platform } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import Customdatetime from "../../components/helper/datetimepicker";
 import SearchableDropdown from "react-native-searchable-dropdown";
@@ -13,6 +13,7 @@ import { KeyboardAvoidingView } from "react-native";
 import { Button } from "react-native";
 import Swiper from "react-native-swiper";
 import WSK from "../../websocket"
+import { findNodeHandle } from "react-native";
 const styles = StyleSheet.create({
   input: {
     height: 40,
@@ -309,19 +310,28 @@ class CreateTask extends Component {
       enableScrollViewScroll: value,
     });
   };
-  scrollToView = (e) => {
+  scrollToView = async (e) => {
     if (e) {
-      e.measure((fx, fy, width, height, px, py) => {
-        let offset = height + py;
+      if (Platform.OS === "ios") {
+        e.measure((fx, fy, width, height, px, py) => {
+          let offset = height + py;
 
-        this.scroller.scrollTo({ x: 0, y: offset });
-      });
+          this.scroller.scrollTo({ x: 0, y: offset });
+        });
+      } else {
+        e.measureLayout(
+          await findNodeHandle(this.scroller), (x, y) => {
+            this.scroller.scrollTo({ x: 0, y: y });
+          }
+        );
+      }
     }
   };
+  // scroller = React.createRef()
   renderView = () => {
     if (this.state.currentPage === 0) {
       return (
-        <View>
+        <View >
           <View styles={styles.ScriptNameContainer}>
             <Text style={styles.Label}>Tên công việc</Text>
             <View style={styles.BoxInput}>
@@ -665,7 +675,9 @@ class CreateTask extends Component {
   render() {
     if (!this.state.isLoading) {
       return (
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "height" : ""}>
+        <KeyboardAvoidingView
+
+          behavior={Platform.OS === "ios" ? "height" : ""}>
           <ScrollView
             ref={(scroller) => {
               this.scroller = scroller;

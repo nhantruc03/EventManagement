@@ -12,6 +12,8 @@ import { TabBar } from "react-native-tab-view";
 import TaskDetailTab from "../../components/TaskTabs/TaskDetailTab";
 import SubTasksTab from "../../components/TaskTabs/SubTasksTab";
 import { ActivityIndicator } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { Image } from "react-native";
 
 const initialLayout = { width: Dimensions.get("window").width };
 const styles = StyleSheet.create({
@@ -96,6 +98,14 @@ class TaskDetail extends Component {
     });
   };
 
+
+  updateData = (e) => {
+    console.log('receive', e)
+    this.setState({
+      data: e
+    })
+  }
+
   async componentDidMount() {
     this._isMounted = true;
     let temp_data = {}
@@ -112,8 +122,25 @@ class TaskDetail extends Component {
         .then((res) => res.data.data);
       temp_data = data_loadBySelf
     } else {
+      console.log('receive', this.props.route.params.data)
       temp_data = this.props.route.params.data
     }
+    this.props.navigation.setOptions({
+      headerRight: () => (
+        <View style={styles.IconRight}>
+          <TouchableOpacity
+            onPress={() =>
+              this.props.navigation.navigate("EditTask", {
+                data: temp_data,
+                updateData: (e) => this.updateData(e)
+              })
+            }
+          >
+            <Image source={require("../../assets/images/preview.png")} />
+          </TouchableOpacity>
+        </View>
+      ),
+    });
     console.log(temp_data)
     const subActions = await axios
       .post(

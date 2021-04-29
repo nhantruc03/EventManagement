@@ -16,7 +16,7 @@ class Video extends Component {
     ref = React.createRef()
     render() {
         return (
-            <video className="styled-video" playsInline autoPlay ref={this.ref} />
+            <video onClick={() => this.props.show(this.ref)} style={this.props.style} className="styled-video" playsInline autoPlay ref={this.ref} />
         );
     }
 }
