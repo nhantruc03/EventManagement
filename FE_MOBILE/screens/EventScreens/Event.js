@@ -14,15 +14,17 @@ import moment from "moment";
 import Url from "../../env";
 import { ActivityIndicator, Tabs } from "@ant-design/react-native";
 import Search from "../../components/helper/search";
+import { StatusBar } from "react-native";
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#F6F7F8",
     flex: 1,
   },
+  containerIOS: { flex: 1, marginTop: 16 },
+  containerAndroid: { marginTop: StatusBar.currentheight, flex: 1 },
   toplabel: {
     fontFamily: "bold",
     fontSize: 32,
-    paddingTop: 16,
     fontWeight: "500",
     color: "#2A9D8F",
     backgroundColor: "#F6F7F8",
@@ -155,7 +157,7 @@ export default class Event extends Component {
       <TouchableOpacity
         onPress={() =>
           this.props.navigation.navigate("EventDetail2", {
-            data: item
+            data: item,
           })
         }
       >
@@ -220,7 +222,11 @@ export default class Event extends Component {
     ];
     //console.log(this.state.data);
     return (
-      <View style={styles.container}>
+      <View
+        style={
+          Platform.OS == "ios" ? styles.containerIOS : styles.containerAndroid
+        }
+      >
         <Text style={styles.toplabel}>Sự kiện</Text>
         {/* <Text style={styles.toplabel}>{this.state.data.length}</Text> */}
         <Search

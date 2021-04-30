@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextInput, Platform } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import Customdatetime from "../../components/helper/datetimepicker";
 import SearchableDropdown from "react-native-searchable-dropdown";
+import { Button } from "@ant-design/react-native";
 import Url from "../../env";
 import getToken from "../../Auth";
 import axios from "axios";
@@ -10,9 +11,9 @@ import { ActivityIndicator } from "react-native";
 import StepIndicator from "react-native-step-indicator";
 import UploadImage from "../../components/helper/UploadImage";
 import { KeyboardAvoidingView } from "react-native";
-import { Button } from "react-native";
+
 import Swiper from "react-native-swiper";
-import WSK from "../../websocket"
+import WSK from "../../websocket";
 import { findNodeHandle } from "react-native";
 const styles = StyleSheet.create({
   input: {
@@ -115,6 +116,7 @@ class CreateTask extends Component {
       selectedFaculties: {},
       selectedActionTypes: {},
       enableScrollViewScroll: true,
+      loadingbtn: false,
     };
   }
 
@@ -248,7 +250,14 @@ class CreateTask extends Component {
     });
   };
 
+  onLoading() {
+    this.setState({
+      loadingbtn: true,
+    });
+  }
+
   onFinish = async () => {
+    this.onLoading();
     let data = {
       ...this.state.data,
       managerId: this.state.selectedManager.id,
@@ -272,8 +281,6 @@ class CreateTask extends Component {
         coverUrl: this.state.coverUrl,
       };
     }
-
-
     await axios
       .post(`${Url()}/api/actions/start`, data, {
         headers: {
@@ -283,10 +290,12 @@ class CreateTask extends Component {
       .then((res) => {
         alert("Tạo thành công");
 
-        client.send(JSON.stringify({
-          type: "sendListNotifications",
-          notifications: res.data.Notifications
-        }))
+        client.send(
+          JSON.stringify({
+            type: "sendListNotifications",
+            notifications: res.data.Notifications,
+          })
+        );
 
         // this.props.route.params.updateListActions(res.data.action);
         this.props.navigation.navigate("Task", {
@@ -319,11 +328,9 @@ class CreateTask extends Component {
           this.scroller.scrollTo({ x: 0, y: offset });
         });
       } else {
-        e.measureLayout(
-          await findNodeHandle(this.scroller), (x, y) => {
-            this.scroller.scrollTo({ x: 0, y: y });
-          }
-        );
+        e.measureLayout(await findNodeHandle(this.scroller), (x, y) => {
+          this.scroller.scrollTo({ x: 0, y: y });
+        });
       }
     }
   };
@@ -331,7 +338,7 @@ class CreateTask extends Component {
   renderView = () => {
     if (this.state.currentPage === 0) {
       return (
-        <View >
+        <View>
           <View styles={styles.ScriptNameContainer}>
             <Text style={styles.Label}>Tên công việc</Text>
             <View style={styles.BoxInput}>
@@ -370,9 +377,8 @@ class CreateTask extends Component {
               BoxInput={styles.BoxInput}
               Save={(e) => this.onChangeTime("endTime", e)}
               data={this.state.data.endTime}
-              mode="date"
+              mode="time"
             />
-
           </View>
 
           <View
@@ -388,7 +394,15 @@ class CreateTask extends Component {
                 });
               }}
               selectedItems={this.state.selectedFaculties}
-              defaultIndex={this.state.listFaculties.indexOf(this.state.selectedFaculties) !== -1 ? this.state.listFaculties.indexOf(this.state.selectedFaculties) : undefined}
+              defaultIndex={
+                this.state.listFaculties.indexOf(
+                  this.state.selectedFaculties
+                ) !== -1
+                  ? this.state.listFaculties.indexOf(
+                      this.state.selectedFaculties
+                    )
+                  : undefined
+              }
               containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
               itemStyle={{
                 padding: 10,
@@ -424,7 +438,7 @@ class CreateTask extends Component {
             <UploadImage
               Save={(e, b) => {
                 this.setState({ coverUrl: e, coverUrl_localPath: b });
-                this.scroller.scrollToEnd({ animated: true })
+                this.scroller.scrollToEnd({ animated: true });
               }}
               localPath={this.state.coverUrl_localPath}
             />
@@ -443,7 +457,11 @@ class CreateTask extends Component {
                 });
               }}
               selectedItems={this.state.selectedManager}
-              defaultIndex={this.state.listUser.indexOf(this.state.selectedManager) !== -1 ? this.state.listUser.indexOf(this.state.selectedManager) : undefined}
+              defaultIndex={
+                this.state.listUser.indexOf(this.state.selectedManager) !== -1
+                  ? this.state.listUser.indexOf(this.state.selectedManager)
+                  : undefined
+              }
               containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
               itemStyle={{
                 padding: 10,
@@ -534,7 +552,15 @@ class CreateTask extends Component {
                 });
               }}
               selectedItems={this.state.selectedActionTypes}
-              defaultIndex={this.state.listActionTypes.indexOf(this.state.selectedActionTypes) !== -1 ? this.state.listActionTypes.indexOf(this.state.selectedActionTypes) : undefined}
+              defaultIndex={
+                this.state.listActionTypes.indexOf(
+                  this.state.selectedActionTypes
+                ) !== -1
+                  ? this.state.listActionTypes.indexOf(
+                      this.state.selectedActionTypes
+                    )
+                  : undefined
+              }
               containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
               itemStyle={{
                 padding: 10,
@@ -578,7 +604,15 @@ class CreateTask extends Component {
                 });
               }}
               selectedItems={this.state.selectedPriorities}
-              defaultIndex={this.state.listPriorities.indexOf(this.state.selectedPriorities) !== -1 ? this.state.listPriorities.indexOf(this.state.selectedPriorities) : undefined}
+              defaultIndex={
+                this.state.listPriorities.indexOf(
+                  this.state.selectedPriorities
+                ) !== -1
+                  ? this.state.listPriorities.indexOf(
+                      this.state.selectedPriorities
+                    )
+                  : undefined
+              }
               containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
               itemStyle={{
                 padding: 10,
@@ -659,14 +693,17 @@ class CreateTask extends Component {
               }}
             />
           </View>
-
-          <TouchableOpacity
-            style={styles.btnUpdate}
-            underlayColor="#fff"
-            onPress={this.onFinish}
-          >
-            <Text style={styles.textUpdate}>Xác nhận</Text>
-          </TouchableOpacity>
+          {!this.state.loadingbtn ? (
+            <TouchableOpacity
+              style={styles.btnUpdate}
+              underlayColor="#fff"
+              onPress={this.onFinish}
+            >
+              <Text style={styles.textUpdate}>Xác nhận</Text>
+            </TouchableOpacity>
+          ) : (
+            <Button loading>Loading</Button>
+          )}
         </View>
       );
     }
@@ -675,9 +712,7 @@ class CreateTask extends Component {
   render() {
     if (!this.state.isLoading) {
       return (
-        <KeyboardAvoidingView
-
-          behavior={Platform.OS === "ios" ? "height" : ""}>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "height" : ""}>
           <ScrollView
             ref={(scroller) => {
               this.scroller = scroller;
@@ -712,7 +747,7 @@ class CreateTask extends Component {
               </Swiper> */}
             </View>
           </ScrollView>
-        </KeyboardAvoidingView >
+        </KeyboardAvoidingView>
       );
     } else {
       return (

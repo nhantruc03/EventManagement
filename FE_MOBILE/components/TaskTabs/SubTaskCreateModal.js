@@ -32,14 +32,21 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   ScriptNameContainer: {
-    width: '50%',
-    paddingHorizontal: 5
+    width: "50%",
+    paddingHorizontal: 5,
   },
   Label: {
     marginTop: 5,
     color: "#2A9D8F",
     fontFamily: "bold",
     fontSize: 14,
+  },
+  LoadingBtn: {
+    borderRadius: 8,
+    padding: 12,
+    margin: 16,
+    justifyContent: "center",
+    alignContent: "center",
   },
   PrimaryBtn: {
     fontFamily: "bold",
@@ -50,7 +57,7 @@ const styles = StyleSheet.create({
     margin: 16,
     justifyContent: "center",
     alignContent: "center",
-  }
+  },
 });
 
 class SubTaskCreateModal extends Component {
@@ -60,22 +67,29 @@ class SubTaskCreateModal extends Component {
       data: {
         endDate: new Date(),
         endTime: new Date(),
-      }
+      },
+      loadingbtn: false,
     };
   }
   componentDidMount() {
     if (!this.props.onAdd) {
       this.setState({
-        data: this.props.data
-      })
+        data: this.props.data,
+      });
     } else {
       this.setState({
-        data: {}
-      })
+        data: {},
+      });
     }
+  }
+  onLoading() {
+    this.setState({
+      loadingbtn: true,
+    });
   }
 
   onFinish = async () => {
+    this.onLoading();
     let data = {
       ...this.state.data,
       actionId: this.props.actionId,
@@ -114,7 +128,6 @@ class SubTaskCreateModal extends Component {
           alert("Cập nhật subtask thất bại");
         });
     }
-
   };
   onChangeTime = (name, time) => {
     let temp = this.state.data;
@@ -150,16 +163,20 @@ class SubTaskCreateModal extends Component {
         >
           <ScrollView
             keyboardDismissMode="interactive"
-            style={{ maxHeight: H * 0.5, paddingHorizontal: 10, marginVertical: 10 }}
+            style={{
+              maxHeight: H * 0.5,
+              paddingHorizontal: 10,
+              marginVertical: 10,
+            }}
             bounces={false}
           >
-            <Text > Tên </Text>
+            <Text> Tên </Text>
             <TextInput
               onChangeText={this.onChangeName}
               style={styles.input}
               value={this.state.data.name}
             ></TextInput>
-            <Text > Mô tả </Text>
+            <Text> Mô tả </Text>
             <TextInput
               style={styles.textArea}
               value={this.state.data.description}
@@ -168,7 +185,6 @@ class SubTaskCreateModal extends Component {
               numberOfLines={1}
             ></TextInput>
             <View style={{ flex: 1, flexDirection: "row" }}>
-
               <Customdatetime
                 containerStyle={styles.ScriptNameContainer}
                 labelStyle={styles.Label}
@@ -189,19 +205,24 @@ class SubTaskCreateModal extends Component {
               />
             </View>
           </ScrollView>
-          <Button
-            type="primary"
-            onPress={this.onFinish}
-            style={styles.PrimaryBtn}
-          >
-            Lưu
-          </Button>
-        </KeyboardAvoidingView >
+          {!this.state.loadingbtn ? (
+            <Button
+              type="primary"
+              onPress={this.onFinish}
+              style={styles.PrimaryBtn}
+            >
+              Lưu
+            </Button>
+          ) : (
+            <Button style={styles.LoadingBtn} loading>
+              loading
+            </Button>
+          )}
+        </KeyboardAvoidingView>
       );
     } else {
-      return null
+      return null;
     }
-
   }
 }
 

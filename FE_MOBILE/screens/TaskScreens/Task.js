@@ -12,6 +12,9 @@ import EventCard from "../../components/EventCard";
 import { Button, Modal, Provider } from "@ant-design/react-native";
 import AddActionTypeModal from "../../components/AddActionTypeModal";
 import { ActivityIndicator } from "react-native";
+import Indicator from "../../components/helper/Loading";
+import { StatusBar } from "react-native";
+import { Platform } from "react-native";
 
 const W = Dimensions.get("window").width;
 
@@ -21,6 +24,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F7F8",
     flex: 1,
   },
+  containerIOS: { flex: 1, marginTop: 16 },
+  containerAndroid: { marginTop: StatusBar.currentheight, flex: 1 },
   cardImage: {
     width: 300,
     height: 200,
@@ -33,7 +38,6 @@ const styles = StyleSheet.create({
   toplabel: {
     fontFamily: "bold",
     fontSize: 32,
-    paddingTop: 16,
     fontWeight: "500",
     color: "#2A9D8F",
     backgroundColor: "#F6F7F8",
@@ -403,15 +407,7 @@ class Taskscreen extends Component {
         return null;
       }
     } else {
-      return (
-        <View>
-          <ActivityIndicator
-            size="large"
-            animating
-            color="#2A9D8F"
-          ></ActivityIndicator>
-        </View>
-      );
+      return <Indicator />;
     }
   };
   updateListListActionType = (e) => {
@@ -430,10 +426,13 @@ class Taskscreen extends Component {
   render() {
     return (
       <Provider>
-        <View style={styles.container}>
+        <View
+          style={
+            Platform.OS == "ios" ? styles.containerIOS : styles.containerAndroid
+          }
+        >
           <View
             style={{
-              marginTop: 12,
               flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "center",

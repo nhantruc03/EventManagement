@@ -50,6 +50,7 @@
     "react-native-step-indicator": "^1.0.3",
     "react-native-svg": "12.1.0",
     "react-native-svg-icon": "^0.10.0",
+    "react-native-svg-transformer": "^0.14.3",
     "react-native-swiper": "^1.6.0",
     "react-native-tab-view": "^3.0.1",
     "react-native-tags": "^2.2.0",

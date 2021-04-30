@@ -39,7 +39,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     textAlign: "center",
   },
-
+  LoadingBtn: {
+    borderRadius: 8,
+    padding: 12,
+    margin: 16,
+    justifyContent: "center",
+    alignContent: "center",
+  },
   PrimaryBtn: {
     fontFamily: "bold",
     borderColor: "#2A9D8F",
@@ -59,6 +65,7 @@ class ScriptDetailModal extends Component {
       data: null,
       richText: React.createRef(),
       showDateTimePicker: false,
+      loadingbtn: false,
     };
     this.ref = React.createRef();
   }
@@ -102,7 +109,13 @@ class ScriptDetailModal extends Component {
     });
   };
 
+  onLoading() {
+    this.setState({
+      loadingbtn: true,
+    });
+  }
   onFinish = async () => {
+    this.onLoading();
     let data = {
       ...this.state.data,
       _id: this.props.data._id,
@@ -214,13 +227,19 @@ class ScriptDetailModal extends Component {
               </View>
             </View>
           </ScrollView>
-          <Button
-            type="primary"
-            onPress={this.onFinish}
-            style={styles.PrimaryBtn}
-          >
-            Lưu
-          </Button>
+          {!this.state.loadingbtn ? (
+            <Button
+              type="primary"
+              onPress={this.onFinish}
+              style={styles.PrimaryBtn}
+            >
+              Lưu
+            </Button>
+          ) : (
+            <Button style={styles.LoadingBtn} loading>
+              loading
+            </Button>
+          )}
           {/* </View> */}
         </KeyboardAvoidingView>
       );

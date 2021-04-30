@@ -149,6 +149,7 @@ class scriptdetail extends Component {
       visible: false,
       editDetailData: null,
       addScriptDetails: false,
+      loadingbtn: false,
     };
     this._isMounted = false;
   }
@@ -253,12 +254,18 @@ class scriptdetail extends Component {
     });
   };
 
+  onLoading() {
+    this.setState({
+      loadingbtn: true,
+    });
+  }
+
   updateScript = async () => {
+    this.onLoading();
     let data = {
       name: this.state.name,
       forId: this.state.forId[0],
     };
-
     await axios
       .put(`${Url()}/api/scripts/` + this.props.route.params.id, data, {
         headers: {
@@ -268,6 +275,7 @@ class scriptdetail extends Component {
       .then((res) => {
         // Message('Tạo thành công', true, this.props);
         // message.success("Cập nhật thành công");
+        this.setState({ loadingbtn: false });
         alert("Cập nhật kịch bản thành công");
         console.log("update success");
       })
@@ -350,13 +358,18 @@ class scriptdetail extends Component {
                 </Picker>
               </View>
             </View>
-            <TouchableOpacity
-              style={styles.btnUpdate}
-              underlayColor="#fff"
-              onPress={() => this.updateScript()}
-            >
-              <Text style={styles.textUpdate}>Cập nhật</Text>
-            </TouchableOpacity>
+            {!this.state.loadingbtn ? (
+              <TouchableOpacity
+                style={styles.btnUpdate}
+                underlayColor="#fff"
+                onPress={() => this.updateScript()}
+              >
+                <Text style={styles.textUpdate}>Cập nhật</Text>
+              </TouchableOpacity>
+            ) : (
+              <Button loading>loading</Button>
+            )}
+
             <View>
               <View>
                 <Text style={styles.Label}>Timeline</Text>

@@ -46,6 +46,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignContent: "center",
   },
+  LoadingBtn: {
+    borderRadius: 8,
+    padding: 12,
+    margin: 16,
+    justifyContent: "center",
+    alignContent: "center",
+  },
   Box: {
     height: 40,
     marginTop: 8,
@@ -65,6 +72,7 @@ class ScriptCreateModal extends Component {
       event: null,
       listUser_default: [],
       listUser: [],
+      loadingbtn: false,
     };
   }
 
@@ -103,7 +111,14 @@ class ScriptCreateModal extends Component {
     });
   };
 
+  onLoading() {
+    this.setState({
+      loadingbtn: true,
+    });
+  }
+
   onFinish = async () => {
+    this.onLoading();
     let login = await AsyncStorage.getItem("login");
     var obj = JSON.parse(login);
     try {
@@ -124,6 +139,7 @@ class ScriptCreateModal extends Component {
           // console.log("result", res.data.data);
           this.props.updateListScript(res.data.data);
           this.props.onClose();
+          //this.onLoading();
           alert("Tạo kịch bản thành công");
         })
         .catch((err) => {
@@ -181,13 +197,19 @@ class ScriptCreateModal extends Component {
                   </View>
                 </View>
               </View>
-              <Button
-                type="primary"
-                onPress={this.onFinish}
-                style={styles.PrimaryBtn}
-              >
-                Lưu
-              </Button>
+              {!this.state.loadingbtn ? (
+                <Button
+                  type="primary"
+                  onPress={this.onFinish}
+                  style={styles.PrimaryBtn}
+                >
+                  Lưu
+                </Button>
+              ) : (
+                <Button style={styles.LoadingBtn} loading>
+                  loading
+                </Button>
+              )}
             </ScrollView>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
