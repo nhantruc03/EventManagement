@@ -12,6 +12,7 @@ import { TabBar } from "react-native-tab-view";
 import { Dimensions } from "react-native";
 import GroupTab from "../../components/EventTabs/GroupTab";
 import { ActivityIndicator } from "@ant-design/react-native";
+import Indicator from "../../components/helper/Loading";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -73,11 +74,7 @@ export default class EventDetail2 extends Component {
       <OrgTab data={this.state.listOrganizer} />
     ) : (
       <View style={styles.Loading}>
-        <ActivityIndicator
-          size="large"
-          animating
-          color="#2A9D8F"
-        ></ActivityIndicator>
+        <Indicator />
       </View>
     );
 
@@ -91,7 +88,7 @@ export default class EventDetail2 extends Component {
       />
     ) : (
       <View style={styles.Loading}>
-        <ActivityIndicator size="large" animating></ActivityIndicator>
+        <Indicator />
       </View>
     );
 
@@ -103,7 +100,7 @@ export default class EventDetail2 extends Component {
       />
     ) : (
       <View style={styles.Loading}>
-        <ActivityIndicator size="large" animating></ActivityIndicator>
+        <Indicator />
       </View>
     );
 
@@ -112,7 +109,7 @@ export default class EventDetail2 extends Component {
       <GuestTab data={this.state.listGuest} />
     ) : (
       <View style={styles.Loading}>
-        <ActivityIndicator size="large" animating></ActivityIndicator>
+        <Indicator />
       </View>
     );
 

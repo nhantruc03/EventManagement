@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "500",
     color: "#2A9D8F",
-    backgroundColor: "#F6F7F8",
+
     paddingLeft: 16,
   },
   AddBtn: {

@@ -15,6 +15,7 @@ import { KeyboardAvoidingView } from "react-native";
 import Swiper from "react-native-swiper";
 import WSK from "../../websocket";
 import { findNodeHandle } from "react-native";
+import Indicator from "../../components/helper/Loading";
 const styles = StyleSheet.create({
   input: {
     height: 40,
@@ -399,8 +400,8 @@ class CreateTask extends Component {
                   this.state.selectedFaculties
                 ) !== -1
                   ? this.state.listFaculties.indexOf(
-                      this.state.selectedFaculties
-                    )
+                    this.state.selectedFaculties
+                  )
                   : undefined
               }
               containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
@@ -557,8 +558,8 @@ class CreateTask extends Component {
                   this.state.selectedActionTypes
                 ) !== -1
                   ? this.state.listActionTypes.indexOf(
-                      this.state.selectedActionTypes
-                    )
+                    this.state.selectedActionTypes
+                  )
                   : undefined
               }
               containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
@@ -609,8 +610,8 @@ class CreateTask extends Component {
                   this.state.selectedPriorities
                 ) !== -1
                   ? this.state.listPriorities.indexOf(
-                      this.state.selectedPriorities
-                    )
+                    this.state.selectedPriorities
+                  )
                   : undefined
               }
               containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
@@ -752,11 +753,7 @@ class CreateTask extends Component {
     } else {
       return (
         <View>
-          <ActivityIndicator
-            size="large"
-            animating
-            color="#2A9D8F"
-          ></ActivityIndicator>
+          <Indicator />
         </View>
       );
     }

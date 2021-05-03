@@ -252,9 +252,9 @@ export default class BottomNav extends React.Component {
           options={{
             tabBarBadge:
               this.state.notifications.filter((e) => e.watch === false).length >
-              0
+                0
                 ? this.state.notifications.filter((e) => e.watch === false)
-                    .length
+                  .length
                 : undefined,
             tabBarIcon: ({ color }) => (
               <FontAwesomeIcon icon={faHome} size={24} color={color} />

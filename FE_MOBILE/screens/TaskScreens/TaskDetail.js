@@ -14,6 +14,7 @@ import SubTasksTab from "../../components/TaskTabs/SubTasksTab";
 import { ActivityIndicator } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Image } from "react-native";
+import Indicator from "../../components/helper/Loading";
 
 const initialLayout = { width: Dimensions.get("window").width };
 const styles = StyleSheet.create({
@@ -84,11 +85,7 @@ class TaskDetail extends Component {
       />
     ) : (
       <View style={styles.Loading}>
-        <ActivityIndicator
-          size="large"
-          animating
-          color="#2A9D8F"
-        ></ActivityIndicator>
+        <Indicator />
       </View>
     );
 

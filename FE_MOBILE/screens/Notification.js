@@ -7,6 +7,7 @@ import Url from "../env";
 import getToken from "../Auth";
 import { Platform } from "react-native";
 import { StatusBar } from "react-native";
+import { Image } from "react-native";
 const styles = StyleSheet.create({
   containerIOS: { flex: 1, marginTop: 16 },
   containerAndroid: { marginTop: StatusBar.currentheight, flex: 1 },
@@ -20,7 +21,29 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     backgroundColor: "white",
+    padding: 16,
+    paddingVertical: 12,
+    marginVertical: 4,
   },
+  Icon: {
+    width: 32,
+    height: 32,
+    marginRight: 8,
+  },
+  container: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  Name: {
+    fontFamily: "semibold",
+    fontSize: 16,
+    color: "#2A9D8F",
+  },
+  Descrip: {
+    fontFamily: "semibold",
+    fontSize: 14,
+    color: "#2E2E2E",
+  }
 });
 
 export default class Notification extends Component {
@@ -45,18 +68,24 @@ export default class Notification extends Component {
     const item = e.item;
     if (item.eventId) {
       return (
-        <TouchableOpacity
-          onPress={() => {
-            this.updateNoti(item._id);
-            this.props.navigation.navigate("EventDetail2", {
-              data: { _id: item.eventId },
-              loadBySelf: true,
-            });
-          }}
-        >
-          <Text>{item.name}</Text>
-          <Text>{item.description}</Text>
-        </TouchableOpacity>
+        <View style={styles.itemContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              this.updateNoti(item._id);
+              this.props.navigation.navigate("EventDetail2", {
+                data: { _id: item.eventId },
+                loadBySelf: true,
+              });
+            }}
+          >
+            <View style={styles.container}><Image style={styles.Icon} source={require("../assets/images/event.png")} />
+              <View>
+                <Text style={styles.Name}>{item.name}</Text>
+                <Text style={styles.Descrip}>{item.description}</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
       );
     } else if (item.actionId) {
       return (
@@ -70,8 +99,12 @@ export default class Notification extends Component {
               });
             }}
           >
-            <Text>{item.name}</Text>
-            <Text>{item.description}</Text>
+            <View style={styles.container}><Image style={styles.Icon} source={require("../assets/images/clipboard.png")} />
+              <View>
+                <Text style={styles.Name}>{item.name}</Text>
+                <Text style={styles.Descrip}>{item.description}</Text>
+              </View>
+            </View>
           </TouchableOpacity>
         </View>
       );
