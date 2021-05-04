@@ -174,7 +174,7 @@ app.use("/api/notifications", authenticateToken, require("./routes/notifications
 
 app.post("/api/uploads", (req, res) => {
   if (req.body.mobile) {
-    let result = storeImage(req.body.file)
+    let result = storeImage(req.body.file, `/images/`)
     if (result) {
       return res.status(200).json({
         uploaded: true,
@@ -205,28 +205,38 @@ app.post("/api/uploads", (req, res) => {
 
 
 app.post("/api/upload-resources/:id", (req, res) => {
-  if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send('No files were uploaded.');
-  }
+  if (req.body.mobile) {
+    let result = storeImage(req.body.file, `/resources/${req.params.id}/`)
+    if (result) {
+      return res.status(200).json({
+        uploaded: true,
+        url: result
+      });
+    }
+  } else {
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).send('No files were uploaded.');
+    }
 
-  let sampleFile = req.files.file;
+    let sampleFile = req.files.file;
 
-  let extension = mime.extension(sampleFile.mimetype);
-  const uniqueSuffix = Date.now()
-  let filename = uniqueSuffix + '-' + req.files.file.name;
-  // Use the mv() method to place the file somewhere on your server
-  if (!fs.existsSync(`./resources/${req.params.id}`)) {
-    fs.mkdirSync(`./resources/${req.params.id}`);
-  }
-  sampleFile.mv(`./resources/${req.params.id}/` + filename, function (err) {
-    if (err)
-      return res.status(500).send(err);
-    res.status(200).json({
-      uploaded: true,
-      url: filename,
-      extension: extension
+    let extension = mime.extension(sampleFile.mimetype);
+    const uniqueSuffix = Date.now()
+    let filename = uniqueSuffix + '-' + req.files.file.name;
+    // Use the mv() method to place the file somewhere on your server
+    if (!fs.existsSync(`./resources/${req.params.id}`)) {
+      fs.mkdirSync(`./resources/${req.params.id}`);
+    }
+    sampleFile.mv(`./resources/${req.params.id}/` + filename, function (err) {
+      if (err)
+        return res.status(500).send(err);
+      res.status(200).json({
+        uploaded: true,
+        url: filename,
+        extension: extension
+      });
     });
-  });
+  }
 })
 
 // Connect DB then start server

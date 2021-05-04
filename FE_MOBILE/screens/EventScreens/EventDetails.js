@@ -123,7 +123,6 @@ export default class EventDetail extends Component {
   }
 
   componentDidMount() {
-    console.log('event', this.props.data)
     this.setState({
       data: this.props.data,
     });

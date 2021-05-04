@@ -48,7 +48,7 @@ LocaleConfig.defaultLocale = "vn";
 
 const styles = StyleSheet.create({
   containerIOS: { flex: 1, marginTop: 16 },
-  containerAndroid: { marginTop: StatusBar.currentheight, flex: 1 },
+  containerAndroid: { marginTop: StatusBar.currentHeight, flex: 1 },
   toplabel: {
     fontFamily: "bold",
     fontSize: 32,
@@ -109,7 +109,7 @@ export default class Calendarscreen extends Component {
     //console.log("date", value)
     this.state.listSubActions.forEach((element) => {
       if (!element.status) {
-        if (moment(element.endDate).format("YYYY-MM-DD") === value) {
+        if (moment(element.endDate).utcOffset(0).format("YYYY-MM-DD") === value) {
           listData.push(element);
         }
       }
@@ -123,15 +123,15 @@ export default class Calendarscreen extends Component {
     this.state.listSubActions.forEach((element) => {
       if (!element.status) {
         if (
-          moment(element.endDate).format("YYYY-MM-DD") ===
+          moment(element.endDate).utcOffset(0).format("YYYY-MM-DD") ===
           this.state.currentDate
         ) {
-          listDate[moment(element.endDate).format("YYYY-MM-DD")] = {
+          listDate[moment(element.endDate).utcOffset(0).format("YYYY-MM-DD")] = {
             marked: true,
             selected: true,
           };
         } else {
-          listDate[moment(element.endDate).format("YYYY-MM-DD")] = {
+          listDate[moment(element.endDate).utcOffset(0).format("YYYY-MM-DD")] = {
             marked: true,
           };
         }
@@ -150,7 +150,7 @@ export default class Calendarscreen extends Component {
     });
   };
   renderCurrentSubAction = (e) => {
-    return <SubActionItems data={e.item} />;
+    return <View style={{ padding: 4 }}><SubActionItems data={e.item} /></View>;
   };
 
   render() {

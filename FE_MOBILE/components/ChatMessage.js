@@ -1,15 +1,21 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet } from "react-native";
-
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import Url from "../env";
-
 import { Image } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import * as WebBrowser from 'expo-web-browser';
+import * as FileSystem from 'expo-file-system';
+const W = Dimensions.get("window").width;
 
 const styles = StyleSheet.create({
   AvaImg: {
     width: 48,
     height: 48,
     borderRadius: 40,
+  },
+  resourceImg: {
+    width: 100,
+    height: 100,
   },
   ChatMessage: {
     maxWidth: 200,
@@ -27,64 +33,74 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     alignContent: "center",
   },
+  resourceContainer: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
+
 });
 class ChatMessage extends Component {
-  renderMessage = () => {
-    if (this.props.message.text) {
-      return <p className="chat-message">{this.props.message.text}</p>;
+
+  renderContent = (messageClass, message) => {
+    if (message.text) {
+      if (messageClass === "sent") {
+        return (
+          <Text
+            style={{
+              ...styles.ChatMessage,
+              color: "white",
+              backgroundColor: "#2A9D8F",
+            }}
+          >
+            {message.text}
+          </Text>
+        )
+      }
+      else {
+        return (
+          <Text
+            style={{
+              ...styles.ChatMessage,
+              color: "black",
+              backgroundColor: "#e5e5ea",
+            }}
+          >
+            {message.text}
+          </Text>
+        )
+      }
     } else {
-      if (this.props.message.resourceUrl) {
-        let temp_resourceUrl = this.props.message.resourceUrl;
-        let extension = temp_resourceUrl.substring(
-          temp_resourceUrl.length - 3,
-          temp_resourceUrl.length
-        );
-        let realName = temp_resourceUrl.substring(14, temp_resourceUrl.length);
+      if (message.resourceUrl) {
+        let temp_resourceUrl = this.props.message.resourceUrl
+        let extension = temp_resourceUrl.substring(temp_resourceUrl.length - 3, temp_resourceUrl.length)
+        let realName = temp_resourceUrl.substring(14, temp_resourceUrl.length)
         if (["png", "svg"].includes(extension)) {
-          return (
-            // <p className="chat-message">{this.props.message.text}</p>
-            <Image
-              style={{ marginBottom: "12px" }}
-              alt="resource"
-              src={`/api/resources/${this.props.roomId}/${temp_resourceUrl}`}
-            />
-          );
-        } else if (extension === "mp4") {
-          return (
-            <video
-              style={{ marginBottom: "12px" }}
-              alt="resource"
-              src={`/api/resources/${this.props.roomId}/${temp_resourceUrl}`}
-            />
-          );
+
+          return (<View>
+            <TouchableOpacity onPress={() => this.props.showImage(`${Url()}/api/resources/${this.props.roomId}/${temp_resourceUrl}`)}>
+              <Image style={styles.resourceImg} source={{ uri: `${Url()}/api/resources/${this.props.roomId}/${temp_resourceUrl}` }}></Image>
+            </TouchableOpacity>
+          </View>
+          )
         } else {
-            if (this.props.message.resourceUrl) {
-                let temp_resourceUrl = this.props.message.resourceUrl
-                let extension = temp_resourceUrl.substring(temp_resourceUrl.length - 3, temp_resourceUrl.length)
-                let realName = temp_resourceUrl.substring(14, temp_resourceUrl.length)
-                if (["png", "svg"].includes(extension)) {
-                    return (
-                        <Image style={{ marginBottom: '12px' }} alt="resource" src={`/api/resources/${this.props.roomId}/${temp_resourceUrl}`} />
-                    )
-                } else if (extension === 'mp4') {
-                    return (
-                        <video style={{ marginBottom: '12px' }} alt='resource' src={`/api/resources/${this.props.roomId}/${temp_resourceUrl}`} />
-                    )
-                } else {
-                    return (
-                        <div style={{ marginTop: 'unset', maxWidth: '150px', marginBottom: '12px' }} className="flex-container-row resource-card">
-                            {this.renderIcon(extension)}
-                            <Tooltip title={realName} placement="top" >
-                                <a className="cut-text" target="_blank" rel="noreferrer" href={`/api/resources/${this.props.roomId}/${temp_resourceUrl}`} style={{ marginLeft: '10px' }} >{realName}</a>
-                            </Tooltip>
-                        </div>
-                    )
-                }
-            }
+          return (<View >
+            <TouchableOpacity onPress={() => this.Download(`${Url()}/api/resources/${this.props.roomId}/${temp_resourceUrl}`, message.resourceUrl)}>
+              <View style={styles.resourceContainer}>
+                <Image source={require("./../assets/images/Attachment.png")} /><Text numberOfLines={2} style={{ width: W * 0.5, backgroundColor: "#e5e5ea" }}>{realName}</Text>
+              </View>
+            </TouchableOpacity>
+          </View>)
         }
       }
+      else {
+        return null
+      }
     }
-  };
+  }
+
+  Download = async (uri, name) => {
+    await WebBrowser.openBrowserAsync(uri);
+  }
 
   renderM = () => {
     if (this.props.messageClass === "sent") {
@@ -102,15 +118,8 @@ class ChatMessage extends Component {
               uri: `${Url()}/api/images/${this.props.message.userId.photoUrl}`,
             }}
           ></Image>
-          <Text
-            style={{
-              ...styles.ChatMessage,
-              color: "white",
-              backgroundColor: "#2A9D8F",
-            }}
-          >
-            {this.props.message.text}
-          </Text>
+
+          {this.renderContent(this.props.messageClass, this.props.message)}
         </View>
       );
     } else {
@@ -122,15 +131,7 @@ class ChatMessage extends Component {
               uri: `${Url()}/api/images/${this.props.message.userId.photoUrl}`,
             }}
           ></Image>
-          <Text
-            style={{
-              ...styles.ChatMessage,
-              color: "black",
-              backgroundColor: "#e5e5ea",
-            }}
-          >
-            {this.props.message.text}
-          </Text>
+          {this.renderContent(this.props.messageClass, this.props.message)}
         </View>
       );
     }

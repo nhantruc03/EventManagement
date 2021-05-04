@@ -126,7 +126,7 @@ const startClone = async (req, res) => {
         // for (const e of clone_Scripts) {
         await Promise.all(clone_Scripts.map(async (e) => {
             let clone_ScriptDetails = await ScriptDetails.find({ scriptId: e._id, isDeleted: false })
-   
+
             let data_insert_Script = {
                 ...pick(e,
                     "name",
@@ -187,7 +187,7 @@ const startClone = async (req, res) => {
                 let data_insert_Actions = {
                     ...pick(a,
                         "name",
-                        "startDate",
+                        "endTime",
                         "endDate",
                         "description",
                         "priorityId",
@@ -199,7 +199,7 @@ const startClone = async (req, res) => {
                     eventId: newDoc[0]._id,
                     actionTypeId: new_ActionTypes[0]._id
                 }
-                
+
                 let new_Actions = await Actions.create([data_insert_Actions], { session: session })
                 listActions.push(new_Actions[0])
 
@@ -208,7 +208,6 @@ const startClone = async (req, res) => {
                     let temp = {
                         ...pick(e,
                             "name",
-                            "startDate",
                             "endDate",
                             "startTime",
                             "endTime",
@@ -261,7 +260,7 @@ const startClone = async (req, res) => {
         }
 
         // Success
-        
+
         await commitTransactions(sessions)
         return res.status(200).json(result);
     } catch (error) {

@@ -10,7 +10,7 @@ import { StatusBar } from "react-native";
 import { Image } from "react-native";
 const styles = StyleSheet.create({
   containerIOS: { flex: 1, marginTop: 16 },
-  containerAndroid: { marginTop: StatusBar.currentheight, flex: 1 },
+  containerAndroid: { marginTop: StatusBar.currentHeight, flex: 1 },
   toplabel: {
     fontFamily: "bold",
     fontSize: 32,
@@ -19,8 +19,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F7F8",
     paddingLeft: 16,
   },
-  itemContainer: {
+  itemSelectedContainer: {
     backgroundColor: "white",
+    padding: 16,
+    paddingVertical: 12,
+    marginVertical: 4,
+  },
+  itemUnSelectedContainer: {
+    backgroundColor: "#DBDBDB",
     padding: 16,
     paddingVertical: 12,
     marginVertical: 4,
@@ -68,7 +74,7 @@ export default class Notification extends Component {
     const item = e.item;
     if (item.eventId) {
       return (
-        <View style={styles.itemContainer}>
+        <View style={item.status ? styles.itemSelectedContainer : styles.itemUnSelectedContainer}>
           <TouchableOpacity
             onPress={() => {
               this.updateNoti(item._id);
@@ -89,7 +95,7 @@ export default class Notification extends Component {
       );
     } else if (item.actionId) {
       return (
-        <View style={styles.itemContainer}>
+        <View style={item.status ? styles.itemSelectedContainer : styles.itemUnSelectedContainer}>
           <TouchableOpacity
             onPress={() => {
               this.updateNoti(item._id);

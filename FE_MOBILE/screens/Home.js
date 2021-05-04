@@ -22,7 +22,7 @@ const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   containerIOS: { marginTop: 24 },
-  containerAndroid: { marginTop: StatusBar.currentheight },
+  containerAndroid: { marginTop: StatusBar.currentHeight },
   avaImg: {
     width: 40,
     height: 40,
@@ -329,7 +329,7 @@ class Home extends Component {
       return (
         <View
           style={
-            Platform.OS == "ios" ? styles.containerIOS : styles.containerAndroid
+            Platform.OS === "ios" ? styles.containerIOS : styles.containerAndroid
           }
         >
           <View style={styles.infoSection}>

@@ -52,7 +52,6 @@ export default LoginScreen = ({ navigation }) => {
       <View style={styles.formcontainer}>
         <Text style={styles.h1}>XIN CHÀO</Text>
         <Text style={styles.h2}>Đăng nhập để tiếp tục</Text>
-
         <View
           style={{ marginBottom: (H * 21) / 667, marginTop: (H * 48) / 667 }}
         >

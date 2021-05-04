@@ -53,13 +53,11 @@ class CalendarSection extends Component {
 
         this.state.listSubActions.forEach(element => {
             if (!element.status) {
-
-                if (moment(element.endDate).utcOffset(0).toDate().setHours(0, 0, 0, 0) === value.toDate().setHours(0, 0, 0, 0)) {
+                if (moment(element.endDate).utcOffset(0).format('YYYY-MM-DD') === value.utcOffset(0).format('YYYY-MM-DD')) {
                     listData.push(element)
                 }
             }
         });
-
         return listData
     }
 

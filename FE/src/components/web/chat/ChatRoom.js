@@ -44,7 +44,7 @@ class ChatRoom extends Component {
     async componentDidMount() {
         this._isMounted = true;
         if (this._isMounted) {
-          
+
             client.onopen = () => {
                 console.log('Connect to ws')
             }
@@ -180,7 +180,7 @@ class ChatRoom extends Component {
     renderMessage = () => {
         return (
             this.state.messages.map((msg, index) => (
-                <ChatMessage key={index} messageClass={msg.userId._id === this.state.currentUser ? 'sent' : 'received'} message={msg} />
+                <ChatMessage key={index} roomId={this.props.roomId} messageClass={msg.userId._id === this.state.currentUser ? 'sent' : 'received'} message={msg} />
             ))
         )
     }

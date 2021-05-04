@@ -11,6 +11,7 @@ import { TabView, SceneMap } from "react-native-tab-view";
 import { TabBar } from "react-native-tab-view";
 import TaskDetailTab from "../../components/TaskTabs/TaskDetailTab";
 import SubTasksTab from "../../components/TaskTabs/SubTasksTab";
+import CommentTab from "../../components/TaskTabs/CommentTab";
 import { ActivityIndicator } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Image } from "react-native";
@@ -66,12 +67,13 @@ class TaskDetail extends Component {
       routes: [
         { key: "1", title: "Thông tin chung" },
         { key: "2", title: "Danh sách cần làm" },
-        // { key: "3", title: "Hội thoại" },
+        { key: "3", title: "Bình luận" },
       ],
     };
     this.renderScene = SceneMap({
       1: this.Route1,
       2: this.Route2,
+      3: this.Route3,
     });
   }
   Route1 = () => <TaskDetailTab data={this.state.data} />;
@@ -84,10 +86,9 @@ class TaskDetail extends Component {
         actionId={this.state.data._id}
       />
     ) : (
-      <View style={styles.Loading}>
-        <Indicator />
-      </View>
+      <Indicator />
     );
+  Route3 = () => <CommentTab actionId={this.state.data._id} />;
 
   updateListSubTask = (e) => {
     this.setState({
@@ -97,7 +98,6 @@ class TaskDetail extends Component {
 
 
   updateData = (e) => {
-    console.log('receive', e)
     this.setState({
       data: e
     })
@@ -119,7 +119,6 @@ class TaskDetail extends Component {
         .then((res) => res.data.data);
       temp_data = data_loadBySelf
     } else {
-      console.log('receive', this.props.route.params.data)
       temp_data = this.props.route.params.data
     }
     this.props.navigation.setOptions({
@@ -138,7 +137,6 @@ class TaskDetail extends Component {
         </View>
       ),
     });
-    console.log(temp_data)
     const subActions = await axios
       .post(
         `${Url()}/api/sub-actions/getAll`,
@@ -196,13 +194,7 @@ class TaskDetail extends Component {
     }
     else {
       return (
-        <View style={styles.Loading}>
-          <ActivityIndicator
-            size="large"
-            animating
-            color="#2A9D8F"
-          ></ActivityIndicator>
-        </View>
+        <Indicator />
       )
     }
   }

@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   containerIOS: { flex: 1, marginTop: 16 },
-  containerAndroid: { marginTop: StatusBar.currentheight, flex: 1 },
+  containerAndroid: { marginTop: StatusBar.currentHeight, flex: 1 },
   toplabel: {
     fontFamily: "bold",
     fontSize: 32,

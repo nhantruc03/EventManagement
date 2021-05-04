@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   containerIOS: { flex: 1, marginTop: 16 },
-  containerAndroid: { marginTop: StatusBar.currentheight, flex: 1 },
+  containerAndroid: { marginTop: StatusBar.currentHeight, flex: 1 },
   cardImage: {
     width: 300,
     height: 200,
@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "500",
     color: "#2A9D8F",
-
     paddingLeft: 16,
   },
   AddBtn: {
@@ -77,6 +76,7 @@ const styles = StyleSheet.create({
     color: "#98A1A5",
   },
   tagContainer: { flex: 1, flexDirection: "row", marginTop: 8 },
+
 });
 
 class Taskscreen extends Component {
@@ -247,7 +247,7 @@ class Taskscreen extends Component {
           data={temp_listActions}
           renderItem={({ item }) => this.renderItem(item)}
           keyExtractor={(item) => item._id}
-          style={{ marginLeft: 12 }}
+          style={{ marginLeft: 10, }}
         />
       </View>
     );
@@ -269,74 +269,76 @@ class Taskscreen extends Component {
         }
       >
         <EventCard>
-          <Image
-            style={styles.cardImage}
-            source={{
-              uri: `${Url()}/api/images/${item.coverUrl}`,
-            }}
-          ></Image>
-          <Text style={styles.titleText}>{item.name}</Text>
-          <View style={styles.datetime}>
+          <View >
             <Image
-              style={styles.Timeicon}
-              source={require("../../assets/images/timesolid.png")}
-            ></Image>
-            <Text style={styles.Timecontent}>
-              {moment(item.endDate).utcOffset(0).format("DD/MM/YYYY")} -{" "}
-              {moment(item.endTime).utcOffset(0).format("HH:mm")}
-            </Text>
-          </View>
-          <View>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
+              style={styles.cardImage}
+              source={{
+                uri: `${Url()}/api/images/${item.coverUrl}`,
               }}
-            >
-              <View style={styles.tagContainer}>
-                {item.tagsId.map((value, key) => (
-                  <View
-                    style={{
-                      backgroundColor: value.background,
-                      marginRight: 10,
-                      paddingHorizontal: 10,
-                      borderRadius: 16,
-                    }}
-                    key={key}
-                  >
-                    <Text
+            ></Image>
+            <Text style={styles.titleText}>{item.name}</Text>
+            <View style={styles.datetime}>
+              <Image
+                style={styles.Timeicon}
+                source={require("../../assets/images/timesolid.png")}
+              ></Image>
+              <Text style={styles.Timecontent}>
+                {moment(item.endDate).utcOffset(0).format("DD/MM/YYYY")} -{" "}
+                {moment(item.endTime).utcOffset(0).format("HH:mm")}
+              </Text>
+            </View>
+            <View>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <View style={styles.tagContainer}>
+                  {item.tagsId.map((value, key) => (
+                    <View
                       style={{
-                        color: value.color,
-                        marginVertical: 4,
-                        fontFamily: "regular",
-                        fontSize: 16,
+                        backgroundColor: value.background,
+                        marginRight: 10,
+                        paddingHorizontal: 10,
+                        borderRadius: 16,
                       }}
+                      key={key}
                     >
-                      {value.name}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-              <View>
-                {item.availUser.map((value, key) => (
-                  <View
-                    style={{
-                      marginRight: 10,
-                      paddingHorizontal: 10,
-                      borderRadius: 16,
-                    }}
-                    key={key}
-                  >
-                    <Image
-                      style={styles.avaImage}
-                      source={{
-                        uri: `${Url()}/api/images/${value.photoUrl}`,
+                      <Text
+                        style={{
+                          color: value.color,
+                          marginVertical: 4,
+                          fontFamily: "regular",
+                          fontSize: 16,
+                        }}
+                      >
+                        {value.name}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+                <View>
+                  {item.availUser.map((value, key) => (
+                    <View
+                      style={{
+                        marginRight: 10,
+                        paddingHorizontal: 10,
+                        borderRadius: 16,
                       }}
-                    ></Image>
-                  </View>
-                ))}
+                      key={key}
+                    >
+                      <Image
+                        style={styles.avaImage}
+                        source={{
+                          uri: `${Url()}/api/images/${value.photoUrl}`,
+                        }}
+                      ></Image>
+                    </View>
+                  ))}
+                </View>
               </View>
             </View>
           </View>
@@ -346,6 +348,7 @@ class Taskscreen extends Component {
   };
 
   renderTabBar = (props) => (
+
     <TabBar
       {...props}
       tabStyle={{ width: "auto" }}
@@ -363,6 +366,9 @@ class Taskscreen extends Component {
       }}
       scrollEnabled={true}
     />
+
+
+
   );
 
   addActionTypes = (e) => {
@@ -397,11 +403,11 @@ class Taskscreen extends Component {
             />
             <TouchableOpacity onPress={() => this.setState({ visible: true })}>
               <Image
-                style={{ marginRight: 10, marginTop: 15 }}
+                style={{ marginRight: 4, marginTop: 15 }}
                 source={require("../../assets/images/Add.png")}
               ></Image>
             </TouchableOpacity>
-          </View>
+          </View >
         );
       } else {
         return null;

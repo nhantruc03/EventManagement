@@ -6,7 +6,6 @@ import {
   KeyboardAvoidingView,
   Dimensions,
 } from "react-native";
-
 import Url from "../../env";
 import WSK from "../../websocket";
 import axios from "axios";
@@ -15,7 +14,9 @@ import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { Image } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 import ChatMessage from "../../components/ChatMessage";
-import { ActivityIndicator } from "@ant-design/react-native";
+import { ActivityIndicator, Modal, Provider } from "@ant-design/react-native";
+import UploadImage from "../../components/helper/UploadImageForChat";
+import { ThemeProvider } from "@react-navigation/native";
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
     borderColor: "#DFDFDF",
     borderRadius: 8,
     height: 40,
-    width: W - 60,
+    width: W - 80,
     backgroundColor: "white",
     paddingRight: 12,
   },
@@ -55,20 +56,23 @@ class ChatRoom extends Component {
       page: 1,
       goToEnd: true,
       disable: false,
+      show: false,
+      CurrentShowImage: null
+
     };
     this._isMounted = false;
   }
 
   onClose = () => {
     this.setState({
-      visible: false,
+      show: false,
     });
   };
 
   getData = async () => {
     const temp = await axios
       .post(
-        `${Url()} / api / chat - message / getAll ? page = 1 & limit=15`,
+        `${Url()}/api/chat-message/getAll?page=1&limit=15`,
         {
           roomId: this.props.route.params.id,
         },
@@ -98,7 +102,7 @@ class ChatRoom extends Component {
               })
             }
           >
-            <Image source={require("../../assets/images/preview.png")} />
+            <Image source={require("../../assets/images/video.png")} />
           </TouchableOpacity>
         </View>
       ),
@@ -107,7 +111,6 @@ class ChatRoom extends Component {
       client.onopen = () => {
         console.log("Connect to ws");
       };
-
       client.onmessage = (message) => {
         if (message !== undefined) {
           const dataFromServer = JSON.parse(message.data);
@@ -147,11 +150,8 @@ class ChatRoom extends Component {
       userId: { _id: obj.id, name: obj.name, photoUrl: obj.photoUrl },
       roomId: this.props.route.params.id,
     };
-
-    // console.log(message)
-
     await axios
-      .post(`${Url()} / api / chat - message`, message, {
+      .post(`${Url()}/api/chat-message`, message, {
         headers: {
           Authorization: await getToken(),
         },
@@ -174,9 +174,37 @@ class ChatRoom extends Component {
     });
   };
 
-  setFormValue = (e) => {
+  sendResources = async (e) => {
+    const login = await AsyncStorage.getItem("login");
+    const obj = JSON.parse(login);
+
+    var message = {
+      resourceUrl: e,
+      userId: { _id: obj.id, name: obj.name, photoUrl: obj.photoUrl },
+      roomId: this.props.route.params.id,
+    }
+
+    await axios
+      .post(`${Url()}/api/chat-message`, message, {
+        headers: {
+          Authorization: await getToken(),
+        },
+      })
+      .then((res) => {
+        message._id = res.data.data[0]._id;
+      });
+
+    client.send(
+      JSON.stringify({
+        type: "sendMessage",
+        roomId: this.props.route.params.id,
+        message,
+      })
+    );
+
     this.setState({
-      formValue: e,
+      formValue: "",
+      goToEnd: true,
     });
   };
 
@@ -184,6 +212,8 @@ class ChatRoom extends Component {
     const msg = object.item;
     return (
       <ChatMessage
+        showImage={(e) => this.setCurrentImage(e)}
+        roomId={this.props.route.params.id}
         messageClass={
           msg.userId._id === this.state.currentUser ? "sent" : "received"
         }
@@ -199,7 +229,7 @@ class ChatRoom extends Component {
 
     await axios
       .post(
-        `${Url()} / api / chat - message / getAll ? page = ${this.state.page + 1} & limit=15`,
+        `${Url()}/api/chat-message/getAll?page=${this.state.page + 1}&limit=15`,
         { roomId: this.props.route.params.id },
         {
           headers: {
@@ -208,7 +238,6 @@ class ChatRoom extends Component {
         }
       )
       .then((res) => {
-        console.log(res.data);
         const temp = res.data.data;
         this.setState({
           isLoading: false,
@@ -226,49 +255,92 @@ class ChatRoom extends Component {
     }
   };
 
+  setCurrentImage = (e) => {
+    this.setState({
+      show: true,
+      CurrentShowImage: e
+    })
+  }
+
   ref = React.createRef();
   render() {
     if (!this.state.isLoading) {
       return (
-        <View style={styles.Container}>
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "position" : null}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
-          >
-            <FlatList
-              refreshing={this.state.refreshing}
-              onRefresh={this.onRefresh}
-              ref={this.ref}
-              style={{ paddingHorizontal: 10, height: 530 }}
-              data={this.state.messages}
-              keyExtractor={(item) => item._id}
-              renderItem={(item) => this.renderMessage(item)}
-              onContentSizeChange={this.goToEnd}
-              onLayout={this.goToEnd}
-            />
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
+        <Provider>
+          <View style={styles.Container}>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "position" : null}
+              keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
             >
-              <TextInput
-                onChangeText={this.setFormValue}
-                style={styles.input}
-                value={this.state.formValue}
-                editable={!this.state.disable}
+              <FlatList
+                refreshing={this.state.refreshing}
+                onRefresh={this.onRefresh}
+                ref={this.ref}
+                style={{ paddingHorizontal: 10, height: 530 }}
+                data={this.state.messages}
+                keyExtractor={(item) => item._id}
+                renderItem={(item) => this.renderMessage(item)}
+                onContentSizeChange={this.goToEnd}
+                onLayout={this.goToEnd}
               />
-              <TouchableOpacity
-                style={{ right: 16 }}
-                disabled={!this.state.formValue}
-                onPress={() => this.sendMessage()}
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
               >
-                <Image source={require("../../assets/images/Send.png")} />
-              </TouchableOpacity>
-            </View>
-          </KeyboardAvoidingView>
-        </View>
+                <TextInput
+                  onChangeText={this.setFormValue}
+                  style={styles.input}
+                  value={this.state.formValue}
+                  editable={!this.state.disable}
+                />
+                <View style={{ flexDirection: "row" }}>
+                  <TouchableOpacity
+                    style={{ right: 16 }}
+                    disabled={!this.state.formValue}
+                    onPress={() => this.sendMessage()}
+                  >
+                    <Image source={require("../../assets/images/voice.png")} />
+                  </TouchableOpacity>
+
+                  <UploadImage roomId={this.props.route.params.id} Save={(e) => this.sendResources(e)} />
+
+                  {/* <TouchableOpacity
+                  style={{ right: 16 }}
+                  disabled={!this.state.formValue}
+                  onPress={() => this.sendMessage()}
+                >
+                  <Image source={require("../../assets/images/Send.png")} />
+                </TouchableOpacity> */}
+                </View>
+              </View>
+              <Modal
+                closable
+                maskClosable
+                transparent
+                visible={this.state.show}
+                animationType="slide-up"
+                onClose={this.onClose}
+                style={{
+                  width: W,
+                  height: "100%",
+                  backgroundColor: 'black',
+                  justifyContent: "center",
+                  alignContent: "center"
+                }}
+
+              >
+                <View>
+                  {this.state.CurrentShowImage ?
+                    <Image style={{ alignSelf: "center", width: "100%", height: undefined, aspectRatio: 1 }} source={{ uri: this.state.CurrentShowImage }}></Image>
+                    : null}
+                </View>
+              </Modal>
+            </KeyboardAvoidingView>
+          </View>
+        </Provider>
       );
     } else {
       return (
