@@ -4,6 +4,8 @@ const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
 const constants = require("../../constants/actions")
 const Permission = require("../../helper/Permissions")
+let event = require("../../models/events")
+const notifications = require("../../models/notifications")
 const create = async (req, res) => {
   let sessions = [];
   try {
@@ -58,10 +60,26 @@ const create = async (req, res) => {
     )
       .populate({ path: "writerId", select: "name" })
       .populate({ path: "forId", select: "name" });
+
+    // start notification
+    const cur_event = await event.findById(req.body.eventId);
+    //prepare data
+    let noti = {}
+    noti.name = "Tạo mới"
+    noti.userId = doc.forId._id
+    noti.description = `Sự kiện ${cur_event.name} đã được tạo kịch bản ${doc.name}`
+    noti.scriptId = doc._id
+    //access DB
+    let created_notification = await notifications.create(
+      noti
+    )
+    // done notification
+    
     await commitTransactions(sessions);
     return res.status(200).json({
       success: true,
       data: doc,
+      notification: created_notification
     });
   } catch (error) {
     await abortTransactions(sessions);

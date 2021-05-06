@@ -14,7 +14,8 @@ import {
 import moment from 'moment'
 import * as constants from "../constant/actions"
 import checkPermission from "../helper/checkPermissions"
-
+import { w3cwebsocket } from 'websocket';
+const client = new w3cwebsocket('ws://localhost:3001');
 class list extends Component {
     constructor(props) {
         super(props);
@@ -80,6 +81,7 @@ class list extends Component {
                     res.data.data
                 )
         ]));
+        console.log(scripts)
         if (scripts !== null) {
             if (this._isMounted) {
                 this.setState({
@@ -109,6 +111,10 @@ class list extends Component {
                 }
             })
                 .then((res) => {
+                    client.send(JSON.stringify({
+                        type: "sendNotification",
+                        notification: res.data.notification
+                    }))
                     this.setState({
                         data: this.state.data.filter(o => o._id !== e)
                     })

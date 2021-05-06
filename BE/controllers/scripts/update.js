@@ -1,9 +1,11 @@
 const Scripts = require('../../models/scripts')
+const notifications = require('../../models/notifications')
 const { handleBody } = require('./handleBody')
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
 const constants = require("../../constants/actions")
 const Permission = require("../../helper/Permissions")
+const scriptHistories = require('../../models/scriptHistories')
 const update = async (req, res) => {
   let sessions = []
   try {
@@ -44,6 +46,7 @@ const update = async (req, res) => {
       body,
       { session, new: true }
     )
+      .populate({ path: 'eventId', select: 'name' })
 
     // Check duplicate
     const oldDocs = await Scripts.find(queryOld, null, { session })
@@ -55,17 +58,55 @@ const update = async (req, res) => {
         error: "Duplicate data"
       })
     }
+    //start history
+    let isChangeNameScript = false
+    let isChangeForIdScript = false
+    if (doc.name !== updated.name) {
+      isChangeNameScript = true
+    }
+    if (doc.forId.toString() !== updated.forId.toString()) {
+      console.log("userid khác nhau")
+      isChangeForIdScript = true
+    }
+    let data_history = {
+      userId: req.body.updateUserId,
+      scriptId: doc._id,
+      oldNameScript: doc.name,
+      oldForIdScript: doc.forId,
+      isChangeNameScript,
+      isChangeForIdScript
+    }
 
-    const temp_new = await Scripts.findOne(queryUpdate, null, { session })
-      .populate({ path: 'eventId', select: 'startDate startTime' })
-      .populate({ path: 'writerId', select: 'name' })
-      .populate({ path: 'forId', select: 'name' })
+    let temp_created_history = await scriptHistories.create(data_history)
+    let created_history = await scriptHistories.findById(temp_created_history._id)
+      .populate({ path: 'userId', select: 'name' })
+      .populate({ path: 'scriptId', populate: { path: 'forId', select: 'name' }, select: 'name forId' })
+      .populate("scriptDetailId")
+      .populate({ path: 'oldForIdScript', select: 'name' })
 
+    //done history
+
+
+    // start notification
+    //prepare data
+    let noti = {}
+    noti.name = "Cập nhật"
+    noti.userId = updated.forId
+    noti.description = `Kịch bản ${updated.name} của sự kiện ${updated.eventId.name} đã được cập nhật thông tin chung`
+    noti.scriptId = updated._id
+    //access DB
+    let created_notification = await notifications.create(
+      noti
+    )
+
+    // done notification
     // Updated Successfully
     await commitTransactions(sessions)
     return res.status(200).json({
       success: true,
-      data: temp_new
+      data: updated,
+      notification: created_notification,
+      history: created_history
     })
   } catch (error) {
     await abortTransactions(sessions)

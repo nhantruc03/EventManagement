@@ -20,6 +20,11 @@ const notifications = new Schema(
             ref: "events",
             index: true,
         },
+        scriptId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "scripts",
+            index: true,
+        },
         name: {
             type: String,
             index: true,

@@ -5,12 +5,15 @@ const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
 const constants = require("../../constants/actions")
 const Permission = require("../../helper/Permissions")
+const notifications = require("../../models/notifications")
+const scriptHistories = require("../../models/scriptHistories")
 const create = async (req, res) => {
   let sessions = []
   try {
     //check permission
     const doc = await Scripts.findOne({ _id: req.body.scriptId, isDeleted: false })
-    let permissons = await Permission.getPermission(doc.eventId, req.user._id, req.user.roleId._id)
+      .populate({ path: 'eventId', select: 'name' })
+    let permissons = await Permission.getPermission(doc.eventId._id, req.user._id, req.user.roleId._id)
     if (!Permission.checkPermission(permissons, constants.QL_KICHBAN_PERMISSION)) {
       return res.status(406).json({
         success: false,
@@ -53,11 +56,45 @@ const create = async (req, res) => {
       })
     }
 
+    // start notification
+    //prepare data
+    let noti = {}
+    noti.name = "Tạo mới"
+    noti.userId = doc.forId
+    noti.description = `Kịch bản ${doc.name} của sự kiện ${doc.eventId.name} đã được tạo chi tiết ${newDoc.name}`
+    noti.scriptId = doc._id
+    //access DB
+    let created_notification = await notifications.create(
+      noti
+    )
+    // done notification
+
+    //start history
+    let isCreateDetail = true
+    let data_history = {
+      userId: req.body.updateUserId,
+      scriptId: doc._id,
+      scriptDetailId: newDoc._id,
+      isCreateDetail
+    }
+
+    let temp_created_history = await scriptHistories.create(data_history)
+
+    let created_history = await scriptHistories.findById(temp_created_history._id)
+      .populate({ path: 'userId', select: 'name' })
+      .populate({ path: 'scriptId', populate: { path: 'forId', select: 'name' }, select: 'name forId' })
+      .populate("scriptDetailId")
+      .populate({ path: 'oldForIdScript', select: 'name' })
+
+    //done history
+
     // Success
     await commitTransactions(sessions)
     return res.status(200).json({
       success: true,
-      data: newDoc
+      data: newDoc,
+      notification: created_notification,
+      history: created_history
     });
   } catch (error) {
     await abortTransactions(sessions)

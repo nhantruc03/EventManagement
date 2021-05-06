@@ -6,6 +6,7 @@ const { commitTransactions, abortTransactions } = require('../../services/transa
 const { isEmpty, pick } = require("lodash")
 const constants = require("../../constants/actions")
 const Permission = require("../../helper/Permissions")
+const notifications = require("../../models/notifications")
 const start = async (req, res) => {
     let sessions = []
     try {
@@ -115,12 +116,28 @@ const start = async (req, res) => {
             }
         }
         // done guest types
+        // start notification
+        const curDoc = await Scripts.findOne({ _id: newDoc[0]._id }, null, { session: session })
+            .populate({ path: 'eventId', select: 'name' })
+        //prepare data
+        let noti = {}
+        noti.name = "Tạo mới"
+        noti.userId = curDoc.forId
+        noti.description = `Sự kiện ${curDoc.eventId.name} đã được tạo kịch bản ${curDoc.name}`
+        noti.scriptId = curDoc._id
+        //access DB
+        let created_notification = await notifications.create(
+            noti
+        )
+
+        // done notification
         // Success
         await commitTransactions(sessions)
         return res.status(200).json({
             success: true,
             script: newDoc,
             ScriptDetails: listScriptDetails,
+            notification: created_notification
         });
     } catch (error) {
         await abortTransactions(sessions)

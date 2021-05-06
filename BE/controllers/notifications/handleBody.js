@@ -15,6 +15,7 @@ const handleBody = (body) => {
         "userId",
         "actionId",
         "eventId",
+        "scriptId",
       )
     }
   }

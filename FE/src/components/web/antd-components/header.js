@@ -45,15 +45,16 @@ class header extends Component {
                         dataFromServer.notifications.forEach(e => {
                             if (e.userId === this.state.currentUser.id) {
                                 this.setState({
-                                    notifications: [...this.state.notifications, e]
+                                    notifications: [e, ...this.state.notifications]
                                 })
                             }
                         })
                     }
                 } else if (dataFromServer.type === "sendNotification") {
+                    console.log(dataFromServer.notification)
                     if (dataFromServer.notification.userId === this.state.currentUser.id) {
                         this.setState({
-                            notifications: [...this.state.notifications, dataFromServer.notification]
+                            notifications: [dataFromServer.notification, ...this.state.notifications]
                         })
                     }
                 }
@@ -69,11 +70,11 @@ class header extends Component {
                         res.data.data
                     )
             ]));
-            
+
             if (notifications !== null) {
                 if (this._isMounted) {
                     this.setState({
-                        notifications: notifications,
+                        notifications: notifications.reverse(),
                         currentUser: obj
                     })
                 }
@@ -142,7 +143,7 @@ class header extends Component {
                     <Tooltip
                         title={
                             <div>
-                                <p>Sự kiện: {e.name}</p>
+                                <p>Thông báo: {e.name}</p>
                                 <br></br>
                                 <p>Mô tả: {e.description}</p>
                             </div>
@@ -159,7 +160,23 @@ class header extends Component {
                 <Link onClick={(x) => this.updateNoti(x, e._id, `/actions/${e.actionId}`)} to={"/#"}>
                     <Tooltip title={
                         <div>
-                            <p>Công việc: {e.name}</p>
+                            <p>Thông báo: {e.name}</p>
+                            <br></br>
+                            <p>Mô tả: {e.description}</p>
+                        </div>
+                    } placement="top">
+                        <p style={{ fontWeight: 'bold' }}>{e.name}</p>
+                        <p className="cut-text">{e.description}</p>
+                    </Tooltip>
+                </Link >
+            )
+        }
+        else if (e.scriptId) {
+            return (
+                <Link onClick={(x) => this.updateNoti(x, e._id, `/viewscripts/${e.scriptId}`)} to={"/#"}>
+                    <Tooltip title={
+                        <div>
+                            <p>Thông báo: {e.name}</p>
                             <br></br>
                             <p>Mô tả: {e.description}</p>
                         </div>
@@ -175,7 +192,7 @@ class header extends Component {
     renderNotifications = () => {
         return (
             <Menu>
-                {this.state.notifications.reverse().map((e, key) =>
+                {this.state.notifications.map((e, key) =>
                     <Menu.Item key={key} >
                         {this.renderNotificationContent(e)}
                     </Menu.Item>
@@ -203,6 +220,44 @@ class header extends Component {
         }
     }
 
+    renderView = () => {
+        return (
+            <Header className="site-layout-background flex-container-row" >
+                <div className="flex-row-item-right">
+                    <div className="flex-container-row">
+                        <Dropdown onVisibleChange={this.onVisibleChange} overlayClassName='dropdown' overlay={this.renderNotifications} placement='bottomRight'>
+                            <Badge count={this.state.notifications.filter(e => e.watch === false).length}>
+                                <Button style={{ border: 'none' }}><BellOutlined /></Button>
+                            </Badge>
+                        </Dropdown>
+                        {this.state.currentUser ?
+                            <Dropdown
+                                overlay={
+                                    <Menu onClick={(e) => this.handleButtonClick(e)}>
+                                        <Menu.Item key="info" icon={<UserOutlined />}>
+                                            Thông tin cá nhân
+                                        </Menu.Item>
+                                        <Menu.Item key="info-pass" icon={<UserOutlined />}>
+                                            Cập nhật mật khẩu
+                                        </Menu.Item>
+                                        <Menu.Item key="logout" icon={<UserOutlined />}>
+                                            Đăng xuất
+                                        </Menu.Item>
+                                    </Menu>
+                                }>
+                                <Button id="button-account">
+                                    <div className="flex-container-row">
+                                        <p className="top-name-user cut-text">{this.state.currentUser.name}</p> <Avatar style={{ marginLeft: '10px' }} className="my-2" src={`/api/images/${this.state.currentUser.photoUrl}`} />
+                                    </div>
+                                </Button>
+                            </Dropdown>
+                            : null}
+                    </div>
+                </div>
+            </Header >
+        )
+    }
+
     render() {
         if (this.state.logout) {
             return (
@@ -220,47 +275,20 @@ class header extends Component {
             )
         }
         else if (this.state.onNoti) {
-            return (
-                <Redirect to={this.state.notiUrl} />
-            )
+            if (window.location.pathname !== this.state.notiUrl) {
+                return (
+                    <Redirect to={this.state.notiUrl} />
+                )
+            } else {
+                return (
+                    this.renderView()
+                )
+            }
         }
         else {
-
             return (
-                <Header className="site-layout-background flex-container-row" >
-                    <div className="flex-row-item-right">
-                        <div className="flex-container-row">
-                            <Dropdown onVisibleChange={this.onVisibleChange} overlayClassName='dropdown' overlay={this.renderNotifications} placement='bottomRight'>
-                                <Badge count={this.state.notifications.filter(e => e.watch === false).length}>
-                                    <Button style={{ border: 'none' }}><BellOutlined /></Button>
-                                </Badge>
-                            </Dropdown>
-                            {this.state.currentUser ?
-                                <Dropdown
-                                    overlay={
-                                        <Menu onClick={(e) => this.handleButtonClick(e)}>
-                                            <Menu.Item key="info" icon={<UserOutlined />}>
-                                                Thông tin cá nhân
-                                            </Menu.Item>
-                                            <Menu.Item key="info-pass" icon={<UserOutlined />}>
-                                                Cập nhật mật khẩu
-                                            </Menu.Item>
-                                            <Menu.Item key="logout" icon={<UserOutlined />}>
-                                                Đăng xuất
-                                            </Menu.Item>
-                                        </Menu>
-                                    }>
-                                    <Button id="button-account">
-                                        <div className="flex-container-row">
-                                            <p className="top-name-user cut-text">{this.state.currentUser.name}</p> <Avatar style={{ marginLeft: '10px' }} className="my-2" src={`/api/images/${this.state.currentUser.photoUrl}`} />
-                                        </div>
-                                    </Button>
-                                </Dropdown>
-                                : null}
-                        </div>
-                    </div>
-                </Header >
-            );
+                this.renderView()
+            )
         }
     }
 }
