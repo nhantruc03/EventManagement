@@ -56,11 +56,16 @@ const update = async (req, res) => {
       })
     }
 
+    const temp_new = await Scripts.findOne(queryUpdate, null, { session })
+      .populate({ path: 'eventId', select: 'startDate startTime' })
+      .populate({ path: 'writerId', select: 'name' })
+      .populate({ path: 'forId', select: 'name' })
+
     // Updated Successfully
     await commitTransactions(sessions)
     return res.status(200).json({
       success: true,
-      data: updated
+      data: temp_new
     })
   } catch (error) {
     await abortTransactions(sessions)

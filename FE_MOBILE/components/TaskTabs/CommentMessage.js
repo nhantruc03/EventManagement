@@ -65,7 +65,7 @@ class CommentMessage extends Component {
                     </View>
                     )
                 } else {
-                    return (<View >
+                    return (<View>
                         <TouchableOpacity onPress={() => this.Download(`${Url()}/api/resources/${this.props.roomId}/${temp_resourceUrl}`, message.resourceUrl)}>
                             <View style={styles.resourceContainer}>
                                 <Image source={require("./../../assets/images/Attachment.png")} /><Text numberOfLines={2} style={{ width: W * 0.5, backgroundColor: "#e5e5ea" }}>{realName}</Text>

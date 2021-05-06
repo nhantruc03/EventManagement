@@ -96,12 +96,21 @@ export default class ScriptTab extends Component {
     this.props.updateListScript(e);
   };
 
+  updateScript = (e) => {
+    let temp = this.state.data
+    temp.forEach(x => {
+      if (x._id === e._id) {
+        x.name = e.name;
+        x.forId = e.forId;
+      }
+    })
+    this.setState({
+      data: temp
+    })
+  }
+
   render() {
-    const footerButtons = [
-      { text: "Cancel", onPress: () => console.log("cancel") },
-      { text: "Ok", onPress: () => console.log("ok") },
-    ];
-    // console.log("data", this.state.data);
+    
     if (this.state.data) {
       return (
         <Provider>
@@ -116,6 +125,7 @@ export default class ScriptTab extends Component {
                     this.props.navigation.navigate("scriptdetail", {
                       id: item._id,
                       event: this.props.event,
+                      updateScript: (e) => this.updateScript(e)
                     })
                   }
                 >

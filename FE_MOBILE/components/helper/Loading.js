@@ -3,10 +3,6 @@ import { ActivityIndicator } from "react-native";
 import { View, Text, StyleSheet } from "react-native";
 
 class indicator extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
 
   render() {
     return (

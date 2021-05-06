@@ -218,7 +218,7 @@ class scriptdetail extends Component {
           let temp_b = new Date(b.time).setFullYear(1, 1, 1);
           return temp_a > temp_b ? 1 : -1;
         });
-        console.log(script);
+
         if (this._isMounted) {
           this.setState({
             isLoading: false,
@@ -278,6 +278,7 @@ class scriptdetail extends Component {
         this.setState({ loadingbtn: false });
         alert("Cập nhật kịch bản thành công");
         console.log("update success");
+        this.props.route.params.updateScript(res.data.data)
       })
       .catch((err) => {
         // Message('Tạo thất bại', false);
@@ -352,8 +353,8 @@ class scriptdetail extends Component {
                     {!this.state.forId
                       ? "Chọn"
                       : this.state.listUser_default.filter(
-                          (e) => e._id === this.state.forId[0]
-                        )[0].name}
+                        (e) => e._id === this.state.forId[0]
+                      )[0].name}
                   </Text>
                 </Picker>
               </View>

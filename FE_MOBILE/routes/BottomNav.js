@@ -5,8 +5,10 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import Profilescreen from "../screens/Profile";
+import ProfileStackNav from "../routes/ProfileStackNav";
+import Profilescreen from "../screens/ProfileScreens/Profile";
 import Calendarscreen from "../screens/Calendar";
 import Notificationscreen from "../screens/Notification";
 import StackNav from "../routes/StackNav";
@@ -18,6 +20,7 @@ import WSK from "../websocket";
 import Url from "../env";
 import axios from "axios";
 import getToken from "../Auth";
+import HomeIcon from "../assets/svg/UI/Navbar/Home";
 const Tab = createBottomTabNavigator();
 
 const Stack = createStackNavigator();
@@ -178,9 +181,10 @@ export default class BottomNav extends React.Component {
           component={HomeStackNav}
           options={({ route }) => ({
             //tabBarLabel: "Trang chủ",
-            tabBarIcon: ({ color }) => (
-              <FontAwesomeIcon icon={faHome} size={24} color={color} />
-              //<Home1 width={120} height={40} color={color} />
+            tabBarIcon: ({ focused, color }) => (
+              //<FontAwesomeIcon icon={faHome} size={24} color={color} />
+              //<HomeIcon color={color} />
+              <Ionicons name={focused ? 'home' : 'home-outline'} size={24} color={color} />
             ),
           })}
         />
@@ -189,8 +193,9 @@ export default class BottomNav extends React.Component {
           component={StackNav}
           options={({ route }) => ({
             //tabBarLabel: "Sự kiện",
-            tabBarIcon: ({ color }) => (
-              <FontAwesomeIcon icon={faHome} size={24} color={color} />
+            tabBarIcon: ({ focused, color }) => (
+              //<FontAwesomeIcon icon={faHome} size={24} color={color} />
+              <Ionicons name={focused ? 'star' : 'star-outline'} size={24} color={color} />
             ),
             tabBarVisible: ((route) => {
               const routeName = getFocusedRouteNameFromRoute(route) ?? "";
@@ -213,9 +218,8 @@ export default class BottomNav extends React.Component {
           name="Task"
           component={TaskStackNav}
           options={({ route }) => ({
-            //tabBarLabel: "Công việc",
-            tabBarIcon: ({ color }) => (
-              <FontAwesomeIcon icon={faHome} size={24} color={color} />
+            tabBarIcon: ({ focused, color }) => (
+              <Ionicons name={focused ? 'reader' : 'reader-outline'} size={24} color={color} />
             ),
             tabBarVisible: ((route) => {
               const routeName = getFocusedRouteNameFromRoute(route) ?? "";
@@ -234,8 +238,8 @@ export default class BottomNav extends React.Component {
           component={Calendarscreen}
           options={{
             //tabBarLabel: "Lịch",
-            tabBarIcon: ({ color }) => (
-              <FontAwesomeIcon icon={faHome} size={24} color={color} />
+            tabBarIcon: ({ focused, color }) => (
+              <Ionicons name={focused ? 'calendar' : 'calendar-outline'} size={24} color={color} />
             ),
           }}
         />
@@ -256,20 +260,30 @@ export default class BottomNav extends React.Component {
                 ? this.state.notifications.filter((e) => e.watch === false)
                   .length
                 : undefined,
-            tabBarIcon: ({ color }) => (
-              <FontAwesomeIcon icon={faHome} size={24} color={color} />
+            tabBarIcon: ({ focused, color }) => (
+              <Ionicons name={focused ? 'notifications' : 'notifications-outline'} size={24} color={color} />
             ),
           }}
         />
+
         <Tab.Screen
           name="Profile"
-          component={Profilescreen}
-          options={{
-            //tabBarLabel: "Hồ sơ",
-            tabBarIcon: ({ color }) => (
-              <FontAwesomeIcon icon={faHome} size={24} color={color} />
+          component={ProfileStackNav}
+          options={({ route }) => ({
+            tabBarIcon: ({ focused, color }) => (
+              <Ionicons name={focused ? 'person' : 'person-outline'} size={24} color={color} />
             ),
-          }}
+            tabBarVisible: ((route) => {
+              const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+              let temp_list = ["ProfileDetail", "Login"];
+              if (temp_list.includes(routeName)) {
+                return false;
+              } else {
+                return true;
+              }
+            })(route),
+          })}
+
         />
       </Tab.Navigator>
     );

@@ -15,7 +15,7 @@ import { ActivityIndicator } from "react-native";
 import Indicator from "../../components/helper/Loading";
 import { StatusBar } from "react-native";
 import { Platform } from "react-native";
-
+import AsyncStorage from "@react-native-community/async-storage";
 const W = Dimensions.get("window").width;
 
 const initialLayout = { width: W };
@@ -116,12 +116,14 @@ class Taskscreen extends Component {
   };
   async componentDidMount() {
     this._isMounted = true;
+    var login = await AsyncStorage.getItem("login");
+    var obj = JSON.parse(login);
     let temp = moment(new Date()).format("YYYY-MM-DD");
     const [future_event, ongoing_event, past_event] = await Promise.all([
       axios
         .post(
           `${Url()}/api/events/getAll?gt=${temp}`,
-          { isClone: false },
+          { isClone: false, availUser: obj.id },
           {
             headers: {
               Authorization: await getToken(),
@@ -132,7 +134,7 @@ class Taskscreen extends Component {
       axios
         .post(
           `${Url()}/api/events/getAll?eq=${temp}`,
-          { isClone: false },
+          { isClone: false, availUser: obj.id },
           {
             headers: {
               Authorization: await getToken(),
@@ -143,7 +145,7 @@ class Taskscreen extends Component {
       axios
         .post(
           `${Url()}/api/events/getAll?lt=${temp}`,
-          { isClone: false },
+          { isClone: false, availUser: obj.id },
           {
             headers: {
               Authorization: await getToken(),

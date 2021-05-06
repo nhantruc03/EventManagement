@@ -15,6 +15,7 @@ import Url from "../../env";
 import { ActivityIndicator, Tabs } from "@ant-design/react-native";
 import Search from "../../components/helper/search";
 import { StatusBar } from "react-native";
+import AsyncStorage from "@react-native-community/async-storage";
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#F6F7F8",
@@ -93,12 +94,14 @@ export default class Event extends Component {
 
   async componentDidMount() {
     this._isMounted = true;
+    var login = await AsyncStorage.getItem("login");
+    var obj = JSON.parse(login);
     let temp = moment(new Date()).format("YYYY-MM-DD");
     const [future_event, ongoing_event, past_event] = await Promise.all([
       axios
         .post(
           `${Url()}/api/events/getAll?gt=${temp}`,
-          { isClone: false },
+          { isClone: false, availUser: obj.id },
           {
             headers: {
               Authorization: await getToken(),
@@ -109,7 +112,7 @@ export default class Event extends Component {
       axios
         .post(
           `${Url()}/api/events/getAll?eq=${temp}`,
-          { isClone: false },
+          { isClone: false, availUser: obj.id },
           {
             headers: {
               Authorization: await getToken(),
@@ -120,7 +123,7 @@ export default class Event extends Component {
       axios
         .post(
           `${Url()}/api/events/getAll?lt=${temp}`,
-          { isClone: false },
+          { isClone: false, availUser: obj.id },
           {
             headers: {
               Authorization: await getToken(),

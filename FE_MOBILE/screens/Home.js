@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-community/async-storage";
 import axios from "axios";
-
+import Url from "../env";
 import moment from "moment";
+import getToken from "../Auth";
 import React, { Component } from "react";
 import { Image } from "react-native";
 import {
@@ -14,9 +15,9 @@ import {
 import { View, Text } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import Swiper from "react-native-swiper";
-import getToken from "../Auth";
+
 import HomeActionItem from "../components/Home/HomeActionItem";
-import Url from "../env";
+
 import Indicator from "../components/helper/Loading";
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
@@ -176,7 +177,7 @@ class Home extends Component {
       axios
         .post(
           `${Url()}/api/events/getAll?gt=${temp}`,
-          { isClone: false },
+          { isClone: false, availUser: obj.id },
           {
             headers: {
               Authorization: await getToken(),
@@ -187,7 +188,7 @@ class Home extends Component {
       axios
         .post(
           `${Url()}/api/events/getAll?eq=${temp}`,
-          { isClone: false },
+          { isClone: false, availUser: obj.id },
           {
             headers: {
               Authorization: await getToken(),

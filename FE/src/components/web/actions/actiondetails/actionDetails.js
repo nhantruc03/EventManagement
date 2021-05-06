@@ -387,7 +387,7 @@ class actionDetails extends Component {
 
                                     <Col sm={24} md={8} style={{ textAlign: 'right' }}>
                                         <Title level={4}>Hạn chót</Title>
-                                        {moment(this.state.data.endDate).utcOffset(0).format("DD/MM/YYYY")} - {moment(this.state.data.endTime).utcOffset(0).format("HH:mm")} 
+                                        {moment(this.state.data.endDate).utcOffset(0).format("DD/MM/YYYY")} - {moment(this.state.data.endTime).utcOffset(0).format("HH:mm")}
                                     </Col>
                                 </Row>
 

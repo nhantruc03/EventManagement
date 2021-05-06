@@ -46,7 +46,6 @@ export default App = () => {
         <Stack.Screen
           name="BottomNav"
           component={BottomNav}
-          // Hiding header for Navigation Drawer as we will use our custom header
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
