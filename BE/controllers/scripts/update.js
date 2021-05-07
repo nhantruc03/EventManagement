@@ -79,7 +79,7 @@ const update = async (req, res) => {
 
     let temp_created_history = await scriptHistories.create(data_history)
     let created_history = await scriptHistories.findById(temp_created_history._id)
-      .populate({ path: 'userId', select: 'name' })
+      .populate({ path: 'userId', select: 'name photoUrl' })
       .populate({ path: 'scriptId', populate: { path: 'forId', select: 'name' }, select: 'name forId' })
       .populate("scriptDetailId")
       .populate({ path: 'oldForIdScript', select: 'name' })

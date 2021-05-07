@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { AUTH } from '../../env'
 import ReviewScriptDetail from './review'
 import ChatRoom from '../chat/ChatRoom';
+import History from './history';
 const { TabPane } = Tabs
 class view extends Component {
     constructor(props) {
@@ -23,7 +24,7 @@ class view extends Component {
     async componentDidMount() {
         this._isMounted = true;
 
-        const [scripts, scripts_details] = await trackPromise(Promise.all([
+        const [scripts, scripts_details, history] = await trackPromise(Promise.all([
             axios.get('/api/scripts/' + this.props.match.params.id, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -33,6 +34,14 @@ class view extends Component {
                     res.data.data
                 ),
             axios.post('/api/script-details/getAll', { scriptId: this.props.match.params.id }, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then((res) =>
+                    res.data.data
+                ),
+           axios.post('/api/script-histories/getAll', { scriptId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
@@ -60,7 +69,8 @@ class view extends Component {
                 this.setState({
                     scripts: scripts,
                     scripts_details: scripts_details,
-                    onGoing: temp_onGoing
+                    onGoing: temp_onGoing,
+                    history: history
                 })
 
             }
@@ -104,6 +114,10 @@ class view extends Component {
                             <Col sm={24} xl={8} className="event-detail">
                                 <Tabs className="chat-tabs" defaultActiveKey="1" >
                                     <TabPane tab="Bình luận" key="1"><ChatRoom roomId={this.props.match.params.id} /></TabPane>
+                                    <TabPane tab="Lịch sử" key="2">
+                                        {/* <ChatRoom roomId={this.props.match.params.id} /> */}
+                                        <History data={this.state.history} />
+                                    </TabPane>
                                 </Tabs>
                             </Col>
                         </Row>

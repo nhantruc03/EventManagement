@@ -3,8 +3,6 @@ import React, { Component } from 'react';
 import moment from 'moment'
 import Title from 'antd/lib/typography/Title';
 class review extends Component {
-
-
     renderTime = (e) => {
         return (
             <div className="flex-container-column" style={{ lineHeight: 1 }}>
