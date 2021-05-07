@@ -87,7 +87,6 @@ class history extends Component {
     }
 
     renderView = (e) => {
-        console.log('view data', e)
         let description = ''
         if (e.isChangeNameScript || e.isChangeForIdScript) {
             description = "Chỉnh sửa kịch bản"
@@ -97,10 +96,9 @@ class history extends Component {
                     <p className="time">Thay đổi lúc: {moment(e.createdAt).format("HH:mm")}</p>
                     {e.isChangeNameScript ? this.renderChangeScriptName(e) : null}
                     {e.isChangeForIdScript ? this.renderChangeScriptForId(e) : null}
-
                 </div>
             )
-        } else {
+        } else if (e.isChangeNameScriptDetail || e.isChangeTimeScriptDetail || e.isChangeDescriptionScriptDetail) {
             description = "Chỉnh sửa chi tiết kịch bản"
             return (
                 <div>
@@ -111,11 +109,45 @@ class history extends Component {
                     {e.isChangeDescriptionScriptDetail ? this.renderChangeScriptDetailDescription(e) : null}
                 </div>
             )
+        } else if (e.isCreateDetail) {
+            description = "Tạo mới"
+            return (
+                <div>
+                    <Title level={4}>{description}</Title>
+                    <p className="time">Thay đổi lúc: {moment(e.createdAt).format("HH:mm")}</p>
+                    <Row>
+                        <Col span={9}>
+                            <div>Chi tiết kịch bản:</div>
+                        </Col>
+                        <Col span={15}>
+                            <div style={{ marginLeft: 5 }}>
+                                <Tag className="new-tag">{e.scriptId.name}</Tag>
+                            </div>
+                        </Col>
+                    </Row>
+                </div>
+            )
         }
-
+        else if (e.isDeleteDetail) {
+            description = "Xóa"
+            return (
+                <div>
+                    <Title level={4}>{description}</Title>
+                    <p className="time">Thay đổi lúc: {moment(e.createdAt).format("HH:mm")}</p>
+                    <Row>
+                        <Col span={9}>
+                            <div>Chi tiết kịch bản:</div>
+                        </Col>
+                        <Col span={15}>
+                            <div style={{ marginLeft: 5 }}>
+                                <Tag className="old-tag">{e.scriptId.name}</Tag>
+                            </div>
+                        </Col>
+                    </Row>
+                </div>
+            )
+        }
     }
-
-
 
 
     renderTimeLine = (data) => {
@@ -164,23 +196,10 @@ class history extends Component {
     }
 
     render() {
-        // this.renderCollapse()
         return (
             <div className="timeline-container">
-                {/* {this.renderView()} */}
-
                 <Space style={{ width: '100%' }} direction="vertical">
                     <Collapse style={{ borderRadius: '8px' }} expandIconPosition={"right"} defaultActiveKey={['0']}>
-                        {/* <Panel className="history-panel" header="This panel can only be collapsed by clicking text" key="1">
-                            <p>asdf</p>
-                        </Panel>
-                        <Panel className="history-panel" header="This panel can only be collapsed by clicking text" key="2">
-                            <p>asdf</p>
-                        </Panel>
-                        <Panel className="history-panel" header="This panel can only be collapsed by clicking text" key="3">
-                            <p>asdf</p>
-                        </Panel> */}
-
                         {this.renderCollapse()}
                     </Collapse>
                 </Space>
