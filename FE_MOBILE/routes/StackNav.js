@@ -12,6 +12,7 @@ import Eventscreen from "../screens/EventScreens/Event";
 import EventDetail2 from "../screens/EventScreens/EventDetails2";
 import scriptdetail from "../screens/EventScreens/scriptdetail";
 import scriptview from "../screens/EventScreens/scriptview";
+import history from "../screens/EventScreens/history";
 import ChatRoom from "../screens/EventScreens/ChatRoom";
 // import Modal from "@ant-design/react-native";
 
@@ -73,6 +74,19 @@ class StackNav extends Component {
           component={scriptview}
           options={{
             title: "Theo dõi kịch bản",
+            headerStyle: {
+              backgroundColor: "#2A9D8F",
+            },
+            headerTitleStyle: {},
+            headerBackTitleVisible: false,
+            headerTintColor: "#fff",
+          }}
+        />
+        <Stack.Screen
+          name="history"
+          component={history}
+          options={{
+            title: "Lịch sử thay đổi",
             headerStyle: {
               backgroundColor: "#2A9D8F",
             },

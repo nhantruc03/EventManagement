@@ -76,8 +76,6 @@ const update = async (req, res) => {
     if (moment(beforeUpdate.time).utcOffset(0).format("HH:mm") !== moment(updated.time).utcOffset(0).format("HH:mm")) {
       isChangeTimeScriptDetail = true
     }
-    console.log("old", beforeUpdate.description)
-    console.log("new", updated.description)
     if (beforeUpdate.description !== updated.description) {
       isChangeDescriptionScriptDetail = true
     }
@@ -88,9 +86,13 @@ const update = async (req, res) => {
       oldNameScriptDetail: beforeUpdate.name,
       oldDescriptionScriptDetail: beforeUpdate.description,
       oldTimeScriptDetail: beforeUpdate.time,
+      newNameScriptDetail: updated.name,
+      newDescriptionScriptDetail: updated.description,
+      newTimeScriptDetail: updated.time,
       isChangeNameScriptDetail,
       isChangeDescriptionScriptDetail,
       isChangeTimeScriptDetail,
+      updateScriptDetailName: beforeUpdate.name
     }
 
     let temp_created_history = await scriptHistories.create(data_history)
@@ -99,6 +101,7 @@ const update = async (req, res) => {
       .populate({ path: 'scriptId', populate: { path: 'forId', select: 'name' }, select: 'name forId' })
       .populate("scriptDetailId")
       .populate({ path: 'oldForIdScript', select: 'name' })
+      .populate({ path: 'newForIdScript', select: 'name' })
 
     //done history
 

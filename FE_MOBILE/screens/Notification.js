@@ -115,6 +115,28 @@ export default class Notification extends Component {
         </View>
       );
     }
+    else if (item.scriptId) {
+      return (
+        <View style={item.status ? styles.itemSelectedContainer : styles.itemUnSelectedContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              this.updateNoti(item._id);
+              this.props.navigation.navigate("TaskDetail", {
+                actionId: item.actionId,
+                loadBySelf: true,
+              });
+            }}
+          >
+            <View style={styles.container}><Image style={styles.Icon} source={require("../assets/images/clipboard.png")} />
+              <View>
+                <Text style={styles.Name}>{item.name}</Text>
+                <Text style={styles.Descrip}>{item.description}</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
+      );
+    }
   };
 
   render() {
@@ -126,7 +148,7 @@ export default class Notification extends Component {
       >
         <Text style={styles.toplabel}>Thông báo</Text>
         <FlatList
-          data={this.props.data.reverse()}
+          data={this.props.data}
           renderItem={this.renderNotificationContent}
           keyExtractor={(item) => item._id}
         />

@@ -15,11 +15,23 @@ const scriptHistories = new Schema(
             ref: "scripts",
             index: true,
         },
+        updateScriptDetailName: {
+            type: String,
+            index: true,
+        },
         oldNameScript: {
             type: String,
             index: true
         },
+        newNameScript: {
+            type: String,
+            index: true
+        },
         oldForIdScript: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "users"
+        },
+        newForIdScript: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "users"
         },
@@ -32,11 +44,23 @@ const scriptHistories = new Schema(
             type: String,
             index: true
         },
+        newNameScriptDetail: {
+            type: String,
+            index: true
+        },
         oldDescriptionScriptDetail: {
             type: String,
             index: true
         },
+        newDescriptionScriptDetail: {
+            type: String,
+            index: true
+        },
         oldTimeScriptDetail: {
+            type: Date,
+            index: true
+        },
+        newTimeScriptDetail: {
             type: Date,
             index: true
         },
@@ -70,9 +94,17 @@ const scriptHistories = new Schema(
             default: false,
             index: true
         },
+        nameCreateDetail: {
+            type: String,
+            index: true
+        },
         isDeleteDetail: {
             type: Boolean,
             default: false,
+            index: true
+        },
+        nameDeleteDetail: {
+            type: String,
             index: true
         },
         isDeleted: {

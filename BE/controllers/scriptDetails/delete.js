@@ -48,7 +48,8 @@ const _delete = async (req, res) => {
       userId: req.query.updateUserId,
       scriptId: scriptDetails.scriptId,
       scriptDetailId: scriptDetails._id,
-      isDeleteDetail
+      isDeleteDetail,
+      nameDeleteDetail: scriptDetails.name
     }
 
     let temp_created_history = await scriptHistories.create(data_history)
@@ -57,6 +58,7 @@ const _delete = async (req, res) => {
       .populate({ path: 'scriptId', populate: { path: 'forId', select: 'name' }, select: 'name forId' })
       .populate("scriptDetailId")
       .populate({ path: 'oldForIdScript', select: 'name' })
+      .populate({ path: 'newForIdScript', select: 'name' })
 
     //done history
     // Deleted Successfully

@@ -30,7 +30,7 @@ class item extends Component {
                                 <Title level={5}>Mốc thời gian</Title>
                                 <div className="input-disable">
                                     <div className="flex-container-row">
-                                        {moment(this.props.data.time).format("HH:mm")}
+                                        {moment(this.props.data.time).utcOffset(0).format("HH:mm")}
                                         <ClockCircleOutlined className="flex-row-item-right" />
                                     </div>
                                 </div>

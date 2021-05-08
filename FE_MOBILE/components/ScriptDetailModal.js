@@ -20,6 +20,8 @@ import Url from "../env";
 import getToken from "../Auth";
 import axios from "axios";
 import Customdatetime from "./helper/datetimepicker";
+import WSK from "../websocket";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
@@ -58,6 +60,8 @@ const styles = StyleSheet.create({
   },
 });
 
+const client = new WebSocket(`${WSK()}`);
+
 class ScriptDetailModal extends Component {
   constructor(props) {
     super(props);
@@ -70,7 +74,11 @@ class ScriptDetailModal extends Component {
     this.ref = React.createRef();
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    client.onopen = () => {
+      console.log("Connect to ws");
+    };
+
     this.setState({
       data: this.props.data,
     });
@@ -116,11 +124,14 @@ class ScriptDetailModal extends Component {
   }
   onFinish = async () => {
     this.onLoading();
+    let login = await AsyncStorage.getItem("login");
+    var obj = JSON.parse(login);
     let data = {
       ...this.state.data,
       _id: this.props.data._id,
       time: this.state.data.time,
       scriptId: this.props.scriptId,
+      updateUserId: obj.id
     };
 
     if (this.props.add) {
@@ -132,9 +143,15 @@ class ScriptDetailModal extends Component {
         })
         .then((res) => {
           // console.log(res.data.data[0]);
-          this.props.addListScriptDetails(res.data.data[0]);
+          this.props.addListScriptDetails(res.data.data[0], res.data.history);
+
+          client.send(JSON.stringify({
+            type: "sendNotification",
+            notification: res.data.notification,
+          })
+          );
           this.props.onClose();
-          AlertIOS.alert("Tạo chi tiết kịch bản thành công");
+          alert("Tạo chi tiết kịch bản thành công");
           //alert("Tạo chi tiết kịch bản thành công");
         })
         .catch((err) => {
@@ -149,7 +166,12 @@ class ScriptDetailModal extends Component {
           },
         })
         .then((res) => {
-          this.props.updateListScriptDetails(res.data.data);
+          this.props.updateListScriptDetails(res.data.data, res.data.history);
+          client.send(JSON.stringify({
+            type: "sendNotification",
+            notification: res.data.notification,
+          })
+          );
           this.props.onClose();
           alert("Cập nhật chi tiết kịch bản thành công");
         })

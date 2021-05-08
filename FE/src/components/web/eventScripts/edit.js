@@ -142,7 +142,7 @@ class edit extends Component {
     onUpdateDetail = async (value) => {
         let temp = {
             name: value.name,
-            time: value.time.toDate(),
+            time: value.time.utc(true).toDate(),
             description: value.description,
             scriptId: this.props.match.params.id,
             updateUserId: this.state.currentUser.id

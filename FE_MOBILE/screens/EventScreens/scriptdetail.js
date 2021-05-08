@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, KeyboardAvoidingView } from "react-native";
-
+import WSK from "../../websocket";
 import Url from "../../env";
 import getToken from "../../Auth";
 import axios from "axios";
@@ -9,10 +9,10 @@ import {
   Modal,
   Provider,
   Button,
-  PickerView,
   Picker,
 } from "@ant-design/react-native";
-import Check from "../../assets/images/Checked.png";
+import { TabView, SceneMap } from "react-native-tab-view";
+import { TabBar } from "react-native-tab-view";
 import moment from "moment";
 import { ActivityIndicator } from "react-native";
 import HTML from "react-native-render-html";
@@ -23,8 +23,14 @@ import {
 } from "react-native-gesture-handler";
 import { Image } from "react-native";
 import ScriptDetailModal from "../../components/ScriptDetailModal";
+import AsyncStorage from "@react-native-community/async-storage";
+import Indicator from "../../components/helper/Loading";
+import OptionsMenu from "react-native-options-menu";
+import Icon from "../../assets/images/more.png";
+
 
 const Step = Steps.Step;
+
 
 const styles = StyleSheet.create({
   Loading: {
@@ -130,6 +136,11 @@ const styles = StyleSheet.create({
   },
   textTime: { paddingHorizontal: 8, fontFamily: "semibold", fontSize: 20 },
 });
+
+
+
+
+const client = new WebSocket(`${WSK()}`);
 class scriptdetail extends Component {
   constructor(props) {
     super(props);
@@ -150,6 +161,7 @@ class scriptdetail extends Component {
       editDetailData: null,
       addScriptDetails: false,
       loadingbtn: false,
+      history: [],
     };
     this._isMounted = false;
   }
@@ -160,33 +172,68 @@ class scriptdetail extends Component {
     });
   };
   // this.setState({ visible: true })
+  ViewDetail = () => {
+    this.props.navigation.navigate("scriptview", {
+      id: this.state._id,
+      startDate: this.state.startDate,
+      startTime: this.state.startTime,
+    })
+  }
+  ViewHistory = () => {
+    this.props.navigation.navigate("history", {
+      data: this.state.history,
+      updateFullListHistory: (e) => this.updateFullListHistory(e)
+    })
+  }
+
+  updateFullListHistory = (e) => {
+    this.setState({
+      history: e
+    })
+  }
+
+  test = () => {
+    console.log('test')
+  }
+
+
   async componentDidMount() {
     this._isMounted = true;
     this.props.navigation.setOptions({
       headerRight: () => (
         <View style={styles.IconRight}>
-          <TouchableOpacity
-            onPress={() =>
-              this.props.navigation.navigate("scriptview", {
-                id: this.state._id,
-                startDate: this.state.startDate,
-                startTime: this.state.startTime,
-              })
-            }
-          >
-            <Image source={require("../../assets/images/preview.png")} />
-          </TouchableOpacity>
+          <OptionsMenu
+            button={Icon}
+            destructiveIndex={1}
+            options={["Theo dõi kịch bản", "Lịch sử thay đổi", "Huỷ bỏ"]}
+            actions={[this.ViewDetail, this.ViewHistory, this.test]}
+
+          />
         </View>
       ),
     });
-    this._isMounted = true;
-    const [script] = await Promise.all([
+
+    client.onopen = () => {
+      console.log("Connect to ws");
+    };
+    const [script, history] = await Promise.all([
       axios
         .get(`${Url()}/api/scripts/` + this.props.route.params.id, {
           headers: {
             Authorization: await getToken(),
           },
         })
+        .then((res) => res.data.data),
+      axios
+        .post(
+          `${Url()}/api/script-histories/getAll`,
+          { scriptId: this.props.route.params.id },
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
+          }
+        )
         .then((res) => res.data.data),
     ]);
     const scriptdetails = await axios
@@ -232,6 +279,7 @@ class scriptdetail extends Component {
             listscriptdetails: temp_listscriptdetails,
             startDate: event.startDate,
             startTime: event.startTime,
+            history: history,
           });
         }
       }
@@ -262,10 +310,14 @@ class scriptdetail extends Component {
 
   updateScript = async () => {
     this.onLoading();
+    let login = await AsyncStorage.getItem("login");
+    var obj = JSON.parse(login);
     let data = {
       name: this.state.name,
       forId: this.state.forId[0],
+      updateUserId: obj.id,
     };
+    console.log('Received values of form: ', data);
     await axios
       .put(`${Url()}/api/scripts/` + this.props.route.params.id, data, {
         headers: {
@@ -277,8 +329,16 @@ class scriptdetail extends Component {
         // message.success("Cập nhật thành công");
         this.setState({ loadingbtn: false });
         alert("Cập nhật kịch bản thành công");
+        client.send(JSON.stringify({
+          type: "sendNotification",
+          notification: res.data.notification,
+        })
+        );
+        this.setState({
+          history: [...this.state.history, res.data.history],
+        });
         console.log("update success");
-        this.props.route.params.updateScript(res.data.data)
+        this.props.route.params.updateScript(res.data.data);
       })
       .catch((err) => {
         // Message('Tạo thất bại', false);
@@ -288,7 +348,8 @@ class scriptdetail extends Component {
       });
   };
 
-  updateListScriptDetails = (temp) => {
+  updateListScriptDetails = (temp, b) => {
+
     let temp_list = this.state.listscriptdetails;
     temp_list.forEach((e) => {
       if (e._id === temp._id) {
@@ -303,10 +364,11 @@ class scriptdetail extends Component {
         let temp_b = new Date(b.time).setFullYear(1, 1, 1);
         return temp_a > temp_b ? 1 : -1;
       }),
+      history: [...this.state.history, b]
     });
   };
 
-  addListScriptDetails = (temp) => {
+  addListScriptDetails = (temp, b) => {
     let temp_list = this.state.listscriptdetails;
     temp_list.push(temp);
     this.setState({
@@ -315,8 +377,11 @@ class scriptdetail extends Component {
         let temp_b = new Date(b.time).setFullYear(1, 1, 1);
         return temp_a > temp_b ? 1 : -1;
       }),
+      history: [...this.state.history, b]
     });
   };
+
+
 
   render() {
     if (!this.state.isLoading) {
@@ -434,8 +499,9 @@ class scriptdetail extends Component {
               add={this.state.addScriptDetails}
               data={this.state.editDetailData}
               scriptId={this.state._id}
-              updateListScriptDetails={(e) => this.updateListScriptDetails(e)}
-              addListScriptDetails={(e) => this.addListScriptDetails(e)}
+              history={this.state.history}
+              updateListScriptDetails={(e, b) => this.updateListScriptDetails(e, b)}
+              addListScriptDetails={(e, b) => this.addListScriptDetails(e)}
             />
           </Modal>
         </Provider>

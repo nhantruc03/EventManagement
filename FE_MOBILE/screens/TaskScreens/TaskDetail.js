@@ -12,7 +12,6 @@ import { TabBar } from "react-native-tab-view";
 import TaskDetailTab from "../../components/TaskTabs/TaskDetailTab";
 import SubTasksTab from "../../components/TaskTabs/SubTasksTab";
 import CommentTab from "../../components/TaskTabs/CommentTab";
-import { ActivityIndicator } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Image } from "react-native";
 import Indicator from "../../components/helper/Loading";

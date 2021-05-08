@@ -73,6 +73,8 @@ const update = async (req, res) => {
       scriptId: doc._id,
       oldNameScript: doc.name,
       oldForIdScript: doc.forId,
+      newNameScript: updated.name,
+      newForIdScript: updated.forId,
       isChangeNameScript,
       isChangeForIdScript
     }
@@ -83,6 +85,7 @@ const update = async (req, res) => {
       .populate({ path: 'scriptId', populate: { path: 'forId', select: 'name' }, select: 'name forId' })
       .populate("scriptDetailId")
       .populate({ path: 'oldForIdScript', select: 'name' })
+      .populate({ path: 'newForIdScript', select: 'name' })
 
     //done history
 

@@ -69,7 +69,7 @@ export default class BottomNav extends React.Component {
             dataFromServer.notifications.forEach((e) => {
               if (e.userId === this.state.currentUser.id) {
                 this.setState({
-                  notifications: [...this.state.notifications, e],
+                  notifications: [e, ...this.state.notifications],
                 });
               }
             });
@@ -79,10 +79,7 @@ export default class BottomNav extends React.Component {
             dataFromServer.notification.userId === this.state.currentUser.id
           ) {
             this.setState({
-              notifications: [
-                ...this.state.notifications,
-                dataFromServer.notification,
-              ],
+              notifications: [dataFromServer.notification, ...this.state.notifications],
             });
           }
         }
@@ -105,7 +102,7 @@ export default class BottomNav extends React.Component {
       if (notifications !== null) {
         if (this._isMounted) {
           this.setState({
-            notifications: notifications,
+            notifications: notifications.reverse(),
             currentUser: obj,
           });
         }
@@ -205,6 +202,7 @@ export default class BottomNav extends React.Component {
                 "scriptdetail",
                 "Phòng hội thoại",
                 "scriptview",
+                "history"
               ];
               if (temp_list.includes(routeName)) {
                 return false;

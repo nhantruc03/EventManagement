@@ -5,10 +5,11 @@ const get = async (req, res) => {
         const query = { _id: req.params.id, isDeleted: false }
 
         const doc = await scriptHistories.findOne(query)
-        .populate({ path: 'userId', select: 'name photoUrl' })
-        .populate({ path: 'scriptId', populate: { path: 'forId', select: 'name' }, select: 'name forId' })
-        .populate("scriptDetailId")
-        .populate({ path: 'oldForIdScript', select: 'name' })
+            .populate({ path: 'userId', select: 'name photoUrl' })
+            .populate({ path: 'scriptId', populate: { path: 'forId', select: 'name' }, select: 'name forId' })
+            .populate("scriptDetailId")
+            .populate({ path: 'oldForIdScript', select: 'name' })
+            .populate({ path: 'newForIdScript', select: 'name' })
         return res.status(200).json({
             success: true,
             data: doc

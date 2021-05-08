@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import { Button, Col, Form, Input, Row, TimePicker } from "antd";
-import Title from 'antd/lib/typography/Title';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import moment from 'moment'
+import Title from "antd/lib/typography/Title";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import moment from "moment";
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -16,26 +16,27 @@ class edit extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: { description: '' }
-        }
+            data: { description: "" },
+        };
     }
 
     onChange = (e) => {
         this.setState({
-            [e.target.name]: e.target.value
-        })
-    }
+            [e.target.name]: e.target.value,
+        });
+    };
 
     onFinish = async (e) => {
         let data = {
             ...e,
-            '_id': this.props.data._id,
-            'noinfo': false
-        }
+            time: e.time,
+            _id: this.props.data._id,
+            noinfo: false,
+        };
 
-        this.props.onUpdate(data)
-        this.props.onClose()
-    }
+        this.props.onUpdate(data);
+        this.props.onClose();
+    };
 
     onClose = () => {
         if (this.props.data.noinfo) {
@@ -43,18 +44,18 @@ class edit extends Component {
         } else {
             this.props.onClose();
         }
-    }
+    };
 
     UNSAFE_componentWillMount() {
         let temp = {
             _id: this.props.data._id,
             name: this.props.data.name,
             description: this.props.data.description,
-            time: moment(this.props.data.time)
-        }
+            time: moment(this.props.data.time).utcOffset(0),
+        };
         this.setState({
-            data: temp
-        })
+            data: temp,
+        });
     }
 
     rednderView = () => {
@@ -74,7 +75,9 @@ class edit extends Component {
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
                                     style={{ width: "90%" }}
-                                    rules={[{ required: true, message: 'Cần chọn mốc thời gian!' }]}
+                                    rules={[
+                                        { required: true, message: "Cần chọn mốc thời gian!" },
+                                    ]}
                                     name="time"
                                 >
                                     <TimePicker format="HH:mm" placeholder="Chọn giờ..." />
@@ -86,15 +89,28 @@ class edit extends Component {
                                     wrapperCol={{ sm: 24 }}
                                     style={{ width: "90%" }}
                                     name="name"
-                                    rules={[{ required: true, message: 'Cần nhập tên tên kịch bản' }]}
+                                    rules={[
+                                        { required: true, message: "Cần nhập tên tên kịch bản" },
+                                    ]}
                                 >
                                     <Input placeholder="Tên kịch bản..." />
                                 </Form.Item>
                             </Col>
-                            <Col sm={24} lg={6} style={{ padding: '45px 0 0 0' }}>
-                                <Button style={{ width: '50%' }} onClick={this.onClose} className="back">Hủy</Button>
-                                <Button style={{ width: '50%' }} htmlType="submit" className="add">Lưu</Button>
-
+                            <Col sm={24} lg={6} style={{ padding: "45px 0 0 0" }}>
+                                <Button
+                                    style={{ width: "50%" }}
+                                    onClick={this.onClose}
+                                    className="back"
+                                >
+                                    Hủy
+                </Button>
+                                <Button
+                                    style={{ width: "50%" }}
+                                    htmlType="submit"
+                                    className="add"
+                                >
+                                    Lưu
+                </Button>
                             </Col>
                         </Row>
                         <Title level={5}>Nội dung</Title>
@@ -102,22 +118,18 @@ class edit extends Component {
                             wrapperCol={{ sm: 24 }}
                             style={{ width: "100%" }}
                             name="description"
-                            rules={[{ required: true, message: 'Cần nhập mô tả kịch bản' }]}
+                            rules={[{ required: true, message: "Cần nhập mô tả kịch bản" }]}
                         >
                             <ReactQuill theme="snow" />
                         </Form.Item>
                     </Col>
                 </Row>
-            </Form >
-        )
-    }
+            </Form>
+        );
+    };
 
     render() {
-        return (
-            <div>
-                {this.rednderView()}
-            </div>
-        );
+        return <div>{this.rednderView()}</div>;
     }
 }
 
