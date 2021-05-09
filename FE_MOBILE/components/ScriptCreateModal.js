@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#D4D4D4",
     borderRadius: 8,
     justifyContent: "center",
+    paddingHorizontal: 12
   },
 });
 
@@ -179,6 +180,7 @@ class ScriptCreateModal extends Component {
                   <Text style={styles.Label}>Dành cho</Text>
                   <View style={styles.Box}>
                     <Picker
+
                       onChange={this.onChangeForId}
                       value={this.state.data.forId}
                       data={this.state.listUser}
@@ -186,12 +188,12 @@ class ScriptCreateModal extends Component {
                       okText="Đồng ý"
                       dismissText="Thoát"
                     >
-                      <Text>
-                        {!this.state.forId
+                      <Text >
+                        {!this.state.data.forId
                           ? "Chọn"
                           : this.state.listUser_default.filter(
-                              (e) => e._id === this.state.forId[0]
-                            )[0].name}
+                            (e) => e._id === this.state.data.forId[0]
+                          )[0].name}
                       </Text>
                     </Picker>
                   </View>

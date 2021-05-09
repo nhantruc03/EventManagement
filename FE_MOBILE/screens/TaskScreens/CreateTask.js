@@ -7,12 +7,9 @@ import { Button } from "@ant-design/react-native";
 import Url from "../../env";
 import getToken from "../../Auth";
 import axios from "axios";
-import { ActivityIndicator } from "react-native";
 import StepIndicator from "react-native-step-indicator";
 import UploadImage from "../../components/helper/UploadImage";
 import { KeyboardAvoidingView } from "react-native";
-
-import Swiper from "react-native-swiper";
 import WSK from "../../websocket";
 import { findNodeHandle } from "react-native";
 import Indicator from "../../components/helper/Loading";
@@ -63,6 +60,9 @@ const styles = StyleSheet.create({
   ScriptNameContainer: {
     width: "50%",
     paddingHorizontal: 5,
+  },
+  BoxInput: {
+    marginHorizontal: 10
   },
 });
 const customStyles = {
@@ -342,7 +342,7 @@ class CreateTask extends Component {
         <View>
           <View styles={styles.ScriptNameContainer}>
             <Text style={styles.Label}>Tên công việc</Text>
-            <View style={styles.BoxInput}>
+            <View>
               <TextInput
                 onFocus={() => {
                   this.scroller.scrollTo({ y: 60 });
@@ -425,6 +425,7 @@ class CreateTask extends Component {
                   borderWidth: 1,
                   borderColor: "#ccc",
                   borderRadius: 5,
+                  backgroundColor: "white"
                 },
               }}
               listProps={{
@@ -484,6 +485,7 @@ class CreateTask extends Component {
                   borderWidth: 1,
                   borderColor: "#ccc",
                   borderRadius: 5,
+                  backgroundColor: "white"
                 },
               }}
               listProps={{
@@ -530,6 +532,7 @@ class CreateTask extends Component {
                     borderWidth: 1,
                     borderColor: "#ccc",
                     borderRadius: 5,
+                    backgroundColor: "white"
                   },
                 }}
                 listProps={{
@@ -583,6 +586,7 @@ class CreateTask extends Component {
                   borderWidth: 1,
                   borderColor: "#ccc",
                   borderRadius: 5,
+                  backgroundColor: "white"
                 },
               }}
               listProps={{
@@ -635,6 +639,7 @@ class CreateTask extends Component {
                   borderWidth: 1,
                   borderColor: "#ccc",
                   borderRadius: 5,
+                  backgroundColor: "white"
                 },
               }}
               listProps={{
@@ -687,6 +692,7 @@ class CreateTask extends Component {
                   borderWidth: 1,
                   borderColor: "#ccc",
                   borderRadius: 5,
+                  backgroundColor: "white"
                 },
               }}
               listProps={{
@@ -752,9 +758,9 @@ class CreateTask extends Component {
       );
     } else {
       return (
-        <View>
-          <Indicator />
-        </View>
+
+        <Indicator />
+
       );
     }
   }

@@ -51,6 +51,9 @@ const styles = StyleSheet.create({
     fontFamily: "semibold",
     fontSize: 16,
   },
+  IconRight: {
+    right: 16,
+  }
 });
 
 class TaskDetail extends Component {

@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
     borderColor: "#DFDFDF",
     backgroundColor: "white",
     borderRadius: 8,
-    paddingHorizontal: 4,
-    textAlign: "center",
+    paddingHorizontal: 8,
+
   },
   LoadingBtn: {
     borderRadius: 8,
@@ -185,15 +185,15 @@ class ScriptDetailModal extends Component {
     if (this.state.data) {
       return (
         <KeyboardAvoidingView
-          style={{ flex: 1 }}
+
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
           <ScrollView
             keyboardDismissMode="interactive"
-            style={{ flex: 1, maxHeight: H * 0.7 }}
+            style={{ height: H * 0.5 }}
             bounces={false}
           >
-            <View style={{ paddingVertical: 20, paddingHorizontal: 16 }}>
+            <View style={{ flex: 1, paddingVertical: 20, paddingHorizontal: 16 }}>
               <Customdatetime
                 containerStyle={styles.ScriptNameContainer}
                 labelStyle={styles.Label}

@@ -19,14 +19,10 @@ const styles = StyleSheet.create({
   },
   ChatMessage: {
     maxWidth: 200,
-    marginBottom: 12,
     lineHeight: 24,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
     borderRadius: 25,
     position: "relative",
     textAlign: "center",
-    marginHorizontal: 5,
   },
   ChatContainer: {
     flex: 1,
@@ -45,15 +41,19 @@ class ChatMessage extends Component {
     if (message.text) {
       if (messageClass === "sent") {
         return (
-          <Text
-            style={{
-              ...styles.ChatMessage,
-              color: "white",
-              backgroundColor: "#2A9D8F",
-            }}
-          >
-            {message.text}
-          </Text>
+          <View style={{
+            borderRadius: 24, backgroundColor: "#2A9D8F", paddingHorizontal: 24, paddingVertical: 12, marginHorizontal: 8
+          }}>
+            <Text
+              style={{
+                ...styles.ChatMessage,
+                color: "white",
+                borderRadius: 50,
+              }}
+            >
+              {message.text}
+            </Text>
+          </View>
         )
       }
       else {
@@ -63,6 +63,7 @@ class ChatMessage extends Component {
               ...styles.ChatMessage,
               color: "black",
               backgroundColor: "#e5e5ea",
+              borderRadius: 50,
             }}
           >
             {message.text}

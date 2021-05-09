@@ -35,14 +35,21 @@ const styles = StyleSheet.create({
   input: {
     marginHorizontal: 16,
     marginVertical: 16,
+    height: "100%",
+    width: "90%",
+    backgroundColor: "white",
+    paddingRight: 16
+  },
+  inputContainer: {
+    height: 48,
     borderWidth: 1,
     borderColor: "#DFDFDF",
-    borderRadius: 8,
-    height: 40,
-    width: W - 80,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 16,
     backgroundColor: "white",
-    paddingRight: 12,
-  },
+  }
 });
 const client = new WebSocket(`${WSK()}`);
 class ChatRoom extends Component {
@@ -149,6 +156,10 @@ class ChatRoom extends Component {
       userId: { _id: obj.id, name: obj.name, photoUrl: obj.photoUrl },
       roomId: this.props.route.params.id,
     };
+    this.setState({
+      formValue: "",
+      goToEnd: true,
+    });
     await axios
       .post(`${Url()}/api/chat-message`, message, {
         headers: {
@@ -167,10 +178,7 @@ class ChatRoom extends Component {
       })
     );
 
-    this.setState({
-      formValue: "",
-      goToEnd: true,
-    });
+
   };
 
   sendResources = async (e) => {
@@ -182,7 +190,10 @@ class ChatRoom extends Component {
       userId: { _id: obj.id, name: obj.name, photoUrl: obj.photoUrl },
       roomId: this.props.route.params.id,
     }
-
+    this.setState({
+      formValue: "",
+      goToEnd: true,
+    });
     await axios
       .post(`${Url()}/api/chat-message`, message, {
         headers: {
@@ -200,11 +211,6 @@ class ChatRoom extends Component {
         message,
       })
     );
-
-    this.setState({
-      formValue: "",
-      goToEnd: true,
-    });
   };
 
   renderMessage = (object) => {
@@ -261,83 +267,87 @@ class ChatRoom extends Component {
     })
   }
 
+  setFormValue = (e) => {
+    this.setState({
+      formValue: e
+    })
+  }
+
   ref = React.createRef();
   render() {
     if (!this.state.isLoading) {
       return (
         <Provider>
           <View style={styles.Container}>
+
+            <FlatList
+              refreshing={this.state.refreshing}
+              onRefresh={this.onRefresh}
+              ref={this.ref}
+              style={{ paddingHorizontal: 10, height: 530 }}
+              data={this.state.messages}
+              keyExtractor={(item) => item._id}
+              renderItem={(item) => this.renderMessage(item)}
+              onContentSizeChange={this.goToEnd}
+              onLayout={this.goToEnd}
+            />
             <KeyboardAvoidingView
-              behavior={Platform.OS === "ios" ? "position" : null}
+              behavior={Platform.OS === "ios" ? "padding" : null}
               keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
             >
-              <FlatList
-                refreshing={this.state.refreshing}
-                onRefresh={this.onRefresh}
-                ref={this.ref}
-                style={{ paddingHorizontal: 10, height: 530 }}
-                data={this.state.messages}
-                keyExtractor={(item) => item._id}
-                renderItem={(item) => this.renderMessage(item)}
-                onContentSizeChange={this.goToEnd}
-                onLayout={this.goToEnd}
-              />
               <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
+                style={styles.inputContainer}
               >
+
                 <TextInput
                   onChangeText={this.setFormValue}
                   style={styles.input}
                   value={this.state.formValue}
                   editable={!this.state.disable}
                 />
-                <View style={{ flexDirection: "row" }}>
-                  <TouchableOpacity
+                <View style={{ flexDirection: "row", right: 16 }}>
+                  {/* <TouchableOpacity
                     style={{ right: 16 }}
                     disabled={!this.state.formValue}
                     onPress={() => this.sendMessage()}
                   >
                     <Image source={require("../../assets/images/voice.png")} />
-                  </TouchableOpacity>
-
+                  </TouchableOpacity> */}
                   <UploadImage roomId={this.props.route.params.id} Save={(e) => this.sendResources(e)} />
 
-                  {/* <TouchableOpacity
-                  style={{ right: 16 }}
-                  disabled={!this.state.formValue}
-                  onPress={() => this.sendMessage()}
-                >
-                  <Image source={require("../../assets/images/Send.png")} />
-                </TouchableOpacity> */}
+                  <TouchableOpacity
+                    style={{}}
+                    disabled={!this.state.formValue}
+                    onPress={() => this.sendMessage()}
+                  >
+                    <Image source={require("../../assets/images/Send.png")} />
+                  </TouchableOpacity>
                 </View>
               </View>
-              <Modal
-                closable
-                maskClosable
-                transparent
-                visible={this.state.show}
-                animationType="slide-up"
-                onClose={this.onClose}
-                style={{
-                  width: W,
-                  height: "100%",
-                  backgroundColor: 'black',
-                  justifyContent: "center",
-                  alignContent: "center"
-                }}
-
-              >
-                <View>
-                  {this.state.CurrentShowImage ?
-                    <Image style={{ alignSelf: "center", width: "100%", height: undefined, aspectRatio: 1 }} source={{ uri: this.state.CurrentShowImage }}></Image>
-                    : null}
-                </View>
-              </Modal>
             </KeyboardAvoidingView>
+            <Modal
+              closable
+              maskClosable
+              transparent
+              visible={this.state.show}
+              animationType="slide-up"
+              onClose={this.onClose}
+              style={{
+                width: W,
+                height: "100%",
+                backgroundColor: 'black',
+                justifyContent: "center",
+                alignContent: "center"
+              }}
+
+            >
+              <View>
+                {this.state.CurrentShowImage ?
+                  <Image style={{ alignSelf: "center", width: "100%", height: undefined, aspectRatio: 1 }} source={{ uri: this.state.CurrentShowImage }}></Image>
+                  : null}
+              </View>
+            </Modal>
+
           </View>
         </Provider>
       );

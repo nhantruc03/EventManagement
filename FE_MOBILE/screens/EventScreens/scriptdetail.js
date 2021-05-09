@@ -23,6 +23,7 @@ import ScriptDetailModal from "../../components/ScriptDetailModal";
 import AsyncStorage from "@react-native-community/async-storage";
 import OptionsMenu from "react-native-options-menu";
 import Icon from "../../assets/images/more.png";
+import Indicator from "../../components/helper/Loading";
 
 
 const Step = Steps.Step;
@@ -38,7 +39,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: "center",
     justifyContent: "center",
-    loadingBigBO: this.props.route.params.loadBySelf ? true : false,
   },
   Container: {
     marginTop: 16,
@@ -487,9 +487,10 @@ class scriptdetail extends Component {
           <Modal
             closable
             maskClosable
-            popup
+            title="Chi tiết"
             visible={this.state.visible}
-            animationType="slide-up"
+
+            transparent
             onClose={this.onClose}
           >
             <ScriptDetailModal
@@ -506,9 +507,7 @@ class scriptdetail extends Component {
       );
     } else {
       return (
-        <View style={styles.Loading}>
-          <ActivityIndicator size="large" animating></ActivityIndicator>
-        </View>
+        <Indicator />
       );
     }
   }

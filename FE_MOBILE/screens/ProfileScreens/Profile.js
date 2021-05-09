@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-community/async-storage";
 import React, { Component } from "react";
-import { Button, View, Text, StyleSheet } from "react-native";
+import { Button, View, Text, StyleSheet, Dimensions } from "react-native";
 import axios from "axios";
 import Url from "../../env";
 import moment from "moment";
@@ -9,6 +9,8 @@ import { Image } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Indicator from '../../components/helper/Loading';
+const W = Dimensions.get("window").width;
+const H = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
   Container: {
@@ -37,15 +39,26 @@ const styles = StyleSheet.create({
   statusContainer: {
     marginTop: 16,
     flexDirection: "row",
-    justifyContent: "space-between",
+    width: "100%",
+    paddingHorizontal: 8,
+
   },
   statusContent: {
+    width: "100%",
     alignItems: "center",
     borderRadius: 12,
     borderColor: "#DFDFDF",
     borderWidth: 2,
     backgroundColor: "white",
-
+    paddingVertical: 8
+  },
+  taskContent: {
+    paddingVertical: 8,
+    alignItems: "center",
+    borderRadius: 12,
+    borderColor: "#DFDFDF",
+    borderWidth: 2,
+    backgroundColor: "white",
   },
   numberContent: {
     fontFamily: "bold",
@@ -55,10 +68,12 @@ const styles = StyleSheet.create({
   textContent: {
     fontFamily: "semibold",
     fontSize: 14,
-    color: "#AAB0B6"
+    color: "#AAB0B6",
+    maxWidth: "70%",
+    textAlign: "center"
   },
   separator: {
-    marginVertical: 24,
+    marginVertical: 8,
     marginHorizontal: 100,
     borderBottomColor: "#737373",
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -67,9 +82,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     marginHorizontal: 16,
     borderRadius: 12,
-    marginVertical: 12,
+    marginVertical: 8,
   },
-
   BtnContent: {
     padding: 12,
     flexDirection: "row",
@@ -86,6 +100,13 @@ const styles = StyleSheet.create({
     fontFamily: "semibold",
     fontSize: 16,
     color: "#EB5757"
+  },
+  statusItemContainer: {
+    width: "50%",
+    paddingHorizontal: 8
+  },
+  taskItemContainer: {
+    padding: 16
   }
 })
 
@@ -212,20 +233,29 @@ class Profilescreen extends Component {
             <Text style={styles.NameText}>{this.state.data.name}</Text>
             <Text style={styles.EmailText}>{this.state.data.email}</Text>
           </View>
+
           <View style={styles.statusContainer}>
-            <View style={styles.statusContent}>
-              <Text style={styles.numberContent}>{this.state.data_ongoing.length}</Text>
-              <Text style={styles.textContent}>Sự kiện đang diễn ra</Text>
+            <View style={styles.statusItemContainer}>
+              <View style={styles.statusContent}>
+                <Text style={styles.numberContent}>{this.state.data_ongoing.length}</Text>
+                <Text style={styles.textContent}>Sự kiện đang diễn ra</Text>
+              </View>
             </View>
-            <View style={styles.statusContent}>
-              <Text style={styles.numberContent}>{this.state.data_future.length}</Text>
-              <Text style={styles.textContent}>Sự kiện sắp diễn ra</Text>
+            <View style={styles.statusItemContainer}>
+              <View style={styles.statusContent}>
+                <Text style={styles.numberContent}>{this.state.data_future.length}</Text>
+                <Text style={styles.textContent}>Sự kiện sắp diễn ra</Text>
+              </View>
             </View>
-            <View style={styles.statusContent}>
+          </View>
+
+          <View style={styles.taskItemContainer}>
+            <View style={styles.taskContent}>
               <Text style={styles.numberContent}>{this.state.listTasks.length}</Text>
               <Text style={styles.textContent}>Công việc chưa hoàn thành</Text>
             </View>
           </View>
+
           <View style={styles.separator}></View>
           <View style={styles.BtnContainer}>
             <TouchableOpacity onPress={() => {
@@ -238,7 +268,7 @@ class Profilescreen extends Component {
                   <Ionicons name='information-circle-outline' size={24} color='black' />
                   <Text style={styles.TextUserInfo}>Thông tin người dùng</Text>
                 </View>
-                <Ionicons name='chevron-forward-outline' size={24} color='black' />
+
               </View>
             </TouchableOpacity>
           </View>

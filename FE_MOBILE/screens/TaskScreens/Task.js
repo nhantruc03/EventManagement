@@ -498,9 +498,7 @@ class Taskscreen extends Component {
               nestedScrollEnabled: false,
             }}
           />
-
           {this.renderTabView()}
-
           <Modal
             title="Loại công việc mới"
             transparent

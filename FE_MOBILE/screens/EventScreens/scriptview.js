@@ -13,6 +13,7 @@ import { Image, FlatList } from "react-native";
 import StepIndicator from "react-native-step-indicator";
 import OptionsMenu from "react-native-options-menu";
 import Icon from "../../assets/images/more.png";
+import Indicator from "../../components/helper/Loading"
 const Step = Steps.Step;
 
 const styles = StyleSheet.create({
@@ -358,9 +359,7 @@ class scriptview extends Component {
       );
     } else {
       return (
-        <View style={styles.Loading}>
-          <ActivityIndicator size="large" animating></ActivityIndicator>
-        </View>
+        <Indicator />
       );
     }
   }

@@ -160,11 +160,12 @@ class SubTaskCreateModal extends Component {
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 300 : 0}
         >
           <ScrollView
             keyboardDismissMode="interactive"
             style={{
-              maxHeight: H * 0.5,
+              maxHeight: H * 0.3,
               paddingHorizontal: 10,
               marginVertical: 10,
             }}

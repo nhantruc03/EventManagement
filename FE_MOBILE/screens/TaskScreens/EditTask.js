@@ -6,15 +6,15 @@ import SearchableDropdown from "react-native-searchable-dropdown";
 import Url from "../../env";
 import getToken from "../../Auth";
 import axios from "axios";
-import { ActivityIndicator } from "react-native";
 import StepIndicator from "react-native-step-indicator";
 import UploadImage from "../../components/helper/UploadImage";
 import { KeyboardAvoidingView } from "react-native";
 import { Button } from "@ant-design/react-native";
-
+import Indicator from "../../components/helper/Loading";
 import WSK from "../../websocket";
 import moment from "moment";
 import { findNodeHandle } from "react-native";
+
 const styles = StyleSheet.create({
   input: {
     height: 40,
@@ -63,6 +63,16 @@ const styles = StyleSheet.create({
     width: "50%",
     paddingHorizontal: 10,
   },
+  BoxInput: {
+    marginHorizontal: 10
+  },
+  Dropdown: {
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    backgroundColor: "white"
+  }
 });
 const customStyles = {
   stepIndicatorSize: 25,
@@ -444,7 +454,7 @@ class EditTask extends Component {
         <View>
           <View styles={styles.ScriptNameContainer}>
             <Text style={styles.Label}>Tên công việc</Text>
-            <View style={styles.BoxInput}>
+            <View >
               <TextInput
                 onFocus={() => {
                   this.scroller.scrollTo({ y: 60 });
@@ -502,8 +512,8 @@ class EditTask extends Component {
                   this.state.selectedFaculties
                 ) !== -1
                   ? this.state.listFaculties.indexOf(
-                      this.state.selectedFaculties
-                    )
+                    this.state.selectedFaculties
+                  )
                   : undefined
               }
               containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
@@ -522,12 +532,7 @@ class EditTask extends Component {
               textInputProps={{
                 placeholder: "Chọn ban",
                 underlineColorAndroid: "transparent",
-                style: {
-                  padding: 12,
-                  borderWidth: 1,
-                  borderColor: "#ccc",
-                  borderRadius: 5,
-                },
+                style: styles.Dropdown
               }}
               listProps={{
                 nestedScrollEnabled: true,
@@ -581,12 +586,7 @@ class EditTask extends Component {
               textInputProps={{
                 placeholder: "Chọn người quản lý",
                 underlineColorAndroid: "transparent",
-                style: {
-                  padding: 12,
-                  borderWidth: 1,
-                  borderColor: "#ccc",
-                  borderRadius: 5,
-                },
+                style: styles.Dropdown
               }}
               listProps={{
                 nestedScrollEnabled: true,
@@ -627,12 +627,7 @@ class EditTask extends Component {
                 textInputProps={{
                   placeholder: "Chọn người phân công",
                   underlineColorAndroid: "transparent",
-                  style: {
-                    padding: 12,
-                    borderWidth: 1,
-                    borderColor: "#ccc",
-                    borderRadius: 5,
-                  },
+                  style: styles.Dropdown
                 }}
                 listProps={{
                   nestedScrollEnabled: true,
@@ -660,8 +655,8 @@ class EditTask extends Component {
                   this.state.selectedActionTypes
                 ) !== -1
                   ? this.state.listActionTypes.indexOf(
-                      this.state.selectedActionTypes
-                    )
+                    this.state.selectedActionTypes
+                  )
                   : undefined
               }
               containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
@@ -680,12 +675,7 @@ class EditTask extends Component {
               textInputProps={{
                 placeholder: "Chọn Loại công việc",
                 underlineColorAndroid: "transparent",
-                style: {
-                  padding: 12,
-                  borderWidth: 1,
-                  borderColor: "#ccc",
-                  borderRadius: 5,
-                },
+                style: styles.Dropdown
               }}
               listProps={{
                 nestedScrollEnabled: true,
@@ -712,8 +702,8 @@ class EditTask extends Component {
                   this.state.selectedPriorities
                 ) !== -1
                   ? this.state.listPriorities.indexOf(
-                      this.state.selectedPriorities
-                    )
+                    this.state.selectedPriorities
+                  )
                   : undefined
               }
               containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
@@ -732,12 +722,7 @@ class EditTask extends Component {
               textInputProps={{
                 placeholder: "Chọn độ ưu tiên",
                 underlineColorAndroid: "transparent",
-                style: {
-                  padding: 12,
-                  borderWidth: 1,
-                  borderColor: "#ccc",
-                  borderRadius: 5,
-                },
+                style: styles.Dropdown
               }}
               listProps={{
                 nestedScrollEnabled: true,
@@ -784,12 +769,7 @@ class EditTask extends Component {
               textInputProps={{
                 placeholder: "Chọn Tags",
                 underlineColorAndroid: "transparent",
-                style: {
-                  padding: 12,
-                  borderWidth: 1,
-                  borderColor: "#ccc",
-                  borderRadius: 5,
-                },
+                style: styles.Dropdown
               }}
               listProps={{
                 nestedScrollEnabled: true,
@@ -827,7 +807,7 @@ class EditTask extends Component {
           >
             <View
               collapsable={false}
-              onLayout={() => {}}
+              onLayout={() => { }}
               style={{ marginTop: 10 }}
             >
               <StepIndicator
@@ -845,13 +825,7 @@ class EditTask extends Component {
       );
     } else {
       return (
-        <View>
-          <ActivityIndicator
-            size="large"
-            animating
-            color="#2A9D8F"
-          ></ActivityIndicator>
-        </View>
+        <Indicator />
       );
     }
   }

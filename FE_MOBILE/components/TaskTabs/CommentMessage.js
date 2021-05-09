@@ -22,8 +22,8 @@ const styles = StyleSheet.create({
         maxWidth: 200,
         marginBottom: 12,
         lineHeight: 24,
-        paddingHorizontal: 20,
-        marginHorizontal: 5,
+        paddingHorizontal: 16,
+        fontFamily: "semibold"
     },
     ChatContainer: {
         flex: 1,
@@ -34,6 +34,10 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center"
     },
+    UserLabel: {
+        paddingHorizontal: 16,
+        fontFamily: "bold"
+    }
 
 });
 class CommentMessage extends Component {
@@ -92,12 +96,12 @@ class CommentMessage extends Component {
                         uri: `${Url()}/api/images/${this.props.message.userId.photoUrl}`,
                     }}
                 ></Image>
-                <View style={{ alignItems: "center" }}>
-                    <Text>{this.props.message.userId.name}</Text>
+                <View style={{}}>
+                    <Text style={styles.UserLabel}>{this.props.message.userId.name}</Text>
                     {this.renderContent(this.props.message)}
                 </View>
 
-            </View>
+            </View >
         );
     };
 

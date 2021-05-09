@@ -36,15 +36,22 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     input: {
-        marginLeft: 16,
+        marginHorizontal: 16,
         marginVertical: 16,
+        height: "100%",
+        width: "90%",
+        backgroundColor: "white",
+        paddingRight: 16
+    },
+    inputContainer: {
+        height: 48,
         borderWidth: 1,
         borderColor: "#DFDFDF",
-        borderRadius: 8,
-        height: 40,
-        width: W - 80,
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingHorizontal: 16,
         backgroundColor: "white",
-        paddingHorizontal: 12,
     },
 });
 const client = new WebSocket(`${WSK()}`);
@@ -59,8 +66,8 @@ class Comment extends Component {
             goToEnd: true,
             disable: false,
             show: false,
-            CurrentShowImage: null
-
+            CurrentShowImage: null,
+            CurrentUser: null
         };
         this._isMounted = false;
     }
@@ -112,7 +119,7 @@ class Comment extends Component {
             const login = await AsyncStorage.getItem("login");
             const obj = JSON.parse(login);
             this.setState({
-                currentUser: obj.id,
+                currentUser: obj,
             });
             await this.getData();
 
@@ -127,14 +134,18 @@ class Comment extends Component {
     }
 
     sendMessage = async () => {
-        const login = await AsyncStorage.getItem("login");
-        const obj = JSON.parse(login);
+        const obj = this.state.currentUser;
 
         var message = {
             text: this.state.formValue,
             userId: { _id: obj.id, name: obj.name, photoUrl: obj.photoUrl },
             roomId: this.props.actionId,
         };
+        this.setState({
+            formValue: "",
+            goToEnd: true,
+
+        });
         await axios
             .post(`${Url()}/api/chat-message`, message, {
                 headers: {
@@ -144,7 +155,6 @@ class Comment extends Component {
             .then((res) => {
                 message._id = res.data.data[0]._id;
             });
-
         client.send(
             JSON.stringify({
                 type: "sendMessage",
@@ -152,23 +162,16 @@ class Comment extends Component {
                 message,
             })
         );
-
-        this.setState({
-            formValue: "",
-            goToEnd: true,
-        });
     };
 
     sendResources = async (e) => {
-        const login = await AsyncStorage.getItem("login");
-        const obj = JSON.parse(login);
+        const obj = this.state.currentUser;
 
         var message = {
             resourceUrl: e,
             userId: { _id: obj.id, name: obj.name, photoUrl: obj.photoUrl },
             roomId: this.props.actionId,
         }
-
         await axios
             .post(`${Url()}/api/chat-message`, message, {
                 headers: {
@@ -273,23 +276,16 @@ class Comment extends Component {
                         />
                         <KeyboardAvoidingView
                             behavior={Platform.OS === "ios" ? "padding" : null}
-                            keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+                            keyboardVerticalOffset={Platform.OS === "ios" ? 130 : 0}
                         >
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    marginBottom: 20,
-                                }}
-                            >
+                            <View style={styles.inputContainer}>
                                 <TextInput
                                     onChangeText={this.setFormValue}
                                     style={styles.input}
                                     value={this.state.formValue}
                                     editable={!this.state.disable}
                                 />
-                                <View style={{ flexDirection: "row", backgroundColor: "white" }}>
+                                <View style={{ flexDirection: "row", right: 24 }}>
 
                                     <View >
                                         <UploadImage roomId={this.props.actionId} Save={(e) => this.sendResources(e)} />
@@ -330,7 +326,7 @@ class Comment extends Component {
                         </Modal>
 
                     </View>
-                </Provider>
+                </Provider >
             );
         } else {
             return (
