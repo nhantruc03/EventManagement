@@ -293,19 +293,7 @@ class Home extends Component {
       <TouchableOpacity
         onPress={() => {
           this.props.navigation.navigate("TaskDetail", {
-            data: {
-              _id: e.item._id,
-              name: e.item.name,
-              description: e.item.description,
-              time: e.item.endTime,
-              date: e.item.endDate,
-              managerId: e.item.managerId,
-              tags: e.item.tagsId,
-              availUser: e.item.availUser,
-              priority: e.item.priorityId,
-              faculty: e.item.facultyId,
-              coverUrl: `${Url()}/api/images/${e.item.coverUrl}`,
-            },
+            data: e.item
           });
         }}
       >

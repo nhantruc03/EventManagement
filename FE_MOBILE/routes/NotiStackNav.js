@@ -4,7 +4,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Notiscreen from "../screens/Notification";
 import EventDetail2 from "../screens/EventScreens/EventDetails2";
 import TaskDetail from "../screens/TaskScreens/TaskDetail";
-
+import scriptview from "../screens/EventScreens/scriptview";
+import history from "../screens/EventScreens/history";
 
 // import Modal from "@ant-design/react-native";
 
@@ -28,7 +29,7 @@ class NotiStackNav extends Component {
                 <Stack.Screen
                     name="Notification"
                     // component={Noticreen}
-                    children={({ navigation }) => <Notiscreen navigation={navigation} data={this.props.data} />}
+                    children={({ navigation }) => <Notiscreen navigation={navigation} updateNoti={(e) => this.props.updateNoti(e)} data={this.props.data} />}
                     options={{
                         headerShown: false,
                         headerStyle: {
@@ -54,6 +55,32 @@ class NotiStackNav extends Component {
                     component={TaskDetail}
                     options={{
                         title: "Chi tiết công việc",
+                        headerStyle: {
+                            backgroundColor: "#2A9D8F",
+                        },
+                        headerTitleStyle: {},
+                        headerBackTitleVisible: false,
+                        headerTintColor: "#fff",
+                    }}
+                />
+                <Stack.Screen
+                    name="scriptview"
+                    component={scriptview}
+                    options={{
+                        title: "Theo dõi kịch bản",
+                        headerStyle: {
+                            backgroundColor: "#2A9D8F",
+                        },
+                        headerTitleStyle: {},
+                        headerBackTitleVisible: false,
+                        headerTintColor: "#fff",
+                    }}
+                />
+                <Stack.Screen
+                    name="history"
+                    component={history}
+                    options={{
+                        title: "Lịch sử thay đổi",
                         headerStyle: {
                             backgroundColor: "#2A9D8F",
                         },

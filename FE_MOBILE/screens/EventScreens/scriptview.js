@@ -115,13 +115,28 @@ class scriptview extends Component {
       modalVisible: false,
       visible: false,
       isLoading: true,
+      loadingBigBO: this.props.route.params.loadBySelf ? true : false,
+      history: []
     };
   }
 
   ViewHistory = () => {
-    this.props.navigation.navigate("history", {
-      data: this.props.route.params.history,
-      updateFullListHistory: (e) => this.props.route.params.updateFullListHistory(e)
+    if (this.state.loadingBigBO) {
+      this.props.navigation.navigate("history", {
+        data: this.state.history,
+        updateFullListHistory: (e) => this.updateFullListHistory(e)
+      })
+    } else {
+      this.props.navigation.navigate("history", {
+        data: this.props.route.params.history,
+        updateFullListHistory: (e) => this.props.route.params.updateFullListHistory(e)
+      })
+    }
+  }
+
+  updateFullListHistory = (e) => {
+    this.setState({
+      history: e
     })
   }
   test = () => {
@@ -142,26 +157,74 @@ class scriptview extends Component {
     });
     this._isMounted = true;
 
-    const scripts_details = await axios
-      .post(
-        `${Url()}/api/script-details/getAll`,
-        { scriptId: this.props.route.params.id },
-        {
-          headers: {
-            Authorization: await getToken(),
-          },
-        }
-      )
-      .then((res) => res.data.data);
+    let scripts_details = undefined;
+    let history = undefined;
+    let startDate = undefined;
+    let startTime = undefined;
+    if (!this.state.loadingBigBO) {
+      const temp_scripts_details = await axios
+        .post(
+          `${Url()}/api/script-details/getAll`,
+          { scriptId: this.props.route.params.id },
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
+          }
+        )
+        .then((res) => res.data.data);
 
-    // console.log("scripp details", scripts_details.length);
+      scripts_details = temp_scripts_details;
+    }
+    else {
+      const [temp_scripts_details, temp_history, temp_script] = await Promise.all([
+        axios
+          .post(
+            `${Url()}/api/script-details/getAll`,
+            { scriptId: this.props.route.params.id },
+            {
+              headers: {
+                Authorization: await getToken(),
+              },
+            }
+          )
+          .then((res) => res.data.data),
+        axios
+          .post(
+            `${Url()}/api/script-histories/getAll`,
+            { scriptId: this.props.route.params.id },
+            {
+              headers: {
+                Authorization: await getToken(),
+              },
+            }
+          )
+          .then((res) => res.data.data),
+        axios
+          .get(
+            `${Url()}/api/scripts/${this.props.route.params.id}`,
+            {
+              headers: {
+                Authorization: await getToken(),
+              },
+            }
+          )
+          .then((res) => res.data.data),
+      ]);
 
-    if (scripts_details !== null) {
+      scripts_details = temp_scripts_details;
+      history = temp_history;
+      startDate = temp_script.eventId.startDate;
+      startTime = temp_script.eventId.startTime;
+    }
+
+
+    if (scripts_details !== undefined) {
       if (this._isMounted) {
         let temp_onGoing = false;
         let now = new Date();
-        let event_date = new Date(this.props.route.params.startDate);
-        let event_time = new Date(this.props.route.params.startTime);
+        let event_date = this.state.loadingBigBO ? new Date(startDate) : new Date(this.props.route.params.startDate);
+        let event_time = this.state.loadingBigBO ? new Date(startTime) : new Date(this.props.route.params.startTime);
 
         if (
           now.getFullYear() === event_date.getFullYear() &&
@@ -191,6 +254,7 @@ class scriptview extends Component {
           isLoading: false,
           data: temp,
           onGoing: temp_onGoing,
+          history: history
         });
       }
     }

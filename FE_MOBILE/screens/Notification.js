@@ -38,7 +38,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
+    paddingRight: 16
   },
   Name: {
     fontFamily: "semibold",
@@ -49,6 +50,7 @@ const styles = StyleSheet.create({
     fontFamily: "semibold",
     fontSize: 14,
     color: "#2E2E2E",
+
   }
 });
 
@@ -68,13 +70,14 @@ export default class Notification extends Component {
         Authorization: await getToken(),
       },
     });
+    this.props.updateNoti(data);
   };
 
   renderNotificationContent = (e) => {
     const item = e.item;
     if (item.eventId) {
       return (
-        <View style={item.status ? styles.itemSelectedContainer : styles.itemUnSelectedContainer}>
+        <View style={!item.status ? styles.itemSelectedContainer : styles.itemUnSelectedContainer}>
           <TouchableOpacity
             onPress={() => {
               this.updateNoti(item._id);
@@ -85,7 +88,7 @@ export default class Notification extends Component {
             }}
           >
             <View style={styles.container}><Image style={styles.Icon} source={require("../assets/images/event.png")} />
-              <View>
+              <View style={{ paddingRight: 8 }}>
                 <Text style={styles.Name}>{item.name}</Text>
                 <Text style={styles.Descrip}>{item.description}</Text>
               </View>
@@ -95,7 +98,7 @@ export default class Notification extends Component {
       );
     } else if (item.actionId) {
       return (
-        <View style={item.status ? styles.itemSelectedContainer : styles.itemUnSelectedContainer}>
+        <View style={!item.status ? styles.itemSelectedContainer : styles.itemUnSelectedContainer}>
           <TouchableOpacity
             onPress={() => {
               this.updateNoti(item._id);
@@ -106,7 +109,7 @@ export default class Notification extends Component {
             }}
           >
             <View style={styles.container}><Image style={styles.Icon} source={require("../assets/images/clipboard.png")} />
-              <View>
+              <View style={{ paddingRight: 8 }}>
                 <Text style={styles.Name}>{item.name}</Text>
                 <Text style={styles.Descrip}>{item.description}</Text>
               </View>
@@ -117,20 +120,21 @@ export default class Notification extends Component {
     }
     else if (item.scriptId) {
       return (
-        <View style={item.status ? styles.itemSelectedContainer : styles.itemUnSelectedContainer}>
+        <View style={!item.status ? styles.itemSelectedContainer : styles.itemUnSelectedContainer}>
           <TouchableOpacity
             onPress={() => {
               this.updateNoti(item._id);
-              this.props.navigation.navigate("TaskDetail", {
-                actionId: item.actionId,
+              this.props.navigation.navigate("scriptview", {
+                id: item.scriptId,
                 loadBySelf: true,
               });
             }}
           >
-            <View style={styles.container}><Image style={styles.Icon} source={require("../assets/images/clipboard.png")} />
-              <View>
+            <View style={styles.container}><Image style={styles.Icon} source={require("../assets/images/screenplay.png")} />
+              <View style={{ paddingRight: 8 }}>
                 <Text style={styles.Name}>{item.name}</Text>
                 <Text style={styles.Descrip}>{item.description}</Text>
+
               </View>
             </View>
           </TouchableOpacity>
@@ -148,6 +152,7 @@ export default class Notification extends Component {
       >
         <Text style={styles.toplabel}>Thông báo</Text>
         <FlatList
+          style={{ paddingHorizontal: 8, }}
           data={this.props.data}
           renderItem={this.renderNotificationContent}
           keyExtractor={(item) => item._id}

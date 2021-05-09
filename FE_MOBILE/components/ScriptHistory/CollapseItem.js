@@ -218,7 +218,7 @@ export default class CollapseItem extends Component {
 
         return (
             <Timeline
-                style={{ marginLeft: 20, width: W }}
+                style={{ marginLeft: 20, width: W, paddingHorizontal: 8 }}
                 timeContainerStyle={{ minWidth: 52, marginTop: 3 }}
                 timeStyle={{
                     textAlign: "center",

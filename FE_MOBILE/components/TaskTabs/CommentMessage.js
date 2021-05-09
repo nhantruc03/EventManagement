@@ -45,7 +45,6 @@ class CommentMessage extends Component {
                     style={{
                         ...styles.ChatMessage,
                         color: "black",
-
                     }}
                 >
                     {message.text}
@@ -93,7 +92,7 @@ class CommentMessage extends Component {
                         uri: `${Url()}/api/images/${this.props.message.userId.photoUrl}`,
                     }}
                 ></Image>
-                <View>
+                <View style={{ alignItems: "center" }}>
                     <Text>{this.props.message.userId.name}</Text>
                     {this.renderContent(this.props.message)}
                 </View>

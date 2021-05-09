@@ -114,25 +114,36 @@ export default class BottomNav extends React.Component {
     this._isMounted = false;
   }
 
-  updateNoti = (e, id, url) => {
-    e.preventDefault();
-    let data = {
-      status: true,
-      _id: id,
-    };
-    axios
-      .put("/api/notifications", data, {
-        headers: {
-          Authorization: { AUTH }.AUTH,
-        },
-      })
-      .then((res) => console.log(res.data.data));
+  // updateNoti = (e, id, url) => {
+  //   e.preventDefault();
+  //   let data = {
+  //     status: true,
+  //     _id: id,
+  //   };
+  //   axios
+  //     .put("/api/notifications", data, {
+  //       headers: {
+  //         Authorization: { AUTH }.AUTH,
+  //       },
+  //     })
+  //     .then((res) => console.log(res.data.data));
 
+  //   this.setState({
+  //     notiUrl: url,
+  //     onNoti: true,
+  //   });
+  // };
+  updateNoti = (e) => {
+    let temp = this.state.notifications;
+    temp.forEach(x => {
+      if (e._id === x._id) {
+        x.status = e.status
+      }
+    })
     this.setState({
-      notiUrl: url,
-      onNoti: true,
-    });
-  };
+      notifications: temp
+    })
+  }
 
   OnTabPress = async () => {
     axios
@@ -183,6 +194,22 @@ export default class BottomNav extends React.Component {
               //<HomeIcon color={color} />
               <Ionicons name={focused ? 'home' : 'home-outline'} size={24} color={color} />
             ),
+            tabBarVisible: ((route) => {
+              const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+              let temp_list = [
+                "EventDetail2",
+                "scriptdetail",
+                "Phòng hội thoại",
+                "scriptview",
+                "history",
+                "CreateTask", "TaskDetail", "EditTask"
+              ];
+              if (temp_list.includes(routeName)) {
+                return false;
+              } else {
+                return true;
+              }
+            })(route),
           })}
         />
         <Tab.Screen
@@ -196,7 +223,6 @@ export default class BottomNav extends React.Component {
             ),
             tabBarVisible: ((route) => {
               const routeName = getFocusedRouteNameFromRoute(route) ?? "";
-
               let temp_list = [
                 "EventDetail2",
                 "scriptdetail",
@@ -244,7 +270,7 @@ export default class BottomNav extends React.Component {
         <Tab.Screen
           name="Notification"
           // component={NotiStackNav}
-          children={() => <NotiStackNav data={this.state.notifications} />}
+          children={() => <NotiStackNav updateNoti={(e) => this.updateNoti(e)} data={this.state.notifications} />}
           listeners={{
             tabPress: (e) => {
               // Prevent default action

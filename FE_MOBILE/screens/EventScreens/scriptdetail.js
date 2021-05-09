@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: "center",
     justifyContent: "center",
+    loadingBigBO: this.props.route.params.loadBySelf ? true : false,
   },
   Container: {
     marginTop: 16,

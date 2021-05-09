@@ -88,7 +88,7 @@ class UploadImage extends Component {
             <View style={{ alignItems: "center" }}>
                 <TouchableOpacity
                     //style={styles.btnUpdate}
-                    style={{ right: 16 }}
+                    style={{}}
                     underlayColor="#fff"
                     onPress={this.pickImage}
                 >

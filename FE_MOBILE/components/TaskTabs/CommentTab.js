@@ -17,7 +17,7 @@ import CommentMessage from "../../components/TaskTabs/CommentMessage";
 import { ActivityIndicator, Modal, Provider } from "@ant-design/react-native";
 import UploadImage from "../../components/helper/UploadImageForChat";
 import Separator from "../helper/separator";
-import separator from "../helper/separator";
+
 
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     input: {
-        marginHorizontal: 16,
+        marginLeft: 16,
         marginVertical: 16,
         borderWidth: 1,
         borderColor: "#DFDFDF",
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
         height: 40,
         width: W - 80,
         backgroundColor: "white",
-        paddingRight: 12,
+        paddingHorizontal: 12,
     },
 });
 const client = new WebSocket(`${WSK()}`);
@@ -247,30 +247,36 @@ class Comment extends Component {
         })
     }
 
+    setFormValue = (e) => {
+        this.setState({
+            formValue: e
+        })
+    }
+
     ref = React.createRef();
     render() {
         if (!this.state.isLoading) {
             return (
                 <Provider>
                     <View style={styles.Container}>
+
+                        <FlatList
+                            refreshing={this.state.refreshing}
+                            onRefresh={this.onRefresh}
+                            ref={this.ref}
+                            style={{ paddingHorizontal: 10, height: 480, }}
+                            data={this.state.messages}
+                            keyExtractor={(item) => item._id}
+                            renderItem={(item) => this.renderMessage(item)}
+                            onContentSizeChange={this.goToEnd}
+                            onLayout={this.goToEnd}
+                        />
                         <KeyboardAvoidingView
-                            behavior={Platform.OS === "ios" ? "position" : null}
+                            behavior={Platform.OS === "ios" ? "padding" : null}
                             keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
                         >
-                            <FlatList
-                                refreshing={this.state.refreshing}
-                                onRefresh={this.onRefresh}
-                                ref={this.ref}
-                                style={{ paddingHorizontal: 10, height: 480, }}
-                                data={this.state.messages}
-                                keyExtractor={(item) => item._id}
-                                renderItem={(item) => this.renderMessage(item)}
-                                onContentSizeChange={this.goToEnd}
-                                onLayout={this.goToEnd}
-                            />
                             <View
                                 style={{
-
                                     flexDirection: "row",
                                     justifyContent: "center",
                                     alignItems: "center",
@@ -283,49 +289,46 @@ class Comment extends Component {
                                     value={this.state.formValue}
                                     editable={!this.state.disable}
                                 />
-                                <View style={{ flexDirection: "row" }}>
-                                    <TouchableOpacity
-                                        style={{ right: 16 }}
-                                        disabled={!this.state.formValue}
-                                        onPress={() => this.sendMessage()}
-                                    >
-                                        <Image source={require("../../assets/images/voice.png")} />
-                                    </TouchableOpacity>
+                                <View style={{ flexDirection: "row", backgroundColor: "white" }}>
 
-                                    <UploadImage roomId={this.props.actionId} Save={(e) => this.sendResources(e)} />
-
-                                    {/* <TouchableOpacity
-                  style={{ right: 16 }}
-                  disabled={!this.state.formValue}
-                  onPress={() => this.sendMessage()}
-                >
-                  <Image source={require("../../assets/images/Send.png")} />
-                </TouchableOpacity> */}
+                                    <View >
+                                        <UploadImage roomId={this.props.actionId} Save={(e) => this.sendResources(e)} />
+                                    </View>
+                                    <View >
+                                        <TouchableOpacity
+                                            style={{}}
+                                            disabled={!this.state.formValue}
+                                            onPress={() => this.sendMessage()}
+                                        >
+                                            <Image source={require("../../assets/images/Send.png")} />
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             </View>
-                            <Modal
-                                closable
-                                maskClosable
-                                transparent
-                                visible={this.state.show}
-                                animationType="slide-up"
-                                onClose={this.onClose}
-                                style={{
-                                    width: W,
-                                    height: "100%",
-                                    backgroundColor: 'black',
-                                    justifyContent: "center",
-                                    alignContent: "center"
-                                }}
-
-                            >
-                                <View>
-                                    {this.state.CurrentShowImage ?
-                                        <Image style={{ alignSelf: "center", width: "100%", height: undefined, aspectRatio: 1 }} source={{ uri: this.state.CurrentShowImage }}></Image>
-                                        : null}
-                                </View>
-                            </Modal>
                         </KeyboardAvoidingView>
+                        <Modal
+                            closable
+                            maskClosable
+                            transparent
+                            visible={this.state.show}
+                            animationType="slide-up"
+                            onClose={this.onClose}
+                            style={{
+                                width: W,
+                                height: "100%",
+                                backgroundColor: 'black',
+                                justifyContent: "center",
+                                alignContent: "center"
+                            }}
+
+                        >
+                            <View>
+                                {this.state.CurrentShowImage ?
+                                    <Image style={{ alignSelf: "center", width: "100%", height: undefined, aspectRatio: 1 }} source={{ uri: this.state.CurrentShowImage }}></Image>
+                                    : null}
+                            </View>
+                        </Modal>
+
                     </View>
                 </Provider>
             );

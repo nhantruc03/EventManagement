@@ -470,7 +470,7 @@ class Taskscreen extends Component {
               this.onChangeEvent(item._id);
             }}
             selectedItems={this.state.selectedItems}
-            containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
+            containerStyle={{ paddingHorizontal: 16, paddingVertical: 12, }}
             itemStyle={{
               padding: 10,
               marginTop: 2,
@@ -491,6 +491,7 @@ class Taskscreen extends Component {
                 borderWidth: 1,
                 borderColor: "#ccc",
                 borderRadius: 5,
+                backgroundColor: "white"
               },
             }}
             listProps={{
