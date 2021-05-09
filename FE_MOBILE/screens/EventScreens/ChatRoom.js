@@ -16,7 +16,6 @@ import AsyncStorage from "@react-native-community/async-storage";
 import ChatMessage from "../../components/ChatMessage";
 import { ActivityIndicator, Modal, Provider } from "@ant-design/react-native";
 import UploadImage from "../../components/helper/UploadImageForChat";
-import { ThemeProvider } from "@react-navigation/native";
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({

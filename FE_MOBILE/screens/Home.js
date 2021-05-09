@@ -237,14 +237,7 @@ class Home extends Component {
           key={key}
           onPress={() => {
             this.props.navigation.navigate("EventDetail2", {
-              id: e._id,
-              name: e.name,
-              description: e.description,
-              time: e.startTime,
-              date: e.startDate,
-              location: e.address,
-              tag: e.tagId,
-              poster: `${Url()}/api/images/${e.posterUrl}`,
+              data: e,
             });
           }}
         >

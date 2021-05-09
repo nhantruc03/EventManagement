@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import WSK from "../../websocket";
 import Url from "../../env";
 import getToken from "../../Auth";
@@ -11,11 +11,8 @@ import {
   Button,
   Picker,
 } from "@ant-design/react-native";
-import { TabView, SceneMap } from "react-native-tab-view";
-import { TabBar } from "react-native-tab-view";
 import moment from "moment";
 import { ActivityIndicator } from "react-native";
-import HTML from "react-native-render-html";
 import {
   FlatList,
   TextInput,
@@ -24,7 +21,6 @@ import {
 import { Image } from "react-native";
 import ScriptDetailModal from "../../components/ScriptDetailModal";
 import AsyncStorage from "@react-native-community/async-storage";
-import Indicator from "../../components/helper/Loading";
 import OptionsMenu from "react-native-options-menu";
 import Icon from "../../assets/images/more.png";
 
@@ -177,6 +173,8 @@ class scriptdetail extends Component {
       id: this.state._id,
       startDate: this.state.startDate,
       startTime: this.state.startTime,
+      history: this.state.history,
+      updateFullListHistory: (e) => this.updateFullListHistory(e)
     })
   }
   ViewHistory = () => {
@@ -207,7 +205,6 @@ class scriptdetail extends Component {
             destructiveIndex={1}
             options={["Theo dõi kịch bản", "Lịch sử thay đổi", "Huỷ bỏ"]}
             actions={[this.ViewDetail, this.ViewHistory, this.test]}
-
           />
         </View>
       ),

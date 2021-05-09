@@ -5,21 +5,14 @@ import getToken from "../../Auth";
 import axios from "axios";
 import {
   Steps,
-  Modal,
-  Provider,
-  Button,
-  PickerView,
 } from "@ant-design/react-native";
 import moment from "moment";
 import { ActivityIndicator } from "react-native";
 import HTML from "react-native-render-html";
-import {
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-} from "react-native-gesture-handler";
 import { Image, FlatList } from "react-native";
 import StepIndicator from "react-native-step-indicator";
+import OptionsMenu from "react-native-options-menu";
+import Icon from "../../assets/images/more.png";
 const Step = Steps.Step;
 
 const styles = StyleSheet.create({
@@ -73,6 +66,7 @@ const styles = StyleSheet.create({
     color: "#3A3A3A",
     maxWidth: 64,
   },
+  IconRight: { right: 16 },
 });
 
 const labels = [
@@ -123,13 +117,26 @@ class scriptview extends Component {
       isLoading: true,
     };
   }
+
+  ViewHistory = () => {
+    this.props.navigation.navigate("history", {
+      data: this.props.route.params.history,
+      updateFullListHistory: (e) => this.props.route.params.updateFullListHistory(e)
+    })
+  }
+  test = () => {
+    console.log('test')
+  }
   async componentDidMount() {
     this.props.navigation.setOptions({
       headerRight: () => (
         <View style={styles.IconRight}>
-          <TouchableOpacity onPress={() => this.setState({ visible: true })}>
-            <Image source={require("../../assets/images/edit.png")} />
-          </TouchableOpacity>
+          <OptionsMenu
+            button={Icon}
+            destructiveIndex={1}
+            options={["Lịch sử thay đổi", "Huỷ bỏ"]}
+            actions={[this.ViewHistory, this.test]}
+          />
         </View>
       ),
     });
