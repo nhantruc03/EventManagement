@@ -6,7 +6,7 @@ import { StyleSheet } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import * as Notifications from 'expo-notifications';
 import ProfileStackNav from "../routes/ProfileStackNav";
 import Profilescreen from "../screens/ProfileScreens/Profile";
 import Calendarscreen from "../screens/Calendar";
@@ -67,7 +67,7 @@ export default class BottomNav extends React.Component {
           if (dataFromServer.notifications.length > 0) {
             // console.log(dataFromServer.message)
             dataFromServer.notifications.forEach((e) => {
-              if (e.userId === this.state.currentUser.id) {
+              if (e.userId._id === this.state.currentUser.id) {
                 this.setState({
                   notifications: [e, ...this.state.notifications],
                 });
@@ -76,7 +76,7 @@ export default class BottomNav extends React.Component {
           }
         } else if (dataFromServer.type === "sendNotification") {
           if (
-            dataFromServer.notification.userId === this.state.currentUser.id
+            dataFromServer.notification.userId._id === this.state.currentUser.id
           ) {
             this.setState({
               notifications: [dataFromServer.notification, ...this.state.notifications],

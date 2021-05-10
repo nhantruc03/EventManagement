@@ -216,7 +216,7 @@ class listactions extends Component {
     if (this.state.currentEvent) {
       return (
         <div className="flex-container-row" style={{ alignItems: "unset" }}>
-          <div className="flex-container-row horizontal-container">
+          <div className="flex-container-row horizontal-container" style={{ width: "100%" }}>
             {this.state.currentActionTypes.map((e, key) => {
               return this.renderActionsView(e, key);
             })}

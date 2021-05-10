@@ -1,3 +1,5 @@
+import axios from "axios"
+
 export function sendPushNoti(e) {
     if (e.userId.push_notification_token) {
         // fetch('https://exp.host/--/api/v2/push/send', {
@@ -25,6 +27,7 @@ export function sendPushNoti(e) {
                 'Content-Type': 'application/json'
             }
         })
+
     }
 }
 

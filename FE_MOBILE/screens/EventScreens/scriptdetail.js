@@ -129,6 +129,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   textTime: { paddingHorizontal: 8, fontFamily: "semibold", fontSize: 20 },
+
 });
 
 
@@ -401,7 +402,7 @@ class scriptdetail extends Component {
             </View>
             <View style={styles.ScriptNameLabelContainer}>
               <Text style={styles.Label}>Dành cho</Text>
-              <View style={styles.Box}>
+              <View >
                 <Picker
                   onChange={this.onChangeForId}
                   value={this.state.forId}
@@ -410,7 +411,7 @@ class scriptdetail extends Component {
                   okText="Đồng ý"
                   dismissText="Thoát"
                 >
-                  <Text>
+                  <Text style={{ padding: 8, }}>
                     {!this.state.forId
                       ? "Chọn"
                       : this.state.listUser_default.filter(

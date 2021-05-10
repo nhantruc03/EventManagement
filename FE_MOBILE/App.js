@@ -1,14 +1,12 @@
 // App.js
 import { useFonts } from "expo-font";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { StyleSheet, Text, View } from "react-native";
 import { LogBox } from "react-native";
 // Import Screens
-
-
 import BottomNav from "./routes/BottomNav";
 import SplashScreen from "./screens/SplashScreen";
 import LoginScreen from "./screens/Login";
