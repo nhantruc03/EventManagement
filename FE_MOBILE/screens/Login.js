@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { Component } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -9,27 +9,83 @@ import {
   Image,
   Keyboard,
 } from "react-native";
+import getToken from "../Auth";
 import Icon from "../assets/images/Show.png";
 import { Dimensions } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 import axios from "axios";
 import Url from "../env";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import * as Notifications from 'expo-notifications'
+import * as Permissions from 'expo-permissions'
+
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 
-export default LoginScreen = ({ navigation }) => {
-  const [username, setUserName] = useState("");
-  const [password, setPassword] = useState("");
-  const [isFalse, setIsFalse] = useState(false);
-  const [showPassword, setShowPassword] = useState(true);
-  const [focusInputType, setFocusInputType] = useState();
 
-  const handleSubmitPress = async () => {
+export default class Login extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: "",
+      password: "",
+      showPassword: true,
+      focusInputType: "",
+    };
+  }
+
+  registerForPushNotificationsAsync = async () => {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    const token = (await Notifications.getExpoPushTokenAsync()).data;
+
+    let data = {
+      push_notification_token: token
+    }
+    let login = await AsyncStorage.getItem("login");
+    var obj = JSON.parse(login);
+    await
+      axios.put(`${Url()}/api/users/updatePushToken/` + obj.id, data, {
+        headers: {
+          'Authorization': await getToken()
+        }
+      })
+        .then(async res => {
+          obj.push_notification_token = data.push_notification_token
+          await AsyncStorage.removeItem("login");
+          await AsyncStorage.setItem("login", JSON.stringify(obj));
+          console.log("update success");
+        })
+        .catch(err => {
+          console.log(err.response.data)
+          console.log("update fails");
+        })
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+  }
+
+  // async componentDidMount() {
+
+  // }
+
+  handleSubmitPress = async () => {
     var data = new FormData();
 
-    data.append("username", username);
-    data.append("password", password);
+    data.append("username", this.state.username);
+    data.append("password", this.state.password);
     let result = await axios
       .post(`${Url()}/api/users/login`, data)
       .then((res) => {
@@ -44,81 +100,108 @@ export default LoginScreen = ({ navigation }) => {
 
     if (result !== undefined) {
       await AsyncStorage.setItem("login", JSON.stringify(result));
-      navigation.replace("BottomNav");
+      await this.registerForPushNotificationsAsync();
+      this.props.navigation.replace("BottomNav");
     } else alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
   };
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.formcontainer}>
-        <Text style={styles.h1}>XIN CHÀO</Text>
-        <Text style={styles.h2}>Đăng nhập để tiếp tục</Text>
-        <View
-          style={{ marginBottom: (H * 21) / 667, marginTop: (H * 48) / 667 }}
-        >
-          <Text style={styles.textBox}>Tên đăng nhập</Text>
-          <View style={styles.boxSection}>
-            <TextInput
-              onFocus={() => setFocusInputType("username")}
-              onBlur={() => setFocusInputType("")}
-              style={
-                focusInputType == "username" ? styles.inputActive : styles.input
-              }
-              placeholder="Nhập tên đăng nhập của bạn"
-              onChangeText={(value) => setUserName(value)}
-              value={username}
-              underlineColorAndroid="transparent"
-              autoCapitalize="none"
-            />
-          </View>
-        </View>
 
-        <View>
-          <Text style={styles.textBox}>Mật khẩu</Text>
-          <View style={styles.boxSection}>
-            <TouchableOpacity
-              style={styles.Icon}
-              onPress={() => setShowPassword(!showPassword)}
-            >
-              <Image source={Icon} />
-            </TouchableOpacity>
+  setUsernameFocusInputType = () => {
+    this.setState({
+      focusInputType: "username"
+    })
+  }
+  setPasswordFocusInputType = () => {
+    this.setState({
+      focusInputType: "password"
+    })
+  }
+  onChangeUsername = (e) => {
+    this.setState({
+      username: e
+    })
+  }
+  onChangePassword = (e) => {
+    this.setState({
+      password: e
+    })
+  }
 
-            <TextInput
-              onFocus={() => setFocusInputType("password")}
-              onBlur={() => setFocusInputType("")}
-              style={
-                focusInputType == "password" ? styles.inputActive : styles.input
-              }
-              placeholder="Nhập mật khẩu của bạn"
-              onChangeText={(value) => setPassword(value)}
-              value={password}
-              secureTextEntry={showPassword}
-              underlineColorAndroid="transparent"
-            />
-          </View>
-        </View>
 
-        <View style={styles.containerBoxSubmit}>
-          <TouchableOpacity
-            onPress={handleSubmitPress}
-            title="Đăng nhập"
-            style={styles.btnSubmit}
-            underlayColor="#fff"
+  render() {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.formcontainer}>
+          <Text style={styles.h1}>XIN CHÀO</Text>
+          <Text style={styles.h2}>Đăng nhập để tiếp tục</Text>
+          <View
+            style={{ marginBottom: (H * 21) / 667, marginTop: (H * 48) / 667 }}
           >
-            <Text style={styles.textSubmit}>Đăng nhập</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <View style={{ flex: 1, height: 1, backgroundColor: "#AAB0B6" }} />
-          <View>
-            <Text style={{ width: 60, textAlign: "center" }}>Hoặc</Text>
+            <Text style={styles.textBox}>Tên đăng nhập</Text>
+            <View style={styles.boxSection}>
+              <TextInput
+                onFocus={this.setUsernameFocusInputType}
+                style={
+                  this.state.focusInputType === "username" ? styles.inputActive : styles.input
+                }
+                placeholder="Nhập tên đăng nhập của bạn"
+                onChangeText={this.onChangeUsername}
+                value={this.state.username}
+                underlineColorAndroid="transparent"
+                autoCapitalize="none"
+              />
+            </View>
           </View>
-          <View style={{ flex: 1, height: 1, backgroundColor: "#AAB0B6" }} />
+
+          <View>
+            <Text style={styles.textBox}>Mật khẩu</Text>
+            <View style={styles.boxSection}>
+              <TouchableOpacity
+                style={styles.Icon}
+                onPress={() => this.setState({ showPassword: !this.state.showPassword })}
+              >
+                <Image source={Icon} />
+              </TouchableOpacity>
+
+              <TextInput
+                onFocus={this.setPasswordFocusInputType}
+                style={
+                  this.state.focusInputType == "password" ? styles.inputActive : styles.input
+                }
+                placeholder="Nhập mật khẩu của bạn"
+                onChangeText={this.onChangePassword}
+                value={this.state.password}
+                secureTextEntry={this.state.showPassword}
+                underlineColorAndroid="transparent"
+              />
+            </View>
+          </View>
+
+          <View style={styles.containerBoxSubmit}>
+            <TouchableOpacity
+              onPress={this.handleSubmitPress}
+              title="Đăng nhập"
+              style={styles.btnSubmit}
+              underlayColor="#fff"
+            >
+              <Text style={styles.textSubmit}>Đăng nhập</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View style={{ flex: 1, height: 1, backgroundColor: "#AAB0B6" }} />
+            <View>
+              <Text style={{ width: 60, textAlign: "center" }}>Hoặc</Text>
+            </View>
+            <View style={{ flex: 1, height: 1, backgroundColor: "#AAB0B6" }} />
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
-  );
-};
+      </SafeAreaView>
+    );
+  }
+}
+
+
+
 
 const styles = StyleSheet.create({
   container: {

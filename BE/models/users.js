@@ -9,7 +9,7 @@ const Users = new Schema(
       required: true,
       index: true
     },
-    mssv:{
+    mssv: {
       type: String,
       index: true,
       unique: true
@@ -62,6 +62,10 @@ const Users = new Schema(
       type: String,
       required: true,
       minlength: 8
+    },
+    push_notification_token: {
+      type: String,
+      index: true
     },
     isDeleted: {
       type: Boolean,

@@ -16,6 +16,7 @@ import Indicator from "../../components/helper/Loading";
 import { StatusBar } from "react-native";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
+import EmptyState from "../../components/EmptyState";
 const W = Dimensions.get("window").width;
 
 const initialLayout = { width: W };
@@ -414,7 +415,8 @@ class Taskscreen extends Component {
       } else {
         return null;
       }
-    } else {
+    }
+    else {
       return <Indicator />;
     }
   };
@@ -430,6 +432,16 @@ class Taskscreen extends Component {
       index,
     });
   };
+
+  renderEmptyState = () => {
+    if (!this.state.loading) {
+      if (!this.state.chosen) {
+        return (
+          <EmptyState />
+        )
+      }
+    } else return null
+  }
 
   render() {
     return (
@@ -464,6 +476,7 @@ class Taskscreen extends Component {
               </Button>
             ) : null}
           </View>
+          {this.renderEmptyState()}
           <SearchableDropdown
             onItemSelect={(item) => {
               this.setState({ selectedItems: item, chosen: true });
@@ -478,6 +491,7 @@ class Taskscreen extends Component {
               borderColor: "#bbb",
               borderWidth: 1,
               borderRadius: 5,
+              zIndex: 2,
             }}
             itemTextStyle={{ color: "#222" }}
             itemsContainerStyle={{ maxHeight: 140 }}
@@ -498,6 +512,8 @@ class Taskscreen extends Component {
               nestedScrollEnabled: false,
             }}
           />
+
+
           {this.renderTabView()}
           <Modal
             title="Loại công việc mới"

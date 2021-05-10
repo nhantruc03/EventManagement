@@ -13,8 +13,8 @@ const login = async (req, res) => {
     // const role = await Credentials
     //   .findOne({ userId: user._id, isDeleted: false })
     //   .populate({ path: 'roleId', select: 'name' })
- 
-    
+
+
     if (user == null) {
       return res.json({ success: false, error: "Login failed" });
     }
@@ -32,14 +32,15 @@ const login = async (req, res) => {
       { expiresIn: "14d" }
     );
 
-    
+
     var data = {
       token: token,
       name: user.name,
       id: user._id,
       role: user.roleId.name,
       roleId: user.roleId._id,
-      photoUrl: user.photoUrl
+      photoUrl: user.photoUrl,
+      push_notification_token: user.push_notification_token
     }
 
     return res.status(200).json({ success: isLogin, data });

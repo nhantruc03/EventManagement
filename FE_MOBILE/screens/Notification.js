@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
-import Separator from "../components/helper/separator";
 import axios from "axios";
 import Url from "../env";
 import getToken from "../Auth";
 import { Platform } from "react-native";
 import { StatusBar } from "react-native";
 import { Image } from "react-native";
+import * as Notifications from 'expo-notifications'
+import * as Permissions from 'expo-permissions'
 const styles = StyleSheet.create({
   containerIOS: { flex: 1, marginTop: 16 },
   containerAndroid: { marginTop: StatusBar.currentHeight, flex: 1 },

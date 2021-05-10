@@ -24,7 +24,8 @@ const handleBody = (body) => {
         "email",
         "roleId",
         "gender",
-        "mssv")
+        "mssv",
+        "push_notification_token")
     }
   }
 } // for newDoc

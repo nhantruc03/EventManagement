@@ -174,6 +174,7 @@ class edit extends Component {
                         }),
                         history: [...this.state.history, res.data.history]
                     })
+                    let temp_noti = res.data.notification;
                     client.send(JSON.stringify({
                         type: "sendNotification",
                         notification: res.data.notification
@@ -184,6 +185,23 @@ class edit extends Component {
                     message.error("Cập nhật chi tiết kịch bản thất bại")
                 })
         )
+    }
+
+    sendPushNoti = (e) => {
+        // Axios.post(
+        let response = fetch('https://exp.host/--/api/v2/push/send', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                to: e.userId.push_notification_token,
+                title: `Thông báo: ${e.name}`,
+                body: e.description,
+                sound: 'default'
+            })
+        })
 
     }
 
@@ -216,7 +234,7 @@ class edit extends Component {
 
     onDeleteDetail = async (value) => {
         await trackPromise(
-            Axios.delete("/api/script-details/" + value + `?updateUserId=${this.state.currentUser.id}`, {
+            Axios.delete("/api/script-details/" + value + `? updateUserId = ${this.state.currentUser.id}`, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }

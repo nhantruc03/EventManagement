@@ -8,6 +8,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { LogBox } from "react-native";
 // Import Screens
 
+
 import BottomNav from "./routes/BottomNav";
 import SplashScreen from "./screens/SplashScreen";
 import LoginScreen from "./screens/Login";
