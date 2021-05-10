@@ -11,4 +11,11 @@ module.exports = function (app) {
             changeOrigin: true,
         })
     );
+    app.use(
+        '/--/api',
+        createProxyMiddleware({
+            target: "https://exp.host",
+            changeOrigin: true,
+        })
+    );
 };

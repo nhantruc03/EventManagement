@@ -45,6 +45,7 @@ const _delete = async (req, res) => {
 
     // done notification
 
+    console.log(req.query.updateUserId)
     //start history
     let isDeleteDetail = true
     let data_history = {

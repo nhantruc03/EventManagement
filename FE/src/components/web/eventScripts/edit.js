@@ -222,7 +222,7 @@ class edit extends Component {
 
     onDeleteDetail = async (value) => {
         await trackPromise(
-            Axios.delete("/api/script-details/" + value + `? updateUserId = ${this.state.currentUser.id}`, {
+            Axios.delete("/api/script-details/" + value + `?updateUserId=${this.state.currentUser.id}`, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }

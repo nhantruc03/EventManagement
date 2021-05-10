@@ -1,36 +1,37 @@
+import axios from "axios"
+
 export function sendPushNoti(e) {
     if (e.userId.push_notification_token) {
-        fetch('https://exp.host/--/api/v2/push/send', {
-            method: 'POST',
+        let data = JSON.stringify({
+            to: e.userId.push_notification_token,
+            title: `Thông báo: ${e.name}`,
+            body: e.description,
+            sound: 'default'
+        })
+        axios.post('/--/api/v2/push/send', data, {
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                to: e.userId.push_notification_token,
-                title: `Thông báo: ${e.name}`,
-                body: e.description,
-                sound: 'default'
-            })
+            }
         })
+            .then(res => { console.log(res) })
     }
 }
 
 export function sendListPushNoti(e) {
-    e.forEac(x => {
+    e.forEach(x => {
         if (x.userId.push_notification_token) {
-            fetch('https://exp.host/--/api/v2/push/send', {
-                method: 'POST',
+            let data = JSON.stringify({
+                to: x.userId.push_notification_token,
+                title: `Thông báo: ${x.name}`,
+                body: x.description,
+                sound: 'default'
+            })
+            axios.post('/--/api/v2/push/send', data, {
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    to: x.userId.push_notification_token,
-                    title: `Thông báo: ${x.name}`,
-                    body: x.description,
-                    sound: 'default'
-                })
+                }
             })
         }
     })
