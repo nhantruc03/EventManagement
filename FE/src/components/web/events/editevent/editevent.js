@@ -36,6 +36,7 @@ import Credentials from "./Credentials/Credentials";
 import * as constants from "../../constant/actions"
 import checkPermission from "../../helper/checkPermissions"
 import getPermission from "../../helper/Credentials"
+import * as PushNoti from "../../helper/pushNotification"
 const client = new w3cwebsocket('ws://localhost:3001');
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -97,6 +98,8 @@ class editevent extends Component {
                         notifications: res.data.notification
                     }))
 
+                    PushNoti.sendListPushNoti(res.data.notification)
+
                     message.success('Thêm thành công')
                 })
                 .catch(err => {
@@ -129,6 +132,8 @@ class editevent extends Component {
                         type: "sendListNotifications",
                         notifications: res.data.notification
                     }))
+
+                    PushNoti.sendListPushNoti(res.data.notification)
 
                     message.success('Thêm thành công')
                 })

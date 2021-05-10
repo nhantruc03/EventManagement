@@ -180,18 +180,27 @@ const update = async (req, res) => {
 
 
       //access DB
-      listNotifications = await notifications.insertMany(
+      // listNotifications
+      let temp_listNoti = await notifications.insertMany(
         listNoti,
         { session: session }
       )
 
-      if (isEmpty(listNotifications) || listNotifications.length != listNoti.length) {
+      if (isEmpty(temp_listNoti) || temp_listNoti.length != listNoti.length) {
         await abortTransactions(sessions);
         return res.status(406).json({
           success: false,
           error: "Created failed"
         });
       }
+
+      let list_userIdForNoti = temp_listNoti.reduce((list, e) => {
+        list.push(e.userId)
+        return list;
+      }, [])
+  
+      listNotifications = await notifications.find({ _id: { $in: list_userIdForNoti } })
+        .populate({path:'userId',select:'push_notification_token'})
 
     }
     // done notification

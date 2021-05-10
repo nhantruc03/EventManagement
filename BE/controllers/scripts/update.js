@@ -102,13 +102,16 @@ const update = async (req, res) => {
       noti
     )
 
+    let result_noti = await notifications.findById(created_notification._id)
+      .populate({path:'userId', select:'push_notification_token'})
+
     // done notification
     // Updated Successfully
     await commitTransactions(sessions)
     return res.status(200).json({
       success: true,
       data: updated,
-      notification: created_notification,
+      notification: result_noti,
       history: created_history
     })
   } catch (error) {

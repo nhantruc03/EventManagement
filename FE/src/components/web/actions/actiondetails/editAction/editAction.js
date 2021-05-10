@@ -10,6 +10,7 @@ import {
 import axios from 'axios';
 import moment from 'moment'
 import { w3cwebsocket } from 'websocket';
+import * as PushNoti from '../../../helper/pushNotification'
 const client = new w3cwebsocket('ws://localhost:3001');
 const { Option } = Select;
 const formItemLayout = {
@@ -192,6 +193,9 @@ class editAction extends Component {
                         type: "sendListNotifications",
                         notifications: res.data.notifications
                     }))
+
+                    PushNoti.sendListPushNoti(res.data.notifications)
+
                     this.props.update(temp_Action, temp_manager, temp_actionAssign)
 
                 })

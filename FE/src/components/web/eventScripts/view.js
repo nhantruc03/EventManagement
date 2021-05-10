@@ -51,9 +51,6 @@ class view extends Component {
                 ),
         ]));
 
-        console.log(scripts)
-        console.log(scripts_details)
-
         if (scripts !== null) {
             if (this._isMounted) {
                 let temp_onGoing = false

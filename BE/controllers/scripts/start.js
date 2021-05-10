@@ -3,7 +3,7 @@ const ScriptDetails = require("../../models/scriptDetails")
 const { handleBody } = require("./handleBody")
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
-const { isEmpty, pick } = require("lodash")
+const { isEmpty, pick, result } = require("lodash")
 const constants = require("../../constants/actions")
 const Permission = require("../../helper/Permissions")
 const notifications = require("../../models/notifications")
@@ -129,7 +129,8 @@ const start = async (req, res) => {
         let created_notification = await notifications.create(
             noti
         )
-
+        let result_noti = await notifications.findById(created_notification._id)
+            .populate({path:'userId',select:'push_notification_token'})
         // done notification
         // Success
         await commitTransactions(sessions)
@@ -137,7 +138,7 @@ const start = async (req, res) => {
             success: true,
             script: newDoc,
             ScriptDetails: listScriptDetails,
-            notification: created_notification
+            notification: result_noti
         });
     } catch (error) {
         await abortTransactions(sessions)

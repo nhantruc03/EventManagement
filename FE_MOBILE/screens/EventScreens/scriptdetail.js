@@ -5,14 +5,12 @@ import Url from "../../env";
 import getToken from "../../Auth";
 import axios from "axios";
 import {
-  Steps,
   Modal,
   Provider,
   Button,
   Picker,
 } from "@ant-design/react-native";
 import moment from "moment";
-import { ActivityIndicator } from "react-native";
 import {
   FlatList,
   TextInput,
@@ -24,9 +22,8 @@ import AsyncStorage from "@react-native-community/async-storage";
 import OptionsMenu from "react-native-options-menu";
 import Icon from "../../assets/images/more.png";
 import Indicator from "../../components/helper/Loading";
+import * as PushNoti from '../../components/helper/pushNotification'
 
-
-const Step = Steps.Step;
 
 
 const styles = StyleSheet.create({
@@ -332,6 +329,7 @@ class scriptdetail extends Component {
           notification: res.data.notification,
         })
         );
+        PushNoti.sendPushNoti(res.data.notification)
         this.setState({
           history: [...this.state.history, res.data.history],
         });

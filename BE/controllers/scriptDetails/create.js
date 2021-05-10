@@ -67,6 +67,9 @@ const create = async (req, res) => {
     let created_notification = await notifications.create(
       noti
     )
+
+    let result_notification = await notifications.findById(created_notification._id)
+      .populate({path:'userId', select:'push_notification_token'})
     // done notification
 
     //start history
@@ -95,7 +98,7 @@ const create = async (req, res) => {
     return res.status(200).json({
       success: true,
       data: newDoc,
-      notification: created_notification,
+      notification: result_notification,
       history: created_history
     });
   } catch (error) {

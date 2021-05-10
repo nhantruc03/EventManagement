@@ -13,6 +13,7 @@ import { KeyboardAvoidingView } from "react-native";
 import WSK from "../../websocket";
 import { findNodeHandle } from "react-native";
 import Indicator from "../../components/helper/Loading";
+import * as PushNoti from '../../components/helper/pushNotification'
 const styles = StyleSheet.create({
   input: {
     height: 40,
@@ -297,6 +298,7 @@ class CreateTask extends Component {
             notifications: res.data.Notifications,
           })
         );
+        PushNoti.sendListPushNoti(res.data.Notifications)
 
         // this.props.route.params.updateListActions(res.data.action);
         this.props.navigation.navigate("Task", {

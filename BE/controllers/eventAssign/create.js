@@ -101,22 +101,26 @@ const create = async (req, res) => {
     let created_notification = await notifications.insertMany(
       list_noti
     )
+
+    let list_userIdForNoti = created_notification.reduce((list, e) => {
+      list.push(e.userId)
+      return list;
+    }, [])
+
+    let result_notifications = await notifications.find({ _id: { $in: list_userIdForNoti } })
+      .populate({path:'userId',select:'push_notification_token'})
+
+
+
     // Success
     await commitTransactions(sessions)
-
-
-
-
-
-
-
     // done notification
 
     return res.status(200).json({
       success: true,
       data: doc,
       updated: updated,
-      notification: created_notification
+      notification: result_notifications
     });
   } catch (error) {
     await abortTransactions(sessions);

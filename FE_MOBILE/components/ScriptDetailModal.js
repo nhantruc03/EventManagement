@@ -22,7 +22,7 @@ import axios from "axios";
 import Customdatetime from "./helper/datetimepicker";
 import WSK from "../websocket";
 import AsyncStorage from "@react-native-community/async-storage";
-
+import * as PushNoti from '../components/helper/pushNotification'
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   Label: {
@@ -150,6 +150,7 @@ class ScriptDetailModal extends Component {
             notification: res.data.notification,
           })
           );
+          PushNoti.sendPushNoti(res.data.notification)
           this.props.onClose();
           alert("Tạo chi tiết kịch bản thành công");
           //alert("Tạo chi tiết kịch bản thành công");
@@ -172,6 +173,7 @@ class ScriptDetailModal extends Component {
             notification: res.data.notification,
           })
           );
+          PushNoti.sendPushNoti(res.data.notification)
           this.props.onClose();
           alert("Cập nhật chi tiết kịch bản thành công");
         })

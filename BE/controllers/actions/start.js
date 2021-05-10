@@ -141,7 +141,7 @@ const start = async (req, res) => {
                 body.push(temp)
             })
             //access DB
-            listNotifications = await notifications.insertMany(
+            let temp_listNoti = await notifications.insertMany(
                 body,
                 { session: session }
             )
@@ -153,6 +153,14 @@ const start = async (req, res) => {
                     error: "Created failed"
                 });
             }
+
+            let list_userIdForNoti = temp_listNoti.reduce((list, e) => {
+                list.push(e.userId)
+                return list;
+              }, [])
+          
+              listNotifications = await notifications.find({ _id: { $in: list_userIdForNoti } })
+                .populate({path:'userId',select:'push_notification_token'})
 
         }
         // done notification

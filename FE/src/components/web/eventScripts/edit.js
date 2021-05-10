@@ -11,6 +11,7 @@ import ListScriptDetails from '../eventScriptDetail/list'
 import ReviewScriptDetail from '../eventScriptDetail/withId/review'
 import { w3cwebsocket } from 'websocket';
 import History from './history';
+import * as PushNoti from '../helper/pushNotification'
 const { TabPane } = Tabs;
 const client = new w3cwebsocket('ws://localhost:3001');
 const { Option } = Select;
@@ -129,6 +130,7 @@ class edit extends Component {
                     type: "sendNotification",
                     notification: res.data.notification
                 }))
+                PushNoti.sendPushNoti(res.data.notification)
                 this.setState({
                     history: [...this.state.history, res.data.history]
                 })
@@ -174,11 +176,12 @@ class edit extends Component {
                         }),
                         history: [...this.state.history, res.data.history]
                     })
-                    let temp_noti = res.data.notification;
+
                     client.send(JSON.stringify({
                         type: "sendNotification",
                         notification: res.data.notification
                     }))
+                    PushNoti.sendPushNoti(res.data.notification)
                     message.success("Cập nhật chi tiết kịch bản thành công")
                 })
                 .catch(err => {
@@ -187,23 +190,7 @@ class edit extends Component {
         )
     }
 
-    sendPushNoti = (e) => {
-        // Axios.post(
-        let response = fetch('https://exp.host/--/api/v2/push/send', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                to: e.userId.push_notification_token,
-                title: `Thông báo: ${e.name}`,
-                body: e.description,
-                sound: 'default'
-            })
-        })
 
-    }
 
     onAddDetail = async () => {
         await trackPromise(
@@ -223,6 +210,7 @@ class edit extends Component {
                         type: "sendNotification",
                         notification: res.data.notification
                     }))
+                    PushNoti.sendPushNoti(res.data.notification)
                     message.success("Thêm chi tiết kịch bản thành công")
                 })
                 .catch(err => {
@@ -249,6 +237,7 @@ class edit extends Component {
                         type: "sendNotification",
                         notification: res.data.notification
                     }))
+                    PushNoti.sendPushNoti(res.data.notification)
                     message.success("Xóa chi tiết kịch bản thành công")
                 })
                 .catch(err => {

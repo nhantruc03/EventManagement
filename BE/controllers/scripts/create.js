@@ -73,13 +73,15 @@ const create = async (req, res) => {
     let created_notification = await notifications.create(
       noti
     )
+    let result_noti = await notifications.findById(created_notification._id)
+      .populate({path:'userId',select:'push_notification_token'})
     // done notification
     
     await commitTransactions(sessions);
     return res.status(200).json({
       success: true,
       data: doc,
-      notification: created_notification
+      notification: result_noti
     });
   } catch (error) {
     await abortTransactions(sessions);

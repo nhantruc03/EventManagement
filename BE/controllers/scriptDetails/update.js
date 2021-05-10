@@ -117,7 +117,7 @@ const update = async (req, res) => {
       noti
     )
 
-    let result_noti = await notifications.findById(created_notification)
+    let result_noti = await notifications.findById(created_notification._id)
       .populate({ path: 'userId', select: 'push_notification_token' })
 
     // done notification

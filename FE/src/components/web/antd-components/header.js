@@ -43,7 +43,7 @@ class header extends Component {
                     if (dataFromServer.notifications.length > 0) {
                         // console.log(dataFromServer.message)
                         dataFromServer.notifications.forEach(e => {
-                            if (e.userId === this.state.currentUser.id) {
+                            if (e.userId._id === this.state.currentUser.id) {
                                 this.setState({
                                     notifications: [e, ...this.state.notifications]
                                 })
@@ -52,7 +52,7 @@ class header extends Component {
                     }
                 } else if (dataFromServer.type === "sendNotification") {
                     console.log(dataFromServer.notification)
-                    if (dataFromServer.notification.userId === this.state.currentUser.id) {
+                    if (dataFromServer.notification.userId._id === this.state.currentUser.id) {
                         this.setState({
                             notifications: [dataFromServer.notification, ...this.state.notifications]
                         })

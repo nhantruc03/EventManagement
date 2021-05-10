@@ -15,6 +15,7 @@ import moment from 'moment'
 import * as constants from "../constant/actions"
 import checkPermission from "../helper/checkPermissions"
 import { w3cwebsocket } from 'websocket';
+import * as PushNoti from '../helper/pushNotification'
 const client = new w3cwebsocket('ws://localhost:3001');
 class list extends Component {
     constructor(props) {
@@ -115,6 +116,7 @@ class list extends Component {
                         type: "sendNotification",
                         notification: res.data.notification
                     }))
+                    PushNoti.sendPushNoti(res.data.notification)
                     this.setState({
                         data: this.state.data.filter(o => o._id !== e)
                     })

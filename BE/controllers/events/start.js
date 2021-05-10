@@ -68,7 +68,6 @@ const start = async (req, res) => {
         // start Event Assign
         let listEventAssign = [];
         if (body_ref.eventAssigns) {
-            console.log('start 1')
             //prepare data
             let body = [];
             body_ref.eventAssigns.map(element => {
@@ -124,7 +123,6 @@ const start = async (req, res) => {
         // done Event Assign
         // start notification
         if (!isEmpty(listEventAssign)) {
-            console.log('start 2')
             let listNotifications = [];
             //prepare data
             let body = [];
@@ -150,12 +148,12 @@ const start = async (req, res) => {
                 });
             }
 
+
         }
         // done notification
         // start guest type
         let listGuestTypes = [];
         if (body_ref.guestTypes) {
-            console.log('start 3')
             //prepare data
             let body = [];
             body_ref.guestTypes.map(element => {
@@ -211,7 +209,6 @@ const start = async (req, res) => {
         // listGuestTypes
         let listGuests = [];
         if (body_ref.guests) {
-            console.log('start 4')
             let body = body_ref.guests.map(element =>
                 pick(element,
                     "name",
@@ -282,7 +279,6 @@ const start = async (req, res) => {
         // start chat room
         let listGroups = [];
         if (body_ref.groups) {
-            console.log('start 5')
             //prepare data
             let body = [];
             body_ref.groups.map(element => {

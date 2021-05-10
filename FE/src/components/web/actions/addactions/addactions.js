@@ -10,6 +10,7 @@ import {
 import Dragger from 'antd/lib/upload/Dragger';
 import { w3cwebsocket } from 'websocket';
 import moment from 'moment'
+import * as PushNoti from '../../helper/pushNotification'
 const client = new w3cwebsocket('ws://localhost:3001');
 const { Step } = Steps;
 const { Option } = Select;
@@ -128,6 +129,7 @@ class addactions extends Component {
                     type: "sendListNotifications",
                     notifications: res.data.Notifications
                 }))
+                PushNoti.sendListPushNoti(res.data.Notifications)
                 let temp = res.data.action
                 temp.endTime = moment(temp.endTime).utcOffset(0)
                 temp.endDate = moment(temp.endDate).utcOffset(0)
