@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Animated } from "react-native";
 import WSK from "../../websocket";
 import Url from "../../env";
 import getToken from "../../Auth";
@@ -23,8 +23,12 @@ import OptionsMenu from "react-native-options-menu";
 import Icon from "../../assets/images/more.png";
 import Indicator from "../../components/helper/Loading";
 import * as PushNoti from '../../components/helper/pushNotification'
+import checkPermisson from "../../components/helper/checkPermissions";
+import * as constants from "../../components/constant/action";
+import * as GestureHandler from 'react-native-gesture-handler';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-
+const { Swipeable } = GestureHandler;
 
 const styles = StyleSheet.create({
   Loading: {
@@ -129,7 +133,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   textTime: { paddingHorizontal: 8, fontFamily: "semibold", fontSize: 20 },
+  rightContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingRight: 16,
 
+  },
+  rightAction: {
+    backgroundColor: "#FF2121",
+    borderRadius: 8,
+  },
+
+  iconDelete: {
+    padding: 12
+  },
 });
 
 
@@ -378,7 +395,102 @@ class scriptdetail extends Component {
     });
   };
 
+  renderUpdateBtn = () => {
+    if (!this.state.loadingbtn) {
+      if (checkPermisson(this.props.route.params.currentPermissions, constants.QL_KICHBAN_PERMISSION)) {
+        return (
+          <TouchableOpacity
+            style={styles.btnUpdate}
+            underlayColor="#fff"
+            onPress={() => this.updateScript()}
+          >
+            <Text style={styles.textUpdate}>Cập nhật</Text>
+          </TouchableOpacity>
+        )
+      } else return null
+    }
+    else return (
+      <Button loading>loading</Button>
+    )
+  }
 
+  RightActions = (e) => {
+
+    // let scale = dragX.interpolate({
+    //   inputRange: [0, 50],
+    //   outputRange: [1, 0],
+    //   extrapolate: 'clamp'
+    // })
+    return (
+      <View style={styles.rightContainer}>
+        <TouchableOpacity onPress={() => this.onDeleteDetail(e)}>
+          <View style={styles.rightAction}>
+            <Animated.View style={styles.iconDelete}>
+              <Ionicons name='trash-outline' size={24} color='white' />
+            </Animated.View>
+          </View>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+  onDeleteDetail = async (value) => {
+    console.log(value)
+    let login = await AsyncStorage.getItem("login");
+    var obj = JSON.parse(login);
+    await (
+      axios.delete(`${Url()}/api/script-details/` + value._id + `?updateUserId=${obj.id}`, {
+        headers: {
+          'Authorization': await getToken(),
+        }
+      })
+        .then((res) => {
+          let temp = this.state.listscriptdetails.filter(e => e._id !== value._id);
+          this.setState({
+            listscriptdetails: temp,
+            history: [...this.state.history, res.data.history]
+          })
+          client.send(JSON.stringify({
+            type: "sendNotification",
+            notification: res.data.notification
+          }))
+          PushNoti.sendPushNoti(res.data.notification)
+          message.success("Xóa chi tiết kịch bản thành công")
+        })
+        .catch(err => {
+          message.error("Xóa chi tiết kịch bản thất bại")
+        })
+    )
+
+  }
+
+
+  renderItem = (e) => {
+    if (checkPermisson(this.props.route.params.currentPermissions, constants.QL_KICHBAN_PERMISSION)) {
+      return (
+        <Swipeable renderRightActions={() => this.RightActions(e.item)}>
+          <TouchableOpacity
+            style={styles.itemContainer}
+            onPress={() =>
+              this.setState({
+                visible: true,
+                editDetailData: e.item,
+                addScriptDetails: false,
+              })
+            }
+          >
+            <View style={styles.itemForm}>
+              <Image
+                source={require("../../assets/images/timesolid.png")}
+              />
+              <Text style={styles.textTime}>
+                {moment(e.item.time).utcOffset(0).format("HH:mm")}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </Swipeable>
+      )
+    } else return null
+  }
 
   render() {
     if (!this.state.isLoading) {
@@ -402,7 +514,7 @@ class scriptdetail extends Component {
             </View>
             <View style={styles.ScriptNameLabelContainer}>
               <Text style={styles.Label}>Dành cho</Text>
-              <View >
+              <View style={styles.Box}>
                 <Picker
                   onChange={this.onChangeForId}
                   value={this.state.forId}
@@ -421,18 +533,7 @@ class scriptdetail extends Component {
                 </Picker>
               </View>
             </View>
-            {!this.state.loadingbtn ? (
-              <TouchableOpacity
-                style={styles.btnUpdate}
-                underlayColor="#fff"
-                onPress={() => this.updateScript()}
-              >
-                <Text style={styles.textUpdate}>Cập nhật</Text>
-              </TouchableOpacity>
-            ) : (
-              <Button loading>loading</Button>
-            )}
-
+            {this.renderUpdateBtn()}
             <View>
               <View>
                 <Text style={styles.Label}>Timeline</Text>
@@ -442,53 +543,34 @@ class scriptdetail extends Component {
               <FlatList
                 data={this.state.listscriptdetails}
                 keyExtractor={(item) => item._id}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.itemContainer}
-                    onPress={() =>
-                      this.setState({
-                        visible: true,
-                        editDetailData: item,
-                        addScriptDetails: false,
-                      })
-                    }
-                  >
-                    <View style={styles.itemForm}>
-                      <Image
-                        source={require("../../assets/images/timesolid.png")}
-                      />
-                      <Text style={styles.textTime}>
-                        {moment(item.time).utcOffset(0).format("HH:mm")}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                )}
+                renderItem={this.renderItem}
               ></FlatList>
             </View>
-            <TouchableOpacity
-              style={styles.btnAdd}
-              underlayColor="#fff"
-              onPress={() =>
-                this.setState({
-                  visible: true,
-                  editDetailData: {
-                    name: "",
-                    time: new Date(),
-                    description: "",
-                  },
-                  addScriptDetails: true,
-                })
-              }
-            >
-              <Text style={styles.textAdd}>+ Thêm</Text>
-            </TouchableOpacity>
+            {checkPermisson(this.props.route.params.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
+              <TouchableOpacity
+                style={styles.btnAdd}
+                underlayColor="#fff"
+                onPress={() =>
+                  this.setState({
+                    visible: true,
+                    editDetailData: {
+                      name: "",
+                      time: new Date(),
+                      description: "",
+                    },
+                    addScriptDetails: true,
+                  })
+                }
+              >
+                <Text style={styles.textAdd}>+ Thêm</Text>
+              </TouchableOpacity>
+              : null}
           </View>
           <Modal
             closable
             maskClosable
             title="Chi tiết"
             visible={this.state.visible}
-
             transparent
             onClose={this.onClose}
           >

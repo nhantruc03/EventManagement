@@ -13,6 +13,8 @@ import { Dimensions } from "react-native";
 import GroupTab from "../../components/EventTabs/GroupTab";
 import { ActivityIndicator } from "@ant-design/react-native";
 import Indicator from "../../components/helper/Loading";
+import getPermission from "../../components/helper/Credentials"
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -57,6 +59,7 @@ export default class EventDetail2 extends Component {
         { key: "5", title: "Khách mời" },
       ],
       loadingBigBO: this.props.route.params.loadBySelf ? true : false,
+      currentPermissions: []
     };
     this._isMounted = false;
     this.renderScene = SceneMap({
@@ -81,6 +84,7 @@ export default class EventDetail2 extends Component {
   Route3 = () =>
     this.state.listscripts && !this.state.loading ? (
       <ScriptTab
+        currentPermissions={this.state.currentPermissions}
         navigation={this.props.navigation}
         data={this.state.listscripts}
         updateListScript={(e) => this.updateListScript(e)}
@@ -95,6 +99,7 @@ export default class EventDetail2 extends Component {
   Route4 = () =>
     this.state.listgroups && !this.state.loading ? (
       <GroupTab
+
         navigation={this.props.navigation}
         data={this.state.listgroups}
       />
@@ -106,7 +111,7 @@ export default class EventDetail2 extends Component {
 
   Route5 = () =>
     this.state.listGuest && !this.state.loading ? (
-      <GuestTab data={this.state.listGuest} />
+      <GuestTab currentPermissions={this.state.currentPermissions} data={this.state.listGuest} />
     ) : (
       <View style={styles.Loading}>
         <Indicator />
@@ -127,6 +132,7 @@ export default class EventDetail2 extends Component {
       listEventAssign,
       scripts,
       event,
+      permissons,
     ] = await Promise.all([
       axios
         .post(
@@ -189,6 +195,7 @@ export default class EventDetail2 extends Component {
         .then((res) => {
           return res.data.data;
         }),
+      getPermission(this.props.route.params.data._id).then(res => res)
     ]);
 
     let guests = [];
@@ -223,7 +230,8 @@ export default class EventDetail2 extends Component {
         event: event,
         loading: false,
         listscripts: scripts,
-        loadingBigBO: false
+        loadingBigBO: false,
+        currentPermissions: permissons
       });
     }
   }

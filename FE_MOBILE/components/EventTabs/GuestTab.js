@@ -14,6 +14,8 @@ import Checked from "../../assets/images/square_checked.png";
 import axios from "axios";
 import Url from "../../env";
 import getToken from "../../Auth";
+import checkPermisson from "../helper/checkPermissions";
+import * as constants from "../constant/action";
 
 
 const styles = StyleSheet.create({
@@ -117,6 +119,31 @@ export default class GuestTab extends Component {
       SearchData: data,
     });
   };
+
+  renderItem = (e) => {
+
+    return (
+      <View style={styles.itemContainer}>
+        <View style={styles.itemTextContainer}>
+          <Text style={styles.itemTextName}>{e.item.name}</Text>
+          <Text style={styles.itemTextPhone}>{e.item.phone}</Text>
+          <Text style={styles.itemTextEmail}>{e.item.email}</Text>
+        </View>
+        <View style={styles.checkboxContainer}>
+          {checkPermisson(this.props.currentPermissions, constants.QL_KHACHMOI_PERMISSION) ?
+            <TouchableOpacity onPress={() => this.changeStatus(e.item)}>
+              {e.item.status ? (
+                <Image source={Checked}></Image>
+              ) : (
+                <Image source={Unchecked}></Image>
+              )}
+            </TouchableOpacity> : null}
+        </View>
+      </View>
+    )
+
+  }
+
   render() {
     //let temp_listActions = this.applyFilter(this.props.sectionListData);
 
@@ -155,24 +182,7 @@ export default class GuestTab extends Component {
               <Text style={styles.headerText}>{section.title}</Text>
             </View>
           )}
-          renderItem={({ item }) => (
-            <View style={styles.itemContainer}>
-              <View style={styles.itemTextContainer}>
-                <Text style={styles.itemTextName}>{item.name}</Text>
-                <Text style={styles.itemTextPhone}>{item.phone}</Text>
-                <Text style={styles.itemTextEmail}>{item.email}</Text>
-              </View>
-              <View style={styles.checkboxContainer}>
-                <TouchableOpacity onPress={() => this.changeStatus(item)}>
-                  {item.status ? (
-                    <Image source={Checked}></Image>
-                  ) : (
-                    <Image source={Unchecked}></Image>
-                  )}
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
+          renderItem={this.renderItem}
         />
       </SafeAreaView>
     );

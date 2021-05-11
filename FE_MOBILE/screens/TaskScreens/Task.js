@@ -17,6 +17,9 @@ import { StatusBar } from "react-native";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 import EmptyState from "../../components/EmptyState";
+import getPermission from "../../components/helper/Credentials"
+import checkPermisson from "../../components/helper/checkPermissions"
+import * as constants from "../../components/constant/action";
 const W = Dimensions.get("window").width;
 
 const initialLayout = { width: W };
@@ -95,6 +98,7 @@ class Taskscreen extends Component {
       selectedItems: {},
       visible: false,
       chosen: false,
+      currentPermissions: []
     };
     this._isMounted = false;
   }
@@ -174,7 +178,7 @@ class Taskscreen extends Component {
     this.setState({
       loading: true,
     });
-    const [actionTypes, falcuties, actions] = await Promise.all([
+    const [actionTypes, falcuties, actions, permissions] = await Promise.all([
       axios
         .post(
           `${Url()}/api/action-types/getAll`,
@@ -217,6 +221,7 @@ class Taskscreen extends Component {
         .catch((err) => {
           console.log(err.response);
         }),
+      getPermission(id).then(res => res)
     ]);
     if (actionTypes !== null && falcuties !== null && actions !== null) {
       let temp_routes = [];
@@ -236,6 +241,7 @@ class Taskscreen extends Component {
         routes: temp_routes,
         currentEvent: temp[0],
         loading: false,
+        currentPermissions: permissions
       });
     }
   };
@@ -267,6 +273,7 @@ class Taskscreen extends Component {
       <TouchableOpacity
         onPress={() =>
           this.props.navigation.navigate("TaskDetail", {
+            currentPermissions: this.state.currentPermissions,
             data: item,
           })
         }
@@ -443,6 +450,29 @@ class Taskscreen extends Component {
     } else return null
   }
 
+  renderCreateBtn() {
+    if (this.state.chosen) {
+      if (checkPermisson(this.state.currentPermissions, constants.QL_CONGVIEC_PERMISSION)) {
+        return (
+          <Button
+            type="primary"
+            size="small"
+            style={styles.AddBtn}
+            activeStyle={{ color: "white" }}
+            onPress={() =>
+              this.props.navigation.navigate("CreateTask", {
+                event: this.state.currentEvent,
+                navigation: this.props.navigation,
+              })
+            }
+          >
+            <Text style={styles.BtnText}>Tạo mới +</Text>
+          </Button>
+        )
+      } else return null
+    } else return null
+  }
+
   render() {
     return (
       <Provider>
@@ -459,22 +489,7 @@ class Taskscreen extends Component {
             }}
           >
             <Text style={styles.toplabel}>Công việc</Text>
-            {this.state.chosen ? (
-              <Button
-                type="primary"
-                size="small"
-                style={styles.AddBtn}
-                activeStyle={{ color: "white" }}
-                onPress={() =>
-                  this.props.navigation.navigate("CreateTask", {
-                    event: this.state.currentEvent,
-                    navigation: this.props.navigation,
-                  })
-                }
-              >
-                <Text style={styles.BtnText}>Tạo mới +</Text>
-              </Button>
-            ) : null}
+            {this.renderCreateBtn()}
           </View>
           {this.renderEmptyState()}
           <SearchableDropdown

@@ -3,24 +3,21 @@ import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-community/async-storage";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faHome } from "@fortawesome/free-solid-svg-icons";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import * as Notifications from 'expo-notifications';
 import ProfileStackNav from "../routes/ProfileStackNav";
-import Profilescreen from "../screens/ProfileScreens/Profile";
 import Calendarscreen from "../screens/Calendar";
-import Notificationscreen from "../screens/Notification";
 import StackNav from "../routes/StackNav";
 import TaskStackNav from "../routes/TaskStackNav";
 import HomeStackNav from "../routes/HomeStackNav";
 import NotiStackNav from "../routes/NotiStackNav";
 import { createStackNavigator } from "@react-navigation/stack";
+
+//import API
 import WSK from "../websocket";
 import Url from "../env";
 import axios from "axios";
 import getToken from "../Auth";
-import HomeIcon from "../assets/svg/UI/Navbar/Home";
+
 const Tab = createBottomTabNavigator();
 
 const Stack = createStackNavigator();

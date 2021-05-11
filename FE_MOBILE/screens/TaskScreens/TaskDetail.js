@@ -15,6 +15,8 @@ import CommentTab from "../../components/TaskTabs/CommentTab";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Image } from "react-native";
 import Indicator from "../../components/helper/Loading";
+import checkPermisson from "../../components/helper/checkPermissions"
+import * as constants from "../../components/constant/action";
 
 const initialLayout = { width: Dimensions.get("window").width };
 const styles = StyleSheet.create({
@@ -126,7 +128,7 @@ class TaskDetail extends Component {
     this.props.navigation.setOptions({
       headerRight: () => (
         <View style={styles.IconRight}>
-          <TouchableOpacity
+          {checkPermisson(this.props.route.params.currentPermissions, constants.QL_CONGVIEC_PERMISSION) ? <TouchableOpacity
             onPress={() =>
               this.props.navigation.navigate("EditTask", {
                 data: temp_data,
@@ -135,7 +137,8 @@ class TaskDetail extends Component {
             }
           >
             <Image source={require("../../assets/images/preview.png")} />
-          </TouchableOpacity>
+          </TouchableOpacity> : null}
+
         </View>
       ),
     });

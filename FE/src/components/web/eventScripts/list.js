@@ -81,7 +81,7 @@ class list extends Component {
                     res.data.data
                 )
         ]));
-        
+
         if (scripts !== null) {
             if (this._isMounted) {
                 this.setState({
@@ -103,6 +103,7 @@ class list extends Component {
     }
 
     deleteClick = async (e) => {
+
         await trackPromise(
             Axios.delete("/api/scripts/" + e, {
                 headers: {
