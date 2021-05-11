@@ -40,7 +40,7 @@ class TableDataRow extends Component {
                 maxTagCount={1}
                 mode="multiple"
                 allowClear
-                style={{ width: '90%' }}
+                // style={{ width: '90%' }}
                 placeholder="Chọn quyền..."
                 filterOption={(input, option) =>
                     option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0

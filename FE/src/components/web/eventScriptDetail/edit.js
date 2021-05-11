@@ -33,14 +33,17 @@ class edit extends Component {
             _id: this.props.data._id,
             noinfo: false,
         };
-
-        this.props.onUpdate(data);
+        if (this.props.data.onAdd) {
+            this.props.onAdd(data)
+        } else {
+            this.props.onUpdate(data);
+        }
         this.props.onClose();
     };
 
     onClose = () => {
         if (this.props.data.noinfo) {
-            this.props.onDelete(this.props.data._id);
+            this.props.onDelete(this.props.data);
         } else {
             this.props.onClose();
         }

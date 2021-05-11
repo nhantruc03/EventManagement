@@ -11,8 +11,7 @@ class review extends Component {
         super(props)
         this.state = {
             intervalId: null,
-            currentScript: 0,
-            nextScript: 1,
+            currentScript: -1,
             currentTime: new Date(),
             data: []
         }
@@ -31,7 +30,6 @@ class review extends Component {
                     return null
                 }
             })
-
             this.setState({
                 data: temp
             })
@@ -41,14 +39,12 @@ class review extends Component {
                     intervalId: intervalId,
                 })
             }
-
         }
     }
 
     componentWillUnmount() {
         this._isMounted = false;
         clearInterval(this.state.intervalId);
-
     }
 
 
@@ -60,69 +56,27 @@ class review extends Component {
                 current = i
             }
         })
-
         if (current !== null) {
             this.setState({ currentScript: current });
         }
     }
 
-    // renderIcon = (key) => {
-    //     let result
-
-    //     if (key < this.state.currentScript) {
-    //         result = <CheckCircleOutlined />
-    //     }
-    //     else if (key > this.state.currentScript) {
-    //         result = null
-    //     }
-    //     else if (key === this.state.currentScript) {
-    //         result = <LoadingOutlined />
-    //     }
-    //     else if (key === this.state.nextScript) {
-    //         result = <HourglassOutlined />
-    //     }
-
-    //     return result
-    // }
-
-    // renderTime = (e, key) => {
-    //     return (
-    //         <div className="flex-container-row">
-    //             {/* {this.renderIcon(key)} */}
-
-    //             <div className="flex-container-column" style={{ lineHeight: 1, marginLeft: '10px' }}>
-    //                 <div>
-    //                     <strong>{moment(new Date(e.time)).format('HH:mm')}</strong>
-    //                 </div>
-    //                 <div className="timeline-name">
-    //                     {e.name}
-    //                 </div>
-    //             </div>
-    //         </div>
-
-    //     )
-    // }
-
-    // renderView = () => {
-    //     return (
-    //         this.state.data.map((e, key) => {
-    //             return (
-    //                 <Timeline.Item key={key} label={this.renderTime(e, key)}>
-    //                     {this.state.currentScript === key ? <div>{key}</div> : null}
-    //                     <div dangerouslySetInnerHTML={{ __html: e.description }} />
-    //                 </Timeline.Item>
-    //             )
-    //         }))
-    // }
-
     renderView2 = () => {
         return (
             this.state.data.map((e, key) => {
-                return (
-                    <Step key={key} title={e.name} subTitle={moment(new Date(e.time)).format('HH:mm')} icon={this.state.currentScript === key ? < LoadingOutlined /> : null}
-                        description={<div dangerouslySetInnerHTML={{ __html: e.description }} />}
-                    />
-                )
+                if (this.props.onGoing) {
+                    return (
+                        <Step key={key} title={e.name} subTitle={moment(new Date(e.time)).utcOffset(0).format('HH:mm')} icon={this.state.currentScript === key ? <LoadingOutlined /> : null}
+                            description={<div dangerouslySetInnerHTML={{ __html: e.description }} />}
+                        />
+                    )
+                } else {
+                    return (
+                        <Step key={key} title={e.name} subTitle={moment(new Date(e.time)).utcOffset(0).format('HH:mm')}
+                            description={<div dangerouslySetInnerHTML={{ __html: e.description }} />}
+                        />
+                    )
+                }
             }))
     }
 
@@ -130,11 +84,6 @@ class review extends Component {
         return (
             <div >
                 <Title level={3}>{this.props.onGoing ? "Đang diễn ra" : "Chưa diễn ra"}</Title>
-                {/* <Timeline mode="left">
-                    <Title></Title>
-                    {this.renderView()}
-                </Timeline> */}
-
                 <Steps className="scrips-view" current={this.state.currentScript} direction="vertical">
                     {this.renderView2()}
                 </Steps>

@@ -18,7 +18,7 @@ class item extends Component {
     renderState = () => {
         if (this.state.current === 'edit' || this.props.data.noinfo) {
             return (
-                <Edit data={this.props.data} onClose={() => { this.setState({ current: null }) }} onDelete={this.props.onDelete} onUpdate={this.props.onUpdate} />
+                <Edit data={this.props.data} onAdd={this.props.onAdd} onClose={() => { this.setState({ current: null }) }} onDelete={this.props.onDelete} onUpdate={this.props.onUpdate} />
             )
         }
         else {

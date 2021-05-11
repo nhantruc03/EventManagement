@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ConfigProvider } from 'antd';
+// import VN from 'antd/lib/locale/vi_VN';
 import VN from 'antd/lib/locale/vi_VN';
 ReactDOM.render(
   <ConfigProvider locale={VN}>

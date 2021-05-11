@@ -11,6 +11,8 @@ import ListScriptDetails from '../eventScriptDetail/list'
 import ReviewScriptDetail from '../eventScriptDetail/withId/review'
 import { w3cwebsocket } from 'websocket';
 import History from './history';
+import moment from 'moment'
+import * as PushNoti from '../helper/pushNotification'
 const { TabPane } = Tabs;
 const client = new w3cwebsocket('ws://localhost:3001');
 const { Option } = Select;
@@ -129,6 +131,7 @@ class edit extends Component {
                     type: "sendNotification",
                     notification: res.data.notification
                 }))
+                PushNoti.sendPushNoti(res.data.notification)
                 this.setState({
                     history: [...this.state.history, res.data.history]
                 })
@@ -174,11 +177,11 @@ class edit extends Component {
                         }),
                         history: [...this.state.history, res.data.history]
                     })
-                    let temp_noti = res.data.notification;
                     client.send(JSON.stringify({
                         type: "sendNotification",
                         notification: res.data.notification
                     }))
+                    PushNoti.sendPushNoti(res.data.notification)
                     message.success("Cập nhật chi tiết kịch bản thành công")
                 })
                 .catch(err => {
@@ -187,74 +190,87 @@ class edit extends Component {
         )
     }
 
-    sendPushNoti = (e) => {
-        // Axios.post(
-        let response = fetch('https://exp.host/--/api/v2/push/send', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                to: e.userId.push_notification_token,
-                title: `Thông báo: ${e.name}`,
-                body: e.description,
-                sound: 'default'
-            })
+    onAddDetail = async (value) => {
+        value.scriptId = this.props.match.params.id
+        let temp ={
+            ...value,
+            scriptId: this.props.match.params.id,
+            updateUserId: this.state.currentUser.id,
+        }
+        console.log('data for add', temp)
+        this.setState({
+            listscriptdetails: this.state.listscriptdetails.filter(e => e._id !== value._id)
         })
-    }
-
-    onAddDetail = async () => {
         await trackPromise(
-            Axios.post("/api/script-details", { name: uuidv1(), description: '<p>Hãy nhập thông tin chi tiết<p>', updateUserId: this.state.currentUser.id, time: new Date(), scriptId: this.props.match.params.id }, {
+            Axios.post("/api/script-details", temp, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
             })
                 .then((res) => {
-                    let temp = res.data.data[0];
-                    temp.noinfo = true;
+                    let result = res.data.data[0];
                     this.setState({
-                        listscriptdetails: [...this.state.listscriptdetails, temp],
+                        listscriptdetails: [...this.state.listscriptdetails, result],
                         history: [...this.state.history, res.data.history]
                     })
                     client.send(JSON.stringify({
                         type: "sendNotification",
                         notification: res.data.notification
                     }))
+                    PushNoti.sendPushNoti(res.data.notification)
                     message.success("Thêm chi tiết kịch bản thành công")
                 })
                 .catch(err => {
                     message.error("Thêm chi tiết kịch bản thất bại")
                 })
         )
+    }
 
+    onAddDetailWithoutApi = () => {
+        let temp = {
+            _id: uuidv1(),
+            scriptId: this.props.match.params.id,
+            onAdd: true,
+            name: '',
+            description: '',
+            time: moment(new Date()).utc(true),
+            noinfo: true
+        }
+        this.setState({
+            listscriptdetails: [...this.state.listscriptdetails, temp],
+        })
     }
 
     onDeleteDetail = async (value) => {
-        await trackPromise(
-            Axios.delete("/api/script-details/" + value + `? updateUserId = ${this.state.currentUser.id}`, {
-                headers: {
-                    'Authorization': { AUTH }.AUTH
-                }
+        if (value.noinfo || value.onAdd) {
+            this.setState({
+                listscriptdetails: this.state.listscriptdetails.filter(e => e._id !== value._id)
             })
-                .then((res) => {
-                    let temp = this.state.listscriptdetails.filter(e => e._id !== value);
-                    this.setState({
-                        listscriptdetails: temp,
-                        history: [...this.state.history, res.data.history]
+        } else {
+            await trackPromise(
+                Axios.delete("/api/script-details/" + value._id + `?updateUserId=${this.state.currentUser.id}`, {
+                    headers: {
+                        'Authorization': { AUTH }.AUTH
+                    }
+                })
+                    .then((res) => {
+                        let temp = this.state.listscriptdetails.filter(e => e._id !== value._id);
+                        this.setState({
+                            listscriptdetails: temp,
+                            history: [...this.state.history, res.data.history]
+                        })
+                        client.send(JSON.stringify({
+                            type: "sendNotification",
+                            notification: res.data.notification
+                        }))
+                        PushNoti.sendPushNoti(res.data.notification)
+                        message.success("Xóa chi tiết kịch bản thành công")
                     })
-                    client.send(JSON.stringify({
-                        type: "sendNotification",
-                        notification: res.data.notification
-                    }))
-                    message.success("Xóa chi tiết kịch bản thành công")
-                })
-                .catch(err => {
-                    message.error("Xóa chi tiết kịch bản thất bại")
-                })
-        )
-
+                    .catch(err => {
+                        message.error("Xóa chi tiết kịch bản thất bại")
+                    })
+            )
+        }
     }
 
 
@@ -342,7 +358,7 @@ class edit extends Component {
                                     </div>
                                 </Form>
                                 <Title style={{ marginTop: '20px' }} level={3}>Kịch bản chính</Title>
-                                <ListScriptDetails onEdit={true} data={this.state.listscriptdetails} onDelete={this.onDeleteDetail} onAdd={this.onAddDetail} onUpdate={this.onUpdateDetail} />
+                                <ListScriptDetails onEdit={true} data={this.state.listscriptdetails} onDelete={this.onDeleteDetail} onAddWithoutApi={this.onAddDetailWithoutApi} onAdd={this.onAddDetail} scriptId={this.props.match.params.id} onUpdate={this.onUpdateDetail} />
                             </Col>
                             <Col sm={24} xl={8}>
                                 <Tabs defaultActiveKey="1" >

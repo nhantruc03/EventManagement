@@ -32,7 +32,6 @@ class header extends Component {
         if (this._isMounted) {
             var login = localStorage.getItem('login');
             var obj = JSON.parse(login);
-
             client.onopen = () => {
                 console.log('Connect to ws')
             }
@@ -41,7 +40,6 @@ class header extends Component {
                 const dataFromServer = JSON.parse(message.data);
                 if (dataFromServer.type === "sendListNotifications") {
                     if (dataFromServer.notifications.length > 0) {
-                        // console.log(dataFromServer.message)
                         dataFromServer.notifications.forEach(e => {
                             if (e.userId._id === this.state.currentUser.id) {
                                 this.setState({
@@ -51,7 +49,6 @@ class header extends Component {
                         })
                     }
                 } else if (dataFromServer.type === "sendNotification") {
-                    console.log(dataFromServer.notification)
                     if (dataFromServer.notification.userId._id === this.state.currentUser.id) {
                         this.setState({
                             notifications: [dataFromServer.notification, ...this.state.notifications]
@@ -80,6 +77,7 @@ class header extends Component {
                 }
             }
         }
+        
     }
 
     handleButtonClick = (e) => {
@@ -125,11 +123,18 @@ class header extends Component {
                 'Authorization': { AUTH }.AUTH
             }
         })
-            .then((res) =>
-                console.log(res.data.data)
-            )
+            .then((res) => {
+                let temp_list = this.state.notifications;
+                temp_list.forEach(e => {
+                    if (e._id === id) {
+                        e.status = true
+                    }
+                })
+                this.setState({
+                    notifications: temp_list
+                })
 
-
+            })
         this.setState({
             notiUrl: url,
             onNoti: true
@@ -139,7 +144,7 @@ class header extends Component {
     renderNotificationContent = (e) => {
         if (e.eventId) {
             return (
-                <Link onClick={(x) => this.updateNoti(x, e._id, `/events/${e.eventId}`)} to={'/#'}>
+                <Link className={e.status ? 'noti-watched' : 'noti'} onClick={(x) => this.updateNoti(x, e._id, `/events/${e.eventId}`)} to={'/#'}>
                     <Tooltip
                         title={
                             <div>
@@ -149,15 +154,17 @@ class header extends Component {
                             </div>
                         }
                         placement="top">
-                        <p style={{ fontWeight: 'bold' }} >{e.name}</p>
-                        <p className="cut-text">{e.description}</p>
+                        <div>
+                            <p style={{ fontWeight: 'bold' }} >{e.name}</p>
+                            <p className="cut-text">{e.description}</p>
+                        </div>
                     </Tooltip>
                 </Link>
             )
         }
         else if (e.actionId) {
             return (
-                <Link onClick={(x) => this.updateNoti(x, e._id, `/actions/${e.actionId}`)} to={"/#"}>
+                <Link className={e.status ? 'noti-watched' : 'noti'} onClick={(x) => this.updateNoti(x, e._id, `/actions/${e.actionId}`)} to={"/#"}>
                     <Tooltip title={
                         <div>
                             <p>Thông báo: {e.name}</p>
@@ -165,15 +172,17 @@ class header extends Component {
                             <p>Mô tả: {e.description}</p>
                         </div>
                     } placement="top">
-                        <p style={{ fontWeight: 'bold' }}>{e.name}</p>
-                        <p className="cut-text">{e.description}</p>
+                        <div >
+                            <p style={{ fontWeight: 'bold' }}>{e.name}</p>
+                            <p className="cut-text">{e.description}</p>
+                        </div>
                     </Tooltip>
                 </Link >
             )
         }
         else if (e.scriptId) {
             return (
-                <Link onClick={(x) => this.updateNoti(x, e._id, `/viewscripts/${e.scriptId}`)} to={"/#"}>
+                <Link className={e.status ? 'noti-watched' : 'noti'} onClick={(x) => this.updateNoti(x, e._id, `/viewscripts/${e.scriptId}`)} to={"/#"}>
                     <Tooltip title={
                         <div>
                             <p>Thông báo: {e.name}</p>
@@ -181,8 +190,11 @@ class header extends Component {
                             <p>Mô tả: {e.description}</p>
                         </div>
                     } placement="top">
-                        <p style={{ fontWeight: 'bold' }}>{e.name}</p>
-                        <p className="cut-text">{e.description}</p>
+                        <div>
+
+                            <p style={{ fontWeight: 'bold' }}>{e.name}</p>
+                            <p className="cut-text">{e.description}</p>
+                        </div>
                     </Tooltip>
                 </Link >
             )
@@ -280,9 +292,7 @@ class header extends Component {
                     <Redirect to={this.state.notiUrl} />
                 )
             } else {
-                return (
-                    this.renderView()
-                )
+                window.location.reload();
             }
         }
         else {

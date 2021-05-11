@@ -25,7 +25,6 @@ class list extends Component {
             currentPage: 1,
             postsPerPage: 2,
             listPage: [],
-            SearchData: [],
             columns: [
                 {
                     title: 'Tên',
@@ -82,12 +81,11 @@ class list extends Component {
                     res.data.data
                 )
         ]));
-        console.log(scripts)
+        
         if (scripts !== null) {
             if (this._isMounted) {
                 this.setState({
-                    data: scripts,
-                    SearchData: scripts
+                    data: scripts.reverse(),
                 })
             }
         }
@@ -123,8 +121,8 @@ class list extends Component {
                 })
         )
     }
-    getlistpage = (SearchData) => {
-        return Math.ceil(SearchData.length / this.state.postsPerPage);
+    getlistpage = (e) => {
+        return Math.ceil(e.length / this.state.postsPerPage);
     }
 
     printData = () => {

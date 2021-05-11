@@ -9,7 +9,7 @@ import Title from 'antd/lib/typography/Title';
 import { v1 as uuidv1 } from 'uuid';
 import ListScriptDetails from '../eventScriptDetail/list'
 import ReviewScriptDetail from '../eventScriptDetail/withoutId/review'
-
+import moment from 'moment'
 const { Option } = Select;
 const formItemLayout = {
     labelCol: {
@@ -127,7 +127,8 @@ class add extends Component {
         let temp = {
             _id: uuidv1(),
             description: null,
-            noinfo: true
+            noinfo: true,
+            time: moment(new Date()).utc(true)
         }
         this.setState({
             listscriptdetails: [...this.state.listscriptdetails, temp]
@@ -240,7 +241,7 @@ class add extends Component {
                                 </div>
                             </Form>
                             <Title style={{ marginTop: '20px' }} level={3}>Kịch bản chính</Title>
-                            <ListScriptDetails data={this.state.listscriptdetails} onDelete={this.onDeleteDetail} onAdd={this.onAddDetail} onUpdate={this.onUpdateDetail} />
+                            <ListScriptDetails data={this.state.listscriptdetails} onDelete={this.onDeleteDetail} onAddWithoutApi={this.onAddDetail} onUpdate={this.onUpdateDetail} />
                         </Col>
                         <Col sm={24} xl={8}>
                             <Title level={3}>Xem trước</Title>

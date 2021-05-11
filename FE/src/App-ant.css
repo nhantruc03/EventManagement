@@ -184,8 +184,11 @@ input.ant-input {
 .ant-select:not(.ant-select-customize-input) .ant-select-selector {
   min-height: 40px;
   border-radius: 6px;
-  display: inline-flex;
   align-items: center;
+}
+
+.ant-select.ant-select-multiple.ant-select-allow-clear.ant-select-disabled.ant-select-show-search {
+  width: 100%;
 }
 
 .ant-input-number {
@@ -293,7 +296,8 @@ ul.events {
   min-width: 300px !important;
   max-width: 300px;
   overflow-x: hidden;
-  background-color: grey;
+  
+  background-color: #f1f1f1;
   /* min-height: 500px; */
   min-height: 200px;
   max-height: 200px;
@@ -1575,4 +1579,12 @@ button.ant-btn[disabled].add {
   width: fit-content !important;
   color: #264653 !important;
   margin-bottom: 5px !important;
+}
+
+.noti-watched{
+  background-color: #AAB0B6;
+}
+
+label.calendar-label{
+  color: #6e6e6e !important;
 }

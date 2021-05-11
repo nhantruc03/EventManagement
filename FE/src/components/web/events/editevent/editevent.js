@@ -281,7 +281,7 @@ class editevent extends Component {
 
 
                 let temp_userForEvent = listeventassign.reduce((list, e) => { list.push(e.userId._id); return list }, [])
-           
+
                 let temp_userNotInEvent = users.filter(e => !temp_userForEvent.includes(e._id))
 
                 // prepare state
@@ -312,7 +312,6 @@ class editevent extends Component {
     };
 
     onFinish = async (values) => {
-        console.log(values['startDate'].toDate())
         let data = {
             ...values,
             'startDate': values['startDate'].utc(true).toDate(),
@@ -359,7 +358,6 @@ class editevent extends Component {
         return (
             <SelectUser
                 canDelete={false}
-                // removeuserfromevent={(e) => this.removeuserfromevent(e)}
                 addusertoevent={(e) => this.addusertoevent(e)}
                 listusers={this.state.listusers}
                 listusersforevent={this.state.listusersforevent}
@@ -607,29 +605,28 @@ class editevent extends Component {
                                             >
                                                 <Input placeholder="Địa điểm..." />
                                             </Form.Item>
-                                            {checkPermission(this.state.currentPermission, constants.QL_SUKIEN_PERMISSION)}
-                                            <Row>
-                                                <Col span={24} style={{ marginTop: '20px' }}>
-                                                    <div style={{ textAlign: 'center' }}>
-                                                        <div >
-                                                            <Button
-                                                                onClick={this.goBack}
-                                                                className="back"
-                                                                style={{ marginRight: 20 }}
-                                                            >
-                                                                Hủy
-                                                    </Button>
-                                                            <Button htmlType="submit" className="add" >
-                                                                Cập nhật
-                                                    </Button>
-                                                        </div>
-                                                    </div>
-                                                </Col>
-                                            </Row>
                                         </Col>
-
-
                                     </Row>
+                                    {checkPermission(this.state.currentPermission, constants.QL_SUKIEN_PERMISSION) ?
+                                        <Row>
+                                            <Col span={24} style={{ marginTop: '20px' }}>
+                                                <div style={{ textAlign: 'center' }}>
+                                                    <div >
+                                                        <Button
+                                                            onClick={this.goBack}
+                                                            className="back"
+                                                            style={{ marginRight: 20 }}
+                                                        >
+                                                            Hủy
+                                                             </Button>
+                                                        <Button htmlType="submit" className="add" >
+                                                            Cập nhật
+                                                            </Button>
+                                                    </div>
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                        : null}
                                 </Form>
                             </Col>
                             <Col className="event-col" sm={24} lg={12}>
