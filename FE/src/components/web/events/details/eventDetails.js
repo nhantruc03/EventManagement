@@ -14,6 +14,8 @@ import {
   Tooltip,
   Tag,
   Image,
+  Popconfirm,
+  message,
 } from "antd";
 import {
   InsertRowAboveOutlined,
@@ -26,7 +28,7 @@ import ListAvailUser from './forAvailUser/listAvailUser'
 import EventAssign from './EventAssign/EventAssign'
 import ListGuest from './forGuest/listGuest'
 import GuestView from "./forGuest/guestView";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import moment from 'moment';
 import ChatRoom from '../../chat/ChatRoom'
 import * as constants from "../../constant/actions"
@@ -50,7 +52,8 @@ class eventDetails extends Component {
       listFaculty: [],
       listGroups: [],
       currentUser: JSON.parse(localStorage.getItem('login')),
-      currentPermissions: []
+      currentPermissions: [],
+      doneDelete: false
     }
   }
 
@@ -241,132 +244,170 @@ class eventDetails extends Component {
     )
   }
 
+  deleteEvent = async () => {
+    const result = await trackPromise(axios.delete(`/api/events/${this.props.match.params.id}`, {
+      headers: {
+        'Authorization': { AUTH }.AUTH
+      }
+    })
+      .then(res => {
+        message.success('Xóa sự kiện thành công')
+        return res.data.data
+      })
+      .catch(err => {
+        console.log(err)
+        message.error('Xóa sự kiện thất bại')
+      })
+    )
+    if (result) {
+      this.setState({
+        doneDelete: true
+      })
+    }
+  }
+
   render() {
-    if (this.state.data) {
+    if (this.state.doneDelete) {
       return (
-        <Content >
-          < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }}>
-            <div className="flex-container-row" style={{ width: '100%', padding: '0 10px' }}>
-              <Breadcrumb separator=">">
-                <Breadcrumb.Item >
-                  <Link to="/events">Sự kiện</Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Item>
-                  Chi tiết
-                                </Breadcrumb.Item>
-              </Breadcrumb>
-              {checkPermisson(this.state.currentPermissions, constants.QL_SUKIEN_PERMISSION) ?
-                <Button onClick={() => { this.props.history.push(`/editevent/${this.props.match.params.id}`) }} className="add flex-row-item-right">Chỉnh sửa</Button>
-                : null
-              }
+        <Redirect to="/events" />
+      )
+    } else {
+      if (this.state.data) {
+        return (
+          <Content >
+            < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }}>
+              <div className="flex-container-row" style={{ width: '100%', padding: '0 10px' }}>
+                <Breadcrumb separator=">">
+                  <Breadcrumb.Item >
+                    <Link to="/events">Sự kiện</Link>
+                  </Breadcrumb.Item>
+                  <Breadcrumb.Item>
+                    Chi tiết
+                                  </Breadcrumb.Item>
+                </Breadcrumb>
+                {checkPermisson(this.state.currentPermissions, constants.QL_SUKIEN_PERMISSION) ?
+                  <div className="flex-row-item-right">
+                    <Popconfirm
+                      title="Bạn có chắc muốn xóa chứ?"
+                      onConfirm={this.deleteEvent}
+                      okText="Đồng ý"
+                      cancelText="Hủy"
+                    >
+                      <Button className="delete">Xóa</Button>
+                    </Popconfirm>
+                    <Button style={{ marginLeft: 10 }} onClick={() => { this.props.history.push(`/editevent/${this.props.match.params.id}`) }} className="add">Chỉnh sửa</Button>
+                  </div>
+                  : null
+                }
+              </div>
+
+
+            </Row >
+
+            <div className="site-layout-background-main">
+              <Row style={{ height: '95%' }}>
+                <Col sm={24} xl={6} className="event-detail">
+                  <Title className="event-detail-title" level={4}>Hình thức</Title>
+                  {this.state.data.eventTypeId.name}
+
+                  <Title className="event-detail-title" level={4}>Ban tổ chức</Title>
+                  <div className="event-detail-user-container">
+                    <Avatar.Group
+                      maxCount={2}
+                      maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}
+                    >
+                      {this.renderAvailUser()}
+                    </Avatar.Group>
+                    <Button className="event-detail-user" onClick={() => this.setModal2Visible(true)}>Xem</Button>
+                  </div>
+
+                  <Title className="event-detail-title" level={4}>Tags</Title>
+                  {this.state.data.tagId.map((value, key) => <Tag style={{ width: 'auto', background: value.background, color: value.color }} key={key}>{value.name}</Tag>)}
+
+                  <div className="flex-container-row" style={{ marginTop: '10px' }}>
+                    <Title className="event-detail-title" level={4}>Khách mời</Title>
+                    {checkPermisson(this.state.currentPermissions, constants.QL_KHACHMOI_PERMISSION) ?
+                      <Button className="flex-row-item-right" onClick={() => this.setModal2Visible2(true)}>Chỉnh sửa</Button>
+                      : null}
+                  </div>
+
+                  <Tabs defaultActiveKey="1" >
+                    {this.renderguest()}
+                  </Tabs>
+                </Col>
+                <Col sm={24} xl={10} className="event-detail">
+                  {/* <Tag className="event-detail-status" style={{ marginTop: '15px' }}>{this.state.status}</Tag> */}
+                  <Title style={{ color: '#017567', margin: 'unset' }} level={1}>{this.state.data.name}</Title>
+                  <Title style={{ margin: 'unset' }} level={4}>Mô tả</Title>
+                  {this.state.data.description}
+
+                  <div className="event-detail-time-date-address">
+                    <div className="flex-container-row" style={{ justifyContent: 'space-between' }}>
+                      <div>
+                        <ClockCircleOutlined className="event-detail" />  {moment(this.state.data.startTime).utcOffset(0).format('HH:mm')}
+                      </div>
+                      <div>
+                        <InsertRowAboveOutlined /> {moment(this.state.data.startDate).utcOffset(0).format('DD/MM/YYYY')}
+                      </div>
+                    </div>
+                    <div style={{ marginTop: '10px' }}>
+                      <EnvironmentOutlined className="event-detail" />  {this.state.data.address}
+                    </div>
+                  </div>
+
+
+                  <Image style={{ maxWidth: '150px' }} src={`/api/images/${this.state.data.posterUrl}`} alt="poster"></Image>
+
+                  <div className="flex-container-row" style={{ marginBottom: '10px' }}>
+                    {/* <Title className="event-detail-title" level={3}>Kịch bản</Title> */}
+                    <Title level={4}>Kịch bản</Title>
+                    {checkPermisson(this.state.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
+                      <Button className="flex-row-item-right add" ><Link to={`/addscripts/${this.props.match.params.id}`}>Thêm</Link></Button>
+                      : null}
+                  </div>
+                  <ListScripts currentPermissions={this.state.currentPermissions} eventId={this.props.match.params.id} />
+                </Col>
+                <Col sm={24} xl={8} className="event-detail">
+                  {/* <Title className="event-detail-title" level={3}>Phòng hội thoại</Title> */}
+
+                  <Tabs className="chat-tabs" defaultActiveKey="1" >
+                    {this.renderGroups()}
+                  </Tabs>
+                </Col>
+              </Row>
             </div>
 
 
-          </Row >
+            <Modal
+              title="Ban tổ chức"
+              centered
+              visible={this.state.modal2Visible}
+              onOk={() => this.setModal2Visible(false)}
+              onCancel={() => this.setModal2Visible(false)}
+              width="80%"
+              pagination={false}
+              footer={false}
+            >
+              {this.renderModel(this.state.listusers)}
+            </Modal>
 
-          <div className="site-layout-background-main">
-            <Row style={{ height: '95%' }}>
-              <Col sm={24} xl={6} className="event-detail">
-                <Title className="event-detail-title" level={4}>Hình thức</Title>
-                {this.state.data.eventTypeId.name}
-
-                <Title className="event-detail-title" level={4}>Ban tổ chức</Title>
-                <div className="event-detail-user-container">
-                  <Avatar.Group
-                    maxCount={2}
-                    maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}
-                  >
-                    {this.renderAvailUser()}
-                  </Avatar.Group>
-                  <Button className="event-detail-user" onClick={() => this.setModal2Visible(true)}>Xem</Button>
-                </div>
-
-                <Title className="event-detail-title" level={4}>Tags</Title>
-                {this.state.data.tagId.map((value, key) => <Tag style={{ width: 'auto', background: value.background, color: value.color }} key={key}>{value.name}</Tag>)}
-
-                <div className="flex-container-row" style={{ marginTop: '10px' }}>
-                  <Title className="event-detail-title" level={4}>Khách mời</Title>
-                  {checkPermisson(this.state.currentPermissions, constants.QL_KHACHMOI_PERMISSION) ?
-                    <Button className="flex-row-item-right" onClick={() => this.setModal2Visible2(true)}>Chỉnh sửa</Button>
-                    : null}
-                </div>
-
-                <Tabs defaultActiveKey="1" >
-                  {this.renderguest()}
-                </Tabs>
-              </Col>
-              <Col sm={24} xl={10} className="event-detail">
-                {/* <Tag className="event-detail-status" style={{ marginTop: '15px' }}>{this.state.status}</Tag> */}
-                <Title style={{ color: '#017567', margin: 'unset' }} level={1}>{this.state.data.name}</Title>
-                <Title style={{ margin: 'unset' }} level={4}>Mô tả</Title>
-                {this.state.data.description}
-
-                <div className="event-detail-time-date-address">
-                  <div className="flex-container-row" style={{ justifyContent: 'space-between' }}>
-                    <div>
-                      <ClockCircleOutlined className="event-detail" />  {moment(this.state.data.startTime).utcOffset(0).format('HH:mm')}
-                    </div>
-                    <div>
-                      <InsertRowAboveOutlined /> {moment(this.state.data.startDate).utcOffset(0).format('DD/MM/YYYY')}
-                    </div>
-                  </div>
-                  <div style={{ marginTop: '10px' }}>
-                    <EnvironmentOutlined className="event-detail" />  {this.state.data.address}
-                  </div>
-                </div>
-
-
-                <Image style={{ maxWidth: '150px' }} src={`/api/images/${this.state.data.posterUrl}`} alt="poster"></Image>
-
-                <div className="flex-container-row" style={{ marginBottom: '10px' }}>
-                  {/* <Title className="event-detail-title" level={3}>Kịch bản</Title> */}
-                  <Title level={4}>Kịch bản</Title>
-                  {checkPermisson(this.state.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
-                    <Button className="flex-row-item-right add" ><Link to={`/addscripts/${this.props.match.params.id}`}>Thêm</Link></Button>
-                    : null}
-                </div>
-                <ListScripts currentPermissions={this.state.currentPermissions} eventId={this.props.match.params.id} />
-              </Col>
-              <Col sm={24} xl={8} className="event-detail">
-                {/* <Title className="event-detail-title" level={3}>Phòng hội thoại</Title> */}
-
-                <Tabs className="chat-tabs" defaultActiveKey="1" >
-                  {this.renderGroups()}
-                </Tabs>
-              </Col>
-            </Row>
-          </div>
-
-
-          <Modal
-            title="Ban tổ chức"
-            centered
-            visible={this.state.modal2Visible}
-            onOk={() => this.setModal2Visible(false)}
-            onCancel={() => this.setModal2Visible(false)}
-            width="80%"
-            pagination={false}
-            footer={false}
-          >
-            {this.renderModel(this.state.listusers)}
-          </Modal>
-
-          <Modal
-            title="Cập nhật khách mời"
-            centered
-            visible={this.state.modal2Visible2}
-            onOk={() => this.setModal2Visible2(false)}
-            onCancel={() => this.setModal2Visible2(false)}
-            width="70%"
-            pagination={false}
-            footer={false}
-          >
-            {this.renderModel2(this.state.listusers)}
-          </Modal>
-        </Content >
-      );
-    } else {
-      return null
+            <Modal
+              title="Cập nhật khách mời"
+              centered
+              visible={this.state.modal2Visible2}
+              onOk={() => this.setModal2Visible2(false)}
+              onCancel={() => this.setModal2Visible2(false)}
+              width="70%"
+              pagination={false}
+              footer={false}
+            >
+              {this.renderModel2(this.state.listusers)}
+            </Modal>
+          </Content >
+        );
+      } else {
+        return null
+      }
     }
 
   }

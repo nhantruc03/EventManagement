@@ -71,7 +71,7 @@ class editevent extends Component {
             listFaculty: [],
             listCredentials: [],
             data: null,
-            currentPermission: []
+            currentPermission: [],
         }
     }
 
@@ -336,23 +336,19 @@ class editevent extends Component {
                 message.error('Cập nhật thất bại');
             }))
     };
-
     setModal2Visible(modal2Visible) {
         this.setState({ modal2Visible });
     }
-
     updatelistguesttype = (values) => {
         this.setState({
             listguesttype: values,
         })
     }
-
     updatelistgroup = (values) => {
         this.setState({
             listgroups: values,
         })
     }
-
 
     renderModel = () => {
         return (
@@ -464,7 +460,7 @@ class editevent extends Component {
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
                                     Chỉnh sửa
-                                </Breadcrumb.Item>
+                                    </Breadcrumb.Item>
                             </Breadcrumb>
                         </Col>
                     </Row >
@@ -618,10 +614,10 @@ class editevent extends Component {
                                                             style={{ marginRight: 20 }}
                                                         >
                                                             Hủy
-                                                             </Button>
+                                                                 </Button>
                                                         <Button htmlType="submit" className="add" >
                                                             Cập nhật
-                                                            </Button>
+                                                                </Button>
                                                     </div>
                                                 </div>
                                             </Col>
@@ -672,7 +668,6 @@ class editevent extends Component {
         else {
             return null
         }
-
     }
 }
 
