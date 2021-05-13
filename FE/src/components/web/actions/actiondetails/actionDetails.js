@@ -1,4 +1,4 @@
-import { Avatar, Breadcrumb, Button, Checkbox, Col, Image, message, Modal, Row, Tabs, Tag, Tooltip, Upload } from 'antd';
+import { Avatar, Breadcrumb, Button, Checkbox, Col, Image, message, Modal, Popconfirm, Row, Tabs, Tag, Tooltip, Upload } from 'antd';
 import { Content } from 'antd/lib/layout/layout';
 import Title from 'antd/lib/typography/Title';
 import axios from 'axios';
@@ -91,6 +91,26 @@ class actionDetails extends Component {
             actionAssign: actionAssign
         })
         this.setModalEditActionVisible(false)
+    }
+
+    deleteAction = async () => {
+        const result = await trackPromise(axios.delete('/api/actions/' + this.props.match.params.id, {
+            headers: {
+                'Authorization': { AUTH }.AUTH
+            }
+        })
+            .then((res) => {
+                message.success('Xóa công việc thành công')
+                return res.data.data
+            })
+            .catch(err => {
+                console.log(err)
+                message.error('Xóa công việc thất bại')
+            })
+        )
+        if (result) {
+            this.props.history.goBack();
+        }
     }
 
     renderModalEditAction = () => {
@@ -314,7 +334,17 @@ class actionDetails extends Component {
                             </Breadcrumb.Item>
                             </Breadcrumb>
                             {checkPermission(this.state.currentPermissions, constants.QL_CONGVIEC_PERMISSION) || this.state.currentUser.id === this.state.data.managerId._id ?
-                                <Button onClick={() => this.setModalEditActionVisible(true)} className="flex-row-item-right add">Chỉnh sửa</Button>
+                                <div className="flex-row-item-right">
+                                    <Popconfirm
+                                        title="Bạn có chắc muốn xóa chứ?"
+                                        onConfirm={this.deleteAction}
+                                        okText="Đồng ý"
+                                        cancelText="Hủy"
+                                    >
+                                        <Button className="delete">Xóa</Button>
+                                    </Popconfirm>
+                                    <Button style={{ marginLeft: 10 }} onClick={() => this.setModalEditActionVisible(true)} className="add">Chỉnh sửa</Button>
+                                </div>
                                 : null}
                         </div>
                     </Row >

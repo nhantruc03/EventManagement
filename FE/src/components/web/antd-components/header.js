@@ -68,16 +68,20 @@ class header extends Component {
                     )
             ]));
 
-            if (notifications !== null) {
+            if (notifications) {
                 if (this._isMounted) {
                     this.setState({
                         notifications: notifications.reverse(),
                         currentUser: obj
                     })
                 }
+            } else {
+                this.setState({
+                    logout: true
+                })
             }
         }
-        
+
     }
 
     handleButtonClick = (e) => {

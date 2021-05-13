@@ -1,4 +1,4 @@
-import { Checkbox, Dropdown, Menu } from 'antd';
+import { Button, Checkbox, Dropdown, Menu, Popconfirm } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import React, { Component } from 'react';
 import ActionCard from './actionCard';
@@ -24,6 +24,23 @@ class actionColumn extends Component {
                             </div>
                         </Checkbox.Group>
                     </Menu.Item>
+                    {this.props.canEdit ?
+                        <Menu.Item>
+                            <Button style={{ width: '100%' }} className="back" onClick={this.props.onEditActionType}>Chỉnh sửa</Button>
+                        </Menu.Item>
+                        : null}
+                    {this.props.canEdit ?
+                        <Menu.Item>
+                            <Popconfirm
+                                title="Bạn có chắc muốn xóa chứ?"
+                                onConfirm={this.props.onDeleteActionType}
+                                okText="Đồng ý"
+                                cancelText="Hủy"
+                            >
+                                <Button style={{ width: '100%' }} className="delete">Xóa</Button>
+                            </Popconfirm>
+                        </Menu.Item>
+                        : null}
                 </Menu>
             ),
             data: []

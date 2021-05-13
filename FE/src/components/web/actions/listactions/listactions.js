@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Modal, Row, Select } from "antd";
+import { Button, Col, Form, Input, message, Modal, Row, Select } from "antd";
 import { Content } from "antd/lib/layout/layout";
 import Title from "antd/lib/typography/Title";
 import React, { Component } from "react";
@@ -33,7 +33,104 @@ class listactions extends Component {
       currentActions: [],
       temp_data: [],
       currentPermissons: [],
+      modalEditActionTypeVisible: false,
+      ActionTypeForEdit: {}
     };
+  }
+
+  setModalEditActionTypeVisible(modalEditActionTypeVisible) {
+    this.setState({
+      modalEditActionTypeVisible
+    })
+  }
+
+  onFinishEditActionType = async (e) => {
+    let data = {
+      ...e,
+      eventId: this.state.currentEvent._id,
+    }
+
+    const result = await trackPromise(axios.put(`/api/action-types/${this.state.ActionTypeForEdit._id}`, data, {
+      headers: {
+        Authorization: { AUTH }.AUTH,
+      },
+    })
+      .then((res) => {
+        message.success("Cập nhật thành công")
+        return res.data.data;
+      })
+      .catch(err => {
+        console.log(err)
+        message.error("Cập nhật thất bại")
+      })
+    )
+    if (result) {
+      let temp = this.state.currentActionTypes
+      temp.forEach(x => {
+        if (x._id === result._id) {
+          x.name = result.name
+        }
+      })
+      this.setState({
+        currentActionTypes: temp
+      })
+      this.setModalEditActionTypeVisible(false)
+    }
+  }
+
+  deleteActionTypes = async (value) => {
+    const result = await trackPromise(axios.delete(`/api/action-types/${value._id}`, {
+      headers: {
+        Authorization: { AUTH }.AUTH,
+      },
+    })
+      .then((res) => {
+        message.success("Xóa thành công")
+        return res.data.data;
+      })
+      .catch(err => {
+        console.log(err)
+        message.error("Xóa thất bại")
+      })
+    )
+    if (result) {
+      this.setState({
+        currentActionTypes: this.state.currentActionTypes.filter(x => x._id !== result._id)
+      })
+    }
+  }
+
+  formEditActionType = React.createRef()
+  renderModelEditActionType = () => {
+    return (
+      <Form
+        ref={this.formEditActionType}
+        name="validate_other"
+        {...formItemLayout}
+        onFinish={(e) => this.onFinishEditActionType(e)}
+        layout="vertical"
+        initialValues={this.state.ActionTypeForEdit}
+      >
+        <Form.Item
+          wrapperCol={{ sm: 24 }}
+          name="name"
+          rules={[{ required: true, message: "Cần nhập tên loại công việc" }]}
+        >
+          <Input placeholder="Tên loại công việc..." />
+        </Form.Item>
+        <br></br>
+        <div className="flex-container-row">
+          <div className="flex-container-row flex-row-item-right">
+            <Button onClick={() => this.setModalEditActionTypeVisible(false)} style={{ marginRight: 5 }} className="back">
+              Hủy
+            </Button>
+            <Button htmlType="submit" className="add">
+              Cập nhật
+          </Button>
+          </div>
+        </div>
+      </Form>
+    );
   }
 
   setModalVisible(modalVisible) {
@@ -201,13 +298,25 @@ class listactions extends Component {
     }
   };
 
+  onEditActionType = (ActionTypeForEdit) => {
+    // console.log(e)
+    this.setState({
+      ActionTypeForEdit,
+    })
+    if (this.formEditActionType.current) {
+      this.formEditActionType.current.setFieldsValue(ActionTypeForEdit)
+    }
+    this.setModalEditActionTypeVisible(true)
+
+  }
+
   renderActionsView = (value, keyCol) => {
     let temp_listActions = this.state.currentActions.filter(
       (e) => e.actionTypeId._id === value._id
     );
     return (
       <Col sm={24} xl={6} key={keyCol} style={{ padding: "10px 0" }}>
-        <ActionColumn title={value.name} listActions={temp_listActions} />
+        <ActionColumn canEdit={checkPermisson(this.state.currentPermissons, constants.QL_CONGVIEC_PERMISSION)} onDeleteActionType={() => this.deleteActionTypes(value)} onEditActionType={() => { this.onEditActionType(value) }} title={value.name} listActions={temp_listActions} />
       </Col>
     );
   };
@@ -328,6 +437,18 @@ class listactions extends Component {
             footer={false}
           >
             {this.renderModel2()}
+          </Modal>
+          <Modal
+            title="Sửa loại công việc"
+            centered
+            visible={this.state.modalEditActionTypeVisible}
+            onOk={() => this.setModalEditActionTypeVisible(false)}
+            onCancel={() => this.setModalEditActionTypeVisible(false)}
+            width="30%"
+            pagination={false}
+            footer={false}
+          >
+            {this.renderModelEditActionType()}
           </Modal>
         </Content>
       );

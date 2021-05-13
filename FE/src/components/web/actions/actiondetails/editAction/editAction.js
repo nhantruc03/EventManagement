@@ -408,11 +408,6 @@ class editAction extends Component {
                             <Button style={{ width: '20%' }} onClick={this.props.onClose} className="back">Hủy</Button>
                             <Button style={{ marginLeft: '20px', width: '20%' }} htmlType="submit" className="add">Cập nhật</Button>
                         </div>
-                        {/* <div className="flex-container-row" style={{ marginTop: '20px' }}>
-                            <div className="flex-row-item-right">
-                                <Button htmlType="submit" className="add">Cập nhật</Button>
-                            </div>
-                        </div> */}
                     </Row>
                 </Form>
             )
