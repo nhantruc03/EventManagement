@@ -36,6 +36,7 @@ const start = async (req, res) => {
                 error: error
             })
         }
+        console.log('data', body)
 
         // Transactions
         let session = await startSession();
@@ -94,7 +95,7 @@ const start = async (req, res) => {
                 await abortTransactions(sessions);
                 return res.status(406).json({
                     success: false,
-                    error: "Created failed"
+                    error: "Created action assign failed"
                 });
             }
             // Check duplicate Action Assign
@@ -146,21 +147,20 @@ const start = async (req, res) => {
                 { session: session }
             )
 
-            if (isEmpty(listNotifications) || listNotifications.length != body.length) {
+            if (isEmpty(temp_listNoti) || temp_listNoti.length != body.length) {
                 await abortTransactions(sessions);
                 return res.status(406).json({
                     success: false,
-                    error: "Created failed"
+                    error: "Created notifications failed"
                 });
             }
-
             let list_userIdForNoti = temp_listNoti.reduce((list, e) => {
                 list.push(e.userId)
                 return list;
-              }, [])
-          
-              listNotifications = await notifications.find({ _id: { $in: list_userIdForNoti } })
-                .populate({path:'userId',select:'push_notification_token'})
+            }, [])
+
+            listNotifications = await notifications.find({ _id: { $in: list_userIdForNoti } })
+                .populate({ path: 'userId', select: 'push_notification_token' })
 
         }
         // done notification

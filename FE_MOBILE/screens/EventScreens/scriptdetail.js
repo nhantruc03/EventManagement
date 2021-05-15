@@ -27,6 +27,8 @@ import checkPermisson from "../../components/helper/checkPermissions";
 import * as constants from "../../components/constant/action";
 import * as GestureHandler from 'react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Loader from "react-native-modal-loader";
+import { Alert } from "react-native";
 
 const { Swipeable } = GestureHandler;
 
@@ -174,6 +176,7 @@ class scriptdetail extends Component {
       addScriptDetails: false,
       loadingbtn: false,
       history: [],
+      deleteLoading: false
     };
     this._isMounted = false;
   }
@@ -293,6 +296,7 @@ class scriptdetail extends Component {
             startDate: event.startDate,
             startTime: event.startTime,
             history: history,
+
           });
         }
       }
@@ -415,15 +419,9 @@ class scriptdetail extends Component {
   }
 
   RightActions = (e) => {
-
-    // let scale = dragX.interpolate({
-    //   inputRange: [0, 50],
-    //   outputRange: [1, 0],
-    //   extrapolate: 'clamp'
-    // })
     return (
       <View style={styles.rightContainer}>
-        <TouchableOpacity onPress={() => this.onDeleteDetail(e)}>
+        <TouchableOpacity onPress={() => this.DeleteAlert(e)}>
           <View style={styles.rightAction}>
             <Animated.View style={styles.iconDelete}>
               <Ionicons name='trash-outline' size={24} color='white' />
@@ -433,8 +431,32 @@ class scriptdetail extends Component {
       </View>
     )
   }
+  DeleteAlert = (e) => {
+    Alert.alert(
+      //title
+      'Xoá chi tiết kịch bản',
+      //body
+      'Bạn có chắc muốn xoá chi tiết kịch bản này? ',
+      [
+        {
+          text: 'Cancel', onPress: () => console.log('Cancel')
+        },
+        {
+          text: 'Xoá', onPress: () => this.onDeleteDetail(e), style: 'destructive'
+        },
+      ],
+      { cancelable: false },
+    );
+  }
+
+  onDeleteLoading() {
+    this.setState({
+      deleteLoading: true,
+    });
+  }
+
   onDeleteDetail = async (value) => {
-    console.log(value)
+    this.onDeleteLoading()
     let login = await AsyncStorage.getItem("login");
     var obj = JSON.parse(login);
     await (
@@ -447,17 +469,18 @@ class scriptdetail extends Component {
           let temp = this.state.listscriptdetails.filter(e => e._id !== value._id);
           this.setState({
             listscriptdetails: temp,
-            history: [...this.state.history, res.data.history]
+            history: [...this.state.history, res.data.history],
+            deleteLoading: false
           })
           client.send(JSON.stringify({
             type: "sendNotification",
             notification: res.data.notification
           }))
           PushNoti.sendPushNoti(res.data.notification)
-          message.success("Xóa chi tiết kịch bản thành công")
+          alert("Xoá chi tiết kịch bản thành công")
         })
         .catch(err => {
-          message.error("Xóa chi tiết kịch bản thất bại")
+          alert("Xoá chi tiết kịch bản thất bại")
         })
     )
 
@@ -496,6 +519,7 @@ class scriptdetail extends Component {
     if (!this.state.isLoading) {
       return (
         <Provider>
+          <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
           <View style={styles.Container}>
             <View styles={styles.ScriptNameContainer}>
               <Text style={styles.Label}>Tên kịch bản</Text>

@@ -96,7 +96,7 @@ class CreateTask extends Component {
     super(props);
     this.state = {
       data: {
-        startDate: new Date(),
+        endTime: new Date(),
         endDate: new Date(),
       },
       event: null,
@@ -299,16 +299,20 @@ class CreateTask extends Component {
           })
         );
         PushNoti.sendListPushNoti(res.data.Notifications)
-
+        this.props.navigation.goBack()
         // this.props.route.params.updateListActions(res.data.action);
-        this.props.navigation.navigate("Task", {
-          data: res.data.action,
-        });
+        // this.props.navigation.navigate("Task", {
+        //   data: res.data.action,
+        // });
       })
       .catch((err) => {
         console.log(err.response.data);
+        this.setState({
+          loadingbtn: false,
+        })
         alert("Tạo thất bại");
       });
+
   };
 
   onStepPress = (position) => {

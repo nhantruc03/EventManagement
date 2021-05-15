@@ -83,7 +83,7 @@ class AddActionTypeModal extends Component {
   };
   render() {
     return (
-      <View style={{ height: H * 0.3 }}>
+      <View style={{ height: H * 0.25 }}>
         <View
           style={{
             flex: 1,

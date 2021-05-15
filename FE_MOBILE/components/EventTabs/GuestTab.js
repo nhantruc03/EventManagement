@@ -121,7 +121,6 @@ export default class GuestTab extends Component {
   };
 
   renderItem = (e) => {
-
     return (
       <View style={styles.itemContainer}>
         <View style={styles.itemTextContainer}>
@@ -141,12 +140,9 @@ export default class GuestTab extends Component {
         </View>
       </View>
     )
-
   }
-
   render() {
     //let temp_listActions = this.applyFilter(this.props.sectionListData);
-
     let result = this.state.SearchData.reduce((list, item) => {
       let temp_list = list.filter((e) => e._id === item.guestTypeId._id); //điều kiện gom nhóm
       let temp_O =

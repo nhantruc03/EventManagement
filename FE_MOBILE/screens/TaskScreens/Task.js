@@ -11,7 +11,6 @@ import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import EventCard from "../../components/EventCard";
 import { Button, Modal, Provider } from "@ant-design/react-native";
 import AddActionTypeModal from "../../components/AddActionTypeModal";
-import { ActivityIndicator } from "react-native";
 import Indicator from "../../components/helper/Loading";
 import { StatusBar } from "react-native";
 import { Platform } from "react-native";
@@ -20,6 +19,9 @@ import EmptyState from "../../components/EmptyState";
 import getPermission from "../../components/helper/Credentials"
 import checkPermisson from "../../components/helper/checkPermissions"
 import * as constants from "../../components/constant/action";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import OptionsMenu from "react-native-options-menu";
+import EditActionTypeModal from "../../components/EditActionTypeModal";
 const W = Dimensions.get("window").width;
 
 const initialLayout = { width: W };
@@ -31,8 +33,8 @@ const styles = StyleSheet.create({
   containerIOS: { flex: 1, marginTop: 16 },
   containerAndroid: { marginTop: StatusBar.currentHeight, flex: 1 },
   cardImage: {
-    width: 300,
-    height: 200,
+    width: 276,
+    height: 160,
   },
   avaImage: {
     width: 48,
@@ -45,6 +47,9 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: "#2A9D8F",
     paddingLeft: 16,
+  },
+  Tabcontainer: {
+    marginLeft: 16,
   },
   AddBtn: {
     right: 16,
@@ -80,8 +85,61 @@ const styles = StyleSheet.create({
     color: "#98A1A5",
   },
   tagContainer: { flex: 1, flexDirection: "row", marginTop: 8 },
+  contentContainer: {
 
+  },
+  FilterBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    backgroundColor: "#C4C4C4",
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: "white"
+  },
+  EditBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: "#2A9D8F"
+  },
+  DeleteBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    padding: 8,
+    borderRadius: 8,
+    borderColor: '#EB5757',
+    borderWidth: 1,
+    backgroundColor: 'white'
+  },
+  FilterBtnText: {
+    fontFamily: "semibold",
+    fontSize: 16,
+    marginRight: 8,
+    color: "#2A9D8F",
+  },
+  EditBtnText: {
+    fontFamily: "semibold",
+    fontSize: 16,
+    marginRight: 8,
+    color: "white",
+  },
+  DeleteBtnText: {
+    fontFamily: "semibold",
+    fontSize: 16,
+    marginRight: 8,
+    color: "#EB5757",
+  },
 });
+
+const myIcon = (<TouchableOpacity>
+  <View style={styles.EditBtn}>
+    <Text style={styles.EditBtnText}>Tuỳ chỉnh</Text>
+    <Ionicons name='ellipsis-vertical-circle' size={24} color='white' />
+  </View>
+</TouchableOpacity>)
 
 class Taskscreen extends Component {
   constructor(props) {
@@ -97,8 +155,10 @@ class Taskscreen extends Component {
       currentActions: [],
       selectedItems: {},
       visible: false,
+      visible2: false,
       chosen: false,
-      currentPermissions: []
+      currentPermissions: [],
+      ActionTypeForEdit: {}
     };
     this._isMounted = false;
   }
@@ -108,7 +168,7 @@ class Taskscreen extends Component {
       const result = this.props.route.params?.data;
 
       // this._onSelectCountry(result);
-      console.log("didupdate", result);
+
       // await this.onChangeEvent(result);
       this.updateListActions(result);
     }
@@ -117,6 +177,11 @@ class Taskscreen extends Component {
   onClose = () => {
     this.setState({
       visible: false,
+    });
+  };
+  onClose2 = () => {
+    this.setState({
+      visible2: false,
     });
   };
   async componentDidMount() {
@@ -246,19 +311,76 @@ class Taskscreen extends Component {
     }
   };
 
+  EditActionType = () => {
+    // this.setState({
+    //   ActionTypeForEdit,
+    // })
+    // if (this.formEditActionType.current) {
+    //   this.formEditActionType.current.setFieldsValue(ActionTypeForEdit)
+    // }
+    // this.setModalEditActionTypeVisible(true)
+    this.setState({
+      visible2: true,
+    })
+  }
+
+  DeleteActionType = async (value) => {
+    console.log("data", value)
+    const result = await axios.delete(`${Url()}/api/action-types/${value}`, {
+      headers: {
+        Authorization: await getToken(),
+      },
+    })
+      .then((res) => {
+        alert("Xóa thành công")
+        return res.data.data;
+      })
+      .catch(err => {
+        console.log(err)
+        alert("Xóa thất bại")
+      })
+    if (result) {
+      this.setState({
+        currentActionTypes: this.state.currentActionTypes.filter(x => x._id !== result._id)
+      })
+    }
+  }
+
+  test = () => {
+    console.log('test')
+  }
+
   renderTask = ({ route }) => {
     let temp_listActions = this.state.currentActions.filter(
       (e) => e.actionTypeId._id === route.key
     );
+
     return (
-      <View>
+      <View style={styles.contentContainer}>
+        <View style={{ marginVertical: 12, flexDirection: "row", justifyContent: 'flex-end' }}>
+          <TouchableOpacity>
+            <View style={{ marginRight: 8 }}>
+              <View style={styles.FilterBtn}>
+                <Text style={styles.FilterBtnText}>Bộ lọc</Text>
+                <Ionicons name='filter' size={24} color="#2A9D8F" />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <View>
+            <OptionsMenu
+              customButton={myIcon}
+              destructiveIndex={1}
+              options={["Chỉnh sửa loại công việc", "Xoá loại công việc", "Huỷ bỏ"]}
+              actions={[this.EditActionType, () => this.DeleteActionType(route.key), this.test]}
+            />
+          </View>
+        </View >
         <FlatList
           data={temp_listActions}
           renderItem={({ item }) => this.renderItem(item)}
           keyExtractor={(item) => item._id}
-          style={{ marginLeft: 10, }}
         />
-      </View>
+      </View >
     );
   };
 
@@ -268,6 +390,12 @@ class Taskscreen extends Component {
     });
   };
 
+  deleteItemInCurrentActions = (e) => {
+    this.setState({
+      currentActions: this.state.currentActions.filter(x => x._id !== e)
+    })
+  }
+
   renderItem = (item) => {
     return (
       <TouchableOpacity
@@ -275,6 +403,7 @@ class Taskscreen extends Component {
           this.props.navigation.navigate("TaskDetail", {
             currentPermissions: this.state.currentPermissions,
             data: item,
+            deleteItemInCurrentActions: (e) => this.deleteItemInCurrentActions(e)
           })
         }
       >
@@ -330,7 +459,7 @@ class Taskscreen extends Component {
                     </View>
                   ))}
                 </View>
-                <View>
+                {/* <View>
                   {item.availUser.map((value, key) => (
                     <View
                       style={{
@@ -348,7 +477,7 @@ class Taskscreen extends Component {
                       ></Image>
                     </View>
                   ))}
-                </View>
+                </View> */}
               </View>
             </View>
           </View>
@@ -358,7 +487,6 @@ class Taskscreen extends Component {
   };
 
   renderTabBar = (props) => (
-
     <TabBar
       {...props}
       tabStyle={{ width: "auto" }}
@@ -377,11 +505,16 @@ class Taskscreen extends Component {
       scrollEnabled={true}
     />
 
-
-
   );
 
   addActionTypes = (e) => {
+    this.setState({
+      currentActionTypes: [...this.state.currentActionTypes, e],
+      routes: [...this.state.routes, { key: e._id, title: e.name }],
+    });
+  };
+
+  editActionTypes = (e) => {
     this.setState({
       currentActionTypes: [...this.state.currentActionTypes, e],
       routes: [...this.state.routes, { key: e._id, title: e.name }],
@@ -413,7 +546,7 @@ class Taskscreen extends Component {
             />
             <TouchableOpacity onPress={() => this.setState({ visible: true })}>
               <Image
-                style={{ marginRight: 4, marginTop: 15 }}
+                style={{ marginRight: 16, marginTop: 15, }}
                 source={require("../../assets/images/Add.png")}
               ></Image>
             </TouchableOpacity>
@@ -542,6 +675,21 @@ class Taskscreen extends Component {
               onClose={this.onClose}
               eventId={this.state.currentEvent._id}
               addActionTypes={(e) => this.addActionTypes(e)}
+            />
+          </Modal>
+          <Modal
+            title="Chỉnh sửa loại công việc"
+            transparent
+            onClose={this.onClose2}
+            maskClosable
+            visible={this.state.visible2}
+            closable
+          >
+            <EditActionTypeModal
+              data={this.state.currentActionTypes}
+              onClose2={this.onClose2}
+              eventId={this.state.currentEvent._id}
+              editActionTypes={(e) => this.editActionTypes(e)}
             />
           </Modal>
         </View>

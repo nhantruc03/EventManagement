@@ -13,6 +13,8 @@ import Url from "../../env";
 import getToken from "../../Auth";
 import axios from "axios";
 import * as PushNoti from '../helper/pushNotification'
+import { Alert } from "react-native";
+import Loader from "react-native-modal-loader";
 
 const { Swipeable } = GestureHandler;
 
@@ -109,6 +111,7 @@ export default class ScriptTab extends Component {
       data: null,
       visible: false,
       loading: true,
+      deleteLoading: false,
     };
   }
 
@@ -143,23 +146,48 @@ export default class ScriptTab extends Component {
     })
   }
 
+
+
   RightActions = (e) => {
     return (
       <View style={styles.rightContainer}>
-        <TouchableOpacity onPress={() => this.onDelete(e)}>
+        <TouchableOpacity onPress={() => this.DeleteAlert(e)}>
           <View style={styles.rightAction}>
             <Animated.View style={styles.iconDelete}>
               <Ionicons name='trash-outline' size={32} color='white' />
             </Animated.View>
-
           </View>
         </TouchableOpacity>
       </View>
     )
   }
 
+  DeleteAlert = (e) => {
+    Alert.alert(
+      //title
+      'Xoá kịch bản',
+      //body
+      'Bạn có chắc muốn xoá kịch bản này? ',
+      [
+        {
+          text: 'Cancel', onPress: () => console.log('Cancel')
+        },
+        {
+          text: 'Xoá', onPress: () => this.onDelete(e), style: 'destructive'
+        },
+      ],
+      { cancelable: false },
+    );
+  }
+
+  onLoading() {
+    this.setState({
+      deleteLoading: true,
+    });
+  }
+
   onDelete = async (e) => {
-    console.log(e)
+    this.onLoading()
     await (
       axios.delete(`${Url()}/api/scripts/` + e._id, {
         headers: {
@@ -173,7 +201,8 @@ export default class ScriptTab extends Component {
           }))
           PushNoti.sendPushNoti(res.data.notification)
           this.setState({
-            data: this.state.data.filter(o => o._id !== e._id)
+            data: this.state.data.filter(o => o._id !== e._id),
+            deleteLoading: false
           })
           alert("Xoá kịch bản thành công");
         })
@@ -183,7 +212,6 @@ export default class ScriptTab extends Component {
         })
     )
   }
-
 
 
   renderItem = (e) => {
@@ -223,6 +251,7 @@ export default class ScriptTab extends Component {
     if (this.state.data) {
       return (
         <Provider>
+          <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
           <View>
             <FlatList
               height={H * 0.7}
@@ -257,8 +286,10 @@ export default class ScriptTab extends Component {
           </View>
         </Provider>
       );
-    } else {
-      return null;
+
+    }
+    else {
+      return null
     }
   }
 }

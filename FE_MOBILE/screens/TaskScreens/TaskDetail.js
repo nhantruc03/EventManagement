@@ -18,6 +18,11 @@ import Indicator from "../../components/helper/Loading";
 import checkPermisson from "../../components/helper/checkPermissions"
 import * as constants from "../../components/constant/action";
 
+import Icon from "../../assets/images/more.png";
+import OptionsMenu from "react-native-options-menu";
+import { Alert } from "react-native";
+import Loader from "react-native-modal-loader"
+
 const initialLayout = { width: Dimensions.get("window").width };
 const styles = StyleSheet.create({
   Tabcontainer: {
@@ -68,6 +73,7 @@ class TaskDetail extends Component {
       currentSubAction: null,
       index: 0,
       loading: false,
+      deleteLoading: false,
       routes: [
         { key: "1", title: "Thông tin chung" },
         { key: "2", title: "Danh sách cần làm" },
@@ -107,6 +113,88 @@ class TaskDetail extends Component {
     })
   }
 
+  EditTask = async () => {
+    let temp_data = {}
+    if (this.props.route.params.loadBySelf) {
+      const data_loadBySelf = await axios
+        .get(
+          `${Url()}/api/actions/${this.props.route.params.actionId}`,
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
+          }
+        )
+        .then((res) => res.data.data);
+      temp_data = data_loadBySelf
+    } else {
+      temp_data = this.props.route.params.data
+    }
+    this.props.navigation.navigate("EditTask", {
+      data: temp_data,
+      updateData: (e) => this.updateData(e)
+    })
+  }
+
+  DeleteConfirm = async () => {
+    this.onDeleteLoading()
+    const result = await axios.delete(`${Url()}/api/actions/${this.state.data._id}`, {
+      headers: {
+        Authorization: await getToken()
+      }
+    })
+      .then((res) => {
+        alert('Xóa công việc thành công')
+        this.setState({
+          deleteLoading: false
+        })
+        return res.data.data
+      })
+      .catch(err => {
+        console.log(err)
+        this.setState({
+          deleteLoading: false
+        })
+        alert('Xóa công việc thất bại')
+      })
+    if (result) {
+      if (!this.props.route.params.loadBySelf) {
+        this.props.route.params.deleteItemInCurrentActions(result._id)
+      }
+      this.props.navigation.goBack()
+    }
+  }
+
+  onDeleteLoading() {
+    this.setState({
+      deleteLoading: true,
+    });
+  }
+
+  DeleteTask = async () => {
+    Alert.alert(
+      //title
+      'Xoá Công Việc',
+      //body
+      'Bạn có chắc muốn xoá công việc này? ',
+      [
+        {
+          text: 'Cancel', onPress: () => console.log('Cancel')
+        },
+        {
+          text: 'Xoá', onPress: this.DeleteConfirm, style: 'destructive'
+
+        },
+      ],
+      { cancelable: false },
+    );
+  }
+
+  test = () => {
+    console.log('test')
+  }
+
+
   async componentDidMount() {
     this._isMounted = true;
     let temp_data = {}
@@ -128,18 +216,16 @@ class TaskDetail extends Component {
     this.props.navigation.setOptions({
       headerRight: () => (
         <View style={styles.IconRight}>
-          {checkPermisson(this.props.route.params.currentPermissions, constants.QL_CONGVIEC_PERMISSION) ? <TouchableOpacity
-            onPress={() =>
-              this.props.navigation.navigate("EditTask", {
-                data: temp_data,
-                updateData: (e) => this.updateData(e)
-              })
-            }
-          >
-            <Image source={require("../../assets/images/preview.png")} />
-          </TouchableOpacity> : null}
-
+          {checkPermisson(this.props.route.params.currentPermissions, constants.QL_CONGVIEC_PERMISSION) ?
+            <OptionsMenu
+              button={Icon}
+              destructiveIndex={1}
+              options={["Chỉnh sửa công việc", "Xoá Công việc", "Huỷ bỏ"]}
+              actions={[this.EditTask, this.DeleteTask, this.test]}
+            /> : null
+          }
         </View>
+
       ),
     });
     const subActions = await axios
@@ -183,6 +269,7 @@ class TaskDetail extends Component {
     if (!this.state.loadingBigObject) {
       return (
         <View style={styles.container}>
+          <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
           <TabView
             renderTabBar={this.renderTabBar}
             navigationState={{
