@@ -158,7 +158,7 @@ class TaskDetail extends Component {
         alert('Xóa công việc thất bại')
       })
     if (result) {
-      if (!this.props.route.params.loadBySelf) {
+      if (this.props.route.params.loadBySelf !== true) {
         this.props.route.params.deleteItemInCurrentActions(result._id)
       }
       this.props.navigation.goBack()

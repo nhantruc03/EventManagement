@@ -49,7 +49,7 @@ class EditActionTypeModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: this.props.data[0].name,
+            name: this.props.data.title,
         };
     }
     onFinish = async (e) => {
@@ -58,16 +58,12 @@ class EditActionTypeModal extends Component {
             eventId: this.props.eventId,
         };
         await axios
-            .post(`${Url()}/api/action-types`, data, {
+            .put(`${Url()}/api/action-types/${this.props.data.key}`, data, {
                 headers: {
                     Authorization: await getToken(),
                 },
             })
             .then((res) => {
-                console.log(res.data.data);
-                // this.setState({
-                //   currentActionTypes: [...this.state.currentActionTypes, res.data.data],
-                // });
                 this.props.editActionTypes(res.data.data);
                 this.props.onClose2();
             })
@@ -81,7 +77,6 @@ class EditActionTypeModal extends Component {
         });
     };
     render() {
-        console.log(this.props.data[0].name)
         return (
             <View style={{ height: H * 0.25 }}>
                 <View

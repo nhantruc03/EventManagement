@@ -290,7 +290,6 @@ class CreateTask extends Component {
         },
       })
       .then((res) => {
-        alert("Tạo thành công");
 
         client.send(
           JSON.stringify({
@@ -298,15 +297,21 @@ class CreateTask extends Component {
             notifications: res.data.Notifications,
           })
         );
+        console.log('noti', res.data.Notifications)
         PushNoti.sendListPushNoti(res.data.Notifications)
-        this.props.navigation.goBack()
+        alert("Tạo thành công");
+        // this.props.route.params.updateListActions(res.data.action)
+        // this.props.route.params.navigation.goBack()
         // this.props.route.params.updateListActions(res.data.action);
-        // this.props.navigation.navigate("Task", {
-        //   data: res.data.action,
-        // });
+        this.props.route.params.navigation.navigate("Task", {
+          data: res.data.action,
+        });
       })
       .catch((err) => {
-        console.log(err.response.data);
+        console.log('error', err);
+        if (err.response) {
+          console.log('error response', err.response.data)
+        }
         this.setState({
           loadingbtn: false,
         })

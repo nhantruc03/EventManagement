@@ -32,7 +32,7 @@ export function sendPushNoti(e) {
 }
 
 export function sendListPushNoti(e) {
-    e.forEac(x => {
+    e.forEach(x => {
         if (x.userId.push_notification_token) {
             let data = JSON.stringify({
                 to: x.userId.push_notification_token,

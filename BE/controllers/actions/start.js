@@ -143,17 +143,9 @@ const start = async (req, res) => {
             })
             //access DB
             let temp_listNoti = await notifications.insertMany(
-                body,
-                { session: session }
+                body
             )
 
-            if (isEmpty(temp_listNoti) || temp_listNoti.length != body.length) {
-                await abortTransactions(sessions);
-                return res.status(406).json({
-                    success: false,
-                    error: "Created notifications failed"
-                });
-            }
             let list_userIdForNoti = temp_listNoti.reduce((list, e) => {
                 list.push(e.userId)
                 return list;

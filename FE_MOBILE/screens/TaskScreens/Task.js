@@ -22,6 +22,7 @@ import * as constants from "../../components/constant/action";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import OptionsMenu from "react-native-options-menu";
 import EditActionTypeModal from "../../components/EditActionTypeModal";
+import TaskCol from "../../components/TaskCol"
 const W = Dimensions.get("window").width;
 
 const initialLayout = { width: W };
@@ -158,7 +159,8 @@ class Taskscreen extends Component {
       visible2: false,
       chosen: false,
       currentPermissions: [],
-      ActionTypeForEdit: {}
+      ActionTypeForEdit: {},
+      currentEditActionType: {}
     };
     this._isMounted = false;
   }
@@ -173,6 +175,8 @@ class Taskscreen extends Component {
       this.updateListActions(result);
     }
   }
+
+
 
   onClose = () => {
     this.setState({
@@ -311,21 +315,14 @@ class Taskscreen extends Component {
     }
   };
 
-  EditActionType = () => {
-    // this.setState({
-    //   ActionTypeForEdit,
-    // })
-    // if (this.formEditActionType.current) {
-    //   this.formEditActionType.current.setFieldsValue(ActionTypeForEdit)
-    // }
-    // this.setModalEditActionTypeVisible(true)
+  EditActionType = (e) => {
     this.setState({
       visible2: true,
+      currentEditActionType: e
     })
   }
 
   DeleteActionType = async (value) => {
-    console.log("data", value)
     const result = await axios.delete(`${Url()}/api/action-types/${value}`, {
       headers: {
         Authorization: await getToken(),
@@ -341,13 +338,14 @@ class Taskscreen extends Component {
       })
     if (result) {
       this.setState({
-        currentActionTypes: this.state.currentActionTypes.filter(x => x._id !== result._id)
+        currentActionTypes: this.state.currentActionTypes.filter(x => x._id !== result._id),
+        routes: this.state.routes.filter(x => x.key !== result._id),
+        index: 0
       })
     }
   }
 
   test = () => {
-    console.log('test')
   }
 
   renderTask = ({ route }) => {
@@ -355,33 +353,18 @@ class Taskscreen extends Component {
       (e) => e.actionTypeId._id === route.key
     );
 
+    // apply filter here
+
+    // render
     return (
-      <View style={styles.contentContainer}>
-        <View style={{ marginVertical: 12, flexDirection: "row", justifyContent: 'flex-end' }}>
-          <TouchableOpacity>
-            <View style={{ marginRight: 8 }}>
-              <View style={styles.FilterBtn}>
-                <Text style={styles.FilterBtnText}>Bộ lọc</Text>
-                <Ionicons name='filter' size={24} color="#2A9D8F" />
-              </View>
-            </View>
-          </TouchableOpacity>
-          <View>
-            <OptionsMenu
-              customButton={myIcon}
-              destructiveIndex={1}
-              options={["Chỉnh sửa loại công việc", "Xoá loại công việc", "Huỷ bỏ"]}
-              actions={[this.EditActionType, () => this.DeleteActionType(route.key), this.test]}
-            />
-          </View>
-        </View >
-        <FlatList
-          data={temp_listActions}
-          renderItem={({ item }) => this.renderItem(item)}
-          keyExtractor={(item) => item._id}
-        />
-      </View >
-    );
+      <TaskCol
+        currentPermissions={this.state.currentPermissions}
+        deleteItemInCurrentActions={(e) => this.deleteItemInCurrentActions(e)}
+        navigation={this.props.navigation}
+        route={route} data={temp_listActions}
+        EditActionType={(e) => this.EditActionType(e)}
+        DeleteActionType={(e) => this.DeleteActionType(e)} />
+    )
   };
 
   updateListActions = (e) => {
@@ -395,96 +378,6 @@ class Taskscreen extends Component {
       currentActions: this.state.currentActions.filter(x => x._id !== e)
     })
   }
-
-  renderItem = (item) => {
-    return (
-      <TouchableOpacity
-        onPress={() =>
-          this.props.navigation.navigate("TaskDetail", {
-            currentPermissions: this.state.currentPermissions,
-            data: item,
-            deleteItemInCurrentActions: (e) => this.deleteItemInCurrentActions(e)
-          })
-        }
-      >
-        <EventCard>
-          <View >
-            <Image
-              style={styles.cardImage}
-              source={{
-                uri: `${Url()}/api/images/${item.coverUrl}`,
-              }}
-            ></Image>
-            <Text style={styles.titleText}>{item.name}</Text>
-            <View style={styles.datetime}>
-              <Image
-                style={styles.Timeicon}
-                source={require("../../assets/images/timesolid.png")}
-              ></Image>
-              <Text style={styles.Timecontent}>
-                {moment(item.endDate).utcOffset(0).format("DD/MM/YYYY")} -{" "}
-                {moment(item.endTime).utcOffset(0).format("HH:mm")}
-              </Text>
-            </View>
-            <View>
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <View style={styles.tagContainer}>
-                  {item.tagsId.map((value, key) => (
-                    <View
-                      style={{
-                        backgroundColor: value.background,
-                        marginRight: 10,
-                        paddingHorizontal: 10,
-                        borderRadius: 16,
-                      }}
-                      key={key}
-                    >
-                      <Text
-                        style={{
-                          color: value.color,
-                          marginVertical: 4,
-                          fontFamily: "regular",
-                          fontSize: 16,
-                        }}
-                      >
-                        {value.name}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-                {/* <View>
-                  {item.availUser.map((value, key) => (
-                    <View
-                      style={{
-                        marginRight: 10,
-                        paddingHorizontal: 10,
-                        borderRadius: 16,
-                      }}
-                      key={key}
-                    >
-                      <Image
-                        style={styles.avaImage}
-                        source={{
-                          uri: `${Url()}/api/images/${value.photoUrl}`,
-                        }}
-                      ></Image>
-                    </View>
-                  ))}
-                </View> */}
-              </View>
-            </View>
-          </View>
-        </EventCard>
-      </TouchableOpacity>
-    );
-  };
 
   renderTabBar = (props) => (
     <TabBar
@@ -515,9 +408,22 @@ class Taskscreen extends Component {
   };
 
   editActionTypes = (e) => {
+    let temp_currentActionTypes = this.state.currentActionTypes
+    temp_currentActionTypes.forEach(x => {
+      if (x._id === e._id) {
+        x.name = e.name
+      }
+    })
+
+    let temp_routes = this.state.routes
+    temp_routes.forEach(x => {
+      if (x.key === e._id) {
+        x.title = e.name
+      }
+    })
     this.setState({
-      currentActionTypes: [...this.state.currentActionTypes, e],
-      routes: [...this.state.routes, { key: e._id, title: e.name }],
+      currentActionTypes: temp_currentActionTypes,
+      routes: temp_routes
     });
   };
 
@@ -536,7 +442,7 @@ class Taskscreen extends Component {
             <TabView
               renderTabBar={this.renderTabBar}
               navigationState={{
-                index: this.state.index,
+                index: 0,
                 routes: this.state.routes,
               }}
               renderScene={this.renderTask}
@@ -596,6 +502,7 @@ class Taskscreen extends Component {
               this.props.navigation.navigate("CreateTask", {
                 event: this.state.currentEvent,
                 navigation: this.props.navigation,
+                updateListActions: (e) => this.updateListActions(e)
               })
             }
           >
@@ -686,7 +593,7 @@ class Taskscreen extends Component {
             closable
           >
             <EditActionTypeModal
-              data={this.state.currentActionTypes}
+              data={this.state.currentEditActionType}
               onClose2={this.onClose2}
               eventId={this.state.currentEvent._id}
               editActionTypes={(e) => this.editActionTypes(e)}
