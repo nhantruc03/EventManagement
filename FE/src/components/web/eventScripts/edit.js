@@ -94,9 +94,9 @@ class edit extends Component {
                     writerId: script.writerId._id,
                     forId: script.forId._id,
                     listscriptdetails: scriptdetails.sort((a, b) => {
-                        let temp_a = new Date(a.time).setFullYear(1, 1, 1);
-                        let temp_b = new Date(b.time).setFullYear(1, 1, 1);
-                        return temp_a > temp_b ? 1 : -1
+                        let temp_a = moment(`0001-01-01 ${moment(a.time).utcOffset(0).format("HH:mm")}`)
+                        let temp_b = moment(`0001-01-01 ${moment(b.time).utcOffset(0).format("HH:mm")}`)
+                        return temp_b.isBefore(temp_a) ? 1 : -1;
                     }),
                     history: history
                 })
@@ -171,9 +171,9 @@ class edit extends Component {
                     })
                     this.setState({
                         listscriptdetails: temp_list.sort((a, b) => {
-                            let temp_a = new Date(a.time).setFullYear(1, 1, 1);
-                            let temp_b = new Date(b.time).setFullYear(1, 1, 1);
-                            return temp_a > temp_b ? 1 : -1
+                            let temp_a = moment(`0001-01-01 ${moment(a.time).utcOffset(0).format("HH:mm")}`)
+                            let temp_b = moment(`0001-01-01 ${moment(b.time).utcOffset(0).format("HH:mm")}`)
+                            return temp_b.isBefore(temp_a) ? 1 : -1;
                         }),
                         history: [...this.state.history, res.data.history]
                     })
