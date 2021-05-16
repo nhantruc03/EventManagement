@@ -35,6 +35,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignContent: "center",
   },
+  LoadingBtn: {
+    borderRadius: 8,
+    padding: 12,
+    margin: 16,
+    justifyContent: "center",
+    alignContent: "center",
+  },
   Box: {
     height: 40,
     marginTop: 8,
@@ -51,9 +58,16 @@ class AddActionTypeModal extends Component {
     super(props);
     this.state = {
       name: "",
+      loadingbtn: false
     };
   }
+  onLoading() {
+    this.setState({
+      loadingbtn: true,
+    });
+  }
   onFinish = async (e) => {
+    this.onLoading()
     let data = {
       name: this.state.name,
       eventId: this.props.eventId,
@@ -81,6 +95,8 @@ class AddActionTypeModal extends Component {
       name: name,
     });
   };
+
+
   render() {
     return (
       <View style={{ height: H * 0.25 }}>
@@ -99,13 +115,16 @@ class AddActionTypeModal extends Component {
             ></TextInput>
           </View>
         </View>
-        <Button
+        {!this.state.loadingbtn ? <Button
           type="primary"
           onPress={this.onFinish}
           style={styles.PrimaryBtn}
         >
           Xác nhận
-        </Button>
+        </Button> : <Button style={styles.LoadingBtn} loading>
+          loading
+        </Button>}
+
       </View>
     );
   }

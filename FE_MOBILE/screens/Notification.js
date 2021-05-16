@@ -60,6 +60,8 @@ export default class Notification extends Component {
     this.state = {};
   }
 
+
+
   updateNoti = async (id) => {
     let data = {
       status: true,
@@ -105,6 +107,7 @@ export default class Notification extends Component {
               this.props.navigation.navigate("TaskDetail", {
                 actionId: item.actionId,
                 loadBySelf: true,
+                currentPermissions: this.props.currentPermissions
               });
             }}
           >

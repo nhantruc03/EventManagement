@@ -69,7 +69,7 @@ const create = async (req, res) => {
     )
 
     let result_notification = await notifications.findById(created_notification._id)
-      .populate({path:'userId', select:'push_notification_token'})
+      .populate({ path: 'userId', select: 'push_notification_token' })
     // done notification
 
     //start history
@@ -92,7 +92,7 @@ const create = async (req, res) => {
       .populate({ path: 'newForIdScript', select: 'name' })
 
     //done history
-
+    console.log(created_history)
     // Success
     await commitTransactions(sessions)
     return res.status(200).json({

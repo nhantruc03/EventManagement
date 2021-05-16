@@ -146,12 +146,12 @@ const start = async (req, res) => {
                 body
             )
 
-            let list_userIdForNoti = temp_listNoti.reduce((list, e) => {
-                list.push(e.userId)
+            let list_Id = temp_listNoti.reduce((list, e) => {
+                list.push(e._id)
                 return list;
             }, [])
 
-            listNotifications = await notifications.find({ _id: { $in: list_userIdForNoti } })
+            listNotifications = await notifications.find({ _id: { $in: list_Id } })
                 .populate({ path: 'userId', select: 'push_notification_token' })
 
         }

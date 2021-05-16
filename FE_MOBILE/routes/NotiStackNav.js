@@ -29,7 +29,7 @@ class NotiStackNav extends Component {
                 <Stack.Screen
                     name="Notification"
                     // component={Noticreen}
-                    children={({ navigation }) => <Notiscreen navigation={navigation} updateNoti={(e) => this.props.updateNoti(e)} data={this.props.data} />}
+                    children={({ navigation }) => <Notiscreen navigation={navigation} updateNoti={(e) => this.props.updateNoti(e)} data={this.props.data} currentPermissions={this.props.currentPermissions} />}
                     options={{
                         headerShown: false,
                         headerStyle: {

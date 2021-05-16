@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import Search from "../helper/search";
-import Unchecked from "../../assets/images/Unchecked.png";
+import Unchecked from "../../assets/images/square_unchecked.png";
 import Checked from "../../assets/images/square_checked.png";
 import axios from "axios";
 import Url from "../../env";
@@ -73,7 +73,7 @@ export default class GuestTab extends Component {
     await axios
       .put(
         `${Url()}/api/guests/` + e._id,
-        { status: !e.status },
+        { status: !e.status, guestTypeId: e.guestTypeId._id },
         {
           headers: {
             Authorization: await getToken(),
@@ -153,7 +153,6 @@ export default class GuestTab extends Component {
             _id: item.guestTypeId._id,
             data: [],
           }; // check cần tạo mới hay đã có trong result
-
       if (list.indexOf(temp_O) !== -1) {
         list[list.indexOf(temp_O)].data.push(item);
       } else {

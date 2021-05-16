@@ -215,6 +215,7 @@ export default class ScriptTab extends Component {
 
 
   renderItem = (e) => {
+    console.log(this.props.currentPermissions)
     return (
       < Swipeable
         renderRightActions={() => this.RightActions(e.item)}

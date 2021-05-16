@@ -99,7 +99,6 @@ export default class EventDetail2 extends Component {
   Route4 = () =>
     this.state.listgroups && !this.state.loading ? (
       <GroupTab
-
         navigation={this.props.navigation}
         data={this.state.listgroups}
       />

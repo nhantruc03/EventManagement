@@ -2,15 +2,18 @@ import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import OptionsMenu from "react-native-options-menu";
-import EventCard from './EventCard';
+import CheckboxGroup from 'react-native-checkbox-group'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import TaskCard from "./TaskCard"
-const styles = StyleSheet.create({
-    contentContainer: {
+import { Overlay } from 'react-native-elements';
+import Search from "../components/helper/search";
+import Url from "../env";
+import axios from "axios";
+import getToken from "../Auth";
+import { RefreshControl } from 'react-native';
 
-    },
+const styles = StyleSheet.create({
     FilterBtn: {
-        flexDirection: "row",
         alignItems: "center",
         width: "100%",
         backgroundColor: "#C4C4C4",
@@ -25,16 +28,6 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         backgroundColor: "#2A9D8F"
     },
-    DeleteBtn: {
-        flexDirection: "row",
-        alignItems: "center",
-        width: "100%",
-        padding: 8,
-        borderRadius: 8,
-        borderColor: '#EB5757',
-        borderWidth: 1,
-        backgroundColor: 'white'
-    },
     FilterBtnText: {
         fontFamily: "semibold",
         fontSize: 16,
@@ -47,16 +40,16 @@ const styles = StyleSheet.create({
         marginRight: 8,
         color: "white",
     },
-    DeleteBtnText: {
-        fontFamily: "semibold",
-        fontSize: 16,
-        marginRight: 8,
-        color: "#EB5757",
-    },
+    CheckboxContainer: {
+        height: "30%",
+        alignContent: 'center',
+        alignItems: 'center',
+
+    }
 })
 const myIcon = (<TouchableOpacity>
     <View style={styles.EditBtn}>
-        <Text style={styles.EditBtnText}>Tuỳ chỉnh</Text>
+        {/* <Text style={styles.EditBtnText}>Tuỳ chỉnh</Text> */}
         <Ionicons name='ellipsis-vertical-circle' size={24} color='white' />
     </View>
 </TouchableOpacity>)
@@ -67,9 +60,61 @@ class TaskCol extends Component {
         this.state = {
             filter: [],
             totalSubOfAction: [],
+            visible: false,
+            SearchData: [],
+            refreshing: false,
+            listCheckbox: [
+                {
+                    label: "Tên", // label for checkbox item
+                    value: "Tên", // selected value for item, if selected, what value should be sent?
+                    selected: false
+                },
+                {
+                    label: "Số lượng công việc",
+                    value: "Số lượng công việc",
+                    selected: false
+                },
+                {
+                    label: "Độ ưu tiên",
+                    value: "Độ ưu tiên",
+                    selected: false
+                },
+                {
+                    label: "Ban",
+                    value: "Ban",
+                    selected: false
+                },
+            ]
+
         };
     }
 
+    componentDidMount() {
+        this.setState({
+            SearchData: this.props.data,
+        })
+    }
+    // UNSAFE_componentWillReceiveProps(e) {
+    //     console.log('data', e)
+    //     this.setState({
+    //         SearchData: e.data
+    //     })
+    // }
+    componentDidUpdate(prevProps) {
+        if (prevProps.data !== this.props.data) {
+            const result = this.props.data;
+            this.setState({
+                SearchData: result
+            })
+        }
+
+    }
+
+    getSearchData = (data) => {
+        this.setState({
+            SearchData: data
+        });
+    };
     applyFilter = (list) => {
         let result = list.slice()
         if (this.state.filter.includes('Tên')) {
@@ -140,37 +185,120 @@ class TaskCol extends Component {
         );
     };
 
+    openFilter = () => {
+        this.setState({
+            visible: !this.state.visible
+        })
+    }
+    onChange = (checkedValues) => {
+        this.setState({
+            filter: checkedValues,
+
+        })
+        console.log("value", checkedValues)
+        let temp = this.state.listCheckbox
+        temp.forEach(e => {
+            if (this.state.filter.includes(e.value)) {
+                console.log('e', e.value)
+                e.selected = true
+            }
+            else e.selected = false
+        })
+        this.setState({
+            listCheckbox: temp
+        })
+    }
     test = () => {
     }
 
+    onRefresh = async () => {
+        this.setState({
+            refreshing: true,
+        });
+        await axios
+            .post(
+                `${Url()}/api/actions/getAll`,
+                { eventId: this.props.eventId },
+                {
+                    headers: {
+                        Authorization: await getToken(),
+                    },
+                }
+            )
+            .then((res) => {
+                console.log("data", res.data.data);
+                this.props.updateFullListCurrentAction(res.data.data);
+                this.setState({
+                    refreshing: false,
+                    SearchData: res.data.data
+                });
+            });
+    }
+
     render() {
-        let data_appliedFilter = this.applyFilter(this.props.data)
+        let data_appliedFilter = this.applyFilter(this.state.SearchData)
         return (
-            <View style={styles.contentContainer}>
-                <View style={{ marginVertical: 12, flexDirection: "row", justifyContent: 'flex-end' }}>
-                    <TouchableOpacity>
-                        <View style={{ marginRight: 8 }}>
-                            <View style={styles.FilterBtn}>
-                                <Text style={styles.FilterBtnText}>Bộ lọc</Text>
-                                <Ionicons name='filter' size={24} color="#2A9D8F" />
+            <View>
+                <View style={{ flexDirection: "row", width: '100%', alignItems: 'center' }}>
+                    <View style={{ backgroundColor: 'black', width: '72%' }}>
+                        <Search style={{ width: '100%' }} data={this.props.data} target={"name"} getSearchData={(e) => this.getSearchData(e)} />
+                    </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'flex-end', width: '28%' }}>
+                        <TouchableOpacity onPress={this.openFilter}>
+                            <View style={{ marginRight: 8 }}>
+                                <View style={styles.FilterBtn}>
+                                    {/* <Text style={styles.FilterBtnText}>Bộ lọc</Text> */}
+                                    <Ionicons name='filter' size={24} color="#2A9D8F" />
+                                </View>
                             </View>
+                        </TouchableOpacity>
+                        <View>
+                            <OptionsMenu
+                                customButton={myIcon}
+                                destructiveIndex={1}
+                                options={["Chỉnh sửa loại công việc", "Xoá loại công việc", "Huỷ bỏ"]}
+                                actions={[() => this.props.EditActionType(this.props.route), () => this.props.DeleteAlert(this.props.route.key), this.test]}
+                            />
                         </View>
-                    </TouchableOpacity>
-                    <View>
-                        <OptionsMenu
-                            customButton={myIcon}
-                            destructiveIndex={1}
-                            options={["Chỉnh sửa loại công việc", "Xoá loại công việc", "Huỷ bỏ"]}
-                            actions={[() => this.props.EditActionType(this.props.route), () => this.props.DeleteActionType(this.props.route.key), this.test]}
-                        />
                     </View>
                 </View >
+                <Overlay isVisible={this.state.visible} onBackdropPress={this.openFilter}>
+                    <View style={styles.CheckboxContainer}>
+                        <View style={{ marginTop: 16 }}></View>
+                        <CheckboxGroup
+                            style={{ backgroundColor: 'black' }}
+                            callback={(selected) => { this.onChange(selected) }}
+                            iconColor={"#2A9D8F"}
+                            iconSize={30}
+                            checkedIcon="ios-checkbox-outline"
+                            uncheckedIcon="ios-square-outline"
+                            checkboxes={this.state.listCheckbox}
+                            labelStyle={{
+                                fontFamily: "semibold",
+                                fontSize: 16,
+                                color: '#2A9D8F'
+                            }}
+                            rowStyle={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+
+                            }}
+                            rowDirection={"column"}
+                        />
+                    </View>
+                </Overlay>
                 <FlatList
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this.onRefresh}
+                        />
+                    }
                     data={data_appliedFilter}
                     renderItem={({ item }) => this.renderItem(item)}
                     keyExtractor={(item) => item._id}
                 />
-            </View >
+            </View>
         );
     }
 }

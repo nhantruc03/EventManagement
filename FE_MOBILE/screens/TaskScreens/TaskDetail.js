@@ -213,6 +213,7 @@ class TaskDetail extends Component {
     } else {
       temp_data = this.props.route.params.data
     }
+    console.log(this.props.route.params.currentPermissions)
     this.props.navigation.setOptions({
       headerRight: () => (
         <View style={styles.IconRight}>

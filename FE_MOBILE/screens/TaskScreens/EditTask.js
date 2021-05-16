@@ -418,7 +418,8 @@ class EditTask extends Component {
         });
       })
       .catch((err) => {
-        alert("Tạo thất bại");
+        console.log(err.response.data)
+        alert(`${err.response.data?.error}`);
       });
   };
 
@@ -787,7 +788,7 @@ class EditTask extends Component {
               <Text style={styles.textUpdate}>Xác nhận</Text>
             </TouchableOpacity>
           ) : (
-            <Button loading>Loading</Button>
+            <Button loading></Button>
           )}
         </View>
       );

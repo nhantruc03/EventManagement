@@ -41,7 +41,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   titleText: {
-    marginVertical: 16,
+    marginTop: 8,
+    marginBottom: 4,
     fontFamily: "bold",
     fontSize: 18,
   },
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   Timeicon: {
-    position: "relative",
+
   },
   Timecontent: {
     marginLeft: 8,
@@ -127,56 +128,38 @@ export default class TaskCard extends Component {
     return (
       <EventCard>
         <View >
-          <Image
-            style={styles.cardImage}
-            source={{
-              uri: `${Url()}/api/images/${item.coverUrl}`,
-            }}
-          ></Image>
+          <Image style={styles.cardImage} source={{ uri: `${Url()}/api/images/${item.coverUrl}` }} />
           <Text style={styles.titleText}>{item.name}</Text>
           <View style={styles.datetime}>
-            <Image
-              style={styles.Timeicon}
-              source={require("../assets/images/timesolid.png")}
-            ></Image>
+            <Image style={styles.Timeicon} source={require("../assets/images/timesolid.png")} />
             <Text style={styles.Timecontent}>
               {moment(item.endDate).utcOffset(0).format("DD/MM/YYYY")} -{" "}
               {moment(item.endTime).utcOffset(0).format("HH:mm")}
             </Text>
           </View>
           <View>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
+            <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
+              <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center", marginRight: 8 }}>
+                <Image source={require("../assets/images/resource.png")} />
+                <Text style={styles.Timecontent}>{this.state.resources.length}</Text>
+              </View>
+              <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
+                <Image source={require("../assets/images/solidchecked.png")} />
+                <Text style={styles.Timecontent}>{this.state.completeSubAction.length}/{this.state.totalSubAction.length}</Text>
+              </View>
+            </View>
+            <View style={{ flex: 1, flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
               <View style={styles.tagContainer}>
                 {item.tagsId.map((value, key) => (
-                  <View
-                    style={{
-                      backgroundColor: value.background,
-                      marginRight: 10,
-                      paddingHorizontal: 10,
-                      borderRadius: 16,
-                    }}
-                    key={key}
-                  >
-                    <Text
-                      style={{
-                        color: value.color,
-                        marginVertical: 4,
-                        fontFamily: "regular",
-                        fontSize: 16,
-                      }}
-                    >
+                  <View style={{ backgroundColor: value.background, marginRight: 10, paddingHorizontal: 10, borderRadius: 16 }}
+                    key={key}>
+                    <Text style={{ color: value.color, marginVertical: 4, fontFamily: "regular", fontSize: 16, }}>
                       {value.name}
                     </Text>
                   </View>
                 ))}
               </View>
+
               {/* <View>
                   {item.availUser.map((value, key) => (
                     <View
@@ -197,6 +180,7 @@ export default class TaskCard extends Component {
                   ))}
                 </View> */}
             </View>
+
           </View>
         </View>
       </EventCard>

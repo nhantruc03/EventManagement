@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, Animated } from "react-native";
+import { View, Text, StyleSheet, Animated, Dimensions } from "react-native";
 import WSK from "../../websocket";
 import Url from "../../env";
 import getToken from "../../Auth";
@@ -29,6 +29,10 @@ import * as GestureHandler from 'react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Loader from "react-native-modal-loader";
 import { Alert } from "react-native";
+
+
+const W = Dimensions.get("window").width;
+const H = Dimensions.get("window").height;
 
 const { Swipeable } = GestureHandler;
 
@@ -277,9 +281,9 @@ class scriptdetail extends Component {
         });
 
         let temp_listscriptdetails = scriptdetails.sort((a, b) => {
-          let temp_a = new Date(a.time).setFullYear(1, 1, 1);
-          let temp_b = new Date(b.time).setFullYear(1, 1, 1);
-          return temp_a > temp_b ? 1 : -1;
+          let temp_a = moment(`0001-01-01 ${moment(a.time).utcOffset(0).format("HH:mm")}`)
+          let temp_b = moment(`0001-01-01 ${moment(b.time).utcOffset(0).format("HH:mm")}`)
+          return temp_b.isBefore(temp_a) ? 1 : -1;
         });
 
         if (this._isMounted) {
@@ -378,9 +382,9 @@ class scriptdetail extends Component {
     });
     this.setState({
       listscriptdetails: temp_list.sort((a, b) => {
-        let temp_a = new Date(a.time).setFullYear(1, 1, 1);
-        let temp_b = new Date(b.time).setFullYear(1, 1, 1);
-        return temp_a > temp_b ? 1 : -1;
+        let temp_a = moment(`0001-01-01 ${moment(a.time).utcOffset(0).format("HH:mm")}`)
+        let temp_b = moment(`0001-01-01 ${moment(b.time).utcOffset(0).format("HH:mm")}`)
+        return temp_b.isBefore(temp_a) ? 1 : -1;
       }),
       history: [...this.state.history, b]
     });
@@ -389,11 +393,12 @@ class scriptdetail extends Component {
   addListScriptDetails = (temp, b) => {
     let temp_list = this.state.listscriptdetails;
     temp_list.push(temp);
+    console.log(b)
     this.setState({
       listscriptdetails: temp_list.sort((a, b) => {
-        let temp_a = new Date(a.time).setFullYear(1, 1, 1);
-        let temp_b = new Date(b.time).setFullYear(1, 1, 1);
-        return temp_a > temp_b ? 1 : -1;
+        let temp_a = moment(`0001-01-01 ${moment(a.time).utcOffset(0).format("HH:mm")}`)
+        let temp_b = moment(`0001-01-01 ${moment(b.time).utcOffset(0).format("HH:mm")}`)
+        return temp_b.isBefore(temp_a) ? 1 : -1;
       }),
       history: [...this.state.history, b]
     });
@@ -517,6 +522,7 @@ class scriptdetail extends Component {
 
   render() {
     if (!this.state.isLoading) {
+      console.log(checkPermisson(this.props.route.params.currentPermissions, constants.QL_KICHBAN_PERMISSION))
       return (
         <Provider>
           <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
@@ -568,6 +574,7 @@ class scriptdetail extends Component {
                 data={this.state.listscriptdetails}
                 keyExtractor={(item) => item._id}
                 renderItem={this.renderItem}
+                style={{ height: H * 0.38 }}
               ></FlatList>
             </View>
             {checkPermisson(this.props.route.params.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
@@ -605,7 +612,7 @@ class scriptdetail extends Component {
               scriptId={this.state._id}
               history={this.state.history}
               updateListScriptDetails={(e, b) => this.updateListScriptDetails(e, b)}
-              addListScriptDetails={(e, b) => this.addListScriptDetails(e)}
+              addListScriptDetails={(e, b) => this.addListScriptDetails(e, b)}
             />
           </Modal>
         </Provider>

@@ -23,6 +23,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import OptionsMenu from "react-native-options-menu";
 import EditActionTypeModal from "../../components/EditActionTypeModal";
 import TaskCol from "../../components/TaskCol"
+import { Alert } from "react-native";
+import Loader from "react-native-modal-loader";
 const W = Dimensions.get("window").width;
 
 const initialLayout = { width: W };
@@ -31,8 +33,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F7F8",
     flex: 1,
   },
-  containerIOS: { flex: 1, marginTop: 16 },
-  containerAndroid: { marginTop: StatusBar.currentHeight, flex: 1 },
+  containerIOS: { flex: 1, marginTop: 16, backgroundColor: "#F6F7F8", },
+  containerAndroid: { marginTop: StatusBar.currentHeight, flex: 1, backgroundColor: "#F6F7F8", },
   cardImage: {
     width: 276,
     height: 160,
@@ -160,7 +162,8 @@ class Taskscreen extends Component {
       chosen: false,
       currentPermissions: [],
       ActionTypeForEdit: {},
-      currentEditActionType: {}
+      currentEditActionType: {},
+      deleteLoading: false,
     };
     this._isMounted = false;
   }
@@ -322,15 +325,42 @@ class Taskscreen extends Component {
     })
   }
 
+  DeleteAlert = (e) => {
+    Alert.alert(
+      //title
+      'Xoá loại công việc',
+      //body
+      `Bạn có chắc muốn xoá loại công việc ${this.state.currentActionTypes[0].name}? `,
+      [
+        {
+          text: 'Cancel', onPress: () => console.log('Cancel')
+        },
+        {
+          text: 'Xoá', onPress: () => this.DeleteActionType(e), style: 'destructive'
+        },
+      ],
+      { cancelable: false },
+    );
+  }
+
+  onDeleteLoading() {
+    this.setState({
+      deleteLoading: true,
+    });
+  }
+
   DeleteActionType = async (value) => {
+    this.onDeleteLoading()
     const result = await axios.delete(`${Url()}/api/action-types/${value}`, {
       headers: {
         Authorization: await getToken(),
       },
     })
       .then((res) => {
+        this.setState({ deleteLoading: !this.state.deleteLoading })
         alert("Xóa thành công")
         return res.data.data;
+
       })
       .catch(err => {
         console.log(err)
@@ -358,14 +388,22 @@ class Taskscreen extends Component {
     // render
     return (
       <TaskCol
+        eventId={this.state.currentEvent._id}
         currentPermissions={this.state.currentPermissions}
         deleteItemInCurrentActions={(e) => this.deleteItemInCurrentActions(e)}
         navigation={this.props.navigation}
-        route={route} data={temp_listActions}
+        route={route}
+        data={temp_listActions}
         EditActionType={(e) => this.EditActionType(e)}
-        DeleteActionType={(e) => this.DeleteActionType(e)} />
+        DeleteAlert={(e) => this.DeleteAlert(e)}
+        updateFullListCurrentAction={(e) => this.updateFullListCurrentAction(e)} />
     )
   };
+  updateFullListCurrentAction = (e) => {
+    this.setState({
+      currentActions: e
+    })
+  }
 
   updateListActions = (e) => {
     this.setState({
@@ -516,6 +554,7 @@ class Taskscreen extends Component {
   render() {
     return (
       <Provider>
+        <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
         <View
           style={
             Platform.OS == "ios" ? styles.containerIOS : styles.containerAndroid

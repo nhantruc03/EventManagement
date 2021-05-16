@@ -144,7 +144,6 @@ class ScriptDetailModal extends Component {
         .then((res) => {
           // console.log(res.data.data[0]);
           this.props.addListScriptDetails(res.data.data[0], res.data.history);
-
           client.send(JSON.stringify({
             type: "sendNotification",
             notification: res.data.notification,

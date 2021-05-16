@@ -11,7 +11,7 @@ import TaskStackNav from "../routes/TaskStackNav";
 import HomeStackNav from "../routes/HomeStackNav";
 import NotiStackNav from "../routes/NotiStackNav";
 import { createStackNavigator } from "@react-navigation/stack";
-
+import getPermission from "../components/helper/Credentials"
 //import API
 import WSK from "../websocket";
 import Url from "../env";
@@ -45,6 +45,7 @@ export default class BottomNav extends React.Component {
       info_pass: false,
       onNoti: false,
       notiUrl: "",
+      currentPermissions: []
     };
   }
 
@@ -60,9 +61,10 @@ export default class BottomNav extends React.Component {
 
       client.onmessage = (message) => {
         const dataFromServer = JSON.parse(message.data);
+
         if (dataFromServer.type === "sendListNotifications") {
           if (dataFromServer.notifications.length > 0) {
-            // console.log(dataFromServer.message)
+
             dataFromServer.notifications.forEach((e) => {
               if (e.userId._id === this.state.currentUser.id) {
                 this.setState({
@@ -82,7 +84,7 @@ export default class BottomNav extends React.Component {
         }
       };
 
-      const [notifications] = await Promise.all([
+      const [notifications, permissions] = await Promise.all([
         axios
           .post(
             `${Url()}/api/notifications/getAll`,
@@ -94,6 +96,7 @@ export default class BottomNav extends React.Component {
             }
           )
           .then((res) => res.data.data),
+        getPermission(obj.id).then(res => res)
       ]);
 
       if (notifications !== null) {
@@ -101,6 +104,7 @@ export default class BottomNav extends React.Component {
           this.setState({
             notifications: notifications.reverse(),
             currentUser: obj,
+            currentPermissions: permissions
           });
         }
       }
@@ -267,7 +271,7 @@ export default class BottomNav extends React.Component {
         <Tab.Screen
           name="Notification"
           // component={NotiStackNav}
-          children={() => <NotiStackNav updateNoti={(e) => this.updateNoti(e)} data={this.state.notifications} />}
+          children={() => <NotiStackNav updateNoti={(e) => this.updateNoti(e)} data={this.state.notifications} currentPermissions={this.state.currentPermissions} />}
           listeners={{
             tabPress: (e) => {
               // Prevent default action
