@@ -31,6 +31,7 @@ import GuestView from "./forGuest/guestView";
 import EventAssignView from "./EventAssign/EventAssignView";
 import { Link } from "react-router-dom";
 import * as XLSX from 'xlsx'
+import ApiFailHandler from '../../helper/ApiFailHandler'
 const { Option } = Select;
 const { TabPane } = Tabs;
 const formItemLayout = {
@@ -121,7 +122,10 @@ class addevents extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/event-types/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -129,7 +133,10 @@ class addevents extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/tags/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -137,7 +144,10 @@ class addevents extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/faculties/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -145,7 +155,10 @@ class addevents extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/roles/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -154,6 +167,9 @@ class addevents extends Component {
                 .then((res) =>
                     res.data.data
                 )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                })
         ]));
 
 
@@ -215,6 +231,7 @@ class addevents extends Component {
             })
             .catch(err => {
                 message.error('Tạo thất bại');
+                ApiFailHandler(err.response?.data?.error)
             }))
     };
 

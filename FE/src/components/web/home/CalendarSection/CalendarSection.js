@@ -8,6 +8,7 @@ import { CarryOutOutlined } from '@ant-design/icons';
 import Title from 'antd/lib/typography/Title';
 import SubActionItems from './SubActionItems';
 import ActionItems from './ActionItem';
+import ApiFailHandler from '../../helper/ApiFailHandler'
 class CalendarSection extends Component {
     constructor(props) {
         super(props);
@@ -31,7 +32,10 @@ class CalendarSection extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
         if (subActions !== null) {
             if (this._isMounted) {

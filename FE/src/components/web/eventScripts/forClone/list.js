@@ -12,9 +12,9 @@ import {
     ZoomInOutlined,
 
 } from '@ant-design/icons';
-
 import moment from 'moment'
 import { Content } from 'antd/lib/layout/layout';
+import ApiFailHandler from '../../helper/ApiFailHandler'
 class list extends Component {
     constructor(props) {
         super(props);
@@ -75,8 +75,11 @@ class list extends Component {
                 .then((res) =>
                     res.data.data
                 )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                })
         ]));
-        console.log(scripts)
+
         if (scripts !== null) {
             if (this._isMounted) {
                 this.setState({
@@ -111,6 +114,9 @@ class list extends Component {
                     this.setState({
                         data: this.state.data.filter(o => o._id !== e)
                     })
+                })
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
                 })
         )
     }

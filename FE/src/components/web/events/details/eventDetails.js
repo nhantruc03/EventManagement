@@ -34,6 +34,7 @@ import ChatRoom from '../../chat/ChatRoom'
 import * as constants from "../../constant/actions"
 import getPermission from "../../helper/Credentials"
 import checkPermisson from "../../helper/checkPermissions"
+import ApiFailHandler from '../../helper/ApiFailHandler'
 const { TabPane } = Tabs;
 
 class eventDetails extends Component {
@@ -75,7 +76,10 @@ class eventDetails extends Component {
       })
         .then((res) =>
           res.data.data
-        ),
+        )
+        .catch(err => {
+          ApiFailHandler(err.response?.data?.error)
+        }),
       axios.post('/api/guest-types/getAll', { eventId: this.props.match.params.id }, {
         headers: {
           'Authorization': { AUTH }.AUTH
@@ -83,7 +87,10 @@ class eventDetails extends Component {
       })
         .then((res) =>
           res.data.data
-        ),
+        )
+        .catch(err => {
+          ApiFailHandler(err.response?.data?.error)
+        }),
       axios.post('/api/event-assign/getAll', { eventId: this.props.match.params.id }, {
         headers: {
           'Authorization': { AUTH }.AUTH
@@ -91,7 +98,10 @@ class eventDetails extends Component {
       })
         .then((res) =>
           res.data.data
-        ),
+        )
+        .catch(err => {
+          ApiFailHandler(err.response?.data?.error)
+        }),
       axios.post('/api/faculties/getAll', {}, {
         headers: {
           'Authorization': { AUTH }.AUTH
@@ -99,7 +109,10 @@ class eventDetails extends Component {
       })
         .then((res) =>
           res.data.data
-        ),
+        )
+        .catch(err => {
+          ApiFailHandler(err.response?.data?.error)
+        }),
       axios.post('/api/roles/getAll', {}, {
         headers: {
           'Authorization': { AUTH }.AUTH
@@ -107,7 +120,10 @@ class eventDetails extends Component {
       })
         .then((res) =>
           res.data.data
-        ),
+        )
+        .catch(err => {
+          ApiFailHandler(err.response?.data?.error)
+        }),
       axios.post('/api/groups/getAll', { eventId: this.props.match.params.id }, {
         headers: {
           'Authorization': { AUTH }.AUTH
@@ -115,7 +131,10 @@ class eventDetails extends Component {
       })
         .then((res) =>
           res.data.data
-        ),
+        )
+        .catch(err => {
+          ApiFailHandler(err.response?.data?.error)
+        }),
       getPermission(this.props.match.params.id).then(res => res)
 
     ]));
@@ -134,6 +153,9 @@ class eventDetails extends Component {
           .then((res) =>
             res.data.data
           )
+          .catch(err => {
+            ApiFailHandler(err.response?.data?.error)
+          })
       )
       guests = temp;
     }
@@ -255,8 +277,8 @@ class eventDetails extends Component {
         return res.data.data
       })
       .catch(err => {
-        console.log(err)
         message.error('Xóa sự kiện thất bại')
+        ApiFailHandler(err.response?.data?.error)
       })
     )
     if (result) {

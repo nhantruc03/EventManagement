@@ -6,6 +6,7 @@ import { trackPromise } from 'react-promise-tracker';
 import { Link } from 'react-router-dom';
 import { AUTH } from '../../../env'
 import ReviewScriptDetail from '../review'
+import ApiFailHandler from '../../helper/ApiFailHandler'
 class view extends Component {
     constructor(props) {
         super(props)
@@ -29,7 +30,10 @@ class view extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/script-details/getAll', { scriptId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -37,11 +41,12 @@ class view extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
 
-        console.log(scripts)
-        console.log(scripts_details)
 
         if (scripts !== null) {
             if (this._isMounted) {

@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
 import { AUTH } from '../../../env'
+import ApiFailHandler from '../../helper/ApiFailHandler'
 const { Meta } = Card;
 
 class actionCard extends Component {
@@ -44,7 +45,10 @@ class actionCard extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/action-resources/getAll', { actionId: this.props.data._id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -52,7 +56,10 @@ class actionCard extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
 
 

@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import ScriptItem from './item'
 class list extends Component {
     printData = (data) => {
-        console.log('listscript', data)
         return (
             data.map((e, key) => {
                 return (

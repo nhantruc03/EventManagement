@@ -6,6 +6,7 @@ import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
 import { AUTH } from '../../../../env'
 import Pagination from '../../../helper/Pagination';
+import ApiFailHandler from '../../../helper/ApiFailHandler'
 class EventAssign extends Component {
     constructor(props) {
         super(props);
@@ -56,6 +57,7 @@ class EventAssign extends Component {
             .catch(err => {
                 // Message('Sửa thất bại', false);
                 message.error('Sửa thất bại')
+                ApiFailHandler(err.response?.data?.error)
             }))
 
     }
@@ -94,6 +96,7 @@ class EventAssign extends Component {
                     message.success('Xóa thành công')
                 })
                 .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
                     let list_actions = err.response.data.list_actions.reduce((list, e) => { list.push(e.name); return list }, [])
                     let list_scripts = err.response.data.list_scripts.reduce((list, e) => { list.push(e.name); return list }, [])
 

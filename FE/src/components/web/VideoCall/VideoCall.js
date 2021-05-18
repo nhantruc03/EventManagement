@@ -91,9 +91,7 @@ class VideoCall extends Component {
                             if (need_delete.length > 0) {
                                 need_delete[0].peer.destroy()
                                 let temp1 = this.state.peers.filter(p => p.Id !== dataFromServer.message)
-                                console.log('peers', temp1.length)
                                 let temp2 = this.state.peersRef.filter(p => p.peerID !== dataFromServer.message)
-                                console.log('peersRef', temp2.length)
                                 this.setState({
                                     peers: temp1,
                                     peersRef: temp2
@@ -206,7 +204,6 @@ class VideoCall extends Component {
     }
 
     show = (e) => {
-        console.log("hi")
         this.ref_For_Show.current.srcObject = e.current.srcObject
     }
 

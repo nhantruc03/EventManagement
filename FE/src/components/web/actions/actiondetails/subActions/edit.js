@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { trackPromise } from 'react-promise-tracker';
 import { AUTH } from '../../../../env'
 import moment from "moment"
+import ApiFailHandler from '../../../helper/ApiFailHandler'
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -42,6 +43,7 @@ class edit extends Component {
                 })
                 .catch(err => {
                     message.error('Cập nhật thất bại');
+                    ApiFailHandler(err.response?.data?.error)
                 }))
     }
 

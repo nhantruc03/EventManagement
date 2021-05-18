@@ -3,6 +3,7 @@ import axios from 'axios';
 import React, { Component } from 'react';
 import { trackPromise } from 'react-promise-tracker';
 import { AUTH } from '../../../../../env'
+import ApiFailHandler from '../../../../helper/ApiFailHandler'
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -39,6 +40,7 @@ class edit extends Component {
                 })
                 .catch(err => {
                     message.error('Cập nhật thất bại');
+                    ApiFailHandler(err.response?.data?.error)
                 }))
     }
 
@@ -53,15 +55,6 @@ class edit extends Component {
             startTime: e.data.startTime,
             endTime: e.data.endTime,
         });
-        // console.log(e.data)
-        // let data = {
-        //     ...e.data,
-        //     startTime: moment(e.data.startTime),
-        //     endTime: moment(e.data.endTime),
-        // }
-        // this.setState({
-        //     data: data
-        // })
     }
 
     componentDidMount() {

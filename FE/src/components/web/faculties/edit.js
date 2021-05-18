@@ -7,6 +7,7 @@ import { Content } from 'antd/lib/layout/layout';
 import { Breadcrumb, Button, Form, Input, Row } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
+import ApiFailHandler from '../helper/ApiFailHandler'
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -35,6 +36,7 @@ class edit extends Component {
                 })
                 .catch(err => {
                     Message('Sửa thất bại', false);
+                    ApiFailHandler(err.response?.data?.error)
                 }))
     }
 
@@ -54,7 +56,10 @@ class edit extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
 
 

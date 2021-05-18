@@ -9,7 +9,7 @@ import EventMiniCard from './EventMiniCard/EventMiniCard';
 import { Link } from 'react-router-dom';
 import ActionItem from './ActionItem/ActionItem';
 import CalendarSection from './CalendarSection/CalendarSection'
-
+import ApiFailHandler from '../helper/ApiFailHandler'
 class home extends Component {
     constructor(props) {
         super(props);
@@ -34,7 +34,10 @@ class home extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/actions/getAll', { availUser: obj.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -42,8 +45,12 @@ class home extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
+        
 
         if (events !== null) {
             if (this._isMounted) {
@@ -190,7 +197,7 @@ class home extends Component {
                                         </Carousel>
                                     </Col>
                                 </Row>
-                                <Row style={{height:'48%'}}>
+                                <Row style={{ height: '48%' }}>
                                     <Col sm={24} xl={24} style={{ padding: '10px', height: '100%' }}>
                                         <div className="flex-container-row" style={{ width: '100%' }}>
                                             <Title level={3}>Công việc</Title>

@@ -3,6 +3,7 @@ import axios from 'axios';
 import React, { Component } from 'react';
 import { trackPromise } from 'react-promise-tracker';
 import { AUTH } from '../../../../../env'
+import ApiFailHandler from '../../../../helper/ApiFailHandler'
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -32,8 +33,8 @@ class add extends Component {
                     this.props.add(res.data.data)
                 })
                 .catch(err => {
-                    console.log(err)
                     message.error('Tạo thất bại');
+                    ApiFailHandler(err.response?.data?.error)
                 }))
     }
 

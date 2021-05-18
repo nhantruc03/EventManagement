@@ -1,6 +1,7 @@
 import axios from "axios";
 import { trackPromise } from "react-promise-tracker";
 import { AUTH } from "../../env"
+import ApiFailHandler from '../helper/ApiFailHandler'
 export default async function getCredentials(eventId) {
     let login = localStorage.getItem('login');
     let user = JSON.parse(login);
@@ -11,6 +12,9 @@ export default async function getCredentials(eventId) {
             }
         })
             .then(res => res.data.data)
+            .catch(err=>{
+                ApiFailHandler(err.response?.data?.error)
+            })
     )
 
 

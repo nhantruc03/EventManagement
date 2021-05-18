@@ -9,7 +9,7 @@ import Title from 'antd/lib/typography/Title';
 import { v1 as uuidv1 } from 'uuid';
 import ListScriptDetails from '../../eventScriptDetail/list'
 import ReviewScriptDetail from '../../eventScriptDetail/withoutId/review'
-
+import ApiFailHandler from '../../helper/ApiFailHandler'
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -67,6 +67,7 @@ class add extends Component {
             })
             .catch(err => {
                 message.error('Tạo thất bại');
+                ApiFailHandler(err.response?.data?.error)
             }))
     };
 

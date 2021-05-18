@@ -8,6 +8,7 @@ import {
 } from '@ant-design/icons';
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
+import ApiFailHandler from '../../../helper/ApiFailHandler'
 class listGuest extends Component {
     constructor(props) {
         super(props);
@@ -60,8 +61,9 @@ class listGuest extends Component {
                 console.log(temp_data)
                 message.success(`Trạng thái của khách mời ${e.name} cập nhật thành công`);
             })
-            .catch(() => {
+            .catch(err => {
                 message.error(`Trạng thái của khách mời ${e.name} cập nhật thất bại`);
+                ApiFailHandler(err.response?.data?.error)
             }))
 
     }

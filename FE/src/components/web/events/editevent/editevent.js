@@ -37,6 +37,7 @@ import * as constants from "../../constant/actions"
 import checkPermission from "../../helper/checkPermissions"
 import getPermission from "../../helper/Credentials"
 import * as PushNoti from "../../helper/pushNotification"
+import ApiFailHandler from '../../helper/ApiFailHandler'
 const client = new w3cwebsocket('ws://localhost:3001');
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -172,7 +173,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/event-types/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -180,7 +184,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/tags/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -188,7 +195,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/faculties/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -196,7 +206,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/roles/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -204,7 +217,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.get('/api/events/' + this.props.match.params.id, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -212,7 +228,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/event-assign/getAll', { eventId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -220,7 +239,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/guest-types/getAll', { eventId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -228,7 +250,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/groups/getAll', { eventId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -236,7 +261,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/credentials/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -244,7 +272,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             getPermission(this.props.match.params.id)
                 .then(res => res)
 
@@ -260,9 +291,13 @@ class editevent extends Component {
                     headers: {
                         'Authorization': { AUTH }.AUTH
                     }
-                }).then((res) =>
-                    res.data.data
-                ))
+                })
+                    .then((res) =>
+                        res.data.data
+                    )
+                    .catch(err => {
+                        ApiFailHandler(err.response?.data?.error)
+                    }))
         }
 
 

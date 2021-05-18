@@ -10,6 +10,7 @@ import moment from 'moment'
 import {
     UploadOutlined,
 } from "@ant-design/icons";
+import ApiFailHandler from '../helper/ApiFailHandler'
 // var Roles = [
 //     { value: 'admin', label: 'Quản trị viên' },
 //     { value: 'doctor', label: 'Bác sĩ' },
@@ -42,8 +43,6 @@ class thongtincanhan extends Component {
     }
 
     onSubmit = async (e) => {
-        console.log(e)
-        console.log(this.state.fileList)
         let data = {
             ...e,
             phone: e.phone.toString(),
@@ -70,6 +69,7 @@ class thongtincanhan extends Component {
                 })
                 .catch(err => {
                     message.error('Cập nhật thất bại')
+                    ApiFailHandler(err.response?.data?.error)
                     // Message('Sửa thất bại', false);
                 }))
     }
@@ -93,7 +93,10 @@ class thongtincanhan extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             Axios.post('/api/system-roles/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -101,9 +104,11 @@ class thongtincanhan extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
-        console.log(data)
 
         if (data !== null && roles !== null) {
             if (this._isMounted) {

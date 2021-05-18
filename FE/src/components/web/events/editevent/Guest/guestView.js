@@ -6,6 +6,7 @@ import { AUTH } from '../../../../env'
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
 import Pagination from '../../../helper/Pagination';
+import ApiFailHandler from '../../../helper/ApiFailHandler'
 class guestView extends Component {
     constructor(props) {
         super(props);
@@ -40,7 +41,6 @@ class guestView extends Component {
                     }
                 });
 
-                console.log(temp_data)
 
                 // cap nhat du lieu
                 this.setState({
@@ -52,6 +52,7 @@ class guestView extends Component {
             })
             .catch(err => {
                 message.error('Sửa thất bại');
+                ApiFailHandler(err.response?.data?.error)
             }))
 
 
@@ -78,6 +79,7 @@ class guestView extends Component {
                 })
                 .catch(err => {
                     message.error('Xóa thất bại');
+                    ApiFailHandler(err.response?.data?.error)
                 }))
     }
 
@@ -110,6 +112,7 @@ class guestView extends Component {
                     })
                     .catch(err => {
                         message.err('Tạo thất thất bại');
+                        ApiFailHandler(err.response?.data?.error)
                     }))
         }
     }

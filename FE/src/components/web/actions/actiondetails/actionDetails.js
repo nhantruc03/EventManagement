@@ -19,7 +19,7 @@ import EditAction from './editAction/editAction'
 import * as constants from "../../constant/actions"
 import checkPermission from "../../helper/checkPermissions"
 import getPermission from "../../helper/Credentials"
-
+import ApiFailHandler from '../../helper/ApiFailHandler'
 const { TabPane } = Tabs;
 class actionDetails extends Component {
     constructor(props) {
@@ -104,8 +104,8 @@ class actionDetails extends Component {
                 return res.data.data
             })
             .catch(err => {
-                console.log(err)
                 message.error('Xóa công việc thất bại')
+                ApiFailHandler(err.response?.data?.error)
             })
         )
         if (result) {
@@ -152,7 +152,10 @@ class actionDetails extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/action-assign/getAll', { actionId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -160,7 +163,10 @@ class actionDetails extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/action-resources/getAll', { actionId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -168,7 +174,10 @@ class actionDetails extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/sub-actions/getAll', { actionId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -176,7 +185,10 @@ class actionDetails extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
 
 
@@ -195,7 +207,7 @@ class actionDetails extends Component {
                 }
 
                 let permissons = await getPermission(action.eventId._id)
-                console.log(action.managerId)
+                
                 this.setState({
                     data: action,
                     actionAssign: actionAssign.filter(e => e.role === 2),
@@ -247,7 +259,7 @@ class actionDetails extends Component {
                     })
                 })
                 .catch(err => {
-                    console.log(err)
+                    ApiFailHandler(err.response?.data?.error)
                 }),
         )
     }
@@ -267,7 +279,7 @@ class actionDetails extends Component {
                     })
                 })
                 .catch(err => {
-                    console.log(err)
+                    ApiFailHandler(err.response?.data?.error)
                 }),
         )
     }
@@ -292,7 +304,7 @@ class actionDetails extends Component {
                     })
                 })
                 .catch(err => {
-                    console.log(err)
+                    ApiFailHandler(err.response?.data?.error)
                 }),
         )
 

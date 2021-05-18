@@ -10,6 +10,7 @@ import { AUTH } from '../../env'
 import { w3cwebsocket } from 'websocket';
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
+import ApiFailHandler from '../helper/ApiFailHandler'
 const client = new w3cwebsocket('ws://localhost:3001');
 const { Header } = Layout;
 class header extends Component {
@@ -66,8 +67,10 @@ class header extends Component {
                     .then((res) =>
                         res.data.data
                     )
+                    .catch(err => {
+                        ApiFailHandler(err.response?.data?.error)
+                    })
             ]));
-
             if (notifications) {
                 if (this._isMounted) {
                     this.setState({
@@ -75,10 +78,6 @@ class header extends Component {
                         currentUser: obj
                     })
                 }
-            } else {
-                this.setState({
-                    logout: true
-                })
             }
         }
 

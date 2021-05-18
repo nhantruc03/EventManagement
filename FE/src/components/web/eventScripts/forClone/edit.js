@@ -9,7 +9,7 @@ import Title from 'antd/lib/typography/Title';
 import { v1 as uuidv1 } from 'uuid';
 import ListScriptDetails from '../../eventScriptDetail/list'
 import ReviewScriptDetail from '../../eventScriptDetail/withId/review'
-
+import ApiFailHandler from '../../helper/ApiFailHandler'
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -43,6 +43,9 @@ class edit extends Component {
                 .then((res) =>
                     res.data.data
                 )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                })
         ]))
         const [scriptdetails] = await trackPromise(Promise.all([
             Axios.post('/api/script-details/getAll', { scriptId: this.props.match.params.id }, {
@@ -52,7 +55,10 @@ class edit extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
 
         if (script !== null && scriptdetails !== null) {
@@ -98,6 +104,7 @@ class edit extends Component {
             .catch(err => {
                 // Message('Tạo thất bại', false);
                 message.error("Cập nhật thất bại")
+                ApiFailHandler(err.response?.data?.error)
             }))
     };
 
@@ -134,6 +141,9 @@ class edit extends Component {
                         })
                     })
                 })
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                })
         )
 
     }
@@ -152,6 +162,9 @@ class edit extends Component {
                         listscriptdetails: [...this.state.listscriptdetails, temp]
                     })
                 })
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                })
         )
 
     }
@@ -168,6 +181,9 @@ class edit extends Component {
                     this.setState({
                         listscriptdetails: temp
                     })
+                })
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
                 })
         )
 
