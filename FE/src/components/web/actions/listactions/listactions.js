@@ -11,6 +11,7 @@ import ActionColumn from "./actionColumn";
 import * as constants from "../../constant/actions";
 import checkPermisson from "../../helper/checkPermissions";
 import getPermisson from "../../helper/Credentials";
+import ApiFailHandler from '../../helper/ApiFailHandler'
 const { Option } = Select;
 const formItemLayout = {
   labelCol: {
@@ -60,8 +61,8 @@ class listactions extends Component {
         return res.data.data;
       })
       .catch(err => {
-        console.log(err)
         message.error("Cập nhật thất bại")
+        ApiFailHandler(err.response?.data?.error)
       })
     )
     if (result) {
@@ -89,8 +90,8 @@ class listactions extends Component {
         return res.data.data;
       })
       .catch(err => {
-        console.log(err)
         message.error("Xóa thất bại")
+        ApiFailHandler(err.response?.data?.error)
       })
     )
     if (result) {
@@ -163,7 +164,7 @@ class listactions extends Component {
           this.setModalVisible2(false);
         })
         .catch((err) => {
-          console.log(err);
+          ApiFailHandler(err.response?.data?.error)
         })
     );
   };
@@ -226,7 +227,10 @@ class listactions extends Component {
               },
             }
           )
-          .then((res) => res.data.data),
+          .then((res) => res.data.data)
+          .catch(err => {
+            ApiFailHandler(err.response?.data?.error)
+          }),
       ])
     );
     if (events !== null) {
@@ -260,7 +264,10 @@ class listactions extends Component {
               },
             }
           )
-          .then((res) => res.data.data),
+          .then((res) => res.data.data)
+          .catch(err => {
+            ApiFailHandler(err.response?.data?.error)
+          }),
         axios
           .post(
             "/api/faculties/getAll",
@@ -271,7 +278,10 @@ class listactions extends Component {
               },
             }
           )
-          .then((res) => res.data.data),
+          .then((res) => res.data.data)
+          .catch(err => {
+            ApiFailHandler(err.response?.data?.error)
+          }),
         axios
           .post(
             "/api/actions/getAll",
@@ -282,7 +292,10 @@ class listactions extends Component {
               },
             }
           )
-          .then((res) => res.data.data),
+          .then((res) => res.data.data)
+          .catch(err => {
+            ApiFailHandler(err.response?.data?.error)
+          }),
         getPermisson(temp[0]._id).then((res) => res),
       ])
     );

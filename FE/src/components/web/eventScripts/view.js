@@ -8,6 +8,7 @@ import { AUTH } from '../../env'
 import ReviewScriptDetail from './review'
 import ChatRoom from '../chat/ChatRoom';
 import History from './history';
+import ApiFailHandler from '../helper/ApiFailHandler'
 const { TabPane } = Tabs
 class view extends Component {
     constructor(props) {
@@ -32,7 +33,10 @@ class view extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/script-details/getAll', { scriptId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -40,7 +44,10 @@ class view extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
            axios.post('/api/script-histories/getAll', { scriptId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -48,7 +55,10 @@ class view extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
 
         if (scripts !== null) {

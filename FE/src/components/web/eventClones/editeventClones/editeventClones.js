@@ -29,6 +29,7 @@ import GroupView from "./Group/groupView";
 import ListScripts from '../../eventScripts/forClone/list'
 import ListActionsClone from '../../actions/forClone/listactions/listactions'
 import { w3cwebsocket } from 'websocket';
+import ApiFailHandler from '../../helper/ApiFailHandler'
 const client = new w3cwebsocket('ws://localhost:3001');
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -118,7 +119,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/event-types/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -126,7 +130,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/tags/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -134,7 +141,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/faculties/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -142,7 +152,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/roles/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -150,7 +163,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.get('/api/events/' + this.props.match.params.id, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -158,7 +174,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/event-assign/getAll', { eventId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -166,7 +185,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/guest-types/getAll', { eventId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -174,7 +196,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/groups/getAll', { eventId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -183,6 +208,9 @@ class editevent extends Component {
                 .then((res) =>
                     res.data.data
                 )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                })
 
         ]));
 
@@ -201,8 +229,10 @@ class editevent extends Component {
                 }).then((res) =>
                     res.data.data
                 ))
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                })
 
-            console.log(guests)
         }
 
 
@@ -278,6 +308,7 @@ class editevent extends Component {
             })
             .catch(err => {
                 message.error('Cập nhật thất bại');
+                ApiFailHandler(err.response?.data?.error)
             }))
     };
 
@@ -309,6 +340,7 @@ class editevent extends Component {
             })
             .catch(err => {
                 message.error('Tạo thất bại');
+                ApiFailHandler(err.response?.data?.error)
             }))
     }
 

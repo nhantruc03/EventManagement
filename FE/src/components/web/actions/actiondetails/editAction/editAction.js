@@ -11,6 +11,7 @@ import axios from 'axios';
 import moment from 'moment'
 import { w3cwebsocket } from 'websocket';
 import * as PushNoti from '../../../helper/pushNotification'
+import ApiFailHandler from '../../../helper/ApiFailHandler'
 const client = new w3cwebsocket('ws://localhost:3001');
 const { Option } = Select;
 const formItemLayout = {
@@ -47,7 +48,10 @@ class editAction extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/action-tags/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -55,7 +59,10 @@ class editAction extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/action-priorities/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -63,7 +70,10 @@ class editAction extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/faculties/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -71,7 +81,10 @@ class editAction extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/action-types/getAll', { eventId: this.props.data.eventId._id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -79,7 +92,10 @@ class editAction extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]))
 
 
@@ -200,8 +216,8 @@ class editAction extends Component {
 
                 })
                 .catch(err => {
-                    console.log(err)
                     message.error('Cập nhật thất bại');
+                    ApiFailHandler(err.response?.data?.error)
                 }))
     }
 

@@ -1,5 +1,5 @@
 import axios from "axios"
-
+import ApiFailHandler from './ApiFailHandler'
 export function sendPushNoti(e) {
     if (e.userId.push_notification_token) {
         let data = JSON.stringify({
@@ -14,7 +14,9 @@ export function sendPushNoti(e) {
                 'Content-Type': 'application/json'
             }
         })
-            .then(res => { console.log(res) })
+            .catch(err => {
+                ApiFailHandler(err.response?.data?.error)
+            })
     }
 }
 
@@ -33,6 +35,9 @@ export function sendListPushNoti(e) {
                     'Content-Type': 'application/json'
                 }
             })
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                })
         }
     })
 }

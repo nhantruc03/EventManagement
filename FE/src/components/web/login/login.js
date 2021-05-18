@@ -5,6 +5,7 @@ import { trackPromise } from 'react-promise-tracker';
 import { LoadingIndicator } from '../helper/Loading';
 import { Button, Col, Form, Image, Input, message, Row } from 'antd';
 import Title from 'antd/lib/typography/Title';
+
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -30,7 +31,6 @@ class login extends Component {
         })
     }
     onSubmit = async (e) => {
-        // console.log(e)
         await trackPromise(Axios.post('/api/users/login', e)
             .then(res => {
                 if (res.data.success === true) {
@@ -40,7 +40,6 @@ class login extends Component {
                         if (login !== null) {
                             this.props.history.push("/");
                         }
-
                     }
                     else {
                         this.setState({

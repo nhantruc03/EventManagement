@@ -8,6 +8,7 @@ import { trackPromise } from 'react-promise-tracker';
 import { AUTH } from '../../../env'
 import axios from 'axios';
 import EventCard from './eventCardClones';
+import ApiFailHandler from '../../helper/ApiFailHandler'
 class listevents extends Component {
     constructor(props) {
         super(props);
@@ -28,6 +29,9 @@ class listevents extends Component {
                 .then((res) =>
                     res.data.data
                 )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                })
         ]));
 
         if (events !== null) {

@@ -7,7 +7,7 @@ import { trackPromise } from 'react-promise-tracker';
 import { Content } from 'antd/lib/layout/layout';
 import { Button, Table } from 'antd';
 import Title from 'antd/lib/typography/Title';
-
+import ApiFailHandler from '../helper/ApiFailHandler'
 class list extends Component {
     constructor(props) {
         super(props);
@@ -46,6 +46,9 @@ class list extends Component {
                 .then((res) =>
                     res.data.data
                 )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                })
         ]));
 
         console.log(users)
@@ -83,6 +86,9 @@ class list extends Component {
                         SearchData: this.state.data.filter(o => o._id !== e._id)
                     })
                 }))
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                })
 
     }
 

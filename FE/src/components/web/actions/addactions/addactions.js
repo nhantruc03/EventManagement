@@ -11,6 +11,7 @@ import Dragger from 'antd/lib/upload/Dragger';
 import { w3cwebsocket } from 'websocket';
 import moment from 'moment'
 import * as PushNoti from '../../helper/pushNotification'
+import ApiFailHandler from '../../helper/ApiFailHandler'
 const client = new w3cwebsocket('ws://localhost:3001');
 const { Step } = Steps;
 const { Option } = Select;
@@ -53,7 +54,10 @@ class addactions extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/action-priorities/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -61,7 +65,10 @@ class addactions extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]))
 
         if (tags !== null && priorities !== null) {
@@ -136,8 +143,8 @@ class addactions extends Component {
                 this.props.done(temp)
             })
             .catch(err => {
-                console.log(err)
                 message.error('Tạo thất bại');
+                ApiFailHandler(err.response?.data?.error)
             }))
     }
 

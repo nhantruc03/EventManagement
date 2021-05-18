@@ -13,6 +13,7 @@ import { w3cwebsocket } from 'websocket';
 import History from './history';
 import moment from 'moment'
 import * as PushNoti from '../helper/pushNotification'
+import ApiFailHandler from '../helper/ApiFailHandler'
 const { TabPane } = Tabs;
 const client = new w3cwebsocket('ws://localhost:3001');
 const { Option } = Select;
@@ -56,7 +57,10 @@ class edit extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             Axios.post('/api/script-histories/getAll', { scriptId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -64,7 +68,10 @@ class edit extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]))
         const [event, scriptdetails] = await trackPromise(Promise.all([
             Axios.get('/api/events/' + script.eventId._id, {
@@ -74,7 +81,10 @@ class edit extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             Axios.post('/api/script-details/getAll', { scriptId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -82,7 +92,10 @@ class edit extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
 
         if (event !== null && script !== null && scriptdetails !== null) {
@@ -137,8 +150,8 @@ class edit extends Component {
                 })
             })
             .catch(err => {
-                // Message('Tạo thất bại', false);
                 message.error("Cập nhật thất bại")
+                ApiFailHandler(err.response?.data?.error)
             }))
     };
 
@@ -186,6 +199,7 @@ class edit extends Component {
                 })
                 .catch(err => {
                     message.error("Cập nhật chi tiết kịch bản thất bại")
+                    ApiFailHandler(err.response?.data?.error)
                 })
         )
     }
@@ -222,6 +236,7 @@ class edit extends Component {
                 })
                 .catch(err => {
                     message.error("Thêm chi tiết kịch bản thất bại")
+                    ApiFailHandler(err.response?.data?.error)
                 })
         )
     }
@@ -268,6 +283,7 @@ class edit extends Component {
                     })
                     .catch(err => {
                         message.error("Xóa chi tiết kịch bản thất bại")
+                        ApiFailHandler(err.response?.data?.error)
                     })
             )
         }

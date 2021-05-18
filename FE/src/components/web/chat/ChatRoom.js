@@ -12,6 +12,7 @@ import Loader from 'react-loader-spinner';
 import { Link } from 'react-router-dom';
 import { Upload } from 'antd';
 import { AUTH } from '../../env'
+import ApiFailHandler from '../helper/ApiFailHandler'
 const client = new w3cwebsocket('ws://localhost:3001');
 class ChatRoom extends Component {
     constructor(props) {
@@ -36,6 +37,10 @@ class ChatRoom extends Component {
             .then((res) =>
                 res.data.data
             ))
+            .catch(err => {
+                ApiFailHandler(err.response?.data?.error)
+            })
+
         this.setState({
             messages: temp.reverse()
         })
@@ -100,6 +105,9 @@ class ChatRoom extends Component {
             .then(res => {
                 message._id = res.data.data[0]._id
             })
+            .catch(err => {
+                ApiFailHandler(err.response?.data?.error)
+            })
 
         client.send(JSON.stringify({
             type: "sendMessage",
@@ -131,6 +139,9 @@ class ChatRoom extends Component {
                 'Authorization': { AUTH }.AUTH
             }
         })
+            .catch(err => {
+                ApiFailHandler(err.response?.data?.error)
+            })
 
         client.send(JSON.stringify({
             type: "sendMessage",
@@ -166,6 +177,9 @@ class ChatRoom extends Component {
                             page: this.state.page + 1,
                             messages: [...temp.reverse(), ...this.state.messages]
                         })
+                    })
+                    .catch(err=>{
+                        ApiFailHandler(err.response?.data?.error)
                     })
             }
         }

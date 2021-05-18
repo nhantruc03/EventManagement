@@ -12,6 +12,7 @@ import moment from 'moment'
 import {
     MenuUnfoldOutlined
 } from '@ant-design/icons';
+import ApiFailHandler from '../../helper/ApiFailHandler'
 class listevents extends Component {
     constructor(props) {
         super(props);
@@ -71,7 +72,9 @@ class listevents extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                ).catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post(`/api/events/getAll?gt=${temp}`, { isClone: false }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -79,7 +82,10 @@ class listevents extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post(`/api/events/getAll?eq=${temp}`, { isClone: false }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -87,7 +93,10 @@ class listevents extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post(`/api/events/getAll?lt=${temp}`, { isClone: false }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -95,7 +104,9 @@ class listevents extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                ).catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
 
         if (future_event !== null && ongoing_event !== null && past_event !== null) {

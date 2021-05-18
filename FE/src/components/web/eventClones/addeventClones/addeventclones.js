@@ -23,6 +23,7 @@ import { trackPromise } from "react-promise-tracker";
 import axios from "axios";
 import AddTagType from "./add_TagType";
 import { Link } from "react-router-dom";
+import ApiFailHandler from '../../helper/ApiFailHandler'
 const { Option } = Select;
 const formItemLayout = {
     labelCol: {
@@ -57,7 +58,10 @@ class addevents extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/tags/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -66,6 +70,9 @@ class addevents extends Component {
                 .then((res) =>
                     res.data.data
                 )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                })
         ]));
 
 
@@ -98,8 +105,6 @@ class addevents extends Component {
             'isClone': true
         }
 
-        console.log('Received values of form: ', data);
-
         await trackPromise(axios.post('/api/events/start', data, {
             headers: {
                 'Authorization': { AUTH }.AUTH
@@ -110,6 +115,7 @@ class addevents extends Component {
             })
             .catch(err => {
                 message.error('Tạo thất bại');
+                ApiFailHandler(err.response?.data?.error)
             }))
     };
 

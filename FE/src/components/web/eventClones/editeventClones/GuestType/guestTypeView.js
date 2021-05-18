@@ -6,6 +6,7 @@ import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
 import { AUTH } from '../../../../env'
 import Pagination from '../../../helper/Pagination';
+import ApiFailHandler from '../../../helper/ApiFailHandler'
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -47,6 +48,7 @@ class guestTypeView extends Component {
             })
             .catch(err => {
                 message.error('Sửa thất bại');
+                ApiFailHandler(err.response?.data?.error)
             }))
 
     }
@@ -113,6 +115,7 @@ class guestTypeView extends Component {
                 })
                 .catch(err => {
                     message.error('Thêm thất bại');
+                    ApiFailHandler(err.response?.data?.error)
                 }))
     }
 
@@ -142,6 +145,7 @@ class guestTypeView extends Component {
                 })
                 .catch(err => {
                     message.success('Xóa thất bại');
+                    ApiFailHandler(err.response?.data?.error)
                 }))
     }
     getlistpage = (SearchData) => {

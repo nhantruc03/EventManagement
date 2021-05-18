@@ -16,6 +16,7 @@ import * as constants from "../constant/actions"
 import checkPermission from "../helper/checkPermissions"
 import { w3cwebsocket } from 'websocket';
 import * as PushNoti from '../helper/pushNotification'
+import ApiFailHandler from '../helper/ApiFailHandler'
 const client = new w3cwebsocket('ws://localhost:3001');
 class list extends Component {
     constructor(props) {
@@ -80,6 +81,9 @@ class list extends Component {
                 .then((res) =>
                     res.data.data
                 )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                })
         ]));
 
         if (scripts !== null) {
@@ -119,6 +123,9 @@ class list extends Component {
                     this.setState({
                         data: this.state.data.filter(o => o._id !== e)
                     })
+                })
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
                 })
         )
     }

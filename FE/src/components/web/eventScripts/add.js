@@ -10,6 +10,7 @@ import { v1 as uuidv1 } from 'uuid';
 import ListScriptDetails from '../eventScriptDetail/list'
 import ReviewScriptDetail from '../eventScriptDetail/withoutId/review'
 import moment from 'moment'
+import ApiFailHandler from '../helper/ApiFailHandler'
 const { Option } = Select;
 const formItemLayout = {
     labelCol: {
@@ -63,6 +64,9 @@ class add extends Component {
                 .then((res) =>
                     res.data.data
                 )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                })
         ]));
 
         if (event !== null) {
@@ -101,6 +105,7 @@ class add extends Component {
             })
             .catch(err => {
                 message.error('Tạo thất bại');
+                ApiFailHandler(err.response?.data?.error)
             }))
     };
 

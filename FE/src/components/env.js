@@ -1,4 +1,4 @@
-var AUTH= ''
+var AUTH = ''
 try {
     var login = localStorage.getItem('login');
     var obj = JSON.parse(login);
@@ -11,4 +11,4 @@ try {
 export { AUTH }
 
 const WebSocketServer = 'ws://localhost:3001'
-export {WebSocketServer}
+export { WebSocketServer }

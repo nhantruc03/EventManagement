@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { Content } from 'antd/lib/layout/layout';
 import Title from 'antd/lib/typography/Title';
 import ReactAntColorPicker from '@feizheng/react-ant-color-picker';
+import ApiFailHandler from '../helper/ApiFailHandler'
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -40,8 +41,8 @@ class add extends Component {
                 message.success('Tạo thành công');
             })
             .catch(err => {
-                // Message('Tạo thất bại', false);
                 message.error('Tạo thất bại')
+                ApiFailHandler(err.response?.data?.error)
             }))
     }
 
