@@ -297,7 +297,6 @@ class Comment extends Component {
                                         editable={!this.state.disable}
                                     />
                                     <View style={{ flexDirection: "row", right: 24 }}>
-
                                         <View >
                                             <UploadImage roomId={this.props.actionId} Save={(e) => this.sendResources(e)} />
                                         </View>

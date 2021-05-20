@@ -19,12 +19,13 @@ import * as Notifications from 'expo-notifications'
 import * as Permissions from 'expo-permissions'
 import { Redirect } from 'react-router';
 import auth from '../router/auth'
+import ValidationComponent from 'react-native-form-validator';
 
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 
 
-export default class Login extends Component {
+export default class Login extends ValidationComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -85,43 +86,43 @@ export default class Login extends Component {
   // }
 
   handleSubmitPress = async () => {
-    var data = new FormData();
+    let temp_validate = this.validate({
+      username: { minlength: 3, maxlength: 7, required: true },
+      password: { minlength: 3, maxlength: 8, required: true },
+    });
 
-    data.append("username", this.state.username);
-    data.append("password", this.state.password);
-    let result = await axios
-      .post(`${Url()}/api/users/login`, data)
-      .then(async (res) => {
-        if (res.data.success === true) {
-          await auth.login(res.data.data);
-          if (await auth.isAuthenticatedAdmin() === true) {
-            var login = await AsyncStorage.getItem('login');
-            if (login !== null) {
-              this.setState({
-                loggined: true
-              })
+    if (temp_validate) {
+      var data = new FormData();
+
+      data.append("username", this.state.username);
+      data.append("password", this.state.password);
+      let result = await axios
+        .post(`${Url()}/api/users/login`, data)
+        .then(async (res) => {
+          if (res.data.success === true) {
+            await auth.login(res.data.data);
+            if (await auth.isAuthenticatedAdmin() === true) {
+              var login = await AsyncStorage.getItem('login');
+              if (login !== null) {
+                this.setState({
+                  loggined: true
+                })
+              }
             }
-          }
-          else {
+            else {
+              alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
+            }
+          } else {
             alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
           }
-        } else {
+        })
+        .catch((error) => {
+          console.log(error.response);
           alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
-        }
-      })
-      .catch((error) => {
-        console.log(error.response);
-        alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
-      });
+        });
+    }
 
-    // if (result !== undefined) {
-    //   await AsyncStorage.setItem("login", JSON.stringify(result));
-    //   await this.registerForPushNotificationsAsync();
-    //   // this.props.navigation.replace("BottomNav");
-    //   this.setState({
-    //     loggined: true,
-    //   })
-    // } else alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
+
   };
 
   setUsernameFocusInputType = () => {
@@ -167,6 +168,7 @@ export default class Login extends Component {
             <Text style={styles.textBox}>Tên đăng nhập</Text>
             <View style={styles.boxSection}>
               <TextInput
+                ref="username"
                 onFocus={this.setUsernameFocusInputType}
                 style={
                   this.state.focusInputType === "username" ? styles.inputActive : styles.input
@@ -178,6 +180,11 @@ export default class Login extends Component {
                 autoCapitalize="none"
               />
             </View>
+            {this.isFieldInError('username') && this.getErrorsInField('username').map((errorMessage, key) =>
+              <Text style={styles.error} key={key}>
+                {errorMessage}
+              </Text>
+            )}
           </View>
 
           <View>
@@ -191,6 +198,7 @@ export default class Login extends Component {
               </TouchableOpacity>
 
               <TextInput
+                ref="password"
                 onFocus={this.setPasswordFocusInputType}
                 style={
                   this.state.focusInputType == "password" ? styles.inputActive : styles.input
@@ -202,6 +210,7 @@ export default class Login extends Component {
                 underlineColorAndroid="transparent"
               />
             </View>
+
           </View>
 
           <View style={styles.containerBoxSubmit}>

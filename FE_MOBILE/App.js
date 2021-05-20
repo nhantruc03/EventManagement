@@ -1,10 +1,7 @@
 // App.js
-import { useFonts } from "expo-font";
-import React from "react";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { StyleSheet, Text, View } from "react-native";
 import { LogBox } from "react-native";
 import { NativeRouter, Route, Link } from "react-router-native";
 // Import Screens
@@ -14,35 +11,70 @@ import LoginScreen from "./screens/Login";
 import AppMain from "./routes/AppMain";
 import { Redirect } from "react-router";
 import auth from "./router/auth";
-
+import * as Font from 'expo-font';
 
 import { SecureRouteAdmin } from './router/secureRoute'
 import { AppRoute } from './router/AppRoute'
 
 const Stack = createStackNavigator();
 
+import React, { Component } from 'react';
+import { StyleSheet } from 'react-native';
+import AsyncStorage from "@react-native-community/async-storage";
 
-
-export default App = () => {
-  LogBox.ignoreAllLogs();
-  const [loaded] = useFonts({
-    antoutline: require("./assets/fonts/antoutline.ttf"),
-    regular: require("./assets/fonts/Nunito-Regular.ttf"),
-    bold: require("./assets/fonts/Nunito-Bold.ttf"),
-    semibold: require("./assets/fonts/Nunito-SemiBold.ttf"),
-    light: require("./assets/fonts/Nunito-Light.ttf"),
-  });
-  if (!loaded) {
-    return null;
+export default class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fontsLoaded: false,
+      userLoaded: false,
+    };
   }
-  return (
+  async loadFonts() {
+    await Font.loadAsync({
+      antoutline: require("./assets/fonts/antoutline.ttf"),
+      regular: require("./assets/fonts/Nunito-Regular.ttf"),
+      bold: require("./assets/fonts/Nunito-Bold.ttf"),
+      semibold: require("./assets/fonts/Nunito-SemiBold.ttf"),
+      light: require("./assets/fonts/Nunito-Light.ttf"),
+    });
+    this.setState({ fontsLoaded: true });
+  }
 
-    <NativeRouter>
-      <SecureRouteAdmin exact path="/" component={AppMain} />
-      <AppRoute exact path="/login" component={LoginScreen} />
-    </NativeRouter>
-  );
-};
+  async componentDidMount() {
+    LogBox.ignoreAllLogs()
+    this.loadFonts();
+
+    var test = await AsyncStorage.getItem('login');
+    if (test !== "null") {
+      console.log(test)
+      var obj = JSON.parse(test);
+      await auth.login(obj);
+    }
+    this.setState({
+      userLoaded: true
+    })
+  }
+  render() {
+    if (this.state.fontsLoaded && this.state.userLoaded) {
+      return (
+        <NativeRouter>
+          <Redirect to={{
+            pathname: "/",
+          }} />
+          <AppRoute exact path="/login" component={LoginScreen} />
+          <SecureRouteAdmin exact path="/" component={AppMain} />
+
+        </NativeRouter>
+      );
+    }
+    else {
+      return null
+    }
+  }
+}
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -51,4 +83,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-});
+})

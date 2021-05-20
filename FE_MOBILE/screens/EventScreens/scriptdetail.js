@@ -32,6 +32,7 @@ import { Alert } from "react-native";
 import { RefreshControl } from "react-native";
 import { Redirect } from "react-router";
 import ApiFailHandler from '../../components/helper/ApiFailHandler'
+import ValidationComponent from 'react-native-form-validator';
 
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
     margin: 12,
     borderWidth: 1,
     borderColor: "#DFDFDF",
-    backgroundColor: "#D4D4D4",
+    backgroundColor: "white",
     borderRadius: 8,
     justifyContent: "center",
   },
@@ -118,10 +119,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#2A9D8F",
     borderRadius: 8,
-
-    marginBottom: 32,
     marginHorizontal: 16,
-
     justifyContent: "center",
   },
   textUpdate: {
@@ -162,16 +160,24 @@ const styles = StyleSheet.create({
   iconDelete: {
     padding: 12
   },
+  error: {
+    color: "red",
+    fontFamily: "semibold",
+    fontSize: 12,
+    top: -10,
+    marginLeft: 12
+  }
 });
 
 
 
 
 const client = new WebSocket(`${WSK()}`);
-class scriptdetail extends Component {
+class scriptdetail extends ValidationComponent {
   constructor(props) {
     super(props);
     this.state = {
+      scriptname: "",
       name: "",
       writerName: "",
       writerId: "",
@@ -179,7 +185,7 @@ class scriptdetail extends Component {
       listUser: [],
       listscriptdetails: [],
       disable: true,
-      forId: null,
+      forId: [],
       isLoading: true,
       startDate: "",
       startTime: "",
@@ -329,7 +335,7 @@ class scriptdetail extends Component {
             startDate: event.startDate,
             startTime: event.startTime,
             history: history,
-
+            scriptname: script.name,
           });
         }
       }
@@ -349,7 +355,9 @@ class scriptdetail extends Component {
   onChangeName = (name) => {
     this.setState({
       name,
+      scriptname: name,
     });
+
   };
 
   onLoading() {
@@ -359,45 +367,51 @@ class scriptdetail extends Component {
   }
 
   updateScript = async () => {
-    this.onLoading();
-    let login = await AsyncStorage.getItem("login");
-    var obj = JSON.parse(login);
-    let data = {
-      name: this.state.name,
-      forId: this.state.forId[0],
-      updateUserId: obj.id,
-    };
-    console.log('Received values of form: ', data);
-    await axios
-      .put(`${Url()}/api/scripts/` + this.props.route.params.id, data, {
-        headers: {
-          Authorization: await getToken(),
-        },
-      })
-      .then((res) => {
-        // Message('Tạo thành công', true, this.props);
-        // message.success("Cập nhật thành công");
-        this.setState({ loadingbtn: false });
-        alert("Cập nhật kịch bản thành công");
-        client.send(JSON.stringify({
-          type: "sendNotification",
-          notification: res.data.notification,
+    let temp_validate = this.validate({
+      scriptname: { required: true },
+      forId: { arrayObjectHasValue: 1 },
+    });
+    if (temp_validate) {
+      this.onLoading();
+      let login = await AsyncStorage.getItem("login");
+      var obj = JSON.parse(login);
+      let data = {
+        name: this.state.name,
+        forId: this.state.forId[0],
+        updateUserId: obj.id,
+      };
+      console.log('Received values of form: ', data);
+      await axios
+        .put(`${Url()}/api/scripts/` + this.props.route.params.id, data, {
+          headers: {
+            Authorization: await getToken(),
+          },
         })
-        );
-        PushNoti.sendPushNoti(res.data.notification)
-        this.setState({
-          history: [...this.state.history, res.data.history],
+        .then((res) => {
+          // Message('Tạo thành công', true, this.props);
+          // message.success("Cập nhật thành công");
+          this.setState({ loadingbtn: false });
+          alert("Cập nhật kịch bản thành công");
+          client.send(JSON.stringify({
+            type: "sendNotification",
+            notification: res.data.notification,
+          })
+          );
+          PushNoti.sendPushNoti(res.data.notification)
+          this.setState({
+            history: [...this.state.history, res.data.history],
+          });
+          console.log("update success");
+          this.props.route.params.updateScript(res.data.data);
+        })
+        .catch((err) => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+          alert(`${errResult.message}`);
         });
-        console.log("update success");
-        this.props.route.params.updateScript(res.data.data);
-      })
-      .catch((err) => {
-        let errResult = ApiFailHandler(err.response?.data?.error)
-        this.setState({
-          loggout: errResult.isExpired
-        })
-        alert(`${errResult.message}`);
-      });
+    }
   };
 
   updateListScriptDetails = (temp, b) => {
@@ -598,6 +612,11 @@ class scriptdetail extends Component {
                     value={this.state.name}
                     editable={this.state.disable}
                   ></TextInput>
+                  {this.isFieldInError('scriptname') && this.getErrorsInField('scriptname').map((errorMessage, key) =>
+                    <Text style={styles.error} key={key}>
+                      {errorMessage}
+                    </Text>
+                  )}
                 </View>
               </View>
               <View style={styles.ScriptNameLabelContainer}>
@@ -620,6 +639,11 @@ class scriptdetail extends Component {
                     </Text>
                   </Picker>
                 </View>
+                {this.isFieldInError('forId') && this.getErrorsInField('forId').map((errorMessage, key) =>
+                  <Text style={styles.error} key={key}>
+                    {errorMessage}
+                  </Text>
+                )}
               </View>
               {this.renderUpdateBtn()}
               <View>
@@ -638,7 +662,7 @@ class scriptdetail extends Component {
                   data={this.state.listscriptdetails}
                   keyExtractor={(item) => item._id}
                   renderItem={this.renderItem}
-                  style={{ height: H * 0.38 }}
+                  style={{ height: H * 0.35 }}
                 ></FlatList>
               </View>
               {checkPermisson(this.props.route.params.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?

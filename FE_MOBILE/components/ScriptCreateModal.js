@@ -18,6 +18,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { Redirect } from "react-router";
 import ApiFailHandler from './helper/ApiFailHandler'
+import ValidationComponent from 'react-native-form-validator';
 
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#2A9D8F",
     borderRadius: 8,
     padding: 12,
-    margin: 16,
+    marginHorizontal: 16,
     justifyContent: "center",
     alignContent: "center",
   },
@@ -59,23 +60,33 @@ const styles = StyleSheet.create({
     marginTop: 8,
     borderWidth: 1,
     borderColor: "#DFDFDF",
-    backgroundColor: "#D4D4D4",
+    backgroundColor: "white",
     borderRadius: 8,
     justifyContent: "center",
-    paddingHorizontal: 12
+    paddingHorizontal: 12,
+    marginBottom: 12,
+
   },
+  error: {
+    color: "red",
+    fontFamily: "semibold",
+    fontSize: 12,
+    top: -10
+  }
 });
 
-class ScriptCreateModal extends Component {
+class ScriptCreateModal extends ValidationComponent {
   constructor(props) {
     super(props);
     this.state = {
+      scriptname: "",
       data: {},
       event: null,
       listUser_default: [],
       listUser: [],
       loadingbtn: false,
       loggout: false,
+      forId: [],
     };
   }
 
@@ -102,6 +113,7 @@ class ScriptCreateModal extends Component {
         ...this.state.data,
         name: name,
       },
+      scriptname: name,
     });
   };
 
@@ -121,40 +133,46 @@ class ScriptCreateModal extends Component {
   }
 
   onFinish = async () => {
-    this.onLoading();
-    let login = await AsyncStorage.getItem("login");
-    var obj = JSON.parse(login);
-    try {
-      let data = {
-        ...this.state.data,
-        forId: this.state.data.forId[0],
-        writerId: obj.id,
-        eventId: this.state.event._id,
-      };
+    let temp_validate = this.validate({
+      scriptname: { required: true },
+      forId: { arrayObjectHasValue: 1 },
+    });
+    if (temp_validate) {
+      this.onLoading();
+      let login = await AsyncStorage.getItem("login");
+      var obj = JSON.parse(login);
+      try {
+        let data = {
+          ...this.state.data,
+          forId: this.state.data.forId[0],
+          writerId: obj.id,
+          eventId: this.state.event._id,
+        };
 
-      await axios
-        .post(`${Url()}/api/scripts`, data, {
-          headers: {
-            Authorization: await getToken(),
-          },
-        })
-        .then((res) => {
-          // console.log("result", res.data.data);
-          this.props.updateListScript(res.data.data);
-          this.props.onClose();
-          //this.onLoading();
-          alert("Tạo kịch bản thành công");
-        })
-        .catch((err) => {
-          let errResult = ApiFailHandler(err.response?.data?.error)
-          this.setState({
-            loggout: errResult.isExpired
+        await axios
+          .post(`${Url()}/api/scripts`, data, {
+            headers: {
+              Authorization: await getToken(),
+            },
           })
-          alert(`${errResult.message}`)
+          .then((res) => {
+            // console.log("result", res.data.data);
+            this.props.updateListScript(res.data.data);
+            this.props.onClose();
+            //this.onLoading();
+            alert("Tạo kịch bản thành công");
+          })
+          .catch((err) => {
+            let errResult = ApiFailHandler(err.response?.data?.error)
+            this.setState({
+              loggout: errResult.isExpired
+            })
+            alert(`${errResult.message}`)
 
-        });
-    } catch (err) {
-      alert("Phải điển đủ thông tin");
+          });
+      } catch (err) {
+        alert("Phải điển đủ thông tin");
+      }
     }
   };
 
@@ -180,7 +198,7 @@ class ScriptCreateModal extends Component {
             >
               <ScrollView
                 keyboardDismissMode="interative"
-                style={{ height: H * 0.4 }}
+                style={{ height: H * 0.43 }}
               >
                 <View
                   style={{ flex: 1, paddingVertical: 20, paddingHorizontal: 16 }}
@@ -192,10 +210,14 @@ class ScriptCreateModal extends Component {
                       style={styles.input}
                       value={this.state.data.name}
                     ></TextInput>
+                    {this.isFieldInError('scriptname') && this.getErrorsInField('scriptname').map((errorMessage, key) =>
+                      <Text style={styles.error} key={key}>
+                        {errorMessage}
+                      </Text>
+                    )}
                     <Text style={styles.Label}>Dành cho</Text>
                     <View style={styles.Box}>
                       <Picker
-
                         onChange={this.onChangeForId}
                         value={this.state.data.forId}
                         data={this.state.listUser}
@@ -212,6 +234,11 @@ class ScriptCreateModal extends Component {
                         </Text>
                       </Picker>
                     </View>
+                    {this.isFieldInError('forId') && this.getErrorsInField('forId').map((errorMessage, key) =>
+                      <Text style={styles.error} key={key}>
+                        {errorMessage}
+                      </Text>
+                    )}
                   </View>
                 </View>
                 {!this.state.loadingbtn ? (

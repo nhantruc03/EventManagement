@@ -16,6 +16,7 @@ import Indicator from "../../components/helper/Loading";
 import * as PushNoti from '../../components/helper/pushNotification'
 import { Redirect } from "react-router";
 import ApiFailHandler from '../../components/helper/ApiFailHandler'
+import ValidationComponent from 'react-native-form-validator';
 const styles = StyleSheet.create({
   input: {
     height: 40,
@@ -74,6 +75,13 @@ const styles = StyleSheet.create({
   BoxInput: {
     marginHorizontal: 10
   },
+  error: {
+    color: "red",
+    fontFamily: "semibold",
+    fontSize: 12,
+    marginLeft: 16,
+    top: -10
+  }
 });
 const customStyles = {
   stepIndicatorSize: 25,
@@ -100,10 +108,12 @@ const customStyles = {
 };
 
 const client = new WebSocket(`${WSK()}`);
-class CreateTask extends Component {
+class CreateTask extends ValidationComponent {
   constructor(props) {
     super(props);
     this.state = {
+      taskname: "",
+      taskdescription: "",
       data: {
         endTime: new Date(),
         endDate: new Date(),
@@ -120,7 +130,7 @@ class CreateTask extends Component {
       listPriorities: null,
       isLoading: true,
       currentPage: 0,
-      coverUrl: null,
+      coverUrl: "",
       coverUrl_localPath: null,
       listFaculties: [],
       listActionTypes: [],
@@ -268,6 +278,7 @@ class CreateTask extends Component {
     this.setState({
       data: temp,
     });
+
   };
   onChangeName = (name) => {
     this.setState({
@@ -275,6 +286,7 @@ class CreateTask extends Component {
         ...this.state.data,
         name: name,
       },
+      taskname: name,
     });
   };
   onChangeDescrip = (description) => {
@@ -283,6 +295,7 @@ class CreateTask extends Component {
         ...this.state.data,
         description: description,
       },
+      taskdescription: description,
     });
   };
 
@@ -293,59 +306,71 @@ class CreateTask extends Component {
   }
 
   onFinish = async () => {
-    this.onLoading();
-    let data = {
-      ...this.state.data,
-      managerId: this.state.selectedManager.id,
-      availUser: this.state.selectedUsers.reduce((list, e) => {
-        list.push(e.id);
-        return list;
-      }, []),
-      tagsId: this.state.selectedTags.reduce((list, e) => {
-        list.push(e.id);
-        return list;
-      }, []),
-      priorityId: this.state.selectedPriorities.id,
-      facultyId: this.state.selectedFaculties.id,
-      actionTypeId: this.state.selectedActionTypes.id,
-      eventId: this.state.event._id,
-    };
-
-    if (this.state.coverUrl !== null) {
-      data = {
-        ...data,
-        coverUrl: this.state.coverUrl,
+    let temp_validate = this.validate({
+      taskname: { required: true },
+      taskdescription: { required: true },
+      coverUrl: { required: true },
+      selectedFaculties: { objectDifferent: 1 },
+      selectedManager: { objectDifferent: 1 },
+      selectedUsers: { arrayObjectHasValue: 1 },
+      selectedActionTypes: { objectDifferent: 1 },
+      selectedPriorities: { objectDifferent: 1 },
+      selectedTags: { arrayObjectHasValue: 1 },
+    });
+    if (temp_validate) {
+      this.onLoading();
+      let data = {
+        ...this.state.data,
+        managerId: this.state.selectedManager.id,
+        availUser: this.state.selectedUsers.reduce((list, e) => {
+          list.push(e.id);
+          return list;
+        }, []),
+        tagsId: this.state.selectedTags.reduce((list, e) => {
+          list.push(e.id);
+          return list;
+        }, []),
+        priorityId: this.state.selectedPriorities.id,
+        facultyId: this.state.selectedFaculties.id,
+        actionTypeId: this.state.selectedActionTypes.id,
+        eventId: this.state.event._id,
       };
-    }
-    await axios
-      .post(`${Url()}/api/actions/start`, data, {
-        headers: {
-          Authorization: await getToken(),
-        },
-      })
-      .then((res) => {
-        alert("Tạo thành công");
 
-        client.send(
-          JSON.stringify({
-            type: "sendListNotifications",
-            notifications: res.data.Notifications,
-          })
-        );
-        PushNoti.sendListPushNoti(res.data.Notifications)
-        this.props.route.params.updateListActions(res.data.action)
-        this.props.navigation.goBack()
-
-      })
-      .catch((err) => {
-        let errResult = ApiFailHandler(err.response?.data?.error)
-        this.setState({
-          loggout: errResult.isExpired,
-          loadingbtn: false,
+      if (this.state.coverUrl !== null) {
+        data = {
+          ...data,
+          coverUrl: this.state.coverUrl,
+        };
+      }
+      await axios
+        .post(`${Url()}/api/actions/start`, data, {
+          headers: {
+            Authorization: await getToken(),
+          },
         })
-        alert(`${errResult.message}`);
-      });
+        .then((res) => {
+          alert("Tạo thành công");
 
+          client.send(
+            JSON.stringify({
+              type: "sendListNotifications",
+              notifications: res.data.Notifications,
+            })
+          );
+          PushNoti.sendListPushNoti(res.data.Notifications)
+          this.props.route.params.updateListActions(res.data.action)
+          this.props.navigation.goBack()
+
+        })
+        .catch((err) => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired,
+            loadingbtn: false,
+          })
+          alert(`${errResult.message}`);
+        });
+    }
   };
 
   onStepPress = (position) => {
@@ -390,6 +415,11 @@ class CreateTask extends Component {
                 style={styles.input}
                 value={this.state.data.name}
               ></TextInput>
+              {this.isFieldInError('taskname') && this.getErrorsInField('taskname').map((errorMessage, key) =>
+                <Text style={styles.error} key={key}>
+                  {errorMessage}
+                </Text>
+              )}
             </View>
             <Text style={styles.Label}>Mô tả công việc</Text>
             <TextInput
@@ -399,6 +429,11 @@ class CreateTask extends Component {
               onChangeText={this.onChangeDescrip}
               value={this.state.data.description}
             ></TextInput>
+            {this.isFieldInError('taskdescription') && this.getErrorsInField('taskdescription').map((errorMessage, key) =>
+              <Text style={styles.error} key={key}>
+                {errorMessage}
+              </Text>
+            )}
           </View>
           <View style={{ flexDirection: "row" }}>
             <Customdatetime
@@ -420,57 +455,67 @@ class CreateTask extends Component {
               mode="time"
             />
           </View>
-
           <View
             onFocus={() => this.scrollToView(this.faculty_view)}
             ref={(e) => {
               this.faculty_view = e;
             }}
+            style={{ marginTop: 8 }}
           >
-            <SearchableDropdown
-              onItemSelect={(item) => {
-                this.setState({
-                  selectedFaculties: item,
-                });
-              }}
-              selectedItems={this.state.selectedFaculties}
-              defaultIndex={
-                this.state.listFaculties.indexOf(
-                  this.state.selectedFaculties
-                ) !== -1
-                  ? this.state.listFaculties.indexOf(
+
+
+            <Text style={styles.Label}>Ban</Text>
+            <View>
+              <SearchableDropdown
+                onItemSelect={(item) => {
+                  this.setState({
+                    selectedFaculties: item,
+                  });
+                }}
+                selectedItems={this.state.selectedFaculties}
+                defaultIndex={
+                  this.state.listFaculties.indexOf(
                     this.state.selectedFaculties
-                  )
-                  : undefined
-              }
-              containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
-              itemStyle={{
-                padding: 10,
-                marginTop: 2,
-                backgroundColor: "#ddd",
-                borderColor: "#bbb",
-                borderWidth: 1,
-                borderRadius: 5,
-              }}
-              itemTextStyle={{ color: "#222" }}
-              itemsContainerStyle={{ maxHeight: 140 }}
-              items={this.state.listFaculties}
-              resetValue={false}
-              textInputProps={{
-                placeholder: "Chọn ban",
-                underlineColorAndroid: "transparent",
-                style: {
-                  padding: 12,
+                  ) !== -1
+                    ? this.state.listFaculties.indexOf(
+                      this.state.selectedFaculties
+                    ).toString()
+                    : undefined
+                }
+                containerStyle={{ paddingHorizontal: 12, paddingVertical: 12 }}
+                itemStyle={{
+                  padding: 10,
+                  marginTop: 2,
+                  backgroundColor: "#ddd",
+                  borderColor: "#bbb",
                   borderWidth: 1,
-                  borderColor: "#ccc",
                   borderRadius: 5,
-                  backgroundColor: "white"
-                },
-              }}
-              listProps={{
-                nestedScrollEnabled: true,
-              }}
-            />
+                }}
+                itemTextStyle={{ color: "#222" }}
+                itemsContainerStyle={{ maxHeight: 140 }}
+                items={this.state.listFaculties}
+                resetValue={false}
+                textInputProps={{
+                  placeholder: "Chọn ban",
+                  underlineColorAndroid: "transparent",
+                  style: {
+                    padding: 12,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
+                    borderRadius: 5,
+                    backgroundColor: "white"
+                  },
+                }}
+                listProps={{
+                  nestedScrollEnabled: true,
+                }}
+              />
+              {this.isFieldInError('selectedFaculties') && this.getErrorsInField('selectedFaculties').map((errorMessage, key) =>
+                <Text style={styles.error} key={key}>
+                  {errorMessage}
+                </Text>
+              )}
+            </View>
           </View>
 
           <View style={styles.ScriptNameLabelContainer}>
@@ -483,6 +528,11 @@ class CreateTask extends Component {
               }}
               localPath={this.state.coverUrl_localPath}
             />
+            {this.isFieldInError('coverUrl') && this.getErrorsInField('coverUrl').map((errorMessage, key) =>
+              <Text style={styles.error} key={key}>
+                {errorMessage}
+              </Text>
+            )}
           </View>
         </View>
       );
@@ -492,6 +542,7 @@ class CreateTask extends Component {
           <View style={styles.ScriptNameLabelContainer}>
             <Text style={styles.Label}>Người quản lý</Text>
             <SearchableDropdown
+              ref="selectedManager"
               onItemSelect={(item) => {
                 this.setState({
                   selectedManager: item,
@@ -500,7 +551,7 @@ class CreateTask extends Component {
               selectedItems={this.state.selectedManager}
               defaultIndex={
                 this.state.listUser.indexOf(this.state.selectedManager) !== -1
-                  ? this.state.listUser.indexOf(this.state.selectedManager)
+                  ? this.state.listUser.indexOf(this.state.selectedManager).toString()
                   : undefined
               }
               containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
@@ -531,11 +582,17 @@ class CreateTask extends Component {
                 nestedScrollEnabled: true,
               }}
             />
+            {this.isFieldInError('selectedManager') && this.getErrorsInField('selectedManager').map((errorMessage, key) =>
+              <Text style={styles.error} key={key}>
+                {errorMessage}
+              </Text>
+            )}
           </View>
           <View style={styles.ScriptNameLabelContainer}>
             <Text style={styles.Label}>Phân công cho</Text>
             <View style={styles.Box}>
               <SearchableDropdown
+                ref="selectedUsers"
                 multi={true}
                 chip={true}
                 onItemSelect={(item) => {
@@ -550,7 +607,7 @@ class CreateTask extends Component {
                   this.setState({ selectedUsers: items });
                 }}
                 selectedItems={this.state.selectedUsers}
-                containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
+                containerStyle={{ paddingHorizontal: 12, paddingVertical: 12 }}
                 itemStyle={{
                   padding: 10,
                   marginTop: 2,
@@ -578,6 +635,11 @@ class CreateTask extends Component {
                   nestedScrollEnabled: true,
                 }}
               />
+              {this.isFieldInError('selectedUsers') && this.getErrorsInField('selectedUsers').map((errorMessage, key) =>
+                <Text style={styles.error} key={key}>
+                  {errorMessage}
+                </Text>
+              )}
             </View>
           </View>
           <View
@@ -601,10 +663,10 @@ class CreateTask extends Component {
                 ) !== -1
                   ? this.state.listActionTypes.indexOf(
                     this.state.selectedActionTypes
-                  )
+                  ).toString()
                   : undefined
               }
-              containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
+              containerStyle={{ paddingHorizontal: 12, paddingVertical: 12 }}
               itemStyle={{
                 padding: 10,
                 marginTop: 2,
@@ -632,6 +694,11 @@ class CreateTask extends Component {
                 nestedScrollEnabled: true,
               }}
             />
+            {this.isFieldInError('selectedActionTypes') && this.getErrorsInField('selectedActionTypes').map((errorMessage, key) =>
+              <Text style={styles.error} key={key}>
+                {errorMessage}
+              </Text>
+            )}
           </View>
           <View
             style={styles.ScriptNameLabelContainer}
@@ -654,10 +721,10 @@ class CreateTask extends Component {
                 ) !== -1
                   ? this.state.listPriorities.indexOf(
                     this.state.selectedPriorities
-                  )
+                  ).toString()
                   : undefined
               }
-              containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
+              containerStyle={{ paddingHorizontal: 12, paddingVertical: 12 }}
               itemStyle={{
                 padding: 10,
                 marginTop: 2,
@@ -685,6 +752,11 @@ class CreateTask extends Component {
                 nestedScrollEnabled: true,
               }}
             />
+            {this.isFieldInError('selectedPriorities') && this.getErrorsInField('selectedPriorities').map((errorMessage, key) =>
+              <Text style={styles.error} key={key}>
+                {errorMessage}
+              </Text>
+            )}
           </View>
 
           <View
@@ -710,7 +782,7 @@ class CreateTask extends Component {
                 this.setState({ selectedTags: items });
               }}
               selectedItems={this.state.selectedTags}
-              containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
+              containerStyle={{ paddingHorizontal: 12, paddingVertical: 12 }}
               itemStyle={{
                 padding: 10,
                 marginTop: 2,
@@ -738,6 +810,11 @@ class CreateTask extends Component {
                 nestedScrollEnabled: true,
               }}
             />
+            {this.isFieldInError('selectedTags') && this.getErrorsInField('selectedTags').map((errorMessage, key) =>
+              <Text style={styles.error} key={key}>
+                {errorMessage}
+              </Text>
+            )}
           </View>
           {!this.state.loadingbtn ? (
             <TouchableOpacity

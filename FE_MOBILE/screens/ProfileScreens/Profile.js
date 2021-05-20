@@ -215,8 +215,7 @@ class Profilescreen extends Component {
             loggout: errResult.isExpired
           })
         })
-    ])
-      ;
+    ]);
 
 
     let ListNotCompletedTask = []

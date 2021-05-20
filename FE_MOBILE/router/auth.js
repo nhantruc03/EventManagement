@@ -22,7 +22,7 @@ class Auth {
             // var test = await AsyncStorage.getItem('login');
             // var obj = JSON.parse(test);
             // await this.login(obj);
-            // console.log("user", this.authenticatedAdmin)
+            console.log("user", this.authenticatedAdmin)
             return this.authenticatedAdmin;
         } catch (e) {
             this.authenticatedAdmin = false

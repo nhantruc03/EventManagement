@@ -9,6 +9,7 @@ import { TextInput } from "react-native-gesture-handler";
 import { Button } from "@ant-design/react-native";
 import { Redirect } from "react-router";
 import ApiFailHandler from './helper/ApiFailHandler'
+import ValidationComponent from 'react-native-form-validator';
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   Label: {
@@ -53,15 +54,22 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: "center",
   },
+  error: {
+    color: "red",
+    fontFamily: "semibold",
+    fontSize: 12,
+    top: -10
+  }
 });
 
-class AddActionTypeModal extends Component {
+class AddActionTypeModal extends ValidationComponent {
   constructor(props) {
     super(props);
     this.state = {
       name: "",
       loadingbtn: false,
       loggout: false,
+      actiontypename: ""
     };
   }
   onLoading() {
@@ -70,38 +78,44 @@ class AddActionTypeModal extends Component {
     });
   }
   onFinish = async (e) => {
-    this.onLoading()
-    let data = {
-      name: this.state.name,
-      eventId: this.props.eventId,
-    };
-    await axios
-      .post(`${Url()}/api/action-types`, data, {
-        headers: {
-          Authorization: await getToken(),
-        },
-      })
-      .then((res) => {
-        console.log(res.data.data);
-        // this.setState({
-        //   currentActionTypes: [...this.state.currentActionTypes, res.data.data],
-        // });
-        this.props.addActionTypes(res.data.data);
-        this.props.onClose();
-        alert('Tạo thành công')
-      })
-      .catch(err => {
-        let errResult = ApiFailHandler(err.response?.data?.error)
-        this.setState({
-          loggout: errResult.isExpired,
-          loadingbtn: false,
+    let temp_validate = this.validate({
+      actiontypename: { required: true },
+    });
+    if (temp_validate) {
+      this.onLoading()
+      let data = {
+        name: this.state.name,
+        eventId: this.props.eventId,
+      };
+      await axios
+        .post(`${Url()}/api/action-types`, data, {
+          headers: {
+            Authorization: await getToken(),
+          },
         })
-        alert(`${errResult.message}`)
-      });
+        .then((res) => {
+          console.log(res.data.data);
+          // this.setState({
+          //   currentActionTypes: [...this.state.currentActionTypes, res.data.data],
+          // });
+          this.props.addActionTypes(res.data.data);
+          this.props.onClose();
+          alert('Tạo thành công')
+        })
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired,
+            loadingbtn: false,
+          })
+          alert(`${errResult.message}`)
+        });
+    }
   };
   onChangeName = (name) => {
     this.setState({
       name: name,
+      actiontypename: name,
     });
   };
 
@@ -117,7 +131,7 @@ class AddActionTypeModal extends Component {
       )
     } else {
       return (
-        <View style={{ height: H * 0.25 }}>
+        <View style={{ height: H * 0.3 }}>
           <View
             style={{
               flex: 1,
@@ -131,6 +145,11 @@ class AddActionTypeModal extends Component {
                 onChangeText={this.onChangeName}
                 style={styles.input}
               ></TextInput>
+              {this.isFieldInError('actiontypename') && this.getErrorsInField('actiontypename').map((errorMessage, key) =>
+                <Text style={styles.error} key={key}>
+                  {errorMessage}
+                </Text>
+              )}
             </View>
           </View>
           {!this.state.loadingbtn ? <Button

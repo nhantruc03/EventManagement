@@ -17,6 +17,7 @@ import { findNodeHandle } from "react-native";
 import * as PushNoti from '../../components/helper/pushNotification'
 import { Redirect } from "react-router";
 import ApiFailHandler from '../../components/helper/ApiFailHandler'
+import ValidationComponent from 'react-native-form-validator';
 const styles = StyleSheet.create({
   input: {
     height: 40,
@@ -81,6 +82,13 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 5,
     backgroundColor: "white"
+  },
+  error: {
+    color: "red",
+    fontFamily: "semibold",
+    fontSize: 12,
+    marginLeft: 16,
+    top: -10
   }
 });
 const customStyles = {
@@ -108,10 +116,12 @@ const customStyles = {
 };
 
 const client = new WebSocket(`${WSK()}`);
-class EditTask extends Component {
+class EditTask extends ValidationComponent {
   constructor(props) {
     super(props);
     this.state = {
+      taskname: "",
+      taskdescription: "",
       data: null,
       event: null,
       listUser_default: [],
@@ -125,7 +135,7 @@ class EditTask extends Component {
       listPriorities: null,
       isLoading: true,
       currentPage: 0,
-      coverUrl: null,
+      coverUrl: "",
       coverUrl_localPath: null,
       listFaculties: [],
       listActionTypes: [],
@@ -340,15 +350,14 @@ class EditTask extends Component {
       });
       this.setState({
         data: data,
+        taskname: data.name,
+        taskdescription: data.description,
         event: event,
-        listUser: [{ id: 1, name: "Vui lòng chọn" }, ...temp_listUser],
-        listTags: [{ id: 1, name: "Vui lòng chọn" }, ...temp_tags],
-        listPriorities: [{ id: 1, name: "Vui lòng chọn" }, ...temp_priorities],
-        listFaculties: [{ id: 1, name: "Vui lòng chọn" }, ...temp_faculties],
-        listActionTypes: [
-          { id: 1, name: "Vui lòng chọn" },
-          ...temp_actiontypes,
-        ],
+        listUser: temp_listUser,
+        listTags: temp_tags,
+        listPriorities: temp_priorities,
+        listFaculties: temp_faculties,
+        listActionTypes: temp_actiontypes,
         selectedFaculties: temp_selectedFaculties,
         selectedManager: temp_selectedManager,
         selectedUsers: temp_availUser,
@@ -372,6 +381,7 @@ class EditTask extends Component {
         ...this.state.data,
         name: name,
       },
+      taskname: name,
     });
   };
   onChangeDescrip = (description) => {
@@ -380,6 +390,7 @@ class EditTask extends Component {
         ...this.state.data,
         description: description,
       },
+      taskdescription: description,
     });
   };
 
@@ -389,80 +400,93 @@ class EditTask extends Component {
     });
   }
   onFinish = async () => {
-    this.onLoading();
-    let data = {
-      ...this.state.data,
-      managerId: this.state.selectedManager.id,
-      availUser: this.state.selectedUsers.reduce((list, e) => {
-        list.push(e.id);
-        return list;
-      }, []),
-      tagsId: this.state.selectedTags.reduce((list, e) => {
-        list.push(e.id);
-        return list;
-      }, []),
-      priorityId: this.state.selectedPriorities.id,
-      facultyId: this.state.selectedFaculties.id,
-      actionTypeId: this.state.selectedActionTypes.id,
-      eventId: this.state.event._id,
-    };
+    let temp_validate = this.validate({
+      taskname: { required: true },
+      taskdescription: { required: true },
+      coverUrl: { required: true },
+      selectedFaculties: { objectDifferent: 1 },
+      selectedManager: { objectDifferent: 1 },
+      selectedUsers: { arrayObjectHasValue: 1 },
+      selectedActionTypes: { objectDifferent: 1 },
+      selectedPriorities: { objectDifferent: 1 },
+      selectedTags: { arrayObjectHasValue: 1 },
+    });
+    if (temp_validate) {
+      this.onLoading();
+      let data = {
+        ...this.state.data,
+        managerId: this.state.selectedManager.id,
+        availUser: this.state.selectedUsers.reduce((list, e) => {
+          list.push(e.id);
+          return list;
+        }, []),
+        tagsId: this.state.selectedTags.reduce((list, e) => {
+          list.push(e.id);
+          return list;
+        }, []),
+        priorityId: this.state.selectedPriorities.id,
+        facultyId: this.state.selectedFaculties.id,
+        actionTypeId: this.state.selectedActionTypes.id,
+        eventId: this.state.event._id,
+      };
 
-    if (this.state.coverUrl !== null) {
+      if (this.state.coverUrl !== null) {
+        data = {
+          ...data,
+          coverUrl: this.state.coverUrl,
+        };
+      }
+
+      let managerId_change = false;
+      if (data.managerId !== this.state.data.managerId) {
+        managerId_change = true;
+      }
+      let availUser_change = false;
+      if (
+        JSON.stringify(data.availUser) !==
+        JSON.stringify(this.state.data.availUser)
+      ) {
+        availUser_change = true;
+      }
+
       data = {
         ...data,
-        coverUrl: this.state.coverUrl,
+        managerId_change: managerId_change,
+        availUser_change: availUser_change,
       };
-    }
-
-    let managerId_change = false;
-    if (data.managerId !== this.state.data.managerId) {
-      managerId_change = true;
-    }
-    let availUser_change = false;
-    if (
-      JSON.stringify(data.availUser) !==
-      JSON.stringify(this.state.data.availUser)
-    ) {
-      availUser_change = true;
-    }
-
-    data = {
-      ...data,
-      managerId_change: managerId_change,
-      availUser_change: availUser_change,
-    };
-    console.log("before", data.description);
-    await axios
-      .put(`${Url()}/api/actions/${this.props.route.params.data._id}`, data, {
-        headers: {
-          Authorization: await getToken(),
-        },
-      })
-      .then((res) => {
-        alert("Cập nhật thành công");
-        client.send(
-          JSON.stringify({
-            type: "sendListNotifications",
-            notifications: res.data.notifications,
-          })
-        );
-        PushNoti.sendListPushNoti(res.data.notifications)
-
-        console.log("after", res.data.data.description);
-        // this.props.route.params.updateListActions(res.data.action);
-        this.props.route.params.updateData(res.data.data);
-        this.props.navigation.navigate("TaskDetail", {
-          data: res.data.data,
-        });
-      })
-      .catch((err) => {
-        let errResult = ApiFailHandler(err.response?.data?.error)
-        this.setState({
-          loggout: errResult.isExpired,
-          loadingbtn: false,
+      console.log("before", data.description);
+      await axios
+        .put(`${Url()}/api/actions/${this.props.route.params.data._id}`, data, {
+          headers: {
+            Authorization: await getToken(),
+          },
         })
-        alert(`${errResult.message}`);
-      });
+        .then((res) => {
+          alert("Cập nhật thành công");
+          client.send(
+            JSON.stringify({
+              type: "sendListNotifications",
+              notifications: res.data.notifications,
+            })
+          );
+          PushNoti.sendListPushNoti(res.data.notifications)
+
+          console.log("after", res.data.data.description);
+          // this.props.route.params.updateListActions(res.data.action);
+          this.props.route.params.updateData(res.data.data);
+          this.props.navigation.navigate("TaskDetail", {
+            data: res.data.data,
+          });
+        })
+        .catch((err) => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired,
+            loadingbtn: false,
+          })
+          alert(`${errResult.message}`);
+        });
+    }
   };
 
   onStepPress = (position) => {
@@ -508,6 +532,11 @@ class EditTask extends Component {
                 style={styles.input}
                 value={this.state.data.name}
               ></TextInput>
+              {this.isFieldInError('taskname') && this.getErrorsInField('taskname').map((errorMessage, key) =>
+                <Text style={styles.error} key={key}>
+                  {errorMessage}
+                </Text>
+              )}
             </View>
             <Text style={styles.Label}>Mô tả công việc</Text>
             <TextInput
@@ -517,6 +546,11 @@ class EditTask extends Component {
               onChangeText={this.onChangeDescrip}
               value={this.state.data.description}
             ></TextInput>
+            {this.isFieldInError('taskdescription') && this.getErrorsInField('taskdescription').map((errorMessage, key) =>
+              <Text style={styles.error} key={key}>
+                {errorMessage}
+              </Text>
+            )}
           </View>
           <View style={{ flexDirection: "row" }}>
             <Customdatetime
@@ -544,45 +578,54 @@ class EditTask extends Component {
             ref={(e) => {
               this.faculty_view = e;
             }}
+            style={{ marginTop: 8 }}
           >
-            <SearchableDropdown
-              onItemSelect={(item) => {
-                this.setState({
-                  selectedFaculties: item,
-                });
-              }}
-              selectedItems={this.state.selectedFaculties}
-              defaultIndex={
-                this.state.listFaculties.indexOf(
-                  this.state.selectedFaculties
-                ) !== -1
-                  ? this.state.listFaculties.indexOf(
+            <Text style={styles.Label}>Ban</Text>
+            <View>
+              <SearchableDropdown
+                onItemSelect={(item) => {
+                  this.setState({
+                    selectedFaculties: item,
+                  });
+                }}
+                selectedItems={this.state.selectedFaculties}
+                defaultIndex={
+                  this.state.listFaculties.indexOf(
                     this.state.selectedFaculties
-                  )
-                  : undefined
-              }
-              containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
-              itemStyle={{
-                padding: 10,
-                marginTop: 2,
-                backgroundColor: "#ddd",
-                borderColor: "#bbb",
-                borderWidth: 1,
-                borderRadius: 5,
-              }}
-              itemTextStyle={{ color: "#222" }}
-              itemsContainerStyle={{ maxHeight: 140 }}
-              items={this.state.listFaculties}
-              resetValue={false}
-              textInputProps={{
-                placeholder: "Chọn ban",
-                underlineColorAndroid: "transparent",
-                style: styles.Dropdown
-              }}
-              listProps={{
-                nestedScrollEnabled: true,
-              }}
-            />
+                  ) !== -1
+                    ? this.state.listFaculties.indexOf(
+                      this.state.selectedFaculties
+                    ).toString()
+                    : undefined
+                }
+                containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
+                itemStyle={{
+                  padding: 10,
+                  marginTop: 2,
+                  backgroundColor: "#ddd",
+                  borderColor: "#bbb",
+                  borderWidth: 1,
+                  borderRadius: 5,
+                }}
+                itemTextStyle={{ color: "#222" }}
+                itemsContainerStyle={{ maxHeight: 140 }}
+                items={this.state.listFaculties}
+                resetValue={false}
+                textInputProps={{
+                  placeholder: "Chọn ban",
+                  underlineColorAndroid: "transparent",
+                  style: styles.Dropdown
+                }}
+                listProps={{
+                  nestedScrollEnabled: true,
+                }}
+              />
+              {this.isFieldInError('selectedFaculties') && this.getErrorsInField('selectedFaculties').map((errorMessage, key) =>
+                <Text style={styles.error} key={key}>
+                  {errorMessage}
+                </Text>
+              )}
+            </View>
           </View>
 
           <View style={styles.ScriptNameLabelContainer}>
@@ -612,7 +655,7 @@ class EditTask extends Component {
               selectedItems={this.state.selectedManager}
               defaultIndex={
                 this.state.listUser.indexOf(this.state.selectedManager) !== -1
-                  ? this.state.listUser.indexOf(this.state.selectedManager)
+                  ? this.state.listUser.indexOf(this.state.selectedManager).toString()
                   : undefined
               }
               containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
@@ -637,6 +680,11 @@ class EditTask extends Component {
                 nestedScrollEnabled: true,
               }}
             />
+            {this.isFieldInError('selectedManager') && this.getErrorsInField('selectedManager').map((errorMessage, key) =>
+              <Text style={styles.error} key={key}>
+                {errorMessage}
+              </Text>
+            )}
           </View>
           <View style={styles.ScriptNameLabelContainer}>
             <Text style={styles.Label}>Phân công cho</Text>
@@ -678,6 +726,11 @@ class EditTask extends Component {
                   nestedScrollEnabled: true,
                 }}
               />
+              {this.isFieldInError('selectedUsers') && this.getErrorsInField('selectedUsers').map((errorMessage, key) =>
+                <Text style={styles.error} key={key}>
+                  {errorMessage}
+                </Text>
+              )}
             </View>
           </View>
           <View
@@ -701,7 +754,7 @@ class EditTask extends Component {
                 ) !== -1
                   ? this.state.listActionTypes.indexOf(
                     this.state.selectedActionTypes
-                  )
+                  ).toString()
                   : undefined
               }
               containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
@@ -726,6 +779,11 @@ class EditTask extends Component {
                 nestedScrollEnabled: true,
               }}
             />
+            {this.isFieldInError('selectedActionTypes') && this.getErrorsInField('selectedActionTypes').map((errorMessage, key) =>
+              <Text style={styles.error} key={key}>
+                {errorMessage}
+              </Text>
+            )}
           </View>
           <View
             style={styles.ScriptNameLabelContainer}
@@ -748,7 +806,7 @@ class EditTask extends Component {
                 ) !== -1
                   ? this.state.listPriorities.indexOf(
                     this.state.selectedPriorities
-                  )
+                  ).toString()
                   : undefined
               }
               containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
@@ -773,6 +831,11 @@ class EditTask extends Component {
                 nestedScrollEnabled: true,
               }}
             />
+            {this.isFieldInError('selectedPriorities') && this.getErrorsInField('selectedPriorities').map((errorMessage, key) =>
+              <Text style={styles.error} key={key}>
+                {errorMessage}
+              </Text>
+            )}
           </View>
 
           <View
@@ -820,6 +883,11 @@ class EditTask extends Component {
                 nestedScrollEnabled: true,
               }}
             />
+            {this.isFieldInError('selectedTags') && this.getErrorsInField('selectedTags').map((errorMessage, key) =>
+              <Text style={styles.error} key={key}>
+                {errorMessage}
+              </Text>
+            )}
           </View>
           {!this.state.loadingbtn ? (
             <TouchableOpacity

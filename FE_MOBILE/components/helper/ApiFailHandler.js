@@ -10,6 +10,9 @@ export default function handle(message) {
             auth.logout();
             temp.isExpired = true;
             break;
+        case "Duplicate data":
+            temp.message = "Đã tồn tại"
+            break;
         default:
             break;
     }

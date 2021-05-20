@@ -4,7 +4,7 @@ import getToken from '../../Auth';
 import Url from '../../env';
 import axios from 'axios';
 import { Image } from 'react-native';
-import { ActivityIndicator } from 'react-native';
+
 import { Redirect } from 'react-router';
 import ApiFailHandler from '../helper/ApiFailHandler'
 const styles = StyleSheet.create({

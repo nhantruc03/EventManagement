@@ -25,6 +25,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import * as PushNoti from '../components/helper/pushNotification'
 import ApiFailHandler from '../components/helper/ApiFailHandler'
 import { Redirect } from "react-router";
+import ValidationComponent from 'react-native-form-validator';
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   Label: {
@@ -34,7 +35,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 48,
-    marginVertical: 8,
+    marginVertical: 12,
     marginHorizontal: 0,
     borderWidth: 1,
     borderColor: "#DFDFDF",
@@ -60,11 +61,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignContent: "center",
   },
+  error: {
+    color: "red",
+    fontFamily: "semibold",
+    fontSize: 12,
+    top: -10
+  },
+  TextEditorContainer: {
+    marginBottom: 12,
+  },
 });
 
 const client = new WebSocket(`${WSK()}`);
 
-class ScriptDetailModal extends Component {
+class ScriptDetailModal extends ValidationComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -73,6 +83,8 @@ class ScriptDetailModal extends Component {
       showDateTimePicker: false,
       loadingbtn: false,
       loggout: false,
+      scriptdetailname: "",
+      scriptdetaildescription: "",
     };
     this.ref = React.createRef();
   }
@@ -84,6 +96,8 @@ class ScriptDetailModal extends Component {
 
     this.setState({
       data: this.props.data,
+      scriptdetailname: this.props.data.name,
+      scriptdetaildescription: this.props.data.description,
     });
   }
 
@@ -93,6 +107,7 @@ class ScriptDetailModal extends Component {
         ...this.state.data,
         name: name,
       },
+      scriptdetailname: name,
     });
   };
 
@@ -111,6 +126,7 @@ class ScriptDetailModal extends Component {
         ...this.state.data,
         description: e,
       },
+      scriptdetaildescription: e
     });
   };
 
@@ -126,69 +142,75 @@ class ScriptDetailModal extends Component {
     });
   }
   onFinish = async () => {
-    this.onLoading();
-    let login = await AsyncStorage.getItem("login");
-    var obj = JSON.parse(login);
-    let data = {
-      ...this.state.data,
-      _id: this.props.data._id,
-      time: this.state.data.time,
-      scriptId: this.props.scriptId,
-      updateUserId: obj.id
-    };
+    let temp_validate = this.validate({
+      scriptdetailname: { required: true },
+      scriptdetaildescription: { required: true },
+    });
+    if (temp_validate) {
+      this.onLoading();
+      let login = await AsyncStorage.getItem("login");
+      var obj = JSON.parse(login);
+      let data = {
+        ...this.state.data,
+        _id: this.props.data._id,
+        time: this.state.data.time,
+        scriptId: this.props.scriptId,
+        updateUserId: obj.id
+      };
 
-    if (this.props.add) {
-      await axios
-        .post(`${Url()}/api/script-details`, data, {
-          headers: {
-            Authorization: await getToken(),
-          },
-        })
-        .then((res) => {
-          // console.log(res.data.data[0]);
-          this.props.addListScriptDetails(res.data.data[0], res.data.history);
-          client.send(JSON.stringify({
-            type: "sendNotification",
-            notification: res.data.notification,
+      if (this.props.add) {
+        await axios
+          .post(`${Url()}/api/script-details`, data, {
+            headers: {
+              Authorization: await getToken(),
+            },
           })
-          );
-          PushNoti.sendPushNoti(res.data.notification)
-          this.props.onClose();
-          alert("Tạo chi tiết kịch bản thành công");
-          //alert("Tạo chi tiết kịch bản thành công");
-        })
-        .catch(err => {
-          let errResult = ApiFailHandler(err.response?.data?.error)
-          this.setState({
-            loggout: errResult.isExpired
+          .then((res) => {
+            // console.log(res.data.data[0]);
+            this.props.addListScriptDetails(res.data.data[0], res.data.history);
+            client.send(JSON.stringify({
+              type: "sendNotification",
+              notification: res.data.notification,
+            })
+            );
+            PushNoti.sendPushNoti(res.data.notification)
+            this.props.onClose();
+            alert("Tạo chi tiết kịch bản thành công");
+            //alert("Tạo chi tiết kịch bản thành công");
           })
-          alert(`${errResult.message}`)
-        });
-    } else {
-      await axios
-        .put(`${Url()}/api/script-details/` + this.props.data._id, data, {
-          headers: {
-            Authorization: await getToken(),
-          },
-        })
-        .then((res) => {
-          this.props.updateListScriptDetails(res.data.data, res.data.history);
-          client.send(JSON.stringify({
-            type: "sendNotification",
-            notification: res.data.notification,
+          .catch(err => {
+            let errResult = ApiFailHandler(err.response?.data?.error)
+            this.setState({
+              loggout: errResult.isExpired
+            })
+            alert(`${errResult.message}`)
+          });
+      } else {
+        await axios
+          .put(`${Url()}/api/script-details/` + this.props.data._id, data, {
+            headers: {
+              Authorization: await getToken(),
+            },
           })
-          );
-          PushNoti.sendPushNoti(res.data.notification)
-          this.props.onClose();
-          alert("Cập nhật chi tiết kịch bản thành công");
-        })
-        .catch(err => {
-          let errResult = ApiFailHandler(err.response?.data?.error)
-          this.setState({
-            loggout: errResult.isExpired
+          .then((res) => {
+            this.props.updateListScriptDetails(res.data.data, res.data.history);
+            client.send(JSON.stringify({
+              type: "sendNotification",
+              notification: res.data.notification,
+            })
+            );
+            PushNoti.sendPushNoti(res.data.notification)
+            this.props.onClose();
+            alert("Cập nhật chi tiết kịch bản thành công");
           })
-          alert(`${errResult.message}`)
-        });
+          .catch(err => {
+            let errResult = ApiFailHandler(err.response?.data?.error)
+            this.setState({
+              loggout: errResult.isExpired
+            })
+            alert(`${errResult.message}`)
+          });
+      }
     }
   };
 
@@ -231,10 +253,14 @@ class ScriptDetailModal extends Component {
                       style={styles.input}
                       value={this.state.data.name}
                     ></TextInput>
+                    {this.isFieldInError('scriptdetailname') && this.getErrorsInField('scriptdetailname').map((errorMessage, key) =>
+                      <Text style={styles.error} key={key}>
+                        {errorMessage}
+                      </Text>
+                    )}
                   </View>
                 </View>
                 <Text style={styles.Label}>Nội dung</Text>
-
                 <View style={styles.TextEditorContainer}>
                   <RichToolbar
                     style={{
@@ -251,7 +277,6 @@ class ScriptDetailModal extends Component {
                       actions.insertImage,
                     ]}
                   />
-
                   <RichEditor
                     // editorStyle={{ maxHeight: 100 }}
                     // ref={(e) => this.getRef(e)}
@@ -267,6 +292,11 @@ class ScriptDetailModal extends Component {
                     initialContentHTML={this.state.data.description}
                   />
                 </View>
+                {this.isFieldInError('scriptdetaildescription') && this.getErrorsInField('scriptdetaildescription').map((errorMessage, key) =>
+                  <Text style={styles.error} key={key}>
+                    {errorMessage}
+                  </Text>
+                )}
               </View>
             </ScrollView>
             {!this.state.loadingbtn ? (

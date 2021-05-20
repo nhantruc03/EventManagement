@@ -47,6 +47,8 @@ const update = async (req, res) => {
       { session, new: true }
     )
       .populate({ path: 'eventId', select: 'name' })
+      .populate({ path: 'writerId', select: 'name' })
+      .populate({ path: 'forId', select: 'name' })
 
     // Check duplicate
     const oldDocs = await Scripts.find(queryOld, null, { session })
@@ -103,7 +105,7 @@ const update = async (req, res) => {
     )
 
     let result_noti = await notifications.findById(created_notification._id)
-      .populate({path:'userId', select:'push_notification_token'})
+      .populate({ path: 'userId', select: 'push_notification_token' })
 
     // done notification
     // Updated Successfully

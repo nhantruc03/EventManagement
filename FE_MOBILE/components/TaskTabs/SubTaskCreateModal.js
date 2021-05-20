@@ -11,6 +11,7 @@ import { Platform } from "react-native";
 import { Dimensions } from "react-native";
 import { SafeAreaView } from "react-native";
 import { Redirect } from "react-router";
+import ValidationComponent from 'react-native-form-validator';
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   Label: {
@@ -37,6 +38,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     height: 48,
     justifyContent: "flex-start",
+    marginBottom: 12,
   },
   ScriptNameContainer: {
     width: "50%",
@@ -61,13 +63,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#2A9D8F",
     borderRadius: 8,
     padding: 12,
-    margin: 16,
+    marginTop: 16,
+    marginHorizontal: 16,
     justifyContent: "center",
     alignContent: "center",
   },
+  error: {
+    color: "red",
+    fontFamily: "semibold",
+    fontSize: 12,
+    top: -10
+  },
 });
 
-class SubTaskCreateModal extends Component {
+class SubTaskCreateModal extends ValidationComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -77,12 +86,16 @@ class SubTaskCreateModal extends Component {
       },
       loadingbtn: false,
       loggout: false,
+      subtaskname: "",
+      subtaskdescription: ""
     };
   }
   componentDidMount() {
     if (!this.props.onAdd) {
       this.setState({
         data: this.props.data,
+        subtaskname: this.props.data.name,
+        subtaskdescription: this.props.data.description
       });
     } else {
       this.setState({
@@ -97,51 +110,57 @@ class SubTaskCreateModal extends Component {
   }
 
   onFinish = async () => {
-    this.onLoading();
-    let data = {
-      ...this.state.data,
-      actionId: this.props.actionId,
-    };
+    let temp_validate = this.validate({
+      subtaskname: { required: true },
+      subtaskdescription: { required: true }
+    });
+    if (temp_validate) {
+      this.onLoading();
+      let data = {
+        ...this.state.data,
+        actionId: this.props.actionId,
+      };
 
-    if (this.props.onAdd) {
-      await axios
-        .post(`${Url()}/api/sub-actions`, data, {
-          headers: {
-            Authorization: await getToken(),
-          },
-        })
-        .then((res) => {
-          alert("Tạo subtask thành công");
-          this.props.onClose();
-          this.props.addToList(res.data.data);
-        })
-        .catch((err) => {
-          console.log(err);
-          this.setState({
-            loadingbtn: false
+      if (this.props.onAdd) {
+        await axios
+          .post(`${Url()}/api/sub-actions`, data, {
+            headers: {
+              Authorization: await getToken(),
+            },
           })
-          alert("Tạo subtask thất bại");
-        });
-    } else {
-      await axios
-        .put(`${Url()}/api/sub-actions/${this.props.data._id}`, data, {
-          headers: {
-            Authorization: await getToken(),
-          },
-        })
-        .then((res) => {
-          alert("Cập nhật subtask thành công");
-          this.props.onClose();
-          this.props.updateToList(res.data.data);
-        })
-        .catch((err) => {
-          console.log(err);
-          this.setState({
-            loadingbtn: false
+          .then((res) => {
+            alert("Tạo subtask thành công");
+            this.props.onClose();
+            this.props.addToList(res.data.data);
           })
-          alert("Cập nhật subtask thất bại");
+          .catch((err) => {
+            console.log(err);
+            this.setState({
+              loadingbtn: false
+            })
+            alert("Tạo subtask thất bại");
+          });
+      } else {
+        await axios
+          .put(`${Url()}/api/sub-actions/${this.props.data._id}`, data, {
+            headers: {
+              Authorization: await getToken(),
+            },
+          })
+          .then((res) => {
+            alert("Cập nhật subtask thành công");
+            this.props.onClose();
+            this.props.updateToList(res.data.data);
+          })
+          .catch((err) => {
+            console.log(err);
+            this.setState({
+              loadingbtn: false
+            })
+            alert("Cập nhật subtask thất bại");
 
-        });
+          });
+      }
     }
   };
   onChangeTime = (name, time) => {
@@ -158,6 +177,7 @@ class SubTaskCreateModal extends Component {
         ...this.state.data,
         name: name,
       },
+      subtaskname: name,
     });
   };
   onChangeDescrip = (description) => {
@@ -166,6 +186,7 @@ class SubTaskCreateModal extends Component {
         ...this.state.data,
         description: description,
       },
+      subtaskdescription: description,
     });
   };
   // startTime | endTime | startDate | endDate
@@ -184,9 +205,9 @@ class SubTaskCreateModal extends Component {
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
-            <SafeAreaView
+            <ScrollView
               keyboardDismissMode="interactive"
-              style={{ height: H * 0.34 }}
+              style={{ height: H * 0.4 }}
               bounces={false}
             >
               <Text style={styles.Label}> Tên </Text>
@@ -195,6 +216,11 @@ class SubTaskCreateModal extends Component {
                 style={styles.input}
                 value={this.state.data.name}
               ></TextInput>
+              {this.isFieldInError('subtaskname') && this.getErrorsInField('subtaskname').map((errorMessage, key) =>
+                <Text style={styles.error} key={key}>
+                  {errorMessage}
+                </Text>
+              )}
               <Text style={styles.Label}> Mô tả </Text>
               <TextInput
                 style={styles.textArea}
@@ -203,6 +229,11 @@ class SubTaskCreateModal extends Component {
                 onChangeText={this.onChangeDescrip}
                 numberOfLines={1}
               ></TextInput>
+              {this.isFieldInError('subtaskdescription') && this.getErrorsInField('subtaskdescription').map((errorMessage, key) =>
+                <Text style={styles.error} key={key}>
+                  {errorMessage}
+                </Text>
+              )}
               <View style={{ flexDirection: "row", marginTop: 8 }}>
                 <Customdatetime
                   containerStyle={styles.ScriptNameContainer}
@@ -223,7 +254,7 @@ class SubTaskCreateModal extends Component {
                   mode="time"
                 />
               </View>
-            </SafeAreaView>
+            </ScrollView>
             {!this.state.loadingbtn ? (
               <Button
                 type="primary"

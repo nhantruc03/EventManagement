@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Image } from 'react-native';
 import { View, Text, StyleSheet } from 'react-native';
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from "axios";
 import Url from "../../env";
@@ -16,6 +16,7 @@ import UploadImage from '../../components/helper/UploadImage';
 import SearchableDropDown from 'react-native-searchable-dropdown';
 import { Redirect } from 'react-router';
 import ApiFailHandler from '../../components/helper/ApiFailHandler'
+import ValidationComponent from 'react-native-form-validator';
 const styles = StyleSheet.create({
     avaContainer: {
         zIndex: 3,
@@ -82,16 +83,23 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         justifyContent: "center",
         margin: 16,
+        alignItems: "center"
     },
-    textUpdate: {
+    textUpdateForm: {
         fontFamily: "bold",
         fontSize: 16,
         color: "white",
         textAlign: "center",
     },
+    error: {
+        color: "red",
+        fontFamily: "semibold",
+        fontSize: 12,
+
+    }
 })
 
-class ProfileDetail extends Component {
+class ProfileDetail extends ValidationComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -109,11 +117,26 @@ class ProfileDetail extends Component {
             curGender: {},
             listGender: [{ id: "nam", name: "Nam" }, { id: "nữ", name: "Nữ" }],
             loggout: false,
+            profilename: "",
+            profilephone: "",
+            profileemail: "",
         };
 
     }
 
-
+    componentDidUpdate() {
+        this.props.navigation.setOptions({
+            headerRight: () => (
+                <View style={styles.IconRight}>
+                    <TouchableOpacity onPress={this.onChangeEdit}>
+                        {/* {this.renderTopIcon()} */}
+                        {/* <Ionicons name='create-outline' size={24} color='white' /> */}
+                        {this.state.edit ? < Ionicons name='close-outline' size={24} color='white' /> : < Ionicons name='create-outline' size={24} color='white' />}
+                    </TouchableOpacity>
+                </View>
+            ),
+        });
+    }
     async componentDidMount() {
 
         if (this.state.photoList.length > 0) {
@@ -122,14 +145,13 @@ class ProfileDetail extends Component {
                 photoUrl: this.state.photoList[0].response.url
             }
         }
-
         this.props.navigation.setOptions({
             headerRight: () => (
                 <View style={styles.IconRight}>
-                    <TouchableOpacity onPress={() => { this.setState({ edit: !this.state.edit }) }}>
+                    <TouchableOpacity onPress={this.onChangeEdit}>
                         {/* {this.renderTopIcon()} */}
-                        <Ionicons name='close-outline' size={24} color='white' />
-                        {/* {!this.state.edit ? < Ionicons name='close-outline' size={24} color='white' /> : < Ionicons name='create-outline' size={24} color='white' />} */}
+                        {/* <Ionicons name='create-outline' size={24} color='white' /> */}
+                        {this.state.edit ? < Ionicons name='close-outline' size={24} color='white' /> : < Ionicons name='create-outline' size={24} color='white' />}
                     </TouchableOpacity>
                 </View>
             ),
@@ -144,9 +166,45 @@ class ProfileDetail extends Component {
             data: this.props.route.params.data,
             curGender: temp_gender,
             isLoading: false,
+            profilename: this.props.route.params.data.name,
+            profilephone: this.props.route.params.data.phone,
+            profileemail: this.props.route.params.data.email,
+
         });
     }
 
+
+    onChangeEdit = () => {
+        if (this.state.edit) {
+
+            let temp_gender = {}
+            this.state.listGender.forEach(e => {
+                if (e.id === this.props.route.params.data.gender) {
+                    temp_gender = e
+                }
+            })
+            this.setState({
+                data: this.props.route.params.data,
+                curGender: temp_gender,
+                profilename: this.props.route.params.data.name,
+                profilephone: this.props.route.params.data.phone,
+                profileemail: this.props.route.params.data.email,
+            },
+                () => {
+                    let temp_validate = this.validate({
+                        profilename: { required: true },
+                        profilephone: { required: true, number: true },
+                        profileemail: { required: true, email: true },
+                    });
+                }
+            )
+
+        }
+        this.setState({
+            edit: !this.state.edit
+        })
+
+    }
     onClose = () => {
         this.setState({
             visible: false,
@@ -158,6 +216,7 @@ class ProfileDetail extends Component {
                 ...this.state.data,
                 phone: phone,
             },
+            profilephone: phone
         });
     };
     onChangeEmail = (email) => {
@@ -166,6 +225,7 @@ class ProfileDetail extends Component {
                 ...this.state.data,
                 email: email,
             },
+            profileemail: email
         });
     };
     onChangeName = (name) => {
@@ -174,6 +234,7 @@ class ProfileDetail extends Component {
                 ...this.state.data,
                 name: name,
             },
+            profilename: name
         });
     };
     onChangeGender = (gender) => {
@@ -198,56 +259,61 @@ class ProfileDetail extends Component {
     }
 
     onSubmit = async () => {
-        this.onLoading();
+        let temp_validate = this.validate({
+            profilename: { required: true },
+            profilephone: { required: true, number: true },
+            profileemail: { required: true, email: true },
+        });
+        if (temp_validate) {
+            this.onLoading();
 
-        let data = {
-            ...this.state.data,
-            gender: this.state.curGender.id
-        }
-        if (this.state.photoUrl !== null) {
-            data = {
-                ...data,
-                photoUrl: this.state.photoUrl,
-            };
-        }
-        let login = await AsyncStorage.getItem("login");
-        var obj = JSON.parse(login);
-        await
-            axios.put(`${Url()}/api/users/` + obj.id, data, {
-                headers: {
-                    'Authorization': await getToken()
-                }
-            })
-                .then(async res => {
-                    if (this.state.photoUrl !== null) {
-                        obj.photoUrl = this.state.photoUrl
+            let data = {
+                ...this.state.data,
+                gender: this.state.curGender.id
+            }
+            if (this.state.photoUrl !== null) {
+                data = {
+                    ...data,
+                    photoUrl: this.state.photoUrl,
+                };
+            }
+            let login = await AsyncStorage.getItem("login");
+            var obj = JSON.parse(login);
+            await
+                axios.put(`${Url()}/api/users/` + obj.id, data, {
+                    headers: {
+                        'Authorization': await getToken()
                     }
-                    obj.name = data.name
-                    await AsyncStorage.removeItem("login");
-                    await AsyncStorage.setItem("login", JSON.stringify(obj));
-                    this.setState({
-                        loadingbtn: false,
-                        edit: !this.state.edit,
-                        data: data,
-                        photoUrl: null,
-                        photoUrl_localPath: null
-                    });
-
-
-                    alert("Cập nhật thông tin thành công");
-                    console.log("update success");
-                    this.props.navigation.navigate("Profile", {
-                        data: data,
-                    });
                 })
-                .catch(err => {
-                    let errResult = ApiFailHandler(err.response?.data?.error)
-                    this.setState({
-                        loggout: errResult.isExpired
+                    .then(async res => {
+                        if (this.state.photoUrl !== null) {
+                            obj.photoUrl = this.state.photoUrl
+                        }
+                        obj.name = data.name
+                        await AsyncStorage.removeItem("login");
+                        await AsyncStorage.setItem("login", JSON.stringify(obj));
+                        this.setState({
+                            loadingbtn: false,
+                            edit: !this.state.edit,
+                            data: data,
+                            photoUrl: null,
+                            photoUrl_localPath: null
+                        });
+                        alert("Cập nhật thông tin thành công");
+                        console.log("update success");
+                        this.props.navigation.navigate("Profile", {
+                            data: data,
+                        });
                     })
-                    alert("Cập nhật thông tin thất bại");
+                    .catch(err => {
+                        let errResult = ApiFailHandler(err.response?.data?.error)
+                        this.setState({
+                            loggout: errResult.isExpired
+                        })
+                        alert("Cập nhật thông tin thất bại");
 
-                })
+                    })
+        }
     }
 
     renderBtnLoading = () => {
@@ -258,7 +324,7 @@ class ProfileDetail extends Component {
                     underlayColor="#fff"
                     onPress={() => this.onSubmit()}
                 >
-                    <Text style={styles.TextUpdate}>Cập nhật</Text>
+                    <Text style={styles.textUpdateForm}>Cập nhật</Text>
                 </TouchableOpacity>
             )
         }
@@ -282,7 +348,7 @@ class ProfileDetail extends Component {
             if (!this.state.isLoading) {
                 return (
                     <Provider>
-                        <View>
+                        <ScrollView>
                             <View style={styles.avaContainer}>
                                 {this.state.edit ? <UploadImage
                                     Save={(e, b) => {
@@ -305,6 +371,11 @@ class ProfileDetail extends Component {
                                         editable={this.state.edit}>
                                         {this.state.data.name}
                                     </TextInput>
+                                    {this.isFieldInError('profilename') && this.getErrorsInField('profilename').map((errorMessage, key) =>
+                                        <Text style={styles.error} key={key}>
+                                            {errorMessage}
+                                        </Text>
+                                    )}
                                 </View>
                                 <View style={styles.InputContainer}>
                                     <Text style={styles.TextLabel}>Giới tính</Text>
@@ -327,10 +398,10 @@ class ProfileDetail extends Component {
                                                     ) !== -1
                                                         ? this.state.listGender.indexOf(
                                                             this.state.curGender
-                                                        )
+                                                        ).toString()
                                                         : undefined
                                                 }
-                                                containerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
+                                                containerStyle={{}}
                                                 itemStyle={{
                                                     padding: 10,
                                                     marginTop: 2,
@@ -363,7 +434,7 @@ class ProfileDetail extends Component {
                                     <Text style={styles.TextLabel}>Ngày sinh</Text>
                                     {!this.state.edit ? <TextInput style={styles.Text}
                                     >
-                                        {moment(this.state.data.birthday).format("DD/MM/YYYY")}
+                                        {moment(this.state.data.birthday).utcOffset(0).format("DD/MM/YYYY")}
                                     </TextInput> :
                                         <Customdatetime
                                             containerStyle={styles.ScriptNameContainer}
@@ -381,6 +452,11 @@ class ProfileDetail extends Component {
                                         editable={this.state.edit}>
                                         {this.state.data.phone}
                                     </TextInput>
+                                    {this.isFieldInError('profilephone') && this.getErrorsInField('profilephone').map((errorMessage, key) =>
+                                        <Text style={styles.error} key={key}>
+                                            {errorMessage}
+                                        </Text>
+                                    )}
                                 </View>
                                 <View style={styles.InputContainer}>
                                     <Text style={styles.TextLabel}>Email</Text>
@@ -389,10 +465,17 @@ class ProfileDetail extends Component {
                                         editable={this.state.edit}>
                                         {this.state.data.email}
                                     </TextInput>
+                                    {this.isFieldInError('profileemail') && this.getErrorsInField('profileemail').map((errorMessage, key) =>
+                                        <Text style={styles.error} key={key}>
+                                            {errorMessage}
+                                        </Text>
+                                    )}
                                 </View>
-                                <TouchableOpacity onPress={() => this.setState({ visible: true })}>
-                                    <Text style={styles.TextUpdate}>Cập nhật mật khẩu</Text>
-                                </TouchableOpacity>
+                                {!this.state.edit ?
+                                    <TouchableOpacity onPress={() => this.setState({ visible: true })}>
+                                        <Text style={styles.TextUpdate}>Cập nhật mật khẩu</Text>
+                                    </TouchableOpacity>
+                                    : null}
                             </View>
                             <Modal
                                 title="Đổi mật khẩu"
@@ -402,10 +485,10 @@ class ProfileDetail extends Component {
                                 visible={this.state.visible}
                                 closable
                             >
-                                <ChangePasswordModal />
+                                <ChangePasswordModal onClose={this.onClose} />
                             </Modal>
                             {this.state.edit ? this.renderBtnLoading() : null}
-                        </View>
+                        </ScrollView>
                     </Provider>
                 );
             } else return <Indicator />;

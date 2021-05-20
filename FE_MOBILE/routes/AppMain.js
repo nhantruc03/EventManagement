@@ -20,17 +20,6 @@ export default class AppMain extends Component {
             <NavigationContainer>
                 <Stack.Navigator>
                     <Stack.Screen
-                        name="SplashScreen"
-                        component={SplashScreen}
-                        // Hiding header for Splash Screen
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Login"
-                        component={LoginScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
                         name="BottomNav"
                         component={BottomNav}
                         options={{ headerShown: false }}
