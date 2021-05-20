@@ -22,6 +22,8 @@ import Icon from "../../assets/images/more.png";
 import OptionsMenu from "react-native-options-menu";
 import { Alert } from "react-native";
 import Loader from "react-native-modal-loader"
+import { Redirect } from "react-router";
+import ApiFailHandler from '../../components/helper/ApiFailHandler'
 
 const initialLayout = { width: Dimensions.get("window").width };
 const styles = StyleSheet.create({
@@ -74,6 +76,7 @@ class TaskDetail extends Component {
       index: 0,
       loading: false,
       deleteLoading: false,
+      loggout: false,
       routes: [
         { key: "1", title: "Thông tin chung" },
         { key: "2", title: "Danh sách cần làm" },
@@ -125,7 +128,12 @@ class TaskDetail extends Component {
             },
           }
         )
-        .then((res) => res.data.data);
+        .then((res) => res.data.data).catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        });
       temp_data = data_loadBySelf
     } else {
       temp_data = this.props.route.params.data
@@ -134,6 +142,7 @@ class TaskDetail extends Component {
       data: temp_data,
       updateData: (e) => this.updateData(e)
     })
+
   }
 
   DeleteConfirm = async () => {
@@ -151,7 +160,10 @@ class TaskDetail extends Component {
         return res.data.data
       })
       .catch(err => {
-        console.log(err)
+        let errResult = ApiFailHandler(err.response?.data?.error)
+        this.setState({
+          loggout: errResult.isExpired
+        })
         this.setState({
           deleteLoading: false
         })
@@ -208,7 +220,13 @@ class TaskDetail extends Component {
             },
           }
         )
-        .then((res) => res.data.data);
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        });
       temp_data = data_loadBySelf
     } else {
       temp_data = this.props.route.params.data
@@ -239,7 +257,13 @@ class TaskDetail extends Component {
           },
         }
       )
-      .then((res) => res.data.data);
+      .then((res) => res.data.data)
+      .catch(err => {
+        let errResult = ApiFailHandler(err.response?.data?.error)
+        this.setState({
+          loggout: errResult.isExpired
+        })
+      });
     this.setState({
       subActions: subActions,
       data: temp_data,
@@ -267,28 +291,38 @@ class TaskDetail extends Component {
     });
   };
   render() {
-    if (!this.state.loadingBigObject) {
+    if (this.state.loggout) {
       return (
-        <View style={styles.container}>
-          <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
-          <TabView
-            renderTabBar={this.renderTabBar}
-            navigationState={{
-              index: this.state.index,
-              routes: this.state.routes,
-            }}
-            renderScene={this.renderScene}
-            onIndexChange={this.setIndex}
-            initialLayout={initialLayout}
-            style={styles.Tabcontainer}
-          />
-        </View>
-      );
-    }
-    else {
-      return (
-        <Indicator />
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
+        />
       )
+    } else {
+      if (!this.state.loadingBigObject) {
+        return (
+          <View style={styles.container}>
+            <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
+            <TabView
+              renderTabBar={this.renderTabBar}
+              navigationState={{
+                index: this.state.index,
+                routes: this.state.routes,
+              }}
+              renderScene={this.renderScene}
+              onIndexChange={this.setIndex}
+              initialLayout={initialLayout}
+              style={styles.Tabcontainer}
+            />
+          </View>
+        );
+      }
+      else {
+        return (
+          <Indicator />
+        )
+      }
     }
   }
 }

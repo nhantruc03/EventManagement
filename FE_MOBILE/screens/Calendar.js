@@ -10,6 +10,8 @@ import moment from "moment";
 import SubActionItems from "../components/Calendar/SubActionItems";
 import { FlatList } from "react-native-gesture-handler";
 import { StatusBar } from "react-native";
+import { Redirect } from "react-router";
+import ApiFailHandler from '../components/helper/ApiFailHandler'
 
 LocaleConfig.locales["vn"] = {
   monthNames: [
@@ -73,6 +75,7 @@ export default class Calendarscreen extends Component {
       currentSubActions: [],
       isLoading: false,
       currentDate: moment(new Date()).format("YYYY-MM-DD"),
+      loggout: false
     };
   }
   async componentDidMount() {
@@ -91,7 +94,13 @@ export default class Calendarscreen extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
     ]);
 
     if (subActions !== null) {
@@ -154,7 +163,16 @@ export default class Calendarscreen extends Component {
   };
 
   render() {
-    return (
+    if (this.state.loggout) {
+      return (
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
+        />
+      )
+    }
+    else return (
       <View
         style={
           Platform.OS == "ios" ? styles.containerIOS : styles.containerAndroid

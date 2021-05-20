@@ -12,6 +12,9 @@ import Search from "../helper/search";
 import axios from "axios";
 import Url from "../../env";
 import getToken from "../../Auth";
+import { RefreshControl } from "react-native";
+import { Redirect } from "react-router";
+import ApiFailHandler from '../helper/ApiFailHandler'
 
 const styles = StyleSheet.create({
   itemContainer: {
@@ -38,15 +41,44 @@ export default class GroupTab extends Component {
     this.state = {
       data: [],
       SearchData: [],
+      refreshing: false,
+      loggout: false,
     };
   }
 
-  
+
 
   UNSAFE_componentWillReceiveProps(e) {
     this.setState({
       data: e.data,
     });
+  }
+  onRefresh = async () => {
+    this.setState({
+      refreshing: true,
+    });
+    await axios
+      .post(
+        `${Url()}/api/guest-types/getAll`,
+        { eventId: this.props.eventId },
+        {
+          headers: {
+            Authorization: await getToken(),
+          },
+        }
+      )
+      .then((res) => {
+        this.setState({
+          refreshing: false,
+          SearchData: res.data.data
+        });
+      })
+      .catch(err => {
+        let errResult = ApiFailHandler(err.response?.data?.error)
+        this.setState({
+          loggout: errResult.isExpired
+        })
+      });
   }
 
   componentDidMount() {
@@ -82,19 +114,35 @@ export default class GroupTab extends Component {
   };
 
   render() {
-    return (
-      <SafeAreaView>
-        <Search
-          target="name"
-          data={this.state.data}
-          getSearchData={(e) => this.getSearchData1(e)}
-        ></Search>
-        <FlatList
-          data={this.state.SearchData}
-          keyExtractor={(item) => item._id}
-          renderItem={({ item }) => this.renderItem(item)}
+    if (this.state.loggout) {
+      return (
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
         />
-      </SafeAreaView>
-    );
+      )
+    } else {
+      return (
+        <SafeAreaView>
+          <Search
+            target="name"
+            data={this.state.data}
+            getSearchData={(e) => this.getSearchData1(e)}
+          ></Search>
+          <FlatList
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this.onRefresh}
+              />
+            }
+            data={this.state.SearchData}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => this.renderItem(item)}
+          />
+        </SafeAreaView>
+      );
+    }
   }
 }

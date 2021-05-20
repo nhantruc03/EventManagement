@@ -14,6 +14,8 @@ import StepIndicator from "react-native-step-indicator";
 import OptionsMenu from "react-native-options-menu";
 import Icon from "../../assets/images/more.png";
 import Indicator from "../../components/helper/Loading"
+import { Redirect } from "react-router";
+import ApiFailHandler from '../../components/helper/ApiFailHandler'
 const Step = Steps.Step;
 
 const styles = StyleSheet.create({
@@ -117,7 +119,8 @@ class scriptview extends Component {
       visible: false,
       isLoading: true,
       loadingBigBO: this.props.route.params.loadBySelf ? true : false,
-      history: []
+      history: [],
+      loggout: false,
     };
   }
 
@@ -189,7 +192,13 @@ class scriptview extends Component {
               },
             }
           )
-          .then((res) => res.data.data),
+          .then((res) => res.data.data)
+          .catch(err => {
+            let errResult = ApiFailHandler(err.response?.data?.error)
+            this.setState({
+              loggout: errResult.isExpired
+            })
+          }),
         axios
           .post(
             `${Url()}/api/script-histories/getAll`,
@@ -200,7 +209,13 @@ class scriptview extends Component {
               },
             }
           )
-          .then((res) => res.data.data),
+          .then((res) => res.data.data)
+          .catch(err => {
+            let errResult = ApiFailHandler(err.response?.data?.error)
+            this.setState({
+              loggout: errResult.isExpired
+            })
+          }),
         axios
           .get(
             `${Url()}/api/scripts/${this.props.route.params.id}`,
@@ -210,7 +225,13 @@ class scriptview extends Component {
               },
             }
           )
-          .then((res) => res.data.data),
+          .then((res) => res.data.data)
+          .catch(err => {
+            let errResult = ApiFailHandler(err.response?.data?.error)
+            this.setState({
+              loggout: errResult.isExpired
+            })
+          }),
       ]);
 
       scripts_details = temp_scripts_details;
@@ -329,38 +350,48 @@ class scriptview extends Component {
   };
 
   render() {
-    if (this.state.data && !this.state.isLoading) {
-      // console.log(this.state.data.length)
+    if (this.state.loggout) {
       return (
-        <View style={styles.container}>
-          <View style={styles.stepIndicator}>
-            <StepIndicator
-              customStyles={customStyles}
-              stepCount={this.state.data.length}
-              direction="vertical"
-              currentPosition={this.state.currentScript}
-              labels={this.state.data.map((item) => (
-                <View>
-                  <Text style={styles.timeText}>
-                    {moment(item.time).utcOffset(0).format("HH:mm")}
-                  </Text>
-                  <Text style={styles.nameText}>{item.name}</Text>
-                </View>
-              ))}
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
+        />
+      )
+    } else {
+      if (this.state.data && !this.state.isLoading) {
+        // console.log(this.state.data.length)
+        return (
+          <View style={styles.container}>
+            <View style={styles.stepIndicator}>
+              <StepIndicator
+                customStyles={customStyles}
+                stepCount={this.state.data.length}
+                direction="vertical"
+                currentPosition={this.state.currentScript}
+                labels={this.state.data.map((item) => (
+                  <View>
+                    <Text style={styles.timeText}>
+                      {moment(item.time).utcOffset(0).format("HH:mm")}
+                    </Text>
+                    <Text style={styles.nameText}>{item.name}</Text>
+                  </View>
+                ))}
+              />
+            </View>
+            <FlatList
+              style={{ marginHorizontal: 8, flexGrow: 1 }}
+              data={this.state.data}
+              renderItem={this.renderPage}
+              keyExtractor={(item) => item._id}
             />
           </View>
-          <FlatList
-            style={{ marginHorizontal: 8, flexGrow: 1 }}
-            data={this.state.data}
-            renderItem={this.renderPage}
-            keyExtractor={(item) => item._id}
-          />
-        </View>
-      );
-    } else {
-      return (
-        <Indicator />
-      );
+        );
+      } else {
+        return (
+          <Indicator />
+        );
+      }
     }
   }
 }

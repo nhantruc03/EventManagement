@@ -6,15 +6,23 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { StyleSheet, Text, View } from "react-native";
 import { LogBox } from "react-native";
+import { NativeRouter, Route, Link } from "react-router-native";
 // Import Screens
 import BottomNav from "./routes/BottomNav";
 import SplashScreen from "./screens/SplashScreen";
 import LoginScreen from "./screens/Login";
+import AppMain from "./routes/AppMain";
+import { Redirect } from "react-router";
+import auth from "./router/auth";
+
+
+import { SecureRouteAdmin } from './router/secureRoute'
+import { AppRoute } from './router/AppRoute'
 
 const Stack = createStackNavigator();
-// console.disableYellowBox = true;
-// LogBox.ignoreLogs(["Warning: ..."]);
-// LogBox.ignoreAllLogs();
+
+
+
 export default App = () => {
   LogBox.ignoreAllLogs();
   const [loaded] = useFonts({
@@ -27,28 +35,12 @@ export default App = () => {
   if (!loaded) {
     return null;
   }
-
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="SplashScreen"
-          component={SplashScreen}
-          // Hiding header for Splash Screen
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="BottomNav"
-          component={BottomNav}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+
+    <NativeRouter>
+      <SecureRouteAdmin exact path="/" component={AppMain} />
+      <AppRoute exact path="/login" component={LoginScreen} />
+    </NativeRouter>
   );
 };
 

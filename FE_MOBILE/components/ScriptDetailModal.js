@@ -23,6 +23,8 @@ import Customdatetime from "./helper/datetimepicker";
 import WSK from "../websocket";
 import AsyncStorage from "@react-native-community/async-storage";
 import * as PushNoti from '../components/helper/pushNotification'
+import ApiFailHandler from '../components/helper/ApiFailHandler'
+import { Redirect } from "react-router";
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   Label: {
@@ -70,6 +72,7 @@ class ScriptDetailModal extends Component {
       richText: React.createRef(),
       showDateTimePicker: false,
       loadingbtn: false,
+      loggout: false,
     };
     this.ref = React.createRef();
   }
@@ -154,9 +157,12 @@ class ScriptDetailModal extends Component {
           alert("Tạo chi tiết kịch bản thành công");
           //alert("Tạo chi tiết kịch bản thành công");
         })
-        .catch((err) => {
-          console.log(err);
-          alert("Tạo chi tiết kịch bản thất bại");
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+          alert(`${errResult.message}`)
         });
     } else {
       await axios
@@ -176,98 +182,110 @@ class ScriptDetailModal extends Component {
           this.props.onClose();
           alert("Cập nhật chi tiết kịch bản thành công");
         })
-        .catch((err) => {
-          alert("Cập nhật chi tiết kịch bản thất bại");
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+          alert(`${errResult.message}`)
         });
     }
   };
 
   render() {
-    if (this.state.data) {
+    if (this.state.loggout) {
       return (
-        <KeyboardAvoidingView
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
+        />
+      )
+    } else {
+      if (this.state.data) {
+        return (
+          <KeyboardAvoidingView
 
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
-          <ScrollView
-            keyboardDismissMode="interactive"
-            style={{ height: H * 0.5 }}
-            bounces={false}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
-            <View style={{ flex: 1, paddingVertical: 20, paddingHorizontal: 16 }}>
-              <Customdatetime
-                containerStyle={styles.ScriptNameContainer}
-                labelStyle={styles.Label}
-                label="Thời gian"
-                BoxInput={styles.BoxInput}
-                Save={(e) => this.onChangeTime(e)}
-                data={this.state.data.time}
-                mode="time"
-              />
-              <View styles={styles.ScriptNameContainer}>
-                <Text style={styles.Label}>Tiêu đề</Text>
-                <View style={styles.BoxInput}>
-                  <TextInput
-                    onChangeText={this.onChangeName}
-                    style={styles.input}
-                    value={this.state.data.name}
-                  ></TextInput>
+            <ScrollView
+              keyboardDismissMode="interactive"
+              style={{ height: H * 0.5 }}
+              bounces={false}
+            >
+              <View style={{ flex: 1, paddingVertical: 20, paddingHorizontal: 16 }}>
+                <Customdatetime
+                  containerStyle={styles.ScriptNameContainer}
+                  labelStyle={styles.Label}
+                  label="Thời gian"
+                  BoxInput={styles.BoxInput}
+                  Save={(e) => this.onChangeTime(e)}
+                  data={this.state.data.time}
+                  mode="time"
+                />
+                <View styles={styles.ScriptNameContainer}>
+                  <Text style={styles.Label}>Tiêu đề</Text>
+                  <View style={styles.BoxInput}>
+                    <TextInput
+                      onChangeText={this.onChangeName}
+                      style={styles.input}
+                      value={this.state.data.name}
+                    ></TextInput>
+                  </View>
+                </View>
+                <Text style={styles.Label}>Nội dung</Text>
+
+                <View style={styles.TextEditorContainer}>
+                  <RichToolbar
+                    style={{
+                      borderRadius: 8,
+                      borderBottomLeftRadius: 0,
+                      borderBottomEndRadius: 0,
+                    }}
+                    editor={this.ref}
+                    actions={[
+                      actions.setBold,
+                      actions.setItalic,
+                      actions.insertBulletsList,
+                      actions.insertOrderedList,
+                      actions.insertImage,
+                    ]}
+                  />
+
+                  <RichEditor
+                    // editorStyle={{ maxHeight: 100 }}
+                    // ref={(e) => this.getRef(e)}
+                    style={{
+                      borderRadius: 8,
+                      borderWidth: 1,
+                      borderColor: "#DFDFDF",
+                      borderTopLeftRadius: 0,
+                      borderTopRightRadius: 0,
+                    }}
+                    ref={this.ref}
+                    onChange={this.Onchange}
+                    initialContentHTML={this.state.data.description}
+                  />
                 </View>
               </View>
-              <Text style={styles.Label}>Nội dung</Text>
-
-              <View style={styles.TextEditorContainer}>
-                <RichToolbar
-                  style={{
-                    borderRadius: 8,
-                    borderBottomLeftRadius: 0,
-                    borderBottomEndRadius: 0,
-                  }}
-                  editor={this.ref}
-                  actions={[
-                    actions.setBold,
-                    actions.setItalic,
-                    actions.insertBulletsList,
-                    actions.insertOrderedList,
-                    actions.insertImage,
-                  ]}
-                />
-
-                <RichEditor
-                  // editorStyle={{ maxHeight: 100 }}
-                  // ref={(e) => this.getRef(e)}
-                  style={{
-                    borderRadius: 8,
-                    borderWidth: 1,
-                    borderColor: "#DFDFDF",
-                    borderTopLeftRadius: 0,
-                    borderTopRightRadius: 0,
-                  }}
-                  ref={this.ref}
-                  onChange={this.Onchange}
-                  initialContentHTML={this.state.data.description}
-                />
-              </View>
-            </View>
-          </ScrollView>
-          {!this.state.loadingbtn ? (
-            <Button
-              type="primary"
-              onPress={this.onFinish}
-              style={styles.PrimaryBtn}
-            >
-              Lưu
-            </Button>
-          ) : (
-            <Button style={styles.LoadingBtn} loading>
-              loading
-            </Button>
-          )}
-          {/* </View> */}
-        </KeyboardAvoidingView>
-      );
-    } else {
-      return null;
+            </ScrollView>
+            {!this.state.loadingbtn ? (
+              <Button
+                type="primary"
+                onPress={this.onFinish}
+                style={styles.PrimaryBtn}
+              >
+                Lưu
+              </Button>
+            ) : (
+              <Button style={styles.LoadingBtn} loading />
+            )}
+            {/* </View> */}
+          </KeyboardAvoidingView>
+        );
+      } else {
+        return null;
+      }
     }
   }
 }

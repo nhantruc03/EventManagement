@@ -7,6 +7,9 @@ import axios from "axios";
 
 import { TextInput } from "react-native-gesture-handler";
 import { Button } from "@ant-design/react-native";
+import { Redirect } from "react-router";
+import ApiFailHandler from './helper/ApiFailHandler'
+
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
     Label: {
@@ -58,6 +61,7 @@ class EditActionTypeModal extends Component {
         this.state = {
             name: this.props.data.title,
             loadingbtn: false,
+            loggout: false,
         };
     }
     onLoading() {
@@ -80,9 +84,15 @@ class EditActionTypeModal extends Component {
             .then((res) => {
                 this.props.editActionTypes(res.data.data);
                 this.props.onClose2();
+                alert('Cập nhật thành công')
             })
-            .catch((err) => {
-                console.log(err);
+            .catch(err => {
+                let errResult = ApiFailHandler(err.response?.data?.error)
+                this.setState({
+                    loggout: errResult.isExpired,
+                    loadingbtn: false
+                })
+                alert(`${errResult.message}`)
             });
     };
     onChangeName = (name) => {
@@ -91,36 +101,45 @@ class EditActionTypeModal extends Component {
         });
     };
     render() {
-        return (
-            <View style={{ height: H * 0.25 }}>
-                <View
-                    style={{
-                        flex: 1,
-                        paddingVertical: 20,
-                        paddingHorizontal: 16,
+        if (this.state.loggout) {
+            return (
+                <Redirect
+                    to={{
+                        pathname: "/login",
                     }}
-                >
-                    <View style={styles.ScriptNameLabelContainer}>
-                        <Text style={styles.Label}>Loại công việc</Text>
-                        <TextInput
-                            onChangeText={this.onChangeName}
-                            style={styles.input}
-                            value={this.state.name}
-                        ></TextInput>
+                />
+            )
+        } else {
+            return (
+                <View style={{ height: H * 0.25 }}>
+                    <View
+                        style={{
+                            flex: 1,
+                            paddingVertical: 20,
+                            paddingHorizontal: 16,
+                        }}
+                    >
+                        <View style={styles.ScriptNameLabelContainer}>
+                            <Text style={styles.Label}>Loại công việc</Text>
+                            <TextInput
+                                onChangeText={this.onChangeName}
+                                style={styles.input}
+                                value={this.state.name}
+                            ></TextInput>
+                        </View>
                     </View>
-                </View>
-                {!this.state.loadingbtn ? <Button
-                    type="primary"
-                    onPress={this.onFinish}
-                    style={styles.PrimaryBtn}
-                >
-                    Xác nhận
+                    {!this.state.loadingbtn ? <Button
+                        type="primary"
+                        onPress={this.onFinish}
+                        style={styles.PrimaryBtn}
+                    >
+                        Xác nhận
         </Button> : <Button style={styles.LoadingBtn} loading>
-                    loading
-        </Button>}
+                    </Button>}
 
-            </View>
-        );
+                </View>
+            );
+        }
     }
 }
 

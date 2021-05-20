@@ -14,6 +14,8 @@ import WSK from "../../websocket";
 import { findNodeHandle } from "react-native";
 import Indicator from "../../components/helper/Loading";
 import * as PushNoti from '../../components/helper/pushNotification'
+import { Redirect } from "react-router";
+import ApiFailHandler from '../../components/helper/ApiFailHandler'
 const styles = StyleSheet.create({
   input: {
     height: 40,
@@ -47,6 +49,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: "center",
     margin: 16,
+  },
+  LoadingBtn: {
+    borderRadius: 8,
+    padding: 12,
+    margin: 16,
+    justifyContent: "center",
+    alignContent: "center",
   },
   textUpdate: {
     fontFamily: "bold",
@@ -119,6 +128,7 @@ class CreateTask extends Component {
       selectedActionTypes: {},
       enableScrollViewScroll: true,
       loadingbtn: false,
+      loggout: false,
     };
   }
 
@@ -134,7 +144,13 @@ class CreateTask extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
       axios
         .post(
           `${Url()}/api/action-priorities/getAll`,
@@ -145,7 +161,13 @@ class CreateTask extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
       axios
         .post(
           `${Url()}/api/faculties/getAll`,
@@ -156,7 +178,13 @@ class CreateTask extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
       axios
         .post(
           `${Url()}/api/action-types/getAll`,
@@ -167,7 +195,13 @@ class CreateTask extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
     ]);
 
     if (tags !== undefined && priorities !== undefined) {
@@ -304,11 +338,12 @@ class CreateTask extends Component {
 
       })
       .catch((err) => {
-        console.log(err.response.data);
+        let errResult = ApiFailHandler(err.response?.data?.error)
         this.setState({
+          loggout: errResult.isExpired,
           loadingbtn: false,
         })
-        alert("Tạo thất bại");
+        alert(`${errResult.message}`);
       });
 
   };
@@ -713,7 +748,7 @@ class CreateTask extends Component {
               <Text style={styles.textUpdate}>Xác nhận</Text>
             </TouchableOpacity>
           ) : (
-            <Button loading style={{ margin: 16, }}>Loading</Button>
+            <Button loading style={styles.LoadingBtn} />
           )}
         </View>
       );
@@ -721,29 +756,38 @@ class CreateTask extends Component {
   };
 
   render() {
-    if (!this.state.isLoading) {
+    if (this.state.loggout) {
       return (
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "height" : ""}>
-          <ScrollView
-            ref={(scroller) => {
-              this.scroller = scroller;
-            }}
-            nestedScrollEnabled={true}
-            style={{ marginTop: 10 }}
-            keyboardDismissMode="interactive"
-            keyboardShouldPersistTaps="always"
-          >
-            <View style={{ marginTop: 10 }}>
-              <StepIndicator
-                stepCount={2}
-                customStyles={customStyles}
-                currentPosition={this.state.currentPage}
-                onPress={this.onStepPress}
-                labels={["Thông tin chung", "Thông tin chi tiết"]}
-              />
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
+        />
+      )
+    } else {
+      if (!this.state.isLoading) {
+        return (
+          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "height" : ""}>
+            <ScrollView
+              ref={(scroller) => {
+                this.scroller = scroller;
+              }}
+              nestedScrollEnabled={true}
+              style={{ marginTop: 10 }}
+              keyboardDismissMode="interactive"
+              keyboardShouldPersistTaps="always"
+            >
+              <View style={{ marginTop: 10 }}>
+                <StepIndicator
+                  stepCount={2}
+                  customStyles={customStyles}
+                  currentPosition={this.state.currentPage}
+                  onPress={this.onStepPress}
+                  labels={["Thông tin chung", "Thông tin chi tiết"]}
+                />
 
-              {this.renderView()}
-              {/* <Swiper
+                {this.renderView()}
+                {/* <Swiper
                 style={{ flexGrow: 1 }}
                 loop={false}
                 index={this.state.currentPage}
@@ -756,16 +800,17 @@ class CreateTask extends Component {
                 }}
               >
               </Swiper> */}
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      );
-    } else {
-      return (
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        );
+      } else {
+        return (
 
-        <Indicator />
+          <Indicator />
 
-      );
+        );
+      }
     }
   }
 }

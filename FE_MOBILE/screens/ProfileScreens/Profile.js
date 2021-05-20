@@ -9,6 +9,8 @@ import { Image } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Indicator from '../../components/helper/Loading';
+import { Redirect } from "react-router";
+import ApiFailHandler from '../../components/helper/ApiFailHandler'
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 
@@ -119,12 +121,17 @@ class Profilescreen extends Component {
       data_ongoing: [],
       data_future: [],
       listTasks: [],
+      loggout: false,
     };
     this._isMounted = false;
   }
-  async Logout() {
+  Logout = async () => {
+
     await AsyncStorage.removeItem("login");
-    this.props.navigation.navigate("Login");
+    // this.props.navigation.navigate("Login");
+    this.setState({
+      loggout: true
+    })
   }
 
   async componentDidUpdate(prevProps) {
@@ -137,6 +144,7 @@ class Profilescreen extends Component {
   }
 
   async componentDidMount() {
+
     this._isMounted = true;
     let login = await AsyncStorage.getItem("login");
     var obj = JSON.parse(login);
@@ -152,7 +160,13 @@ class Profilescreen extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
       axios
         .post(
           `${Url()}/api/events/getAll?eq=${temp}`,
@@ -163,7 +177,13 @@ class Profilescreen extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
       axios
         .post(
           `${Url()}/api/actions/getAll`,
@@ -174,7 +194,13 @@ class Profilescreen extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
       axios.get(`${Url()}/api/users/` + obj.id, {
         headers: {
           'Authorization': await getToken()
@@ -183,7 +209,14 @@ class Profilescreen extends Component {
         .then((res) =>
           res.data.data
         )
-    ]);
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        })
+    ])
+      ;
 
 
     let ListNotCompletedTask = []
@@ -198,6 +231,12 @@ class Profilescreen extends Component {
             .then((res) =>
               res.data.data
             )
+            .catch(err => {
+              let errResult = ApiFailHandler(err.response?.data?.error)
+              this.setState({
+                loggout: errResult.isExpired
+              })
+            })
           let temp = ListSubActions.filter(x => x.status === false)
           if (temp.length > 0) {
             ListNotCompletedTask.push(e)
@@ -218,75 +257,85 @@ class Profilescreen extends Component {
     }
   }
   render() {
-    if (!this.state.isLoading) {
+    if (this.state.loggout) {
       return (
-        <View style={styles.Container}>
-          <View style={styles.UserContainer}>
-            <TouchableOpacity>
-              <Image
-                style={styles.avaImg}
-                source={{
-                  uri: `${Url()}/api/images/${this.state.data.photoUrl}`,
-                }}
-              />
-            </TouchableOpacity>
-            <Text style={styles.NameText}>{this.state.data.name}</Text>
-            <Text style={styles.EmailText}>{this.state.data.email}</Text>
-          </View>
-
-          <View style={styles.statusContainer}>
-            <View style={styles.statusItemContainer}>
-              <View style={styles.statusContent}>
-                <Text style={styles.numberContent}>{this.state.data_ongoing.length}</Text>
-                <Text style={styles.textContent}>Sự kiện đang diễn ra</Text>
-              </View>
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
+        />
+      )
+    }
+    else {
+      if (!this.state.isLoading) {
+        return (
+          <View style={styles.Container}>
+            <View style={styles.UserContainer}>
+              <TouchableOpacity>
+                <Image
+                  style={styles.avaImg}
+                  source={{
+                    uri: `${Url()}/api/images/${this.state.data.photoUrl}`,
+                  }}
+                />
+              </TouchableOpacity>
+              <Text style={styles.NameText}>{this.state.data.name}</Text>
+              <Text style={styles.EmailText}>{this.state.data.email}</Text>
             </View>
-            <View style={styles.statusItemContainer}>
-              <View style={styles.statusContent}>
-                <Text style={styles.numberContent}>{this.state.data_future.length}</Text>
-                <Text style={styles.textContent}>Sự kiện sắp diễn ra</Text>
-              </View>
-            </View>
-          </View>
 
-          <View style={styles.taskItemContainer}>
-            <View style={styles.taskContent}>
-              <Text style={styles.numberContent}>{this.state.listTasks.length}</Text>
-              <Text style={styles.textContent}>Công việc chưa hoàn thành</Text>
-            </View>
-          </View>
-
-          <View style={styles.separator}></View>
-          <View style={styles.BtnContainer}>
-            <TouchableOpacity onPress={() => {
-              this.props.navigation.navigate("ProfileDetail", {
-                data: this.state.data
-              })
-            }}>
-              <View style={styles.BtnContent}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Ionicons name='information-circle-outline' size={24} color='black' />
-                  <Text style={styles.TextUserInfo}>Thông tin người dùng</Text>
-                </View>
-
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.BtnContainer}>
-            <TouchableOpacity onPress={() => {
-              this.props.navigation.navigate("Login")
-            }}>
-              <View style={styles.BtnContent}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Ionicons name='exit-outline' size={24} color='#EB5757' />
-                  <Text style={styles.TextLogout}>Đăng xuất</Text>
+            <View style={styles.statusContainer}>
+              <View style={styles.statusItemContainer}>
+                <View style={styles.statusContent}>
+                  <Text style={styles.numberContent}>{this.state.data_ongoing.length}</Text>
+                  <Text style={styles.textContent}>Sự kiện đang diễn ra</Text>
                 </View>
               </View>
-            </TouchableOpacity>
-          </View>
-        </View >
-      );
-    } else return <Indicator />;
+              <View style={styles.statusItemContainer}>
+                <View style={styles.statusContent}>
+                  <Text style={styles.numberContent}>{this.state.data_future.length}</Text>
+                  <Text style={styles.textContent}>Sự kiện sắp diễn ra</Text>
+                </View>
+              </View>
+            </View>
+
+            <View style={styles.taskItemContainer}>
+              <View style={styles.taskContent}>
+                <Text style={styles.numberContent}>{this.state.listTasks.length}</Text>
+                <Text style={styles.textContent}>Công việc chưa hoàn thành</Text>
+              </View>
+            </View>
+
+            <View style={styles.separator}></View>
+            <View style={styles.BtnContainer}>
+              <TouchableOpacity onPress={() => {
+                this.props.navigation.navigate("ProfileDetail", {
+                  data: this.state.data
+                })
+              }}>
+                <View style={styles.BtnContent}>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Ionicons name='information-circle-outline' size={24} color='black' />
+                    <Text style={styles.TextUserInfo}>Thông tin người dùng</Text>
+                  </View>
+
+                </View>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.BtnContainer}>
+              <TouchableOpacity onPress={this.Logout}>
+                <View style={styles.BtnContent}>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Ionicons name='exit-outline' size={24} color='#EB5757' />
+                    <Text style={styles.TextLogout}>Đăng xuất</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View >
+        );
+      } else return <Indicator />;
+    }
+
   }
 }
 

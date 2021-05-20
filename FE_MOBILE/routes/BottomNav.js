@@ -17,6 +17,9 @@ import WSK from "../websocket";
 import Url from "../env";
 import axios from "axios";
 import getToken from "../Auth";
+import ApiFailHandler from '../components/helper/ApiFailHandler'
+import { Redirect } from "react-router";
+import { fas } from "@fortawesome/free-solid-svg-icons";
 
 const Tab = createBottomTabNavigator();
 
@@ -45,7 +48,8 @@ export default class BottomNav extends React.Component {
       info_pass: false,
       onNoti: false,
       notiUrl: "",
-      currentPermissions: []
+      currentPermissions: [],
+      loggout: false,
     };
   }
 
@@ -95,7 +99,13 @@ export default class BottomNav extends React.Component {
               },
             }
           )
-          .then((res) => res.data.data),
+          .then((res) => res.data.data)
+          .catch(err => {
+            let errResult = ApiFailHandler(err.response?.data?.error)
+            this.setState({
+              loggout: errResult.isExpired
+            })
+          }),
         getPermission(obj.id).then(res => res)
       ]);
 
@@ -157,7 +167,13 @@ export default class BottomNav extends React.Component {
           },
         }
       )
-      .then((res) => res.data.data);
+      .then((res) => res.data.data)
+      .catch(err => {
+        let errResult = ApiFailHandler(err.response?.data?.error)
+        this.setState({
+          loggout: errResult.isExpired
+        })
+      });
 
     let temp = this.state.notifications;
     temp.map((e) => (e.watch = true));
@@ -167,150 +183,160 @@ export default class BottomNav extends React.Component {
   };
 
   render() {
-    return (
-      <Tab.Navigator
-        tabBarOptions={{
-          showLabel: false,
-          labelStyle: {
-            fontSize: 12,
-            fontFamily: "bold",
-          },
-          activeTintColor: "#2A9D8F",
-          activeBackgroundColor: "",
-          inactiveTintColor: "#868686",
-          indicatorStyle: { height: 3 },
-          sceneContainerStyle: {
-            borderTopColor: "#2A9D8F",
-            borderTopWidth: 2,
-          },
-        }}
-      >
-        <Tab.Screen
-          name="Home"
-          component={HomeStackNav}
-          options={({ route }) => ({
-            //tabBarLabel: "Trang chủ",
-            tabBarIcon: ({ focused, color }) => (
-              //<FontAwesomeIcon icon={faHome} size={24} color={color} />
-              //<HomeIcon color={color} />
-              <Ionicons name={focused ? 'home' : 'home-outline'} size={24} color={color} />
-            ),
-            tabBarVisible: ((route) => {
-              const routeName = getFocusedRouteNameFromRoute(route) ?? "";
-              let temp_list = [
-                "EventDetail2",
-                "scriptdetail",
-                "Phòng hội thoại",
-                "scriptview",
-                "history",
-                "CreateTask", "TaskDetail", "EditTask"
-              ];
-              if (temp_list.includes(routeName)) {
-                return false;
-              } else {
-                return true;
-              }
-            })(route),
-          })}
-        />
-        <Tab.Screen
-          name="Event"
-          component={StackNav}
-          options={({ route }) => ({
-            //tabBarLabel: "Sự kiện",
-            tabBarIcon: ({ focused, color }) => (
-              //<FontAwesomeIcon icon={faHome} size={24} color={color} />
-              <Ionicons name={focused ? 'star' : 'star-outline'} size={24} color={color} />
-            ),
-            tabBarVisible: ((route) => {
-              const routeName = getFocusedRouteNameFromRoute(route) ?? "";
-              let temp_list = [
-                "EventDetail2",
-                "scriptdetail",
-                "Phòng hội thoại",
-                "scriptview",
-                "history"
-              ];
-              if (temp_list.includes(routeName)) {
-                return false;
-              } else {
-                return true;
-              }
-            })(route),
-          })}
-        />
-        <Tab.Screen
-          name="Task"
-          component={TaskStackNav}
-          options={({ route }) => ({
-            tabBarIcon: ({ focused, color }) => (
-              <Ionicons name={focused ? 'reader' : 'reader-outline'} size={24} color={color} />
-            ),
-            tabBarVisible: ((route) => {
-              const routeName = getFocusedRouteNameFromRoute(route) ?? "";
-
-              let temp_list = ["CreateTask", "TaskDetail", "EditTask"];
-              if (temp_list.includes(routeName)) {
-                return false;
-              } else {
-                return true;
-              }
-            })(route),
-          })}
-        />
-        <Tab.Screen
-          name="Calendar"
-          component={Calendarscreen}
-          options={{
-            //tabBarLabel: "Lịch",
-            tabBarIcon: ({ focused, color }) => (
-              <Ionicons name={focused ? 'calendar' : 'calendar-outline'} size={24} color={color} />
-            ),
+    if (this.state.loggout) {
+      return (
+        <Redirect
+          to={{
+            pathname: "/login",
           }}
         />
-        <Tab.Screen
-          name="Notification"
-          // component={NotiStackNav}
-          children={() => <NotiStackNav updateNoti={(e) => this.updateNoti(e)} data={this.state.notifications} currentPermissions={this.state.currentPermissions} />}
-          listeners={{
-            tabPress: (e) => {
-              // Prevent default action
-              this.OnTabPress();
+      )
+    } else {
+      return (
+        <Tab.Navigator
+          tabBarOptions={{
+            showLabel: false,
+            labelStyle: {
+              fontSize: 12,
+              fontFamily: "bold",
+            },
+            activeTintColor: "#2A9D8F",
+            activeBackgroundColor: "",
+            inactiveTintColor: "#868686",
+            indicatorStyle: { height: 3 },
+            sceneContainerStyle: {
+              borderTopColor: "#2A9D8F",
+              borderTopWidth: 2,
             },
           }}
-          options={{
-            tabBarBadge:
-              this.state.notifications.filter((e) => e.watch === false).length >
-                0
-                ? this.state.notifications.filter((e) => e.watch === false)
-                  .length
-                : undefined,
-            tabBarIcon: ({ focused, color }) => (
-              <Ionicons name={focused ? 'notifications' : 'notifications-outline'} size={24} color={color} />
-            ),
-          }}
-        />
+        >
+          <Tab.Screen
+            name="Home"
+            component={HomeStackNav}
+            options={({ route }) => ({
+              //tabBarLabel: "Trang chủ",
+              tabBarIcon: ({ focused, color }) => (
+                //<FontAwesomeIcon icon={faHome} size={24} color={color} />
+                //<HomeIcon color={color} />
+                <Ionicons name={focused ? 'home' : 'home-outline'} size={24} color={color} />
+              ),
+              tabBarVisible: ((route) => {
+                const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+                let temp_list = [
+                  "EventDetail2",
+                  "scriptdetail",
+                  "Phòng hội thoại",
+                  "scriptview",
+                  "history",
+                  "CreateTask", "TaskDetail", "EditTask"
+                ];
+                if (temp_list.includes(routeName)) {
+                  return false;
+                } else {
+                  return true;
+                }
+              })(route),
+            })}
+          />
+          <Tab.Screen
+            name="Event"
+            component={StackNav}
+            options={({ route }) => ({
+              //tabBarLabel: "Sự kiện",
+              tabBarIcon: ({ focused, color }) => (
+                //<FontAwesomeIcon icon={faHome} size={24} color={color} />
+                <Ionicons name={focused ? 'star' : 'star-outline'} size={24} color={color} />
+              ),
+              tabBarVisible: ((route) => {
+                const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+                let temp_list = [
+                  "EventDetail2",
+                  "scriptdetail",
+                  "Phòng hội thoại",
+                  "scriptview",
+                  "history"
+                ];
+                if (temp_list.includes(routeName)) {
+                  return false;
+                } else {
+                  return true;
+                }
+              })(route),
+            })}
+          />
+          <Tab.Screen
+            name="Task"
+            component={TaskStackNav}
+            options={({ route }) => ({
+              tabBarIcon: ({ focused, color }) => (
+                <Ionicons name={focused ? 'reader' : 'reader-outline'} size={24} color={color} />
+              ),
+              tabBarVisible: ((route) => {
+                const routeName = getFocusedRouteNameFromRoute(route) ?? "";
 
-        <Tab.Screen
-          name="Profile"
-          component={ProfileStackNav}
-          options={({ route }) => ({
-            tabBarIcon: ({ focused, color }) => (
-              <Ionicons name={focused ? 'person' : 'person-outline'} size={24} color={color} />
-            ),
-            tabBarVisible: ((route) => {
-              const routeName = getFocusedRouteNameFromRoute(route) ?? "";
-              let temp_list = ["ProfileDetail", "Login"];
-              if (temp_list.includes(routeName)) {
-                return false;
-              } else {
-                return true;
-              }
-            })(route),
-          })}
+                let temp_list = ["CreateTask", "TaskDetail", "EditTask"];
+                if (temp_list.includes(routeName)) {
+                  return false;
+                } else {
+                  return true;
+                }
+              })(route),
+            })}
+          />
+          <Tab.Screen
+            name="Calendar"
+            component={Calendarscreen}
+            options={{
+              //tabBarLabel: "Lịch",
+              tabBarIcon: ({ focused, color }) => (
+                <Ionicons name={focused ? 'calendar' : 'calendar-outline'} size={24} color={color} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Notification"
+            // component={NotiStackNav}
+            children={() => <NotiStackNav updateNoti={(e) => this.updateNoti(e)} data={this.state.notifications} currentPermissions={this.state.currentPermissions} />}
+            listeners={{
+              tabPress: (e) => {
+                // Prevent default action
+                this.OnTabPress();
+              },
+            }}
+            options={{
+              tabBarBadge:
+                this.state.notifications.filter((e) => e.watch === false).length >
+                  0
+                  ? this.state.notifications.filter((e) => e.watch === false)
+                    .length
+                  : undefined,
+              tabBarIcon: ({ focused, color }) => (
+                <Ionicons name={focused ? 'notifications' : 'notifications-outline'} size={24} color={color} />
+              ),
+            }}
+          />
 
-        />
-      </Tab.Navigator>
-    );
+          <Tab.Screen
+            name="Profile"
+            component={ProfileStackNav}
+            options={({ route }) => ({
+              tabBarIcon: ({ focused, color }) => (
+                <Ionicons name={focused ? 'person' : 'person-outline'} size={24} color={color} />
+              ),
+              tabBarVisible: ((route) => {
+                const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+                let temp_list = ["ProfileDetail", "Login"];
+                if (temp_list.includes(routeName)) {
+                  return false;
+                } else {
+                  return true;
+                }
+              })(route),
+            })}
+
+          />
+        </Tab.Navigator>
+      );
+    }
   }
 }

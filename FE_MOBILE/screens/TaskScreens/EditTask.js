@@ -15,7 +15,8 @@ import WSK from "../../websocket";
 import moment from "moment";
 import { findNodeHandle } from "react-native";
 import * as PushNoti from '../../components/helper/pushNotification'
-
+import { Redirect } from "react-router";
+import ApiFailHandler from '../../components/helper/ApiFailHandler'
 const styles = StyleSheet.create({
   input: {
     height: 40,
@@ -49,6 +50,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: "center",
     margin: 16,
+  },
+  LoadingBtn: {
+    borderRadius: 8,
+    padding: 12,
+    margin: 16,
+    justifyContent: "center",
+    alignContent: "center",
   },
   textUpdate: {
     fontFamily: "bold",
@@ -125,6 +133,7 @@ class EditTask extends Component {
       selectedActionTypes: {},
       enableScrollViewScroll: true,
       loadingbtn: false,
+      loggout: false,
     };
   }
 
@@ -147,7 +156,13 @@ class EditTask extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
       axios
         .post(
           `${Url()}/api/action-priorities/getAll`,
@@ -158,7 +173,13 @@ class EditTask extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
       axios
         .post(
           `${Url()}/api/faculties/getAll`,
@@ -169,14 +190,26 @@ class EditTask extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
       axios
         .post(
           `${Url()}/api/action-types/getAll`,
           { eventId: this.props.route.params.data.eventId._id },
           {
             headers: {
-              Authorization: await getToken(),
+              Authorization: await getToken()
+                .catch(err => {
+                  let errResult = ApiFailHandler(err.response?.data?.error)
+                  this.setState({
+                    loggout: errResult.isExpired
+                  })
+                }),
             },
           }
         )
@@ -190,7 +223,13 @@ class EditTask extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
     ]);
 
     if (tags !== undefined && priorities !== undefined) {
@@ -401,7 +440,6 @@ class EditTask extends Component {
       })
       .then((res) => {
         alert("Cập nhật thành công");
-
         client.send(
           JSON.stringify({
             type: "sendListNotifications",
@@ -418,8 +456,12 @@ class EditTask extends Component {
         });
       })
       .catch((err) => {
-        console.log(err.response.data)
-        alert(`${err.response.data?.error}`);
+        let errResult = ApiFailHandler(err.response?.data?.error)
+        this.setState({
+          loggout: errResult.isExpired,
+          loadingbtn: false,
+        })
+        alert(`${errResult.message}`);
       });
   };
 
@@ -788,7 +830,7 @@ class EditTask extends Component {
               <Text style={styles.textUpdate}>Xác nhận</Text>
             </TouchableOpacity>
           ) : (
-            <Button loading></Button>
+            <Button loading style={styles.LoadingBtn}></Button>
           )}
         </View>
       );
@@ -796,40 +838,50 @@ class EditTask extends Component {
   };
 
   render() {
-    if (!this.state.isLoading) {
+    if (this.state.loggout) {
       return (
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "height" : ""}>
-          <ScrollView
-            ref={(scroller) => {
-              this.scroller = scroller;
-            }}
-            nestedScrollEnabled={true}
-            style={{ marginTop: 10 }}
-            keyboardDismissMode="interactive"
-            keyboardShouldPersistTaps="always"
-          >
-            <View
-              collapsable={false}
-              onLayout={() => { }}
-              style={{ marginTop: 10 }}
-            >
-              <StepIndicator
-                stepCount={2}
-                customStyles={customStyles}
-                currentPosition={this.state.currentPage}
-                onPress={this.onStepPress}
-                labels={["Thông tin chung", "Thông tin chi tiết"]}
-              />
-
-              {this.renderView()}
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      );
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
+        />
+      )
     } else {
-      return (
-        <Indicator />
-      );
+      if (!this.state.isLoading) {
+        return (
+          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "height" : ""}>
+            <ScrollView
+              ref={(scroller) => {
+                this.scroller = scroller;
+              }}
+              nestedScrollEnabled={true}
+              style={{ marginTop: 10 }}
+              keyboardDismissMode="interactive"
+              keyboardShouldPersistTaps="always"
+            >
+              <View
+                collapsable={false}
+                onLayout={() => { }}
+                style={{ marginTop: 10 }}
+              >
+                <StepIndicator
+                  stepCount={2}
+                  customStyles={customStyles}
+                  currentPosition={this.state.currentPage}
+                  onPress={this.onStepPress}
+                  labels={["Thông tin chung", "Thông tin chi tiết"]}
+                />
+
+                {this.renderView()}
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        );
+      } else {
+        return (
+          <Indicator />
+        );
+      }
     }
   }
 }

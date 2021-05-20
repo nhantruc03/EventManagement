@@ -12,6 +12,8 @@ import Url from "../../env";
 import SubTaskCreateModal from "./SubTaskCreateModal";
 
 import Separator from "../helper/separator";
+import Loader from "react-native-modal-loader";
+import { Redirect } from "react-router";
 
 const styles = StyleSheet.create({
   formContainer: { paddingHorizontal: 16, zIndex: 3 },
@@ -79,6 +81,7 @@ class SubTasksTab extends Component {
       actionId: this.props.actionId,
       visible: false,
       loading: false,
+      loggout: false,
     });
   }
 
@@ -184,76 +187,68 @@ class SubTasksTab extends Component {
     })
   }
   render() {
-    if (this.state.data) {
+    if (this.state.loggout) {
       return (
-        <Provider>
-          <View style={styles.formContainer}>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginBottom: 10,
-                alignItems: "center"
-              }}
-            >
-              <Text style={styles.formLabel}>Danh sách công việc</Text>
-              <Button
-                type="primary"
-                size="small"
-                style={styles.AddBtn}
-                activeStyle={{ color: "white" }}
-                onPress={() => this.setState({ visible: true, addSubTask: true, onEditSubtask: {} })}
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
+        />
+      )
+    } else {
+      if (this.state.data) {
+        return (
+          <Provider>
+            <View style={styles.formContainer}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  marginBottom: 10,
+                  alignItems: "center"
+                }}
               >
-                <Text style={styles.BtnText}>Tạo mới+</Text>
-              </Button>
-              {/* <TouchableOpacity
-                style={styles.AddBtn}
-                onPress={() => this.setState({ visible: true, addSubTask: true, onEditSubtask: {} })}
-              >
-                <Text
-                  style={
-                    (styles.btnLabel)
-                  }
+                <Text style={styles.formLabel}>Danh sách công việc</Text>
+                <Button
+                  type="primary"
+                  size="small"
+                  style={styles.AddBtn}
+                  activeStyle={{ color: "white" }}
+                  onPress={() => this.setState({ visible: true, addSubTask: true, onEditSubtask: {} })}
                 >
-                  Thêm +
-                </Text>
-              </TouchableOpacity> */}
-            </View>
-            <FlatList
-              data={this.state.data}
-              keyExtractor={(item) => item._id}
-              renderItem={({ item }) => this.renderItem(item)}
-            />
-            {this.state.loading ?
-              <ActivityIndicator
-                size="large"
-                animating
-                color="#2A9D8F"
-              ></ActivityIndicator>
-              : null}
-            <Modal
-              title="Tạo mới"
-              popup
-              animationType="slide-up"
-              // transparent
-              onClose={this.onClose}
-              maskClosable
-              visible={this.state.visible}
-              closable
-            >
-              <SubTaskCreateModal
-                onAdd={this.state.addSubTask}
-                data={this.state.onEditSubtask}
-                onClose={this.onClose}
-                actionId={this.state.actionId}
-                addToList={(e) => this.addToList(e)}
-                updateToList={(e) => this.updateToList(e)}
+                  <Text style={styles.BtnText}>Tạo mới+</Text>
+                </Button>
+
+              </View>
+              <FlatList
+                data={this.state.data}
+                keyExtractor={(item) => item._id}
+                renderItem={({ item }) => this.renderItem(item)}
               />
-            </Modal>
-          </View>
-        </Provider >
-      );
-    } else return null;
+              <Loader loading={this.state.loading} color="#2A9D8F" />
+              <Modal
+                title="Tạo mới"
+                animationType="slide-up"
+                transparent
+                onClose={this.onClose}
+                maskClosable
+                visible={this.state.visible}
+                closable
+              >
+                <SubTaskCreateModal
+                  onAdd={this.state.addSubTask}
+                  data={this.state.onEditSubtask}
+                  onClose={this.onClose}
+                  actionId={this.state.actionId}
+                  addToList={(e) => this.addToList(e)}
+                  updateToList={(e) => this.updateToList(e)}
+                />
+              </Modal>
+            </View>
+          </Provider >
+        );
+      } else return null;
+    }
   }
 }
 

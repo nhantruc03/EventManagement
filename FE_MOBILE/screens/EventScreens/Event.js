@@ -16,6 +16,9 @@ import { ActivityIndicator, Tabs } from "@ant-design/react-native";
 import Search from "../../components/helper/search";
 import { StatusBar } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
+import { RefreshControl } from "react-native";
+import { Redirect } from "react-router";
+import ApiFailHandler from '../../components/helper/ApiFailHandler'
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#F6F7F8",
@@ -88,6 +91,8 @@ export default class Event extends Component {
       data_future: [],
       status: "",
       loading: true,
+      refreshing: false,
+      loggout: false,
     };
     this._isMounted = false;
   }
@@ -108,7 +113,13 @@ export default class Event extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
       axios
         .post(
           `${Url()}/api/events/getAll?eq=${temp}`,
@@ -119,7 +130,13 @@ export default class Event extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
       axios
         .post(
           `${Url()}/api/events/getAll?lt=${temp}`,
@@ -130,7 +147,13 @@ export default class Event extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
     ]);
 
     if (
@@ -151,8 +174,74 @@ export default class Event extends Component {
     }
   }
 
+
   componentWillUnmount() {
     this._isMounted = false;
+  }
+  onRefresh = async () => {
+    this.setState({
+      refreshing: true,
+    });
+    var login = await AsyncStorage.getItem("login");
+    var obj = JSON.parse(login);
+    let temp = moment(new Date()).format("YYYY-MM-DD");
+    const [future_event, ongoing_event, past_event] = await Promise.all([
+      axios
+        .post(
+          `${Url()}/api/events/getAll?gt=${temp}`,
+          { isClone: false, availUser: obj.id },
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
+          }
+        )
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
+      axios
+        .post(
+          `${Url()}/api/events/getAll?eq=${temp}`,
+          { isClone: false, availUser: obj.id },
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
+          }
+        )
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
+      axios
+        .post(
+          `${Url()}/api/events/getAll?lt=${temp}`,
+          { isClone: false, availUser: obj.id },
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
+          }
+        )
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
+    ]);
+    this.setState({
+      refreshing: false,
+      SearchData: [...future_event, ...ongoing_event, ...past_event],
+    });
   }
 
   renderItem = (item) => {
@@ -223,75 +312,108 @@ export default class Event extends Component {
       { title: "Sắp tới" },
       { title: "Đã xong" },
     ];
-    //console.log(this.state.data);
-    return (
-      <View
-        style={
-          Platform.OS == "ios" ? styles.containerIOS : styles.containerAndroid
-        }
-      >
-        <Text style={styles.toplabel}>Sự kiện</Text>
-        {/* <Text style={styles.toplabel}>{this.state.data.length}</Text> */}
-        <Search
-          target={["name", "description"]}
-          multi={true}
-          data={this.state.data}
-          getSearchData={(e) => this.getSearchData(e)}
-        />
-        <Tabs
-          style={styles.Tabcontainer}
-          tabs={tabs}
-          tabBarActiveTextColor="#2A9D8F"
-          tabBarInactiveTextColor="#AAB0B6"
-          tabBarTextStyle={{
-            fontFamily: "semibold",
-            marginVertical: 8,
+    if (this.state.loggout) {
+      return (
+        <Redirect
+          to={{
+            pathname: "/login",
           }}
-          tabBarUnderlineStyle={{ backgroundColor: "#2A9D8F" }}
+        />
+      )
+    } else {
+      return (
+        <View
+          style={
+            Platform.OS == "ios" ? styles.containerIOS : styles.containerAndroid
+          }
         >
-          {this.state.loading ? (
-            <View
-              style={{
-                justifyContent: "center",
-                position: "absolute",
-                left: 0,
-                top: 0,
-                right: 0,
-                bottom: 0,
-                alignItems: "center",
-              }}
-            >
-              <ActivityIndicator
-                size="large"
-                animating
-                color="#2A9D8F"
-              ></ActivityIndicator>
-            </View>
-          ) : (
+          <Text style={styles.toplabel}>Sự kiện</Text>
+          {/* <Text style={styles.toplabel}>{this.state.data.length}</Text> */}
+          <Search
+            target={["name", "description"]}
+            multi={true}
+            data={this.state.data}
+            getSearchData={(e) => this.getSearchData(e)}
+          />
+          <Tabs
+            style={styles.Tabcontainer}
+            tabs={tabs}
+            tabBarActiveTextColor="#2A9D8F"
+            tabBarInactiveTextColor="#AAB0B6"
+            tabBarTextStyle={{
+              fontFamily: "semibold",
+              marginVertical: 8,
+            }}
+            tabBarUnderlineStyle={{ backgroundColor: "#2A9D8F" }}
+          >
+            {this.state.loading ? (
+              <View
+                style={{
+                  justifyContent: "center",
+                  position: "absolute",
+                  left: 0,
+                  top: 0,
+                  right: 0,
+                  bottom: 0,
+                  alignItems: "center",
+                }}
+              >
+                <ActivityIndicator
+                  size="large"
+                  animating
+                  color="#2A9D8F"
+                ></ActivityIndicator>
+              </View>
+            ) : (
+              <FlatList
+                refreshControl={
+                  <RefreshControl
+                    refreshing={this.state.refreshing}
+                    onRefresh={this.onRefresh}
+                  />
+                }
+                data={this.state.SearchData}
+                renderItem={({ item }) => this.renderItem(item)}
+                keyExtractor={(item) => item._id}
+              />
+            )}
+
             <FlatList
-              data={this.state.SearchData}
+              refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this.onRefresh}
+                />
+              }
+              data={this.state.data_ongoing}
               renderItem={({ item }) => this.renderItem(item)}
               keyExtractor={(item) => item._id}
             />
-          )}
-
-          <FlatList
-            data={this.state.data_ongoing}
-            renderItem={({ item }) => this.renderItem(item)}
-            keyExtractor={(item) => item._id}
-          />
-          <FlatList
-            data={this.state.data_future}
-            renderItem={({ item }) => this.renderItem(item)}
-            keyExtractor={(item) => item._id}
-          />
-          <FlatList
-            data={this.state.data_past}
-            renderItem={({ item }) => this.renderItem(item)}
-            keyExtractor={(item) => item._id}
-          />
-        </Tabs>
-      </View>
-    );
+            <FlatList
+              refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this.onRefresh}
+                />
+              }
+              data={this.state.data_future}
+              renderItem={({ item }) => this.renderItem(item)}
+              keyExtractor={(item) => item._id}
+            />
+            <FlatList
+              refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this.onRefresh}
+                />
+              }
+              data={this.state.data_past}
+              renderItem={({ item }) => this.renderItem(item)}
+              keyExtractor={(item) => item._id}
+            />
+          </Tabs>
+        </View>
+      );
+    }
   }
 }

@@ -8,6 +8,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Button } from "react-native";
 import { ActivityIndicator } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import ApiFailHandler from '../helper/ApiFailHandler'
 class UploadImage extends Component {
   constructor(props) {
     super(props);
@@ -16,6 +17,7 @@ class UploadImage extends Component {
       image: null,
       coverUrl: null,
       isLoading: false,
+      loggout: false
     };
   }
 
@@ -73,6 +75,12 @@ class UploadImage extends Component {
             isLoading: false,
           });
           this.props.Save(res.data.url, result.uri);
+        })
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
         });
 
       if (!result.cancelled) {
@@ -85,30 +93,40 @@ class UploadImage extends Component {
   };
 
   render() {
-    return (
-      <View style={{ alignItems: "center" }}>
-        <TouchableOpacity
-          style={styles.btnUpdate}
-          underlayColor="#fff"
-          onPress={this.pickImage}
-        >
-          <Text style={styles.textUpdate}>Chọn ảnh</Text>
-        </TouchableOpacity>
-        {this.state.isLoading ? (
-          <ActivityIndicator
-            size="large"
-            animating
-            color="#2A9D8F"
-          ></ActivityIndicator>
-        ) : null}
-        {this.state.image && (
-          <Image
-            source={{ uri: this.state.image }}
-            style={{ width: 200, height: 200 }}
-          />
-        )}
-      </View>
-    );
+    if (this.state.loggout) {
+      return (
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
+        />
+      )
+    } else {
+      return (
+        <View style={{ alignItems: "center" }}>
+          <TouchableOpacity
+            style={styles.btnUpdate}
+            underlayColor="#fff"
+            onPress={this.pickImage}
+          >
+            <Text style={styles.textUpdate}>Chọn ảnh</Text>
+          </TouchableOpacity>
+          {this.state.isLoading ? (
+            <ActivityIndicator
+              size="large"
+              animating
+              color="#2A9D8F"
+            ></ActivityIndicator>
+          ) : null}
+          {this.state.image && (
+            <Image
+              source={{ uri: this.state.image }}
+              style={{ width: 200, height: 200 }}
+            />
+          )}
+        </View>
+      );
+    }
   }
 }
 

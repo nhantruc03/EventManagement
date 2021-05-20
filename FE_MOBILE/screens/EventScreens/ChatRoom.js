@@ -16,6 +16,8 @@ import AsyncStorage from "@react-native-community/async-storage";
 import ChatMessage from "../../components/ChatMessage";
 import { ActivityIndicator, Modal, Provider } from "@ant-design/react-native";
 import UploadImage from "../../components/helper/UploadImageForChat";
+import { Redirect } from "react-router";
+import ApiFailHandler from '../../components/helper/ApiFailHandler'
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
@@ -63,7 +65,8 @@ class ChatRoom extends Component {
       goToEnd: true,
       disable: false,
       show: false,
-      CurrentShowImage: null
+      CurrentShowImage: null,
+      loggout: false,
 
     };
     this._isMounted = false;
@@ -136,7 +139,6 @@ class ChatRoom extends Component {
         currentUser: obj.id,
       });
       await this.getData();
-
       this.setState({
         isLoading: false,
       });
@@ -202,6 +204,12 @@ class ChatRoom extends Component {
       })
       .then((res) => {
         message._id = res.data.data[0]._id;
+      })
+      .catch(err => {
+        let errResult = ApiFailHandler(err.response?.data?.error)
+        this.setState({
+          loggout: errResult.isExpired
+        })
       });
 
     client.send(
@@ -251,6 +259,12 @@ class ChatRoom extends Component {
           messages: [...temp.reverse(), ...this.state.messages],
           goToEnd: false,
         });
+      })
+      .catch(err => {
+        let errResult = ApiFailHandler(err.response?.data?.error)
+        this.setState({
+          loggout: errResult.isExpired
+        })
       });
   };
 
@@ -275,92 +289,101 @@ class ChatRoom extends Component {
 
   ref = React.createRef();
   render() {
-    if (!this.state.isLoading) {
+    if (this.state.loggout) {
       return (
-        <Provider>
-          <View style={styles.Container}>
-
-            <FlatList
-              refreshing={this.state.refreshing}
-              onRefresh={this.onRefresh}
-              ref={this.ref}
-              style={{ paddingHorizontal: 10, height: 530 }}
-              data={this.state.messages}
-              keyExtractor={(item) => item._id}
-              renderItem={(item) => this.renderMessage(item)}
-              onContentSizeChange={this.goToEnd}
-              onLayout={this.goToEnd}
-            />
-            <KeyboardAvoidingView
-              behavior={Platform.OS === "ios" ? "padding" : null}
-              keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
-            >
-              <View
-                style={styles.inputContainer}
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
+        />
+      )
+    } else {
+      if (!this.state.isLoading) {
+        return (
+          <Provider>
+            <View style={styles.Container}>
+              <FlatList
+                refreshing={this.state.refreshing}
+                onRefresh={this.onRefresh}
+                ref={this.ref}
+                style={{ paddingHorizontal: 10, height: 530 }}
+                data={this.state.messages}
+                keyExtractor={(item) => item._id}
+                renderItem={(item) => this.renderMessage(item)}
+                onContentSizeChange={this.goToEnd}
+                onLayout={this.goToEnd}
+              />
+              <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : null}
+                keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
               >
+                <View
+                  style={styles.inputContainer}
+                >
 
-                <TextInput
-                  onChangeText={this.setFormValue}
-                  style={styles.input}
-                  value={this.state.formValue}
-                  editable={!this.state.disable}
-                />
-                <View style={{ flexDirection: "row", right: 16 }}>
-                  {/* <TouchableOpacity
+                  <TextInput
+                    onChangeText={this.setFormValue}
+                    style={styles.input}
+                    value={this.state.formValue}
+                    editable={!this.state.disable}
+                  />
+                  <View style={{ flexDirection: "row", right: 16 }}>
+                    {/* <TouchableOpacity
                     style={{ right: 16 }}
                     disabled={!this.state.formValue}
                     onPress={() => this.sendMessage()}
                   >
                     <Image source={require("../../assets/images/voice.png")} />
                   </TouchableOpacity> */}
-                  <UploadImage roomId={this.props.route.params.id} Save={(e) => this.sendResources(e)} />
+                    <UploadImage roomId={this.props.route.params.id} Save={(e) => this.sendResources(e)} />
 
-                  <TouchableOpacity
-                    style={{}}
-                    disabled={!this.state.formValue}
-                    onPress={() => this.sendMessage()}
-                  >
-                    <Image source={require("../../assets/images/Send.png")} />
-                  </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{}}
+                      disabled={!this.state.formValue}
+                      onPress={() => this.sendMessage()}
+                    >
+                      <Image source={require("../../assets/images/Send.png")} />
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-            </KeyboardAvoidingView>
-            <Modal
-              closable
-              maskClosable
-              transparent
-              visible={this.state.show}
-              animationType="slide-up"
-              onClose={this.onClose}
-              style={{
-                width: W,
-                height: "100%",
-                backgroundColor: 'black',
-                justifyContent: "center",
-                alignContent: "center"
-              }}
+              </KeyboardAvoidingView>
+              <Modal
+                closable
+                maskClosable
+                transparent
+                visible={this.state.show}
+                animationType="slide-up"
+                onClose={this.onClose}
+                style={{
+                  width: W,
+                  height: "100%",
+                  backgroundColor: 'black',
+                  justifyContent: "center",
+                  alignContent: "center"
+                }}
 
-            >
-              <View>
-                {this.state.CurrentShowImage ?
-                  <Image style={{ alignSelf: "center", width: "100%", height: undefined, aspectRatio: 1 }} source={{ uri: this.state.CurrentShowImage }}></Image>
-                  : null}
-              </View>
-            </Modal>
+              >
+                <View>
+                  {this.state.CurrentShowImage ?
+                    <Image style={{ alignSelf: "center", width: "100%", height: undefined, aspectRatio: 1 }} source={{ uri: this.state.CurrentShowImage }}></Image>
+                    : null}
+                </View>
+              </Modal>
 
+            </View>
+          </Provider>
+        );
+      } else {
+        return (
+          <View style={styles.Loading}>
+            <ActivityIndicator
+              size="large"
+              animating
+              color="#2A9D8F"
+            ></ActivityIndicator>
           </View>
-        </Provider>
-      );
-    } else {
-      return (
-        <View style={styles.Loading}>
-          <ActivityIndicator
-            size="large"
-            animating
-            color="#2A9D8F"
-          ></ActivityIndicator>
-        </View>
-      );
+        );
+      }
     }
   }
 }

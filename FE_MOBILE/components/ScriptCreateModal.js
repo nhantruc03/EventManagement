@@ -11,12 +11,13 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
-
 import Url from "../env";
 import getToken from "../Auth";
 import axios from "axios";
 import AsyncStorage from "@react-native-community/async-storage";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { Redirect } from "react-router";
+import ApiFailHandler from './helper/ApiFailHandler'
 
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
@@ -74,6 +75,7 @@ class ScriptCreateModal extends Component {
       listUser_default: [],
       listUser: [],
       loadingbtn: false,
+      loggout: false,
     };
   }
 
@@ -144,8 +146,12 @@ class ScriptCreateModal extends Component {
           alert("Tạo kịch bản thành công");
         })
         .catch((err) => {
-          console.log(err);
-          alert("Tạo kịch bản thất bại");
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+          alert(`${errResult.message}`)
+
         });
     } catch (err) {
       alert("Phải điển đủ thông tin");
@@ -153,71 +159,80 @@ class ScriptCreateModal extends Component {
   };
 
   render() {
-    if (this.state.event) {
-      // console.log(this.richText);
+    if (this.state.loggout) {
       return (
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
-          <TouchableWithoutFeedback
-            onPress={Keyboard.dismiss}
-            accessible={false}
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
+        />
+      )
+    } else {
+      if (this.state.event) {
+        // console.log(this.richText);
+        return (
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
-            <ScrollView
-              keyboardDismissMode="interative"
-              style={{ height: H * 0.4 }}
+            <TouchableWithoutFeedback
+              onPress={Keyboard.dismiss}
+              accessible={false}
             >
-              <View
-                style={{ flex: 1, paddingVertical: 20, paddingHorizontal: 16 }}
+              <ScrollView
+                keyboardDismissMode="interative"
+                style={{ height: H * 0.4 }}
               >
-                <View style={styles.ScriptNameLabelContainer}>
-                  <Text style={styles.Label}>Tên kịch bản</Text>
-                  <TextInput
-                    onChangeText={this.onChangeName}
-                    style={styles.input}
-                    value={this.state.data.name}
-                  ></TextInput>
-                  <Text style={styles.Label}>Dành cho</Text>
-                  <View style={styles.Box}>
-                    <Picker
+                <View
+                  style={{ flex: 1, paddingVertical: 20, paddingHorizontal: 16 }}
+                >
+                  <View style={styles.ScriptNameLabelContainer}>
+                    <Text style={styles.Label}>Tên kịch bản</Text>
+                    <TextInput
+                      onChangeText={this.onChangeName}
+                      style={styles.input}
+                      value={this.state.data.name}
+                    ></TextInput>
+                    <Text style={styles.Label}>Dành cho</Text>
+                    <View style={styles.Box}>
+                      <Picker
 
-                      onChange={this.onChangeForId}
-                      value={this.state.data.forId}
-                      data={this.state.listUser}
-                      cascade={false}
-                      okText="Đồng ý"
-                      dismissText="Thoát"
-                    >
-                      <Text >
-                        {!this.state.data.forId
-                          ? "Chọn"
-                          : this.state.listUser_default.filter(
-                            (e) => e._id === this.state.data.forId[0]
-                          )[0].name}
-                      </Text>
-                    </Picker>
+                        onChange={this.onChangeForId}
+                        value={this.state.data.forId}
+                        data={this.state.listUser}
+                        cascade={false}
+                        okText="Đồng ý"
+                        dismissText="Thoát"
+                      >
+                        <Text >
+                          {!this.state.data.forId
+                            ? "Chọn"
+                            : this.state.listUser_default.filter(
+                              (e) => e._id === this.state.data.forId[0]
+                            )[0].name}
+                        </Text>
+                      </Picker>
+                    </View>
                   </View>
                 </View>
-              </View>
-              {!this.state.loadingbtn ? (
-                <Button
-                  type="primary"
-                  onPress={this.onFinish}
-                  style={styles.PrimaryBtn}
-                >
-                  Lưu
-                </Button>
-              ) : (
-                <Button style={styles.LoadingBtn} loading>
-                  loading
-                </Button>
-              )}
-            </ScrollView>
-          </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
-      );
-    } else {
-      return null;
+                {!this.state.loadingbtn ? (
+                  <Button
+                    type="primary"
+                    onPress={this.onFinish}
+                    style={styles.PrimaryBtn}
+                  >
+                    Lưu
+                  </Button>
+                ) : (
+                  <Button style={styles.LoadingBtn} loading />
+
+                )}
+              </ScrollView>
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
+        );
+      } else {
+        return null;
+      }
     }
   }
 }

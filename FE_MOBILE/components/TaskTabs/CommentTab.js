@@ -17,6 +17,7 @@ import CommentMessage from "../../components/TaskTabs/CommentMessage";
 import { ActivityIndicator, Modal, Provider } from "@ant-design/react-native";
 import UploadImage from "../../components/helper/UploadImageForChat";
 import Separator from "../helper/separator";
+import { Redirect } from "react-router";
 
 
 const W = Dimensions.get("window").width;
@@ -67,7 +68,8 @@ class Comment extends Component {
             disable: false,
             show: false,
             CurrentShowImage: null,
-            CurrentUser: null
+            CurrentUser: null,
+            loggout: false,
         };
         this._isMounted = false;
     }
@@ -258,86 +260,96 @@ class Comment extends Component {
 
     ref = React.createRef();
     render() {
-        if (!this.state.isLoading) {
+        if (this.state.loggout) {
             return (
-                <Provider>
-                    <View style={styles.Container}>
+                <Redirect
+                    to={{
+                        pathname: "/login",
+                    }}
+                />
+            )
+        } else {
+            if (!this.state.isLoading) {
+                return (
+                    <Provider>
+                        <View style={styles.Container}>
 
-                        <FlatList
-                            refreshing={this.state.refreshing}
-                            onRefresh={this.onRefresh}
-                            ref={this.ref}
-                            style={{ paddingHorizontal: 10, height: 480, }}
-                            data={this.state.messages}
-                            keyExtractor={(item) => item._id}
-                            renderItem={(item) => this.renderMessage(item)}
-                            onContentSizeChange={this.goToEnd}
-                            onLayout={this.goToEnd}
-                        />
-                        <KeyboardAvoidingView
-                            behavior={Platform.OS === "ios" ? "padding" : null}
-                            keyboardVerticalOffset={Platform.OS === "ios" ? 130 : 0}
-                        >
-                            <View style={styles.inputContainer}>
-                                <TextInput
-                                    onChangeText={this.setFormValue}
-                                    style={styles.input}
-                                    value={this.state.formValue}
-                                    editable={!this.state.disable}
-                                />
-                                <View style={{ flexDirection: "row", right: 24 }}>
+                            <FlatList
+                                refreshing={this.state.refreshing}
+                                onRefresh={this.onRefresh}
+                                ref={this.ref}
+                                style={{ paddingHorizontal: 10, height: 480, }}
+                                data={this.state.messages}
+                                keyExtractor={(item) => item._id}
+                                renderItem={(item) => this.renderMessage(item)}
+                                onContentSizeChange={this.goToEnd}
+                                onLayout={this.goToEnd}
+                            />
+                            <KeyboardAvoidingView
+                                behavior={Platform.OS === "ios" ? "padding" : null}
+                                keyboardVerticalOffset={Platform.OS === "ios" ? 130 : 0}
+                            >
+                                <View style={styles.inputContainer}>
+                                    <TextInput
+                                        onChangeText={this.setFormValue}
+                                        style={styles.input}
+                                        value={this.state.formValue}
+                                        editable={!this.state.disable}
+                                    />
+                                    <View style={{ flexDirection: "row", right: 24 }}>
 
-                                    <View >
-                                        <UploadImage roomId={this.props.actionId} Save={(e) => this.sendResources(e)} />
-                                    </View>
-                                    <View >
-                                        <TouchableOpacity
-                                            style={{}}
-                                            disabled={!this.state.formValue}
-                                            onPress={() => this.sendMessage()}
-                                        >
-                                            <Image source={require("../../assets/images/Send.png")} />
-                                        </TouchableOpacity>
+                                        <View >
+                                            <UploadImage roomId={this.props.actionId} Save={(e) => this.sendResources(e)} />
+                                        </View>
+                                        <View >
+                                            <TouchableOpacity
+                                                style={{}}
+                                                disabled={!this.state.formValue}
+                                                onPress={() => this.sendMessage()}
+                                            >
+                                                <Image source={require("../../assets/images/Send.png")} />
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
                                 </View>
-                            </View>
-                        </KeyboardAvoidingView>
-                        <Modal
-                            closable
-                            maskClosable
-                            transparent
-                            visible={this.state.show}
-                            animationType="slide-up"
-                            onClose={this.onClose}
-                            style={{
-                                width: W,
-                                height: "100%",
-                                backgroundColor: 'black',
-                                justifyContent: "center",
-                                alignContent: "center"
-                            }}
+                            </KeyboardAvoidingView>
+                            <Modal
+                                closable
+                                maskClosable
+                                transparent
+                                visible={this.state.show}
+                                animationType="slide-up"
+                                onClose={this.onClose}
+                                style={{
+                                    width: W,
+                                    height: "100%",
+                                    backgroundColor: 'black',
+                                    justifyContent: "center",
+                                    alignContent: "center"
+                                }}
 
-                        >
-                            <View>
-                                {this.state.CurrentShowImage ?
-                                    <Image style={{ alignSelf: "center", width: "100%", height: undefined, aspectRatio: 1 }} source={{ uri: this.state.CurrentShowImage }}></Image>
-                                    : null}
-                            </View>
-                        </Modal>
+                            >
+                                <View>
+                                    {this.state.CurrentShowImage ?
+                                        <Image style={{ alignSelf: "center", width: "100%", height: undefined, aspectRatio: 1 }} source={{ uri: this.state.CurrentShowImage }}></Image>
+                                        : null}
+                                </View>
+                            </Modal>
 
+                        </View>
+                    </Provider >
+                );
+            } else {
+                return (
+                    <View style={styles.Loading}>
+                        <ActivityIndicator
+                            size="large"
+                            animating
+                            color="#2A9D8F"
+                        ></ActivityIndicator>
                     </View>
-                </Provider >
-            );
-        } else {
-            return (
-                <View style={styles.Loading}>
-                    <ActivityIndicator
-                        size="large"
-                        animating
-                        color="#2A9D8F"
-                    ></ActivityIndicator>
-                </View>
-            );
+                );
+            }
         }
     }
 }

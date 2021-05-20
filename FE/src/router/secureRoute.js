@@ -8,6 +8,6 @@ export const SecureRouteAdmin = ({ component: Component, layout: Layout, ...rest
       <Layout><Component {...data}></Component></Layout>) :
       (auth.isAuthenticatedStaff() ? (
         <Redirect to={{ pathname: '/khongcoquyen' }}></Redirect>) :
-        (<Redirect to={{ pathname: '/login' }}></Redirect>))}></Route >
+        (<Redirect to={{ pathname: '/login' }}></Redirect>))}></Route>
   );
 };

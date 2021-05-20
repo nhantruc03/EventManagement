@@ -7,6 +7,7 @@ import getToken from "../Auth";
 import { Platform } from "react-native";
 import { StatusBar } from "react-native";
 import { Image } from "react-native";
+import { Redirect } from "react-router";
 
 const styles = StyleSheet.create({
   containerIOS: { flex: 1, marginTop: 16 },
@@ -57,10 +58,11 @@ const styles = StyleSheet.create({
 export default class Notification extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+
+    };
+
   }
-
-
 
   updateNoti = async (id) => {
     let data = {

@@ -9,8 +9,15 @@ import Customdatetime from "../helper/datetimepicker";
 import { KeyboardAvoidingView } from "react-native";
 import { Platform } from "react-native";
 import { Dimensions } from "react-native";
+import { SafeAreaView } from "react-native";
+import { Redirect } from "react-router";
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
+  Label: {
+    color: "#2A9D8F",
+    fontFamily: "bold",
+    fontSize: 14,
+  },
   input: {
     height: 40,
     marginVertical: 8,
@@ -28,7 +35,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 8,
     paddingHorizontal: 8,
-    height: 150,
+    height: 48,
     justifyContent: "flex-start",
   },
   ScriptNameContainer: {
@@ -69,6 +76,7 @@ class SubTaskCreateModal extends Component {
         endTime: new Date(),
       },
       loadingbtn: false,
+      loggout: false,
     };
   }
   componentDidMount() {
@@ -109,6 +117,9 @@ class SubTaskCreateModal extends Component {
         })
         .catch((err) => {
           console.log(err);
+          this.setState({
+            loadingbtn: false
+          })
           alert("Tạo subtask thất bại");
         });
     } else {
@@ -125,7 +136,11 @@ class SubTaskCreateModal extends Component {
         })
         .catch((err) => {
           console.log(err);
+          this.setState({
+            loadingbtn: false
+          })
           alert("Cập nhật subtask thất bại");
+
         });
     }
   };
@@ -155,74 +170,77 @@ class SubTaskCreateModal extends Component {
   };
   // startTime | endTime | startDate | endDate
   render() {
-    if (this.state.data) {
+    if (this.state.loggout) {
       return (
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 300 : 0}
-        >
-          <ScrollView
-            keyboardDismissMode="interactive"
-            style={{
-              maxHeight: H * 0.3,
-              paddingHorizontal: 10,
-              marginVertical: 10,
-            }}
-            bounces={false}
-          >
-            <Text> Tên </Text>
-            <TextInput
-              onChangeText={this.onChangeName}
-              style={styles.input}
-              value={this.state.data.name}
-            ></TextInput>
-            <Text> Mô tả </Text>
-            <TextInput
-              style={styles.textArea}
-              value={this.state.data.description}
-              multiline={true}
-              onChangeText={this.onChangeDescrip}
-              numberOfLines={1}
-            ></TextInput>
-            <View style={{ flex: 1, flexDirection: "row" }}>
-              <Customdatetime
-                containerStyle={styles.ScriptNameContainer}
-                labelStyle={styles.Label}
-                label="Ngày kết thúc:"
-                BoxInput={styles.BoxInput}
-                Save={(e) => this.onChangeTime("endDate", e)}
-                data={this.state.data.endDate}
-                mode="date"
-              />
-              <Customdatetime
-                containerStyle={styles.ScriptNameContainer}
-                labelStyle={styles.Label}
-                label="Giờ kết thúc:"
-                BoxInput={styles.BoxInput}
-                Save={(e) => this.onChangeTime("endTime", e)}
-                data={this.state.data.endTime}
-                mode="time"
-              />
-            </View>
-          </ScrollView>
-          {!this.state.loadingbtn ? (
-            <Button
-              type="primary"
-              onPress={this.onFinish}
-              style={styles.PrimaryBtn}
-            >
-              Lưu
-            </Button>
-          ) : (
-            <Button style={styles.LoadingBtn} loading>
-              loading
-            </Button>
-          )}
-        </KeyboardAvoidingView>
-      );
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
+        />
+      )
     } else {
-      return null;
+      if (this.state.data) {
+        return (
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+          >
+            <SafeAreaView
+              keyboardDismissMode="interactive"
+              style={{ height: H * 0.34 }}
+              bounces={false}
+            >
+              <Text style={styles.Label}> Tên </Text>
+              <TextInput
+                onChangeText={this.onChangeName}
+                style={styles.input}
+                value={this.state.data.name}
+              ></TextInput>
+              <Text style={styles.Label}> Mô tả </Text>
+              <TextInput
+                style={styles.textArea}
+                value={this.state.data.description}
+                multiline={true}
+                onChangeText={this.onChangeDescrip}
+                numberOfLines={1}
+              ></TextInput>
+              <View style={{ flexDirection: "row", marginTop: 8 }}>
+                <Customdatetime
+                  containerStyle={styles.ScriptNameContainer}
+                  labelStyle={styles.Label}
+                  label="Ngày kết thúc:"
+                  BoxInput={styles.BoxInput}
+                  Save={(e) => this.onChangeTime("endDate", e)}
+                  data={this.state.data.endDate}
+                  mode="date"
+                />
+                <Customdatetime
+                  containerStyle={styles.ScriptNameContainer}
+                  labelStyle={styles.Label}
+                  label="Giờ kết thúc:"
+                  BoxInput={styles.BoxInput}
+                  Save={(e) => this.onChangeTime("endTime", e)}
+                  data={this.state.data.endTime}
+                  mode="time"
+                />
+              </View>
+            </SafeAreaView>
+            {!this.state.loadingbtn ? (
+              <Button
+                type="primary"
+                onPress={this.onFinish}
+                style={styles.PrimaryBtn}
+              >
+                Lưu
+              </Button>
+            ) : (
+              <Button style={styles.LoadingBtn} loading>
+              </Button>
+            )}
+          </KeyboardAvoidingView>
+        );
+      } else {
+        return null;
+      }
     }
   }
 }

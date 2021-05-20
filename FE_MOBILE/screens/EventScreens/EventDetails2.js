@@ -14,6 +14,8 @@ import GroupTab from "../../components/EventTabs/GroupTab";
 import { ActivityIndicator } from "@ant-design/react-native";
 import Indicator from "../../components/helper/Loading";
 import getPermission from "../../components/helper/Credentials"
+import ApiFailHandler from '../../components/helper/ApiFailHandler'
+import { Redirect } from "react-router";
 
 const styles = StyleSheet.create({
   container: {
@@ -51,6 +53,7 @@ export default class EventDetail2 extends Component {
       listgroups: null,
       loading: true,
       index: 0,
+      loggout: false,
       routes: [
         { key: "1", title: "Thông tin chung" },
         { key: "2", title: "Ban tổ chức" },
@@ -74,7 +77,7 @@ export default class EventDetail2 extends Component {
 
   Route2 = () =>
     this.state.listOrganizer && !this.state.loading ? (
-      <OrgTab data={this.state.listOrganizer} />
+      <OrgTab data={this.state.listOrganizer} eventId={this.props.route.params.data._id} />
     ) : (
       <View style={styles.Loading}>
         <Indicator />
@@ -89,6 +92,7 @@ export default class EventDetail2 extends Component {
         data={this.state.listscripts}
         updateListScript={(e) => this.updateListScript(e)}
         event={this.state.event}
+        eventId={this.props.route.params.data._id}
       />
     ) : (
       <View style={styles.Loading}>
@@ -101,6 +105,7 @@ export default class EventDetail2 extends Component {
       <GroupTab
         navigation={this.props.navigation}
         data={this.state.listgroups}
+        eventId={this.props.route.params.data._id}
       />
     ) : (
       <View style={styles.Loading}>
@@ -110,7 +115,10 @@ export default class EventDetail2 extends Component {
 
   Route5 = () =>
     this.state.listGuest && !this.state.loading ? (
-      <GuestTab currentPermissions={this.state.currentPermissions} data={this.state.listGuest} />
+      <GuestTab
+        currentPermissions={this.state.currentPermissions}
+        data={this.state.listGuest}
+        eventId={this.props.route.params.data._id} />
     ) : (
       <View style={styles.Loading}>
         <Indicator />
@@ -145,6 +153,12 @@ export default class EventDetail2 extends Component {
         )
         .then((res) => {
           return res.data.data;
+        })
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
         }),
       axios
         .post(
@@ -158,7 +172,14 @@ export default class EventDetail2 extends Component {
         )
         .then((res) => {
           return res.data.data;
+        })
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
         }),
+
       axios
         .post(
           `${Url()}/api/event-assign/getAll`,
@@ -171,6 +192,12 @@ export default class EventDetail2 extends Component {
         )
         .then((res) => {
           return res.data.data;
+        })
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
         }),
       axios
         .post(
@@ -184,6 +211,12 @@ export default class EventDetail2 extends Component {
         )
         .then((res) => {
           return res.data.data;
+        })
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
         }),
       axios
         .get(`${Url()}/api/events/` + this.props.route.params.data._id, {
@@ -193,6 +226,12 @@ export default class EventDetail2 extends Component {
         })
         .then((res) => {
           return res.data.data;
+        })
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
         }),
       getPermission(this.props.route.params.data._id).then(res => res)
     ]);
@@ -216,6 +255,12 @@ export default class EventDetail2 extends Component {
         )
         .then((res) => {
           return res.data.data;
+        })
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
         });
       guests = temp;
     }
@@ -260,30 +305,40 @@ export default class EventDetail2 extends Component {
   };
 
   render() {
-    if (!this.state.loadingBigBO) {
+    if (this.state.loggout) {
       return (
-        <TabView
-          renderTabBar={this.renderTabBar}
-          navigationState={{
-            index: this.state.index,
-            routes: this.state.routes,
+        <Redirect
+          to={{
+            pathname: "/login",
           }}
-          renderScene={this.renderScene}
-          onIndexChange={this.setIndex}
-          initialLayout={initialLayout}
-          style={styles.Tabcontainer}
         />
-      );
+      )
     } else {
-      return (
-        <View style={styles.Loading}>
-          <ActivityIndicator
-            size="large"
-            animating
-            color="#2A9D8F"
-          ></ActivityIndicator>
-        </View>
-      );
+      if (!this.state.loadingBigBO) {
+        return (
+          <TabView
+            renderTabBar={this.renderTabBar}
+            navigationState={{
+              index: this.state.index,
+              routes: this.state.routes,
+            }}
+            renderScene={this.renderScene}
+            onIndexChange={this.setIndex}
+            initialLayout={initialLayout}
+            style={styles.Tabcontainer}
+          />
+        );
+      } else {
+        return (
+          <View style={styles.Loading}>
+            <ActivityIndicator
+              size="large"
+              animating
+              color="#2A9D8F"
+            ></ActivityIndicator>
+          </View>
+        );
+      }
     }
   }
 }

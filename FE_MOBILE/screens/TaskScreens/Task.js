@@ -25,6 +25,8 @@ import EditActionTypeModal from "../../components/EditActionTypeModal";
 import TaskCol from "../../components/TaskCol"
 import { Alert } from "react-native";
 import Loader from "react-native-modal-loader";
+import { Redirect } from "react-router";
+import ApiFailHandler from '../../components/helper/ApiFailHandler'
 const W = Dimensions.get("window").width;
 
 const initialLayout = { width: W };
@@ -164,6 +166,7 @@ class Taskscreen extends Component {
       ActionTypeForEdit: {},
       currentEditActionType: {},
       deleteLoading: false,
+      loggout: false,
     };
     this._isMounted = false;
   }
@@ -207,18 +210,31 @@ class Taskscreen extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
       axios
         .post(
           `${Url()}/api/events/getAll?eq=${temp}`,
           { isClone: false, availUser: obj.id },
           {
             headers: {
-              Authorization: await getToken(),
+              Authorization: await getToken()
+              ,
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
       axios
         .post(
           `${Url()}/api/events/getAll?lt=${temp}`,
@@ -229,7 +245,13 @@ class Taskscreen extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
     ]);
 
     if (
@@ -262,8 +284,11 @@ class Taskscreen extends Component {
           }
         )
         .then((res) => res.data.data)
-        .catch((err) => {
-          console.log(err.response);
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
         }),
       axios
         .post(
@@ -276,8 +301,11 @@ class Taskscreen extends Component {
           }
         )
         .then((res) => res.data.data)
-        .catch((err) => {
-          console.log(err.response);
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
         }),
       axios
         .post(
@@ -290,8 +318,11 @@ class Taskscreen extends Component {
           }
         )
         .then((res) => res.data.data)
-        .catch((err) => {
-          console.log(err.response);
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
         }),
       getPermission(id).then(res => res)
     ]);
@@ -363,8 +394,11 @@ class Taskscreen extends Component {
 
       })
       .catch(err => {
-        console.log(err)
-        alert("Xóa thất bại")
+        let errResult = ApiFailHandler(err.response?.data?.error)
+        this.setState({
+          loggout: errResult.isExpired
+        })
+        alert("Xoá thất bại")
       })
     if (result) {
       this.setState({
@@ -552,7 +586,16 @@ class Taskscreen extends Component {
   }
 
   render() {
-    return (
+    if (this.state.loggout) {
+      return (
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
+        />
+      )
+    }
+    else return (
       <Provider>
         <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
         <View

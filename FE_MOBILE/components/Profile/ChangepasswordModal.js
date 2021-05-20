@@ -5,7 +5,8 @@ import { Image } from 'react-native';
 import { View, Text, StyleSheet } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import { Redirect } from 'react-router';
+import ApiFailHandler from '../helper/ApiFailHandler'
 const styles = StyleSheet.create({
     textBox: {},
     input: {
@@ -34,6 +35,7 @@ class ChangepasswordModal extends Component {
         super(props);
         this.state = {
             showPassword: true,
+            loggout: false,
         };
     }
     onFinish = async () => {
@@ -55,8 +57,11 @@ class ChangepasswordModal extends Component {
                     // Message('Sửa thành công', true, this.props);
                 })
                 .catch(err => {
+                    let errResult = ApiFailHandler(err.response?.data?.error)
+                    this.setState({
+                        loggout: errResult.isExpired
+                    })
                     alert("Cập nhật mật khẩu thất bại");
-                    // Message('Sửa thất bại', false);
                 }))
     }
 
@@ -67,84 +72,94 @@ class ChangepasswordModal extends Component {
     }
 
     render() {
-        return (
-            <View>
+        if (this.state.loggout) {
+            return (
+                <Redirect
+                    to={{
+                        pathname: "/login",
+                    }}
+                />
+            )
+        } else {
+            return (
                 <View>
-                    <Text style={styles.textBox}>Mật khẩu hiện tại</Text>
-                    <View style={styles.boxSection}>
-                        <TouchableOpacity
-                            style={styles.Icon}
-                            onPress={this.setShowPassword}
-                        >
-                            <Ionicons name='eye-off-outline' size={20} color='black' />
-                        </TouchableOpacity>
-                        <TextInput
-                            style={
-                                styles.input
-                            }
-                            placeholder="Nhập mật khẩu của bạn"
-                            secureTextEntry={this.state.showPassword}
-                            underlineColorAndroid="transparent"
-                        />
+                    <View>
+                        <Text style={styles.textBox}>Mật khẩu hiện tại</Text>
+                        <View style={styles.boxSection}>
+                            <TouchableOpacity
+                                style={styles.Icon}
+                                onPress={this.setShowPassword}
+                            >
+                                <Ionicons name='eye-off-outline' size={20} color='black' />
+                            </TouchableOpacity>
+                            <TextInput
+                                style={
+                                    styles.input
+                                }
+                                placeholder="Nhập mật khẩu của bạn"
+                                secureTextEntry={this.state.showPassword}
+                                underlineColorAndroid="transparent"
+                            />
+                        </View>
                     </View>
-                </View>
-                <View>
-                    <Text style={styles.textBox}>Mật khẩu mới</Text>
-                    <View style={styles.boxSection}>
-                        <TouchableOpacity
-                            style={styles.Icon}
-                            onPress={() => setShowPassword(!showPassword)}
-                        >
-                            <Ionicons name='eye-off-outline' size={20} color='black' />
-                        </TouchableOpacity>
-                        <TextInput
-                            style={
-                                styles.input
-                            }
-                            placeholder="Nhập mật khẩu của bạn"
+                    <View>
+                        <Text style={styles.textBox}>Mật khẩu mới</Text>
+                        <View style={styles.boxSection}>
+                            <TouchableOpacity
+                                style={styles.Icon}
+                                onPress={() => setShowPassword(!showPassword)}
+                            >
+                                <Ionicons name='eye-off-outline' size={20} color='black' />
+                            </TouchableOpacity>
+                            <TextInput
+                                style={
+                                    styles.input
+                                }
+                                placeholder="Nhập mật khẩu của bạn"
 
 
-                            secureTextEntry="true"
-                            underlineColorAndroid="transparent"
-                        />
+                                secureTextEntry="true"
+                                underlineColorAndroid="transparent"
+                            />
+                        </View>
                     </View>
-                </View>
-                <View>
-                    <Text style={styles.textBox}>Xác nhận mật khẩu mới</Text>
-                    <View style={styles.boxSection}>
-                        <TouchableOpacity
-                            style={styles.Icon}
-                            onPress={() => setShowPassword(!showPassword)}
-                        >
-                            <Ionicons name='eye-off-outline' size={20} color='black' />
-                        </TouchableOpacity>
-                        <TextInput
-                            style={
-                                styles.input
-                            }
-                            placeholder="Nhập mật khẩu của bạn"
+                    <View>
+                        <Text style={styles.textBox}>Xác nhận mật khẩu mới</Text>
+                        <View style={styles.boxSection}>
+                            <TouchableOpacity
+                                style={styles.Icon}
+                                onPress={() => setShowPassword(!showPassword)}
+                            >
+                                <Ionicons name='eye-off-outline' size={20} color='black' />
+                            </TouchableOpacity>
+                            <TextInput
+                                style={
+                                    styles.input
+                                }
+                                placeholder="Nhập mật khẩu của bạn"
 
 
-                            secureTextEntry="true"
-                            underlineColorAndroid="transparent"
-                        />
+                                secureTextEntry="true"
+                                underlineColorAndroid="transparent"
+                            />
+                        </View>
                     </View>
+                    {!this.state.loadingbtn ? (
+                        <Button
+                            type="primary"
+                            onPress={this.onFinish}
+                            style={styles.PrimaryBtn}
+                        >
+                            Lưu
+                        </Button>
+                    ) : (
+                        <Button style={styles.LoadingBtn} loading>
+                            loading
+                        </Button>
+                    )}
                 </View>
-                {!this.state.loadingbtn ? (
-                    <Button
-                        type="primary"
-                        onPress={this.onFinish}
-                        style={styles.PrimaryBtn}
-                    >
-                        Lưu
-                    </Button>
-                ) : (
-                    <Button style={styles.LoadingBtn} loading>
-                        loading
-                    </Button>
-                )}
-            </View>
-        );
+            );
+        }
     }
 }
 

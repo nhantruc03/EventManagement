@@ -7,6 +7,8 @@ import { View, Platform, Image, Text } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { ActivityIndicator } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { Redirect } from "react-router";
+import ApiFailHandler from '../helper/ApiFailHandler'
 class UploadImage extends Component {
     constructor(props) {
         super(props);
@@ -15,6 +17,7 @@ class UploadImage extends Component {
             image: null,
             coverUrl: null,
             isLoading: false,
+            loggout: false,
         };
     }
 
@@ -73,8 +76,13 @@ class UploadImage extends Component {
                         isLoading: false,
                     });
                     this.props.Save(res.data.url, result.uri);
+                })
+                .catch(err => {
+                    let errResult = ApiFailHandler(err.response?.data?.error)
+                    this.setState({
+                        loggout: errResult.isExpired
+                    })
                 });
-
             if (!result.cancelled) {
                 this.setState({
                     image: result.uri,
@@ -84,18 +92,28 @@ class UploadImage extends Component {
     };
 
     render() {
-        return (
-            <View style={{ alignItems: "center" }}>
-                <TouchableOpacity
-                    //style={styles.btnUpdate}
-                    style={{}}
-                    underlayColor="#fff"
-                    onPress={this.pickImage}
-                >
-                    <Image source={require("../../assets/images/picture.png")} />
-                </TouchableOpacity>
-            </View>
-        );
+        if (this.state.loggout) {
+            return (
+                <Redirect
+                    to={{
+                        pathname: "/login",
+                    }}
+                />
+            )
+        } else {
+            return (
+                <View style={{ alignItems: "center" }}>
+                    <TouchableOpacity
+                        //style={styles.btnUpdate}
+                        style={{}}
+                        underlayColor="#fff"
+                        onPress={this.pickImage}
+                    >
+                        <Image source={require("../../assets/images/picture.png")} />
+                    </TouchableOpacity>
+                </View>
+            );
+        }
     }
 }
 

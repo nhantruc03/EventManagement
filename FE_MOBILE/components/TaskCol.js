@@ -11,6 +11,8 @@ import Url from "../env";
 import axios from "axios";
 import getToken from "../Auth";
 import { RefreshControl } from 'react-native';
+import ApiFailHandler from '../components/helper/ApiFailHandler'
+import { Redirect } from 'react-router';
 
 const styles = StyleSheet.create({
     FilterBtn: {
@@ -63,6 +65,7 @@ class TaskCol extends Component {
             visible: false,
             SearchData: [],
             refreshing: false,
+            loggout: false,
             listCheckbox: [
                 {
                     label: "Tên", // label for checkbox item
@@ -195,11 +198,11 @@ class TaskCol extends Component {
             filter: checkedValues,
 
         })
-        console.log("value", checkedValues)
+
         let temp = this.state.listCheckbox
         temp.forEach(e => {
             if (this.state.filter.includes(e.value)) {
-                console.log('e', e.value)
+
                 e.selected = true
             }
             else e.selected = false
@@ -226,80 +229,95 @@ class TaskCol extends Component {
                 }
             )
             .then((res) => {
-                console.log("data", res.data.data);
                 this.props.updateFullListCurrentAction(res.data.data);
                 this.setState({
                     refreshing: false,
                     SearchData: res.data.data
                 });
+            })
+            .catch(err => {
+                let errResult = ApiFailHandler(err.response?.data?.error)
+                this.setState({
+                    loggout: errResult.isExpired
+                })
             });
     }
 
     render() {
         let data_appliedFilter = this.applyFilter(this.state.SearchData)
-        return (
-            <View>
-                <View style={{ flexDirection: "row", width: '100%', alignItems: 'center' }}>
-                    <View style={{ backgroundColor: 'black', width: '72%' }}>
-                        <Search style={{ width: '100%' }} data={this.props.data} target={"name"} getSearchData={(e) => this.getSearchData(e)} />
-                    </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'flex-end', width: '28%' }}>
-                        <TouchableOpacity onPress={this.openFilter}>
-                            <View style={{ marginRight: 8 }}>
-                                <View style={styles.FilterBtn}>
-                                    {/* <Text style={styles.FilterBtnText}>Bộ lọc</Text> */}
-                                    <Ionicons name='filter' size={24} color="#2A9D8F" />
+        if (this.state.loggout) {
+            return (
+                <Redirect
+                    to={{
+                        pathname: "/login",
+                    }}
+                />
+            )
+        } else {
+            return (
+                <View>
+                    <View style={{ flexDirection: "row", width: '100%', alignItems: 'center' }}>
+                        <View style={{ backgroundColor: 'black', width: '72%' }}>
+                            <Search style={{ width: '100%' }} data={this.props.data} target={"name"} getSearchData={(e) => this.getSearchData(e)} />
+                        </View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', width: '28%' }}>
+                            <TouchableOpacity onPress={this.openFilter}>
+                                <View style={{ marginRight: 8 }}>
+                                    <View style={styles.FilterBtn}>
+                                        {/* <Text style={styles.FilterBtnText}>Bộ lọc</Text> */}
+                                        <Ionicons name='filter' size={24} color="#2A9D8F" />
+                                    </View>
                                 </View>
+                            </TouchableOpacity>
+                            <View>
+                                <OptionsMenu
+                                    customButton={myIcon}
+                                    destructiveIndex={1}
+                                    options={["Chỉnh sửa loại công việc", "Xoá loại công việc", "Huỷ bỏ"]}
+                                    actions={[() => this.props.EditActionType(this.props.route), () => this.props.DeleteAlert(this.props.route.key), this.test]}
+                                />
                             </View>
-                        </TouchableOpacity>
-                        <View>
-                            <OptionsMenu
-                                customButton={myIcon}
-                                destructiveIndex={1}
-                                options={["Chỉnh sửa loại công việc", "Xoá loại công việc", "Huỷ bỏ"]}
-                                actions={[() => this.props.EditActionType(this.props.route), () => this.props.DeleteAlert(this.props.route.key), this.test]}
+                        </View>
+                    </View >
+                    <Overlay isVisible={this.state.visible} onBackdropPress={this.openFilter}>
+                        <View style={styles.CheckboxContainer}>
+                            <View style={{ marginTop: 16 }}></View>
+                            <CheckboxGroup
+                                style={{ backgroundColor: 'black' }}
+                                callback={(selected) => { this.onChange(selected) }}
+                                iconColor={"#2A9D8F"}
+                                iconSize={30}
+                                checkedIcon="ios-checkbox-outline"
+                                uncheckedIcon="ios-square-outline"
+                                checkboxes={this.state.listCheckbox}
+                                labelStyle={{
+                                    fontFamily: "semibold",
+                                    fontSize: 16,
+                                    color: '#2A9D8F'
+                                }}
+                                rowStyle={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+
+                                }}
+                                rowDirection={"column"}
                             />
                         </View>
-                    </View>
-                </View >
-                <Overlay isVisible={this.state.visible} onBackdropPress={this.openFilter}>
-                    <View style={styles.CheckboxContainer}>
-                        <View style={{ marginTop: 16 }}></View>
-                        <CheckboxGroup
-                            style={{ backgroundColor: 'black' }}
-                            callback={(selected) => { this.onChange(selected) }}
-                            iconColor={"#2A9D8F"}
-                            iconSize={30}
-                            checkedIcon="ios-checkbox-outline"
-                            uncheckedIcon="ios-square-outline"
-                            checkboxes={this.state.listCheckbox}
-                            labelStyle={{
-                                fontFamily: "semibold",
-                                fontSize: 16,
-                                color: '#2A9D8F'
-                            }}
-                            rowStyle={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-
-                            }}
-                            rowDirection={"column"}
-                        />
-                    </View>
-                </Overlay>
-                <FlatList
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={this.state.refreshing}
-                            onRefresh={this.onRefresh}
-                        />
-                    }
-                    data={data_appliedFilter}
-                    renderItem={({ item }) => this.renderItem(item)}
-                    keyExtractor={(item) => item._id}
-                />
-            </View>
-        );
+                    </Overlay>
+                    <FlatList
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={this.state.refreshing}
+                                onRefresh={this.onRefresh}
+                            />
+                        }
+                        data={data_appliedFilter}
+                        renderItem={({ item }) => this.renderItem(item)}
+                        keyExtractor={(item) => item._id}
+                    />
+                </View>
+            );
+        }
     }
 }
 

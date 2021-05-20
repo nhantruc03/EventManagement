@@ -29,7 +29,9 @@ import * as GestureHandler from 'react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Loader from "react-native-modal-loader";
 import { Alert } from "react-native";
-
+import { RefreshControl } from "react-native";
+import { Redirect } from "react-router";
+import ApiFailHandler from '../../components/helper/ApiFailHandler'
 
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
@@ -60,6 +62,13 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderColor: "#2A9D8F",
     fontFamily: "semibold",
+  },
+  LoadingBtn: {
+    borderRadius: 8,
+    padding: 12,
+    margin: 16,
+    justifyContent: "center",
+    alignContent: "center",
   },
   inputdisable: {
     height: 40,
@@ -180,7 +189,9 @@ class scriptdetail extends Component {
       addScriptDetails: false,
       loadingbtn: false,
       history: [],
-      deleteLoading: false
+      deleteLoading: false,
+      refreshing: false,
+      loggout: false,
     };
     this._isMounted = false;
   }
@@ -243,7 +254,13 @@ class scriptdetail extends Component {
             Authorization: await getToken(),
           },
         })
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
       axios
         .post(
           `${Url()}/api/script-histories/getAll`,
@@ -254,7 +271,13 @@ class scriptdetail extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
     ]);
     const scriptdetails = await axios
       .post(
@@ -266,7 +289,13 @@ class scriptdetail extends Component {
           },
         }
       )
-      .then((res) => res.data.data);
+      .then((res) => res.data.data)
+      .catch(err => {
+        let errResult = ApiFailHandler(err.response?.data?.error)
+        this.setState({
+          loggout: errResult.isExpired
+        })
+      });
 
     if (script !== null && scriptdetails !== null) {
       if (this._isMounted) {
@@ -363,10 +392,11 @@ class scriptdetail extends Component {
         this.props.route.params.updateScript(res.data.data);
       })
       .catch((err) => {
-        // Message('Tạo thất bại', false);
-        // message.error("Cập nhật thất bại");
-        alert("Cập nhật kịch bản thất bại");
-        console.log("update fails");
+        let errResult = ApiFailHandler(err.response?.data?.error)
+        this.setState({
+          loggout: errResult.isExpired
+        })
+        alert(`${errResult.message}`);
       });
   };
 
@@ -419,7 +449,7 @@ class scriptdetail extends Component {
       } else return null
     }
     else return (
-      <Button loading>loading</Button>
+      <Button loading style={styles.LoadingBtn}>loading</Button>
     )
   }
 
@@ -488,7 +518,27 @@ class scriptdetail extends Component {
           alert("Xoá chi tiết kịch bản thất bại")
         })
     )
-
+  }
+  onRefresh = async () => {
+    this.setState({
+      refreshing: true,
+    });
+    await axios
+      .post(
+        `${Url()}/api/script-details/getAll`,
+        { scriptId: this.props.route.params.id },
+        {
+          headers: {
+            Authorization: await getToken(),
+          },
+        }
+      )
+      .then((res) => {
+        this.setState({
+          refreshing: false,
+          listscriptdetails: res.data.data
+        });
+      });
   }
 
 
@@ -521,106 +571,121 @@ class scriptdetail extends Component {
   }
 
   render() {
-    if (!this.state.isLoading) {
-      console.log(checkPermisson(this.props.route.params.currentPermissions, constants.QL_KICHBAN_PERMISSION))
+    if (this.state.loggout) {
       return (
-        <Provider>
-          <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
-          <View style={styles.Container}>
-            <View styles={styles.ScriptNameContainer}>
-              <Text style={styles.Label}>Tên kịch bản</Text>
-              <View style={styles.BoxInput}>
-                <TextInput
-                  onChangeText={this.onChangeName}
-                  style={
-                    this.state.disable === true
-                      ? styles.input
-                      : styles.inputdisable
-                  }
-                  value={this.state.name}
-                  editable={this.state.disable}
-                ></TextInput>
-              </View>
-            </View>
-            <View style={styles.ScriptNameLabelContainer}>
-              <Text style={styles.Label}>Dành cho</Text>
-              <View style={styles.Box}>
-                <Picker
-                  onChange={this.onChangeForId}
-                  value={this.state.forId}
-                  data={this.state.listUser}
-                  cascade={false}
-                  okText="Đồng ý"
-                  dismissText="Thoát"
-                >
-                  <Text style={{ padding: 8, }}>
-                    {!this.state.forId
-                      ? "Chọn"
-                      : this.state.listUser_default.filter(
-                        (e) => e._id === this.state.forId[0]
-                      )[0].name}
-                  </Text>
-                </Picker>
-              </View>
-            </View>
-            {this.renderUpdateBtn()}
-            <View>
-              <View>
-                <Text style={styles.Label}>Timeline</Text>
-              </View>
-            </View>
-            <View>
-              <FlatList
-                data={this.state.listscriptdetails}
-                keyExtractor={(item) => item._id}
-                renderItem={this.renderItem}
-                style={{ height: H * 0.38 }}
-              ></FlatList>
-            </View>
-            {checkPermisson(this.props.route.params.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
-              <TouchableOpacity
-                style={styles.btnAdd}
-                underlayColor="#fff"
-                onPress={() =>
-                  this.setState({
-                    visible: true,
-                    editDetailData: {
-                      name: "",
-                      time: new Date(),
-                      description: "",
-                    },
-                    addScriptDetails: true,
-                  })
-                }
-              >
-                <Text style={styles.textAdd}>+ Thêm</Text>
-              </TouchableOpacity>
-              : null}
-          </View>
-          <Modal
-            closable
-            maskClosable
-            title="Chi tiết"
-            visible={this.state.visible}
-            transparent
-            onClose={this.onClose}
-          >
-            <ScriptDetailModal
-              onClose={this.onClose}
-              add={this.state.addScriptDetails}
-              data={this.state.editDetailData}
-              scriptId={this.state._id}
-              history={this.state.history}
-              updateListScriptDetails={(e, b) => this.updateListScriptDetails(e, b)}
-              addListScriptDetails={(e, b) => this.addListScriptDetails(e, b)}
-            />
-          </Modal>
-        </Provider>
-      );
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
+        />
+      )
     } else {
-      return (
-        <Indicator />
-      );
+      if (!this.state.isLoading) {
+        return (
+          <Provider>
+            <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
+            <View style={styles.Container}>
+              <View styles={styles.ScriptNameContainer}>
+                <Text style={styles.Label}>Tên kịch bản</Text>
+                <View style={styles.BoxInput}>
+                  <TextInput
+                    onChangeText={this.onChangeName}
+                    style={
+                      this.state.disable === true
+                        ? styles.input
+                        : styles.inputdisable
+                    }
+                    value={this.state.name}
+                    editable={this.state.disable}
+                  ></TextInput>
+                </View>
+              </View>
+              <View style={styles.ScriptNameLabelContainer}>
+                <Text style={styles.Label}>Dành cho</Text>
+                <View style={styles.Box}>
+                  <Picker
+                    onChange={this.onChangeForId}
+                    value={this.state.forId}
+                    data={this.state.listUser}
+                    cascade={false}
+                    okText="Đồng ý"
+                    dismissText="Thoát"
+                  >
+                    <Text style={{ padding: 8, }}>
+                      {!this.state.forId
+                        ? "Chọn"
+                        : this.state.listUser_default.filter(
+                          (e) => e._id === this.state.forId[0]
+                        )[0].name}
+                    </Text>
+                  </Picker>
+                </View>
+              </View>
+              {this.renderUpdateBtn()}
+              <View>
+                <View>
+                  <Text style={styles.Label}>Timeline</Text>
+                </View>
+              </View>
+              <View>
+                <FlatList
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={this.state.refreshing}
+                      onRefresh={this.onRefresh}
+                    />
+                  }
+                  data={this.state.listscriptdetails}
+                  keyExtractor={(item) => item._id}
+                  renderItem={this.renderItem}
+                  style={{ height: H * 0.38 }}
+                ></FlatList>
+              </View>
+              {checkPermisson(this.props.route.params.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
+                <TouchableOpacity
+                  style={styles.btnAdd}
+                  underlayColor="#fff"
+                  onPress={() =>
+                    this.setState({
+                      visible: true,
+                      editDetailData: {
+                        name: "",
+                        time: new Date(),
+                        description: "",
+                      },
+                      addScriptDetails: true,
+                    })
+                  }
+                >
+                  <Text style={styles.textAdd}>+ Thêm</Text>
+                </TouchableOpacity>
+                : null}
+            </View>
+            <Modal
+              closable
+              maskClosable
+              title="Chi tiết"
+              visible={this.state.visible}
+              transparent
+              onClose={this.onClose}
+            >
+              <ScriptDetailModal
+                onClose={this.onClose}
+                add={this.state.addScriptDetails}
+                data={this.state.editDetailData}
+                scriptId={this.state._id}
+                history={this.state.history}
+                updateListScriptDetails={(e, b) => this.updateListScriptDetails(e, b)}
+                addListScriptDetails={(e, b) => this.addListScriptDetails(e, b)}
+              />
+            </Modal>
+          </Provider>
+        );
+      } else {
+        return (
+          <Indicator />
+        );
+      }
     }
   }
 }

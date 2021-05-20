@@ -16,6 +16,10 @@ import Url from "../../env";
 import getToken from "../../Auth";
 import checkPermisson from "../helper/checkPermissions";
 import * as constants from "../constant/action";
+import Loader from "react-native-modal-loader";
+import { RefreshControl } from "react-native";
+import { Redirect } from "react-router";
+import ApiFailHandler from '../helper/ApiFailHandler'
 
 
 const styles = StyleSheet.create({
@@ -66,10 +70,20 @@ export default class GuestTab extends Component {
     this.state = {
       data: [],
       SearchData: [],
+      updateLoading: false,
+      refreshing: false,
+      loggout: false,
     };
   }
 
+  onLoading() {
+    this.setState({
+      updateLoading: true,
+    });
+  }
+
   changeStatus = async (e) => {
+    this.onLoading()
     await axios
       .put(
         `${Url()}/api/guests/` + e._id,
@@ -91,20 +105,47 @@ export default class GuestTab extends Component {
           data: temp_data,
           SearchData: temp_data,
         });
-        // this.props.updateGuest(temp_data);
-        // console.log("temp_data", temp_data);
+        this.setState({
+          updateLoading: !this.state.updateLoading
+        })
         alert(`Trạng thái của khách mời ${e.name} cập nhật thành công`);
       })
-      .catch(() => {
+      .catch(err => {
+        let errResult = ApiFailHandler(err.response?.data?.error)
+        this.setState({
+          loggout: errResult.isExpired,
+          updateLoading: !this.state.updateLoading
+        })
         alert(`Trạng thái của khách mời ${e.name} cập nhật thất bại`);
       });
   };
 
-  UNSAFE_componentWillReceiveProps(e) {
-    // console.log("should update", e);
+  onRefresh = async () => {
     this.setState({
-      data: e.data,
+      refreshing: true,
     });
+    await axios
+      .post(
+        `${Url()}/api/guest-types/getAll`,
+        { eventId: this.eventId },
+        {
+          headers: {
+            Authorization: await getToken(),
+          },
+        }
+      )
+      .then((res) => {
+        this.setState({
+          refreshing: false,
+          data: res.data.data
+        });
+      })
+      .catch(err => {
+        let errResult = ApiFailHandler(err.response?.data?.error)
+        this.setState({
+          loggout: errResult.isExpired
+        })
+      });
   }
 
   componentDidMount() {
@@ -117,8 +158,12 @@ export default class GuestTab extends Component {
   getSearchData1 = (data) => {
     this.setState({
       SearchData: data,
+      refreshing: false,
     });
   };
+
+
+
 
   renderItem = (e) => {
     return (
@@ -161,25 +206,42 @@ export default class GuestTab extends Component {
       }
       return list;
     }, []);
-    return (
-      <SafeAreaView>
-        <Search
-          target={["name", "phone"]}
-          multi={true}
-          data={this.state.data}
-          getSearchData={(e) => this.getSearchData1(e)}
-        ></Search>
-        <SectionList
-          sections={result}
-          keyExtractor={(item) => item._id}
-          renderSectionHeader={({ section }) => (
-            <View style={styles.headerContainer}>
-              <Text style={styles.headerText}>{section.title}</Text>
-            </View>
-          )}
-          renderItem={this.renderItem}
+    if (this.state.loggout) {
+      return (
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
         />
-      </SafeAreaView>
-    );
+      )
+    } else {
+      return (
+        <SafeAreaView>
+          <Loader loading={this.state.updateLoading} color="#2A9D8F" />
+          <Search
+            target={["name", "phone"]}
+            multi={true}
+            data={this.state.data}
+            getSearchData={(e) => this.getSearchData1(e)}
+          ></Search>
+          <SectionList
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this.onRefresh}
+              />
+            }
+            sections={result}
+            keyExtractor={(item) => item._id}
+            renderSectionHeader={({ section }) => (
+              <View style={styles.headerContainer}>
+                <Text style={styles.headerText}>{section.title}</Text>
+              </View>
+            )}
+            renderItem={this.renderItem}
+          />
+        </SafeAreaView>
+      );
+    }
   }
 }

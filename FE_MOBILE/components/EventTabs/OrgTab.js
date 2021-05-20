@@ -1,12 +1,16 @@
 import React, { Component } from "react";
-
 import { SafeAreaView, View, Text, Image, StyleSheet } from "react-native";
-
 import { FlatList } from "react-native-gesture-handler";
 import { SearchBar } from "react-native-elements";
 import Search from "../helper/search";
 import Url from "../../env";
 import { ActivityIndicator } from "@ant-design/react-native";
+import { RefreshControl } from 'react-native';
+
+import getToken from "../../Auth";
+import axios from "axios";
+import { Redirect } from "react-router";
+import ApiFailHandler from '../helper/ApiFailHandler'
 
 const styles = StyleSheet.create({
   Container: {
@@ -62,6 +66,8 @@ class OrgTab extends Component {
       search: null,
       SearchData1: [],
       loading: true,
+      refreshing: false,
+      loggout: false,
     };
   }
 
@@ -71,6 +77,34 @@ class OrgTab extends Component {
       data: this.props.data,
       SearchData: this.props.data,
     });
+  }
+
+  onRefresh = async () => {
+    this.setState({
+      refreshing: true,
+    });
+    await axios
+      .post(
+        `${Url()}/api/event-assign/getAll`,
+        { eventId: this.props.eventId },
+        {
+          headers: {
+            Authorization: await getToken(),
+          },
+        }
+      )
+      .then((res) => {
+        this.setState({
+          refreshing: false,
+          SearchData: res.data.data
+        });
+      })
+      .catch(err => {
+        let errResult = ApiFailHandler(err.response?.data?.error)
+        this.setState({
+          loggout: errResult.isExpired
+        })
+      });
   }
 
   getSearchData1 = (data) => {
@@ -83,6 +117,12 @@ class OrgTab extends Component {
     if (this.state.data.length > 0) {
       return (
         <FlatList
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this.onRefresh}
+            />
+          }
           style={styles.ListContainer}
           data={this.state.SearchData}
           renderItem={({ item }) => (
@@ -121,24 +161,34 @@ class OrgTab extends Component {
   };
 
   render() {
-    return (
-      <SafeAreaView style={styles.Container}>
-        <Search
-          targetParent="userId"
-          target="name"
-          data={this.state.data}
-          getSearchData={(e) => this.getSearchData1(e)}
-        ></Search>
+    if (this.state.loggout) {
+      return (
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
+        />
+      )
+    } else {
+      return (
+        <SafeAreaView style={styles.Container}>
+          <Search
+            targetParent="userId"
+            target="name"
+            data={this.state.data}
+            getSearchData={(e) => this.getSearchData1(e)}
+          ></Search>
 
-        {this.state.loading ? (
-          <View>
-            <ActivityIndicator size="large" animating color="#2A9D8F"></ActivityIndicator>
-          </View>
-        ) : (
-          this.renderList()
-        )}
-      </SafeAreaView>
-    );
+          {this.state.loading ? (
+            <View>
+              <ActivityIndicator size="large" animating color="#2A9D8F"></ActivityIndicator>
+            </View>
+          ) : (
+            this.renderList()
+          )}
+        </SafeAreaView>
+      );
+    }
   }
 }
 

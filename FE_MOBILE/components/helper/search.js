@@ -63,6 +63,9 @@ class ss extends Component {
             // alignItems: "center",
             ...this.props.style
           }}
+          inputContainerStyle={{
+            backgroundColor: 'white',
+          }}
           value={this.state.value}
           onClear={() => this.onChange("")}
           onCancel={() => this.onChange("")}

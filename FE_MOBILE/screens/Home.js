@@ -19,6 +19,9 @@ import Swiper from "react-native-swiper";
 import HomeActionItem from "../components/Home/HomeActionItem";
 
 import Indicator from "../components/helper/Loading";
+import { RefreshControl } from "react-native";
+import ApiFailHandler from '../components/helper/ApiFailHandler'
+import { Redirect } from "react-router";
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
@@ -135,6 +138,7 @@ class Home extends Component {
       refreshing: false,
       totalActionDoneLoading: 0,
       ActionDoneLoading: false,
+      loggout: false
     };
     this._isMounted = false;
   }
@@ -155,7 +159,13 @@ class Home extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
     ]);
     if (this._isMounted) {
       this.setState({
@@ -184,7 +194,13 @@ class Home extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
       axios
         .post(
           `${Url()}/api/events/getAll?eq=${temp}`,
@@ -195,7 +211,13 @@ class Home extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
       axios
         .post(
           `${Url()}/api/actions/getAll`,
@@ -206,7 +228,13 @@ class Home extends Component {
             },
           }
         )
-        .then((res) => res.data.data),
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
     ]);
     if (this._isMounted) {
       let temp = [...future_event, ...ongoing_event];
@@ -307,65 +335,79 @@ class Home extends Component {
   };
 
   render() {
-    if (!this.state.isLoading) {
+    if (this.state.loggout) {
       return (
-        <View
-          style={
-            Platform.OS === "ios" ? styles.containerIOS : styles.containerAndroid
-          }
-        >
-          <View style={styles.infoSection}>
-            <View style={styles.avacontainer}>
-              <Image
-                style={styles.avaImg}
-                source={{
-                  uri: `${Url()}/api/images/${this.state.currentUser.photoUrl}`,
-                }}
-              />
-            </View>
-            <View>
-              <Text style={styles.introText}>Xin chào!</Text>
-              <Text style={styles.nameText}>{this.state.currentUser.name}</Text>
-            </View>
-          </View>
-          <View style={styles.eventSection}>
-            <View style={styles.headContainer}>
-              <Text style={styles.labelText}>Sự kiện</Text>
-              <TouchableOpacity
-                onPress={() => this.props.navigation.navigate("Event")}
-              >
-                <Text style={styles.linkText}>Xem tất cả</Text>
-              </TouchableOpacity>
-            </View>
-            <Swiper loop={false} autoplay={false} showsPagination={false}>
-              {this.renderEvents()}
-            </Swiper>
-          </View>
-          <View style={styles.taskSection}>
-            <View style={styles.headContainer}>
-              <Text style={styles.labelText}>Công việc</Text>
-              <TouchableOpacity
-                onPress={() => this.props.navigation.navigate("Task")}
-              >
-                <Text style={styles.linkText}>Xem tất cả</Text>
-              </TouchableOpacity>
-            </View>
-            <View>
-              <FlatList
-                style={{ height: 300 }}
-                refreshing={this.state.refreshing}
-                onRefresh={this.loadData}
-                data={this.state.listTasks}
-                renderItem={this.renderActions}
-                keyExtractor={(item) => item._id}
-                nestedScrollEnabled={true}
-              />
-            </View>
-          </View>
-        </View>
-      );
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
+        />
+      )
     } else {
-      return <Indicator />;
+      if (!this.state.isLoading) {
+        return (
+          <View
+            style={
+              Platform.OS === "ios" ? styles.containerIOS : styles.containerAndroid
+            }
+          >
+            <View style={styles.infoSection}>
+              <View style={styles.avacontainer}>
+                <Image
+                  style={styles.avaImg}
+                  source={{
+                    uri: `${Url()}/api/images/${this.state.currentUser.photoUrl}`,
+                  }}
+                />
+              </View>
+              <View>
+                <Text style={styles.introText}>Xin chào!</Text>
+                <Text style={styles.nameText}>{this.state.currentUser.name}</Text>
+              </View>
+            </View>
+            <View style={styles.eventSection}>
+              <View style={styles.headContainer}>
+                <Text style={styles.labelText}>Sự kiện</Text>
+                <TouchableOpacity
+                  onPress={() => this.props.navigation.navigate("Event")}
+                >
+                  <Text style={styles.linkText}>Xem tất cả</Text>
+                </TouchableOpacity>
+              </View>
+              <Swiper loop={false} autoplay={false} showsPagination={false}>
+                {this.renderEvents()}
+              </Swiper>
+            </View>
+            <View style={styles.taskSection}>
+              <View style={styles.headContainer}>
+                <Text style={styles.labelText}>Công việc</Text>
+                <TouchableOpacity
+                  onPress={() => this.props.navigation.navigate("Task")}
+                >
+                  <Text style={styles.linkText}>Xem tất cả</Text>
+                </TouchableOpacity>
+              </View>
+              <View>
+                <FlatList
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={this.state.refreshing}
+                      onRefresh={this.loadData}
+                    />
+                  }
+                  style={{ height: 300 }}
+                  data={this.state.listTasks}
+                  renderItem={this.renderActions}
+                  keyExtractor={(item) => item._id}
+                  nestedScrollEnabled={true}
+                />
+              </View>
+            </View>
+          </View>
+        );
+      } else {
+        return <Indicator />;
+      }
     }
   }
 }

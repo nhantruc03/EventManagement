@@ -15,6 +15,9 @@ import axios from "axios";
 import * as PushNoti from '../helper/pushNotification'
 import { Alert } from "react-native";
 import Loader from "react-native-modal-loader";
+import { RefreshControl } from "react-native";
+import { Redirect } from "react-router";
+import ApiFailHandler from '../helper/ApiFailHandler'
 
 const { Swipeable } = GestureHandler;
 
@@ -112,6 +115,8 @@ export default class ScriptTab extends Component {
       visible: false,
       loading: true,
       deleteLoading: false,
+      refreshing: false,
+      loggout: false,
     };
   }
 
@@ -126,6 +131,36 @@ export default class ScriptTab extends Component {
       loading: this.props.loading,
     });
   }
+
+  onRefresh = async () => {
+    this.setState({
+      refreshing: true,
+    });
+    await axios
+      .post(
+        `${Url()}/api/scripts/getAll`,
+        { eventId: this.props.eventId },
+        {
+          headers: {
+            Authorization: await getToken(),
+          },
+        }
+      )
+      .then((res) => {
+        this.setState({
+          refreshing: false,
+          data: res.data.data
+        });
+      })
+      .catch(err => {
+        let errResult = ApiFailHandler(err.response?.data?.error)
+        this.setState({
+          loggout: errResult.isExpired
+        })
+      });
+  }
+
+
   updateListScript = (e) => {
     this.setState({
       data: [...this.state.data, e],
@@ -215,7 +250,7 @@ export default class ScriptTab extends Component {
 
 
   renderItem = (e) => {
-    console.log(this.props.currentPermissions)
+
     return (
       < Swipeable
         renderRightActions={() => this.RightActions(e.item)}
@@ -249,48 +284,64 @@ export default class ScriptTab extends Component {
   }
 
   render() {
-    if (this.state.data) {
+    if (this.state.loggout) {
       return (
-        <Provider>
-          <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
-          <View>
-            <FlatList
-              height={H * 0.7}
-              style={styles.ListContainer}
-              data={this.state.data}
-              renderItem={this.renderItem}
-              keyExtractor={(item) => item._id}
-            ></FlatList>
-            {checkPermisson(this.props.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
-              <TouchableOpacity
-                style={styles.btnUpdate}
-                underlayColor="#fff"
-                onPress={() => this.setState({ visible: true })}
-              >
-                <Text style={styles.textUpdate}>Tạo mới</Text>
-              </TouchableOpacity> : null}
-            <Modal
-              title="Tạo mới"
-              transparent
-              onClose={this.onClose}
-              maskClosable
-              visible={this.state.visible}
-              closable
-            >
-              <ScriptCreateModal
+        <Redirect
+          to={{
+            pathname: "/login",
+          }}
+        />
+      )
+    } else {
+      if (this.state.data) {
+        return (
+          <Provider>
+            <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
+            <View>
+              <FlatList
+                refreshControl={
+                  <RefreshControl
+                    refreshing={this.state.refreshing}
+                    onRefresh={this.onRefresh}
+                  />
+                }
+                height={H * 0.7}
+                style={styles.ListContainer}
+                data={this.state.data}
+                renderItem={this.renderItem}
+                keyExtractor={(item) => item._id}
+              ></FlatList>
+              {checkPermisson(this.props.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
+                <TouchableOpacity
+                  style={styles.btnUpdate}
+                  underlayColor="#fff"
+                  onPress={() => this.setState({ visible: true })}
+                >
+                  <Text style={styles.textUpdate}>Tạo mới</Text>
+                </TouchableOpacity> : null}
+              <Modal
+                title="Tạo mới"
+                transparent
                 onClose={this.onClose}
-                scriptId={this.state._id}
-                event={this.props.event}
-                updateListScript={(e) => this.updateListScript(e)}
-              />
-            </Modal>
-          </View>
-        </Provider>
-      );
+                maskClosable
+                visible={this.state.visible}
+                closable
+              >
+                <ScriptCreateModal
+                  onClose={this.onClose}
+                  scriptId={this.state._id}
+                  event={this.props.event}
+                  updateListScript={(e) => this.updateListScript(e)}
+                />
+              </Modal>
+            </View>
+          </Provider>
+        );
 
-    }
-    else {
-      return null
+      }
+      else {
+        return null
+      }
     }
   }
 }

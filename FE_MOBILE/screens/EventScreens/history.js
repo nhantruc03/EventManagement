@@ -1,13 +1,7 @@
 import React, { Component } from "react";
-import { SectionList } from "react-native";
 import {
-    View,
-    Text,
     StyleSheet,
-    TouchableOpacity,
-    LayoutAnimation,
-    Platform,
-    UIManager,
+
     ScrollView,
 } from "react-native";
 import moment from "moment";
@@ -17,6 +11,8 @@ import axios from "axios";
 import Url from "../../env";
 
 import getToken from "../../Auth";
+import { Redirect } from "react-router";
+import ApiFailHandler from '../../components/helper/ApiFailHandler'
 
 const styles = StyleSheet.create({
     Container: {
@@ -42,6 +38,7 @@ class history extends Component {
             expand: false,
             refreshing: false,
             data: [],
+            loggout: false,
         };
     }
 
@@ -100,24 +97,40 @@ class history extends Component {
                     refreshing: false,
                     data: res.data.data
                 });
+            })
+            .catch(err => {
+                let errResult = ApiFailHandler(err.response?.data?.error)
+                this.setState({
+                    loggout: errResult.isExpired
+                })
             });
     };
 
     render() {
-        return (
-            <ScrollView
-                refreshControl={
-                    <RefreshControl
-                        refreshing={this.state.refreshing}
-                        onRefresh={this.onRefresh}
-                    />
-                }
-                nestedScrollEnabled={true}
-                style={styles.Container}
-            >
-                {this.renderList()}
-            </ScrollView>
-        );
+        if (this.state.loggout) {
+            return (
+                <Redirect
+                    to={{
+                        pathname: "/login",
+                    }}
+                />
+            )
+        } else {
+            return (
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this.onRefresh}
+                        />
+                    }
+                    nestedScrollEnabled={true}
+                    style={styles.Container}
+                >
+                    {this.renderList()}
+                </ScrollView>
+            );
+        }
     }
 }
 

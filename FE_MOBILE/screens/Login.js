@@ -17,6 +17,8 @@ import axios from "axios";
 import Url from "../env";
 import * as Notifications from 'expo-notifications'
 import * as Permissions from 'expo-permissions'
+import { Redirect } from 'react-router';
+import auth from '../router/auth'
 
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
@@ -30,6 +32,7 @@ export default class Login extends Component {
       password: "",
       showPassword: true,
       focusInputType: "",
+      loggined: false,
     };
   }
 
@@ -88,21 +91,37 @@ export default class Login extends Component {
     data.append("password", this.state.password);
     let result = await axios
       .post(`${Url()}/api/users/login`, data)
-      .then((res) => {
+      .then(async (res) => {
         if (res.data.success === true) {
-          return res.data.data;
+          await auth.login(res.data.data);
+          if (await auth.isAuthenticatedAdmin() === true) {
+            var login = await AsyncStorage.getItem('login');
+            if (login !== null) {
+              this.setState({
+                loggined: true
+              })
+            }
+          }
+          else {
+            alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
+          }
+        } else {
+          alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
         }
       })
       .catch((error) => {
         console.log(error.response);
-        //alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
+        alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
       });
 
-    if (result !== undefined) {
-      await AsyncStorage.setItem("login", JSON.stringify(result));
-      await this.registerForPushNotificationsAsync();
-      this.props.navigation.replace("BottomNav");
-    } else alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
+    // if (result !== undefined) {
+    //   await AsyncStorage.setItem("login", JSON.stringify(result));
+    //   await this.registerForPushNotificationsAsync();
+    //   // this.props.navigation.replace("BottomNav");
+    //   this.setState({
+    //     loggined: true,
+    //   })
+    // } else alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
   };
 
   setUsernameFocusInputType = () => {
@@ -128,7 +147,16 @@ export default class Login extends Component {
 
 
   render() {
-    return (
+    if (this.state.loggined) {
+      return (
+        <Redirect
+          to={{
+            pathname: "/",
+          }}
+        />
+      )
+    }
+    else return (
       <SafeAreaView style={styles.container}>
         <View style={styles.formcontainer}>
           <Text style={styles.h1}>XIN CHÀO</Text>
