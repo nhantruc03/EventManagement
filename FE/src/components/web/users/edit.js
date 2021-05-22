@@ -2,9 +2,8 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { AUTH } from '../../env'
 import { trackPromise } from 'react-promise-tracker';
-import { Message } from '../service/renderMessage';
 import { Content } from 'antd/lib/layout/layout';
-import { Breadcrumb, Button, Form, Input, InputNumber, Row, Select, } from 'antd';
+import { Breadcrumb, Button, Form, Input, InputNumber, message, Row, Select, } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
 import ApiFailHandler from '../helper/ApiFailHandler'
@@ -33,10 +32,11 @@ class edit extends Component {
                 }
             })
                 .then(res => {
-                    Message('Sửa thành công', true, this.props);
+                    message.success('Sửa thành công');
+                    this.props.history.goBack()
                 })
                 .catch(err => {
-                    Message('Sửa thất bại', false);
+                    message.error('Sửa thất bại');
                     ApiFailHandler(err.response?.data?.error)
                 }))
     }
@@ -58,7 +58,7 @@ class edit extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
             Axios.post('/api/system-roles/getAll', {}, {
@@ -69,7 +69,7 @@ class edit extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
         ]));

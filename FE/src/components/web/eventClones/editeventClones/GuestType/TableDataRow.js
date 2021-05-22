@@ -1,7 +1,10 @@
-import { Button } from 'antd';
+import { Button, Popconfirm } from 'antd';
 import React, { Component } from 'react';
 import EditUser from './EditRow';
-
+import {
+    ToolOutlined,
+    CloseOutlined,
+} from "@ant-design/icons";
 class TableDataRow extends Component {
     constructor(props) {
         super(props);
@@ -41,8 +44,16 @@ class TableDataRow extends Component {
                     <td className="ant-table-cell">{this.props.data.name}</td>
                     <td className="ant-table-cell">
                         <div className="btn-group">
-                            {this.props.canDelete ? <Button onClick={() => this.props.deleteClick(this.props.data._id)} className="back">Xóa</Button> : null}
-                            <Button onClick={() => this.editClick()} className="add">Sửa</Button>
+                            <Button onClick={() => this.editClick()} className="add"><ToolOutlined /></Button>
+                            <Popconfirm
+                                title="Bạn có chắc muốn xóa chứ?"
+                                onConfirm={() => this.props.deleteClick(this.props.data._id)}
+                                okText="Đồng ý"
+                                cancelText="Hủy"
+                            >
+                                {this.props.canDelete ? <Button className="back"><CloseOutlined /></Button> : null}
+                            </Popconfirm>
+
                         </div>
                     </td>
                 </tr>

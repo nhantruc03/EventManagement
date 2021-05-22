@@ -1,4 +1,4 @@
-import { Button, Col, Row } from 'antd';
+import { Button, Col, Popconfirm, Row } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import React, { Component } from 'react';
 import Edit from './edit'
@@ -42,7 +42,14 @@ class item extends Component {
                                 </div>
                             </Col>
                             <Col sm={24} lg={6} style={{ padding: '50px 0 0 0' }}>
-                                <Button style={{ width: '50%' }} className="back" onClick={() => this.props.onDelete(this.props.data._id)}>Xóa</Button>
+                                <Popconfirm
+                                    title="Bạn có chắc muốn xóa chứ?"
+                                    onConfirm={() => this.props.onDelete(this.props.data)}
+                                    okText="Đồng ý"
+                                    cancelText="Hủy"
+                                >
+                                    <Button style={{ width: '50%' }} className="back">Xóa</Button>
+                                </Popconfirm>
                                 <Button style={{ width: '50%' }} className="add" onClick={() => { this.setState({ current: 'edit' }) }}>Sửa</Button>
                             </Col>
                         </Row>

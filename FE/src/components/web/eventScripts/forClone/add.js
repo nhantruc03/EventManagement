@@ -10,6 +10,7 @@ import { v1 as uuidv1 } from 'uuid';
 import ListScriptDetails from '../../eventScriptDetail/list'
 import ReviewScriptDetail from '../../eventScriptDetail/withoutId/review'
 import ApiFailHandler from '../../helper/ApiFailHandler'
+import moment from 'moment'
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -53,10 +54,9 @@ class add extends Component {
         let data = {
             ...values,
             'listscriptdetails': this.state.listscriptdetails,
-            'eventId': this.props.match.params.id
+            'eventId': this.props.match.params.id,
+            'clone': true
         }
-
-        console.log('Received values of form: ', data);
         await trackPromise(Axios.post('/api/scripts/start', data, {
             headers: {
                 'Authorization': { AUTH }.AUTH
@@ -64,6 +64,7 @@ class add extends Component {
         })
             .then(res => {
                 message.success('Tạo thành công');
+                this.props.history.goBack()
             })
             .catch(err => {
                 message.error('Tạo thất bại');
@@ -94,7 +95,8 @@ class add extends Component {
         let temp = {
             _id: uuidv1(),
             description: null,
-            noinfo: true
+            noinfo: true,
+            time: moment(new Date()).utc(true)
         }
         this.setState({
             listscriptdetails: [...this.state.listscriptdetails, temp]
@@ -102,7 +104,7 @@ class add extends Component {
     }
 
     onDeleteDetail = (value) => {
-        let temp = this.state.listscriptdetails.filter(e => e._id !== value);
+        let temp = this.state.listscriptdetails.filter(e => e._id !== value._id);
         this.setState({
             listscriptdetails: temp
         })
@@ -170,7 +172,7 @@ class add extends Component {
                                 </div>
                             </Form>
                             <Title style={{ marginTop: '20px' }} level={3}>Kịch bản chính</Title>
-                            <ListScriptDetails data={this.state.listscriptdetails} onDelete={this.onDeleteDetail} onAdd={this.onAddDetail} onUpdate={this.onUpdateDetail} />
+                            <ListScriptDetails data={this.state.listscriptdetails} onDelete={this.onDeleteDetail} onAddWithoutApi={this.onAddDetail} onUpdate={this.onUpdateDetail} />
                         </Col>
                         <Col sm={24} xl={8}>
                             <Title level={3}>Xem trước</Title>

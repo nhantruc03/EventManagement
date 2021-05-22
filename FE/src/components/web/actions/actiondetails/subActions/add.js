@@ -14,9 +14,6 @@ const formItemLayout = {
     },
 };
 class add extends Component {
-    componentDidMount() {
-        console.log(moment(new Date()).utc(true).toDate())
-    }
     onFinish = async (e) => {
         let data = {
             ...e,

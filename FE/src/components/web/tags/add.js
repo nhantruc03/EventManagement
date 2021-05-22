@@ -42,6 +42,7 @@ class add extends Component {
         })
             .then(res => {
                 message.success('Tạo thành công');
+                this.props.history.goBack();
             })
             .catch(err => {
                 message.error('Tạo thất bại')

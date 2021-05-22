@@ -106,7 +106,7 @@ class edit extends Component {
                                     className="back"
                                 >
                                     Hủy
-                </Button>
+                                </Button>
                                 <Button
                                     style={{ width: "50%" }}
                                     htmlType="submit"

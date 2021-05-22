@@ -24,6 +24,7 @@ class add extends Component {
         })
             .then(res => {
                 message.success('Tạo thành công')
+                this.props.history.goBack()
                 // Message('Tạo thành công', true, this.props);
             })
             .catch(err => {

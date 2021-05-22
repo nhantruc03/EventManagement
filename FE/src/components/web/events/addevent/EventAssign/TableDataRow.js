@@ -1,4 +1,4 @@
-import { Button } from 'antd';
+import { Button, Popconfirm } from 'antd';
 import React, { Component } from 'react';
 import EditUser from './EditUser';
 import {
@@ -46,7 +46,15 @@ class TableDataRow extends Component {
                 <td style={{ width: `${100 / 6}%` }} className="ant-table-cell">
                     <div className="btn-group">
                         <Button onClick={() => this.editClick()} className="add"><ToolOutlined /></Button>
-                        {this.props.canDelete ? <Button onClick={() => this.props.deleteClick(this.props.data._id)} className="add"><CloseOutlined /></Button> : null}
+                        <Popconfirm
+                            title="Bạn có chắc muốn xóa chứ?"
+                            onConfirm={() => this.props.deleteClick(this.props.data._id)}
+                            okText="Đồng ý"
+                            cancelText="Hủy"
+                        >
+                            {this.props.canDelete ? <Button className="back"><CloseOutlined /></Button> : null}
+                        </Popconfirm>
+
                     </div>
                 </td>
             </tr>);

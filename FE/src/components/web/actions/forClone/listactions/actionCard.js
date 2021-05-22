@@ -1,4 +1,4 @@
-import { Avatar, Card, Col, Row, Tag, Tooltip } from 'antd';
+import { Avatar, Card, Image, Row, Tag, Tooltip } from 'antd';
 import React, { Component } from 'react';
 import moment from 'moment';
 import {
@@ -18,7 +18,8 @@ class actionCard extends Component {
         this.state = {
             completeSubAction: [],
             totalSubAction: [],
-            resources: []
+            resources: [],
+            showImage: false
         }
     }
     renderAvailUser = () => {
@@ -46,7 +47,7 @@ class actionCard extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
             axios.post('/api/action-resources/getAll', { actionId: this.props.data._id }, {
@@ -57,7 +58,7 @@ class actionCard extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
         ]));
@@ -88,16 +89,23 @@ class actionCard extends Component {
     componentWillUnmount() {
         this._isMounted = false;
     }
+    mouseHover = (value) => {
+        this.setState({
+            showImage: value
+        })
+    }
     render() {
         return (
             <div className="event-card-container">
-                <Link to={`/actionsclone/${this.props.data._id}`}>
-                    <Card
-                        hoverable
-                        className="eventCard"
-                        cover={<img className="cover" alt="example" src={`/api/images/${this.props.data.coverUrl}`} />}
-
-                    >
+                <Card
+                    hoverable
+                    className="eventCard"
+                    // cover={<img className="cover" alt="example" src={`/api/images/${this.props.data.coverUrl}`} />}
+                    cover={this.state.showImage ? <Image className="cover" alt="example" src={`/api/images/${this.props.data.coverUrl}`} /> : null}
+                    onMouseEnter={() => this.mouseHover(true)}
+                    onMouseLeave={() => this.mouseHover(false)}
+                >
+                    <Link to={`/actionsclone/${this.props.data._id}`}>
                         <Tooltip title={this.props.data.description} placement="top">
                             <Meta title={this.props.data.name} />
                         </Tooltip>
@@ -128,14 +136,9 @@ class actionCard extends Component {
                                     {this.renderAvailUser()}
                                 </Avatar.Group>
                             </div>
-                            <Col span={20}>
-
-                            </Col>
-                            <Col span={4}>
-                            </Col>
                         </Row>
-                    </Card>
-                </Link>
+                    </Link>
+                </Card>
             </div>
         );
     }

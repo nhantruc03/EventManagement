@@ -5,7 +5,7 @@ import Search from '../helper/search';
 import { AUTH } from '../../env'
 import { trackPromise } from 'react-promise-tracker';
 import { Content } from 'antd/lib/layout/layout';
-import { Button, Table } from 'antd';
+import { Button, Popconfirm, Table } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import ApiFailHandler from '../helper/ApiFailHandler'
 class list extends Component {
@@ -32,7 +32,14 @@ class list extends Component {
     renderAction = (e) =>
         <div className="center">
             <Button className="add"><Link to={`/editeventtypes/${e._id}`}>Sửa</Link></Button >
-            <Button className="back" onClick={() => this.onDelete(e)}>Xoá</Button>
+            <Popconfirm
+                title="Bạn có chắc muốn xóa chứ?"
+                onConfirm={() => this.onDelete(e)}
+                okText="Đồng ý"
+                cancelText="Hủy"
+            >
+                <Button className="back" >Xoá</Button>
+            </Popconfirm>
         </div>
 
     async componentDidMount() {
@@ -46,7 +53,7 @@ class list extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 })
         ]));
@@ -86,9 +93,9 @@ class list extends Component {
                         SearchData: this.state.data.filter(o => o._id !== e._id)
                     })
                 }))
-                .catch(err=>{
-                    ApiFailHandler(err.response?.data?.error)
-                })
+            .catch(err => {
+                ApiFailHandler(err.response?.data?.error)
+            })
 
     }
 
@@ -96,7 +103,7 @@ class list extends Component {
         return (
             <div >
                 <Title level={4}>Danh sách hình thức sự kiện</Title>
-                <div className="flex-container-row">
+                <div className="flex-container-row" style={{ marginBottom: 20 }}>
                     <Search target="name" data={this.state.data} getSearchData={(e) => this.getSearchData(e)} />
                     <Button className="flex-row-item-right add">
                         <Link to={`/addeventtypes`} >

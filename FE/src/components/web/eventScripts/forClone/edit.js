@@ -10,6 +10,7 @@ import { v1 as uuidv1 } from 'uuid';
 import ListScriptDetails from '../../eventScriptDetail/list'
 import ReviewScriptDetail from '../../eventScriptDetail/withId/review'
 import ApiFailHandler from '../../helper/ApiFailHandler'
+import moment from 'moment'
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -23,7 +24,8 @@ class edit extends Component {
         super(props);
         this.state = {
             listscriptdetails: [],
-            data: null
+            data: null,
+            currentUser: JSON.parse(localStorage.getItem('login')),
         }
     }
 
@@ -43,7 +45,7 @@ class edit extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 })
         ]))
@@ -56,7 +58,7 @@ class edit extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
         ]));
@@ -88,10 +90,10 @@ class edit extends Component {
         let data = {
             ...values,
             'listscriptdetails': this.state.listscriptdetails,
-            // 'eventId': this.props.match.params.id
+            'clone': true
+            // updateUserId: this.state.currentUser.id
         }
 
-        console.log('Received values of form: ', data);
         await trackPromise(Axios.put('/api/scripts/' + this.props.match.params.id, data, {
             headers: {
                 'Authorization': { AUTH }.AUTH
@@ -111,9 +113,10 @@ class edit extends Component {
     onUpdateDetail = async (value) => {
         let temp = {
             name: value.name,
-            time: value.time.toDate(),
+            time: value.time.utc(true).toDate(),
             description: value.description,
-            scriptId: this.props.match.params.id
+            scriptId: this.props.match.params.id,
+            clone: true
         }
 
         await trackPromise(
@@ -141,52 +144,84 @@ class edit extends Component {
                         })
                     })
                 })
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 })
         )
 
     }
 
-    onAddDetail = async () => {
+    onAddDetail = async (value) => {
+        value.scriptId = this.props.match.params.id
+        let temp = {
+            ...value,
+            scriptId: this.props.match.params.id,
+            updateUserId: this.state.currentUser.id,
+            clone: true
+        }
+
+        this.setState({
+            listscriptdetails: this.state.listscriptdetails.filter(e => e._id !== value._id)
+        })
         await trackPromise(
-            Axios.post("/api/script-details", { name: uuidv1(), description: 'Hãy nhập thông tin chi tiết', time: new Date(), scriptId: this.props.match.params.id }, {
+            Axios.post("/api/script-details", temp, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
             })
                 .then((res) => {
                     let temp = res.data.data[0];
-                    temp.noinfo = true;
+
                     this.setState({
                         listscriptdetails: [...this.state.listscriptdetails, temp]
                     })
+                    message.success("Thêm chi tiết kịch bản thành công")
                 })
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 })
         )
+    }
 
+    onAddDetailWithoutApi = () => {
+        let temp = {
+            _id: uuidv1(),
+            scriptId: this.props.match.params.id,
+            onAdd: true,
+            name: '',
+            description: '',
+            time: moment(new Date()).utc(true),
+            noinfo: true
+        }
+        this.setState({
+            listscriptdetails: [...this.state.listscriptdetails, temp],
+        })
     }
 
     onDeleteDetail = async (value) => {
-        await trackPromise(
-            Axios.delete("/api/script-details/" + value, {
-                headers: {
-                    'Authorization': { AUTH }.AUTH
-                }
+        if (value.noinfo || value.onAdd) {
+            this.setState({
+                listscriptdetails: this.state.listscriptdetails.filter(e => e._id !== value._id)
             })
-                .then((res) => {
-                    let temp = this.state.listscriptdetails.filter(e => e._id !== value);
-                    this.setState({
-                        listscriptdetails: temp
+        } else {
+            await trackPromise(
+                Axios.delete("/api/script-details/" + value._id + "?clone=true", {
+                    headers: {
+                        'Authorization': { AUTH }.AUTH
+                    }
+                })
+                    .then((res) => {
+                        let temp = this.state.listscriptdetails.filter(e => e._id !== value._id);
+                        this.setState({
+                            listscriptdetails: temp
+                        })
+                        message.success("Xóa chi tiết kịch bản thành công")
                     })
-                })
-                .catch(err=>{
-                    ApiFailHandler(err.response?.data?.error)
-                })
-        )
-
+                    .catch(err => {
+                        ApiFailHandler(err.response?.data?.error)
+                    })
+            )
+        }
     }
 
     render() {
@@ -250,7 +285,7 @@ class edit extends Component {
                                     </div>
                                 </Form>
                                 <Title style={{ marginTop: '20px' }} level={3}>Kịch bản chính</Title>
-                                <ListScriptDetails onEdit={true} data={this.state.listscriptdetails} onDelete={this.onDeleteDetail} onAdd={this.onAddDetail} onUpdate={this.onUpdateDetail} />
+                                <ListScriptDetails onEdit={true} data={this.state.listscriptdetails} onDelete={this.onDeleteDetail} onAddWithoutApi={this.onAddDetailWithoutApi} onAdd={this.onAddDetail} onUpdate={this.onUpdateDetail} />
                             </Col>
                             <Col sm={24} xl={8}>
                                 <Title level={3}>Xem trước</Title>

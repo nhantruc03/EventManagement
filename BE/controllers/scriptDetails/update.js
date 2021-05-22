@@ -65,71 +65,80 @@ const update = async (req, res) => {
       })
     }
 
+    if (!req.body.clone) {
+      //start history
+      let isChangeNameScriptDetail = false
+      let isChangeDescriptionScriptDetail = false
+      let isChangeTimeScriptDetail = false
+      if (beforeUpdate.name !== updated.name) {
+        isChangeNameScriptDetail = true
+      }
+      if (moment(beforeUpdate.time).utcOffset(0).format("HH:mm") !== moment(updated.time).utcOffset(0).format("HH:mm")) {
+        isChangeTimeScriptDetail = true
+      }
+      if (beforeUpdate.description !== updated.description) {
+        isChangeDescriptionScriptDetail = true
+      }
+      let data_history = {
+        userId: req.body.updateUserId,
+        scriptId: beforeUpdate.scriptId,
+        scriptDetailId: beforeUpdate._id,
+        oldNameScriptDetail: beforeUpdate.name,
+        oldDescriptionScriptDetail: beforeUpdate.description,
+        oldTimeScriptDetail: beforeUpdate.time,
+        newNameScriptDetail: updated.name,
+        newDescriptionScriptDetail: updated.description,
+        newTimeScriptDetail: updated.time,
+        isChangeNameScriptDetail,
+        isChangeDescriptionScriptDetail,
+        isChangeTimeScriptDetail,
+        updateScriptDetailName: beforeUpdate.name
+      }
 
-    //start history
-    let isChangeNameScriptDetail = false
-    let isChangeDescriptionScriptDetail = false
-    let isChangeTimeScriptDetail = false
-    if (beforeUpdate.name !== updated.name) {
-      isChangeNameScriptDetail = true
+      let temp_created_history = await scriptHistories.create(data_history)
+      let created_history = await scriptHistories.findById(temp_created_history._id)
+        .populate({ path: 'userId', select: 'name photoUrl' })
+        .populate({ path: 'scriptId', populate: { path: 'forId', select: 'name' }, select: 'name forId' })
+        .populate("scriptDetailId")
+        .populate({ path: 'oldForIdScript', select: 'name' })
+        .populate({ path: 'newForIdScript', select: 'name' })
+
+      //done history
+
+      // start notification
+      //prepare data
+      let noti = {}
+      noti.name = "Cập nhật"
+      noti.userId = doc.forId
+      noti.description = `Kịch bản ${doc.name} của sự kiện ${doc.eventId.name} đã được cập nhật chi tiết ${updated.name}`
+      noti.scriptId = doc._id
+      //access DB
+      let created_notification = await notifications.create(
+        noti
+      )
+
+      let result_noti = await notifications.findById(created_notification._id)
+        .populate({ path: 'userId', select: 'push_notification_token' })
+
+      // done notification
+
+      // Updated Successfully
+      await commitTransactions(sessions)
+      return res.status(200).json({
+        success: true,
+        data: updated,
+        notification: result_noti,
+        history: created_history
+      })
     }
-    if (moment(beforeUpdate.time).utcOffset(0).format("HH:mm") !== moment(updated.time).utcOffset(0).format("HH:mm")) {
-      isChangeTimeScriptDetail = true
-    }
-    if (beforeUpdate.description !== updated.description) {
-      isChangeDescriptionScriptDetail = true
-    }
-    let data_history = {
-      userId: req.body.updateUserId,
-      scriptId: beforeUpdate.scriptId,
-      scriptDetailId: beforeUpdate._id,
-      oldNameScriptDetail: beforeUpdate.name,
-      oldDescriptionScriptDetail: beforeUpdate.description,
-      oldTimeScriptDetail: beforeUpdate.time,
-      newNameScriptDetail: updated.name,
-      newDescriptionScriptDetail: updated.description,
-      newTimeScriptDetail: updated.time,
-      isChangeNameScriptDetail,
-      isChangeDescriptionScriptDetail,
-      isChangeTimeScriptDetail,
-      updateScriptDetailName: beforeUpdate.name
+    else {
+      await commitTransactions(sessions)
+      return res.status(200).json({
+        success: true,
+        data: updated,
+      })
     }
 
-    let temp_created_history = await scriptHistories.create(data_history)
-    let created_history = await scriptHistories.findById(temp_created_history._id)
-      .populate({ path: 'userId', select: 'name photoUrl' })
-      .populate({ path: 'scriptId', populate: { path: 'forId', select: 'name' }, select: 'name forId' })
-      .populate("scriptDetailId")
-      .populate({ path: 'oldForIdScript', select: 'name' })
-      .populate({ path: 'newForIdScript', select: 'name' })
-
-    //done history
-
-    // start notification
-    //prepare data
-    let noti = {}
-    noti.name = "Cập nhật"
-    noti.userId = doc.forId
-    noti.description = `Kịch bản ${doc.name} của sự kiện ${doc.eventId.name} đã được cập nhật chi tiết ${updated.name}`
-    noti.scriptId = doc._id
-    //access DB
-    let created_notification = await notifications.create(
-      noti
-    )
-
-    let result_noti = await notifications.findById(created_notification._id)
-      .populate({ path: 'userId', select: 'push_notification_token' })
-
-    // done notification
-
-    // Updated Successfully
-    await commitTransactions(sessions)
-    return res.status(200).json({
-      success: true,
-      data: updated,
-      notification: result_noti,
-      history: created_history
-    })
   } catch (error) {
     await abortTransactions(sessions)
     return res.status(500).json({

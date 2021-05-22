@@ -328,7 +328,7 @@ class listactions extends Component {
       (e) => e.actionTypeId._id === value._id
     );
     return (
-      <Col sm={24} xl={6} key={keyCol} style={{ padding: "10px 0" }}>
+      <Col sm={24} xl={24 / this.state.currentActionTypes.length} key={keyCol} style={{ padding: "10px 0" }}>
         <ActionColumn canEdit={checkPermisson(this.state.currentPermissons, constants.QL_CONGVIEC_PERMISSION)} onDeleteActionType={() => this.deleteActionTypes(value)} onEditActionType={() => { this.onEditActionType(value) }} title={value.name} listActions={temp_listActions} />
       </Col>
     );

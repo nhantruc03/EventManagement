@@ -21,25 +21,34 @@ const _delete = async (req, res) => {
       { isDeleted: true },
       { new: true }
     )
-    // start notification
-    //prepare data
-    let noti = {}
-    noti.name = "Xóa"
-    noti.userId = doc.forId
-    noti.description = `Sự kiện ${doc.eventId.name} đã xóa kịch bản ${doc.name}`
-    noti.eventId = doc.eventId._id
-    //access DB
-    let created_notification = await notifications.create(
-      noti
-    )
-    // done notification
-    
-    // Deleted Successfully
-    return res.status(200).json({
-      success: true,
-      data: deleted,
-      notification: created_notification
-    })
+    console.log(req.query.clone)
+    if (!req.query.clone) {
+      // start notification
+      //prepare data
+      let noti = {}
+      noti.name = "Xóa"
+      noti.userId = doc.forId
+      noti.description = `Sự kiện ${doc.eventId.name} đã xóa kịch bản ${doc.name}`
+      noti.eventId = doc.eventId._id
+      //access DB
+      let created_notification = await notifications.create(
+        noti
+      )
+      // done notification
+
+      // Deleted Successfully
+      return res.status(200).json({
+        success: true,
+        data: deleted,
+        notification: created_notification
+      })
+    }else{
+      return res.status(200).json({
+        success: true,
+        data: deleted,
+      })
+    }
+
   } catch (error) {
     return res.status(500).json({
       success: false,

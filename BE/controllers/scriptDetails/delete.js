@@ -25,53 +25,59 @@ const _delete = async (req, res) => {
       { isDeleted: true },
       { new: true }
     )
-    // start notification
+    if (!req.query.clone) {
+      // start notification
+      //prepare data
+      let noti = {}
+      noti.name = "Xóa"
+      noti.userId = doc.forId
+      noti.description = `Kịch bản ${doc.name} của sự kiện ${doc.eventId.name} đã xóa chi tiết ${deleted.name}`
+      noti.scriptId = scriptDetails.scriptId
 
+      //access DB
+      let created_notification = await notifications.create(
+        noti
+      )
 
-    //prepare data
-    let noti = {}
-    noti.name = "Xóa"
-    noti.userId = doc.forId
-    noti.description = `Kịch bản ${doc.name} của sự kiện ${doc.eventId.name} đã xóa chi tiết ${deleted.name}`
-    noti.scriptId = scriptDetails.scriptId
+      let result_notification = await notifications.findById(created_notification._id)
+        .populate({ path: 'userId', select: 'push_notification_token' })
 
-    //access DB
-    let created_notification = await notifications.create(
-      noti
-    )
+      // done notification
 
-    let result_notification = await notifications.findById(created_notification._id)
-      .populate({path:'userId', select:'push_notification_token'})
+      //start history
+      let isDeleteDetail = true
+      let data_history = {
+        userId: req.query.updateUserId,
+        scriptId: scriptDetails.scriptId,
+        scriptDetailId: scriptDetails._id,
+        isDeleteDetail,
+        nameDeleteDetail: scriptDetails.name
+      }
 
-    // done notification
+      let temp_created_history = await scriptHistories.create(data_history)
+      let created_history = await scriptHistories.findById(temp_created_history._id)
+        .populate({ path: 'userId', select: 'name photoUrl' })
+        .populate({ path: 'scriptId', populate: { path: 'forId', select: 'name' }, select: 'name forId' })
+        .populate("scriptDetailId")
+        .populate({ path: 'oldForIdScript', select: 'name' })
+        .populate({ path: 'newForIdScript', select: 'name' })
 
-    console.log(req.query.updateUserId)
-    //start history
-    let isDeleteDetail = true
-    let data_history = {
-      userId: req.query.updateUserId,
-      scriptId: scriptDetails.scriptId,
-      scriptDetailId: scriptDetails._id,
-      isDeleteDetail,
-      nameDeleteDetail: scriptDetails.name
+      //done history
+      // Deleted Successfully
+      return res.status(200).json({
+        success: true,
+        data: deleted,
+        notification: result_notification,
+        history: created_history
+      })
+    }
+    else{
+      return res.status(200).json({
+        success: true,
+        data: deleted,
+      })
     }
 
-    let temp_created_history = await scriptHistories.create(data_history)
-    let created_history = await scriptHistories.findById(temp_created_history._id)
-      .populate({ path: 'userId', select: 'name photoUrl' })
-      .populate({ path: 'scriptId', populate: { path: 'forId', select: 'name' }, select: 'name forId' })
-      .populate("scriptDetailId")
-      .populate({ path: 'oldForIdScript', select: 'name' })
-      .populate({ path: 'newForIdScript', select: 'name' })
-
-    //done history
-    // Deleted Successfully
-    return res.status(200).json({
-      success: true,
-      data: deleted,
-      notification: result_notification,
-      history: created_history
-    })
   } catch (error) {
     return res.status(500).json({
       success: false,

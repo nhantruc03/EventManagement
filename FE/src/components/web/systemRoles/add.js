@@ -24,12 +24,11 @@ class add extends Component {
         })
             .then(res => {
                 message.success('Tạo thành công')
-                // Message('Tạo thành công', true, this.props);
+                this.props.history.goBack();
             })
             .catch(err => {
                 message.error('Tạo thất bại')
                 ApiFailHandler(err.response?.data?.error)
-                // Message('Tạo thất bại', false);
             }))
     }
 

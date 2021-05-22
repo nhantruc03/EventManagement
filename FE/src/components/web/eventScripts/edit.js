@@ -211,7 +211,7 @@ class edit extends Component {
             scriptId: this.props.match.params.id,
             updateUserId: this.state.currentUser.id,
         }
-        console.log('data for add', temp)
+        
         this.setState({
             listscriptdetails: this.state.listscriptdetails.filter(e => e._id !== value._id)
         })

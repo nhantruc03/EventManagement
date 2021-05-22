@@ -10,6 +10,7 @@ import moment from 'moment';
 import ChatRoom from '../../chat/ChatRoom';
 import {
     UploadOutlined,
+    DeleteOutlined,
     EyeOutlined
 } from '@ant-design/icons';
 import ResourceCard from './resourceCard/resourceCard';
@@ -153,7 +154,7 @@ class actionDetails extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
             axios.post('/api/action-assign/getAll', { actionId: this.props.match.params.id }, {
@@ -164,7 +165,7 @@ class actionDetails extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
             axios.post('/api/action-resources/getAll', { actionId: this.props.match.params.id }, {
@@ -175,7 +176,7 @@ class actionDetails extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
             axios.post('/api/sub-actions/getAll', { actionId: this.props.match.params.id }, {
@@ -186,7 +187,7 @@ class actionDetails extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
         ]));
@@ -207,7 +208,7 @@ class actionDetails extends Component {
                 }
 
                 let permissons = await getPermission(action.eventId._id)
-                
+
                 this.setState({
                     data: action,
                     actionAssign: actionAssign.filter(e => e.role === 2),
@@ -307,7 +308,26 @@ class actionDetails extends Component {
                     ApiFailHandler(err.response?.data?.error)
                 }),
         )
+    }
 
+    deleteSubAction = async (e) => {
+        await trackPromise(
+            axios.delete('/api/sub-actions/' + e, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then((res) => {
+                    message.success(`${res.data.data.name} xóa thành công`);
+                    let temp = this.state.subActions.filter(x => x._id !== e)
+                    this.setState({
+                        subActions: temp
+                    })
+                })
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
+        )
     }
 
     renderSubActions = () => {
@@ -319,10 +339,18 @@ class actionDetails extends Component {
                             <>
                                 <Checkbox className="checkbox" onChange={this.onChange} checked={e.status} style={e.status ? { textDecoration: 'line-through' } : null} value={e._id} >{e.name}</Checkbox>
                                 <Button onClick={() => this.setModalEditSubActionVisible(true, e)} className="flex-row-item-right no-border"><EyeOutlined /></Button>
+                                <Popconfirm
+                                    title="Bạn có chắc muốn xóa chứ?"
+                                    onConfirm={() => this.deleteSubAction(e._id)}
+                                    okText="Đồng ý"
+                                    cancelText="Hủy"
+                                >
+                                    <Button className="no-border"><DeleteOutlined /></Button>
+                                </Popconfirm>
                             </> :
                             <>
                                 <Checkbox disabled={true} className="checkbox" onChange={this.onChange} checked={e.status} style={e.status ? { textDecoration: 'line-through' } : null} value={e._id} >{e.name}</Checkbox>
-                                <Button disabled={true} onClick={() => this.setModalEditSubActionVisible(true, e)} className="flex-row-item-right no-border"><EyeOutlined /></Button>
+                                {/* <Button disabled={true} onClick={() => this.setModalEditSubActionVisible(true, e)} className="flex-row-item-right no-border"><EyeOutlined /></Button> */}
                             </>
                         }
                     </div>
@@ -375,7 +403,6 @@ class actionDetails extends Component {
 
                                 <div className="flex-container-row" style={{ marginTop: '20px' }}>
                                     <Title style={{ color: '#264653' }} level={3}>File đính kèm</Title>
-                                    {/* <Button className="flex-row-item-right add">Thêm</Button> */}
                                     <Upload
                                         className="flex-row-item-right"
                                         fileList={this.state.fileList}
@@ -395,14 +422,12 @@ class actionDetails extends Component {
                                 {this.state.resources.map((e, key) => <ResourceCard delete={(e) => this.deleteResources(e)} key={key} resourcePath={this.props.match.params.id} data={e}></ResourceCard>)}
                             </Col>
                             <Col sm={24} xl={10} className="event-detail">
-                                {/* <Title level={3}>Cover</Title> */}
                                 <Image style={{ maxHeight: '200px' }} src={`/api/images/${this.state.data.coverUrl}`}></Image>
 
                                 <Title style={{ color: '#017567' }} level={1}>{this.state.data.name}</Title>
 
                                 <div className="flex-container-row" style={{ width: '80%' }}>
                                     <Tag className="event-detail-status">{this.state.currentStatus}</Tag>
-                                    {/* <p style={{ color: 'grey' }}>Bắt đầu: {moment(this.state.data.startTime).format("DD/MM/YYYY")}</p> */}
                                 </div>
 
                                 <Title level={4}>Mô tả</Title>

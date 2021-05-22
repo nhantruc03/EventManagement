@@ -104,7 +104,7 @@ class actionCard extends Component {
                     hoverable
                     className="eventCard"
                     // cover={<img className="cover" alt="example" src={`api/images/${this.props.data.coverUrl}`} />}
-                    cover={this.state.showImage ? <Image className="cover" alt="example" src={`api/images/${this.props.data.coverUrl}`} /> : null}
+                    cover={this.state.showImage ? <Image className="cover" alt="example" src={`/api/images/${this.props.data.coverUrl}`} /> : null}
                     onMouseEnter={() => this.mouseHover(true)}
                     onMouseLeave={() => this.mouseHover(false)}
                 >

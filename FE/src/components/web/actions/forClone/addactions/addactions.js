@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Form, Input, message, Row, Select, Steps } from 'antd';
+import { Button, Col, DatePicker, Form, Input, message, Row, Select, Steps, TimePicker } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import axios from 'axios';
 import React, { Component } from 'react';
@@ -98,8 +98,8 @@ class addactions extends Component {
     onFinish_Form1 = async (e) => {
         let data = {
             ...e,
-            startDate: e['startDate'].toDate(),
-            endDate: e['endDate'].toDate(),
+            endTime: e.endTime.utc(true).toDate(),
+            endDate: e.endDate.utc(true).toDate(),
             eventId: this.props.event._id
         }
 
@@ -192,24 +192,25 @@ class addactions extends Component {
                             </Col>
                             <Col span={24}>
                                 <Row>
-                                    <Col sm={24} md={8}>
+                                <Col sm={24} md={8}>
                                         <Form.Item
                                             wrapperCol={{ sm: 24 }}
-                                            label="Bắt đầu"
-                                            rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
-                                            name="startDate"
+                                            label="Ngày kết thúc"
+                                            rules={[{ required: true, message: 'Cần chọn ngày kết thức!' }]}
+                                            name="endDate"
                                         >
-                                            <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày bắt đầu..." />
+                                            <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày kết thúc..." />
                                         </Form.Item>
                                     </Col>
                                     <Col sm={24} md={8}>
                                         <Form.Item
                                             wrapperCol={{ sm: 24 }}
-                                            label="Kết thúc"
-                                            rules={[{ required: true, message: 'Cần chọn ngày kết thức!' }]}
-                                            name="endDate"
+                                            label="Giờ kết thúc"
+                                            rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
+                                            name="endTime"
                                         >
-                                            <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày kết thúc..." />
+                                            {/* <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày bắt đầu..." /> */}
+                                            <TimePicker format="HH:mm" placeholder="Chọn giờ kết thúc"></TimePicker>
                                         </Form.Item>
                                     </Col>
                                     <Col sm={24} md={8}>

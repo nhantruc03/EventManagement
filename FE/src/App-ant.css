@@ -771,6 +771,9 @@ p {
 button.ant-btn.flex-row-item-right.no-border {
   border: none;
 }
+button.ant-btn.no-border {
+  border: none;
+}
 
 /* .ant-tabs.ant-tabs-top {
   height: 100%;

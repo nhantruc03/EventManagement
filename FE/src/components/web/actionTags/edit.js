@@ -36,6 +36,7 @@ class edit extends Component {
             })
                 .then(res => {
                     message.success('Sửa thành công');
+                    this.props.history.goBack();
                 })
                 .catch(err => {
                     message.error('Sửa thất bại');

@@ -16,6 +16,7 @@ import {
     Breadcrumb,
     Image,
     Tabs,
+    Popconfirm,
 } from "antd";
 import {
     UploadOutlined,
@@ -30,6 +31,7 @@ import ListScripts from '../../eventScripts/forClone/list'
 import ListActionsClone from '../../actions/forClone/listactions/listactions'
 import { w3cwebsocket } from 'websocket';
 import ApiFailHandler from '../../helper/ApiFailHandler'
+import getPermission from "../../helper/Credentials"
 const client = new w3cwebsocket('ws://localhost:3001');
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -54,7 +56,8 @@ class editevent extends Component {
             listguesttype: [],
             listgroups: [],
             data: null,
-            currentUser: JSON.parse(localStorage.getItem('login'))
+            currentUser: JSON.parse(localStorage.getItem('login')),
+            currentPermissions: [],
         }
     }
 
@@ -111,7 +114,7 @@ class editevent extends Component {
 
     async componentDidMount() {
         this._isMounted = true;
-        const [users, eventTypes, tags, faculties, roles, event, listeventassign, guesttypes, groups] = await trackPromise(Promise.all([
+        const [users, eventTypes, tags, faculties, roles, event, listeventassign, guesttypes, groups, permissons] = await trackPromise(Promise.all([
             axios.post('/api/users/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -210,7 +213,8 @@ class editevent extends Component {
                 )
                 .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
-                })
+                }),
+            getPermission(this.props.match.params.id).then(res => res)
 
         ]));
 
@@ -257,7 +261,7 @@ class editevent extends Component {
                     temp_userForEvent.push(e.userId._id)
                 })
                 let temp_userNotInEvent = users.filter(e => !temp_userForEvent.includes(e._id))
-
+                console.log('permission', permissons)
                 // prepare state
                 this.setState({
                     listRole: roles,
@@ -270,7 +274,8 @@ class editevent extends Component {
                     listtags: tags,
                     listguesttype: guesttypes,
                     listguest: guests,
-                    listgroups: groups
+                    listgroups: groups,
+                    currentPermissions: permissons
                 })
             }
         }
@@ -328,6 +333,28 @@ class editevent extends Component {
         })
     }
 
+    deleteEvent = async () => {
+        const result = await trackPromise(axios.delete(`/api/events/${this.props.match.params.id}`, {
+            headers: {
+                'Authorization': { AUTH }.AUTH
+            }
+        })
+            .then(res => {
+                message.success('Xóa sự kiện thành công')
+                return res.data.data
+            })
+            .catch(err => {
+                message.error('Xóa sự kiện thất bại')
+                ApiFailHandler(err.response?.data?.error)
+            })
+        )
+        if (result) {
+            this.setState({
+                doneDelete: true
+            })
+        }
+    }
+
     onClickAddEvent = async () => {
 
         await trackPromise(axios.post('/api/events/start-clone', { eventId: this.props.match.params.id }, {
@@ -359,7 +386,17 @@ class editevent extends Component {
                                 </Breadcrumb.Item>
                             </Breadcrumb>
                             {this.state.currentUser.role === 'Admin' ?
-                                <Button onClick={this.onClickAddEvent} className="add flex-row-item-right">Tạo sự kiện</Button>
+                                <div className="flex-row-item-right">
+                                    <Popconfirm
+                                        title="Bạn có chắc muốn xóa chứ?"
+                                        onConfirm={this.deleteEvent}
+                                        okText="Đồng ý"
+                                        cancelText="Hủy"
+                                    >
+                                        <Button className="delete">Xóa</Button>
+                                    </Popconfirm>
+                                    <Button onClick={this.onClickAddEvent} className="add ">Tạo sự kiện</Button>
+                                </div>
                                 : null
                             }
                         </div>
@@ -538,10 +575,10 @@ class editevent extends Component {
                                 </Row>
                             </TabPane>
                             <TabPane style={{ padding: '0 15px' }} tab='Kịch bản' key={2}>
-                                <ListScripts eventId={this.props.match.params.id} />
+                                <ListScripts eventId={this.props.match.params.id} currentPermissions={this.state.currentPermissions} />
                             </TabPane>
                             <TabPane style={{ padding: '0 15px' }} tab='Công việc' key={3}>
-                                <ListActionsClone eventId={this.props.match.params.id} />
+                                <ListActionsClone eventId={this.props.match.params.id} currentPermissions={this.state.currentPermissions} />
                             </TabPane>
                         </Tabs>
                     </div>

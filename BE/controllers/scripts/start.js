@@ -117,29 +117,39 @@ const start = async (req, res) => {
         }
         // done guest types
         // start notification
-        const curDoc = await Scripts.findOne({ _id: newDoc[0]._id }, null, { session: session })
-            .populate({ path: 'eventId', select: 'name' })
-        //prepare data
-        let noti = {}
-        noti.name = "Tạo mới"
-        noti.userId = curDoc.forId
-        noti.description = `Sự kiện ${curDoc.eventId.name} đã được tạo kịch bản ${curDoc.name}`
-        noti.scriptId = curDoc._id
-        //access DB
-        let created_notification = await notifications.create(
-            noti
-        )
-        let result_noti = await notifications.findById(created_notification._id)
-            .populate({path:'userId',select:'push_notification_token'})
-        // done notification
-        // Success
-        await commitTransactions(sessions)
-        return res.status(200).json({
-            success: true,
-            script: newDoc,
-            ScriptDetails: listScriptDetails,
-            notification: result_noti
-        });
+        if (req.body.clone !== true) {
+            const curDoc = await Scripts.findOne({ _id: newDoc[0]._id }, null, { session: session })
+                .populate({ path: 'eventId', select: 'name' })
+            //prepare data
+            let noti = {}
+            noti.name = "Tạo mới"
+            noti.userId = curDoc.forId
+            noti.description = `Sự kiện ${curDoc.eventId.name} đã được tạo kịch bản ${curDoc.name}`
+            noti.scriptId = curDoc._id
+            //access DB
+            let created_notification = await notifications.create(
+                noti
+            )
+            let result_noti = await notifications.findById(created_notification._id)
+                .populate({ path: 'userId', select: 'push_notification_token' })
+            // done notification
+            // Success
+            await commitTransactions(sessions)
+            return res.status(200).json({
+                success: true,
+                script: newDoc,
+                ScriptDetails: listScriptDetails,
+                notification: result_noti
+            });
+        }else{
+            await commitTransactions(sessions)
+            return res.status(200).json({
+                success: true,
+                script: newDoc,
+                ScriptDetails: listScriptDetails,
+            });
+        }
+
     } catch (error) {
         await abortTransactions(sessions)
         return res.status(500).json({

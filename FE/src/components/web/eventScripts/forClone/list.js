@@ -2,7 +2,7 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { AUTH } from '../../../env'
 import { trackPromise } from 'react-promise-tracker';
-import { Button, Row, Table, Tooltip } from 'antd';
+import { Button, message, Popconfirm, Row, Table, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
 import Search from "../../helper/search";
@@ -51,7 +51,14 @@ class list extends Component {
                                 </Link>
                             </Tooltip>
                             <Tooltip title="Xóa" arrow>
-                                <Button onClick={() => this.deleteClick(e)} className="add" ><CloseOutlined /></Button>
+                                <Popconfirm
+                                    title="Bạn có chắc muốn xóa chứ?"
+                                    onConfirm={() => this.deleteClick(e)}
+                                    okText="Đồng ý"
+                                    cancelText="Hủy"
+                                >
+                                    <Button className="add" ><CloseOutlined /></Button>
+                                </Popconfirm>
                             </Tooltip>
                             <Tooltip title="Xem" arrow>
                                 <Link to={`/viewscriptsclone/${e}`} >
@@ -75,7 +82,7 @@ class list extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 })
         ]));
@@ -105,17 +112,19 @@ class list extends Component {
     deleteClick = async (e) => {
         console.log(e)
         await trackPromise(
-            Axios.delete("/api/scripts/" + e, {
+            Axios.delete("/api/scripts/" + e + "?clone=true", {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
             })
                 .then((res) => {
+                    message.success('Xóa thành công')
                     this.setState({
-                        data: this.state.data.filter(o => o._id !== e)
+                        data: this.state.data.filter(o => o._id !== e),
+                        SearchData: this.state.SearchData.filter(o => o._id !== e)
                     })
                 })
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 })
         )

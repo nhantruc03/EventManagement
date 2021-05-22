@@ -2,7 +2,7 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { AUTH } from '../../env'
 import { trackPromise } from 'react-promise-tracker';
-import { Button, Table, Tooltip } from 'antd';
+import { Button, Popconfirm, Table, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
 import {
@@ -55,7 +55,15 @@ class list extends Component {
                                         </Link>
                                     </Tooltip>
                                     <Tooltip title="Xóa" arrow>
-                                        <Button onClick={() => this.deleteClick(e)} className="add" ><CloseOutlined /></Button>
+                                        <Popconfirm
+                                            title="Bạn có chắc muốn xóa chứ?"
+                                            onConfirm={() => this.deleteClick(e)}
+                                            okText="Đồng ý"
+                                            cancelText="Hủy"
+                                        >
+                                            <Button className="add"><CloseOutlined /></Button>
+                                        </Popconfirm>
+                                        {/* <Button onClick={} className="add" ><CloseOutlined /></Button> */}
                                     </Tooltip>
                                 </>
                                 : null}
@@ -81,7 +89,7 @@ class list extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 })
         ]));
@@ -124,7 +132,7 @@ class list extends Component {
                         data: this.state.data.filter(o => o._id !== e)
                     })
                 })
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 })
         )

@@ -1,4 +1,4 @@
-import { Checkbox, Dropdown, Menu } from 'antd';
+import { Button, Checkbox, Dropdown, Menu, Popconfirm } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import React, { Component } from 'react';
 import ActionCard from './actionCard';
@@ -24,6 +24,23 @@ class actionColumn extends Component {
                             </div>
                         </Checkbox.Group>
                     </Menu.Item>
+                    {this.props.canEdit ?
+                        <Menu.Item>
+                            <Button style={{ width: '100%' }} className="back" onClick={this.props.onEditActionType}>Chỉnh sửa</Button>
+                        </Menu.Item>
+                        : null}
+                    {this.props.canEdit ?
+                        <Menu.Item>
+                            <Popconfirm
+                                title="Bạn có chắc muốn xóa chứ?"
+                                onConfirm={this.props.onDeleteActionType}
+                                okText="Đồng ý"
+                                cancelText="Hủy"
+                            >
+                                <Button style={{ width: '100%' }} className="delete">Xóa</Button>
+                            </Popconfirm>
+                        </Menu.Item>
+                        : null}
                 </Menu>
             ),
             data: []
@@ -57,7 +74,7 @@ class actionColumn extends Component {
 
     applyFilter = (list) => {
         let result = list.slice()
-        
+
         if (this.state.filter.includes('Tên')) {
             result = result.sort((a, b) => {
                 let nameA = a.name.substring(0, 1).toLowerCase();
@@ -116,8 +133,9 @@ class actionColumn extends Component {
                         <EllipsisOutlined style={{ fontSize: '30px', color: '#2A9D8F' }} />
                     </Dropdown>
                 </div>
-                {this.renderActions()}
-
+                <div className="list-actions-col-data">
+                    {this.renderActions()}
+                </div>
             </>
         );
     }

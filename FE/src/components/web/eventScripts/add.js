@@ -141,7 +141,7 @@ class add extends Component {
     }
 
     onDeleteDetail = (value) => {
-        let temp = this.state.listscriptdetails.filter(e => e._id !== value);
+        let temp = this.state.listscriptdetails.filter(e => e._id !== value._id);
         this.setState({
             listscriptdetails: temp
         })
