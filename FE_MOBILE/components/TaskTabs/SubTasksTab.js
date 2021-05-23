@@ -10,10 +10,14 @@ import UnChecked from "../../assets/images/Unchecked.png";
 import getToken from "../../Auth";
 import Url from "../../env";
 import SubTaskCreateModal from "./SubTaskCreateModal";
-
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import Separator from "../helper/separator";
 import Loader from "react-native-modal-loader";
 import { Redirect } from "react-router";
+import Swipeable from "react-native-gesture-handler/Swipeable";
+import ApiFailHandler from '../helper/ApiFailHandler'
+import Animated from "react-native-reanimated";
+import { Alert } from "react-native";
 
 const styles = StyleSheet.create({
   formContainer: { paddingHorizontal: 16, zIndex: 3 },
@@ -61,7 +65,19 @@ const styles = StyleSheet.create({
     color: "#2A9D8F",
     fontFamily: "semibold",
     textDecorationLine: 'underline'
-  }
+  },
+  rightContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+
+  },
+  rightAction: {
+  },
+  iconDelete: {
+
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+  },
 });
 
 class SubTasksTab extends Component {
@@ -71,7 +87,8 @@ class SubTasksTab extends Component {
       data: null,
       addSubTask: false,
       onEditSubtask: null,
-      visible: false
+      visible: false,
+      deleteLoading: false,
     };
   }
 
@@ -116,50 +133,118 @@ class SubTasksTab extends Component {
           data: temp_data,
           loading: false
         });
-
         alert(`Trạng thái của khách mời ${e.name} cập nhật thành công`);
       })
       .catch(() => {
+        let errResult = ApiFailHandler(err.response?.data?.error)
+        this.setState({
+          loggout: errResult.isExpired
+        })
         alert(`Trạng thái của khách mời ${e.name} cập nhật thất bại`);
       });
   };
 
+  RightActions = (e) => {
+    return (
+      <View style={styles.rightContainer}>
+        <TouchableOpacity onPress={() => this.DeleteAlert(e)}>
+          <View style={styles.rightAction}>
+            <Animated.View style={styles.iconDelete}>
+              <Ionicons name='trash-outline' size={24} color='#FF2121' />
+            </Animated.View>
+          </View>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
+  DeleteAlert = (e) => {
+    Alert.alert(
+      //title
+      'Xoá kịch bản',
+      //body
+      'Bạn có chắc muốn xoá kịch bản này? ',
+      [
+        {
+          text: 'Cancel', onPress: () => console.log('Cancel')
+        },
+        {
+          text: 'Xoá', onPress: () => this.deleteSubAction(e), style: 'destructive'
+        },
+      ],
+      { cancelable: false },
+    );
+  }
+  onLoading() {
+    this.setState({
+      deleteLoading: true,
+    });
+  }
+
+  deleteSubAction = async (e) => {
+    this.onLoading()
+    await (
+      axios.delete(`${Url()}/api/sub-actions/` + e._id, {
+        headers: {
+          'Authorization': await getToken(),
+        }
+      })
+        .then((res) => {
+          alert(`${res.data.data.name} xóa thành công`);
+          let temp = this.state.data.filter(x => x._id !== e._id)
+          this.setState({
+            data: temp,
+            deleteLoading: false,
+          })
+        })
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        })
+    )
+  }
+
   renderItem = (item) => {
     return (
-      <View>
-        <View style={styles.itemContainer}>
-          <View style={styles.checkboxContainer}>
-            <TouchableOpacity style={{ marginRight: 8, }} onPress={() => this.changeStatus(item)}>
-              {item.status ? (
-                <Image source={Checked}></Image>
-              ) : (
-                <Image source={UnChecked}></Image>
-              )}
-            </TouchableOpacity>
-            <View>
-              <Text
-                style={styles.itemTextName}
-              >
-                {item.name}
-              </Text>
-              <Text style={styles.itemTextDescription}>{item.description}</Text>
+      < Swipeable
+        renderRightActions={() => this.RightActions(item)}
+      >
+        <View>
+          <View style={styles.itemContainer}>
+            <View style={styles.checkboxContainer}>
+              <TouchableOpacity style={{ marginRight: 8, }} onPress={() => this.changeStatus(item)}>
+                {item.status ? (
+                  <Image source={Checked}></Image>
+                ) : (
+                  <Image source={UnChecked}></Image>
+                )}
+              </TouchableOpacity>
+              <View>
+                <Text
+                  style={styles.itemTextName}
+                >
+                  {item.name}
+                </Text>
+                <Text style={styles.itemTextDescription}>{item.description}</Text>
+              </View>
+
+
             </View>
-
-
+            <View>
+              <TouchableOpacity onPress={() => {
+                this.setState({
+                  addSubTask: false,
+                  onEditSubtask: item,
+                  visible: true
+                })
+              }}><Text style={styles.viewDetailText}>Xem chi tiết</Text></TouchableOpacity>
+            </View>
           </View>
-          <View>
-            <TouchableOpacity onPress={() => {
-              this.setState({
-                addSubTask: false,
-                onEditSubtask: item,
-                visible: true
-              })
-            }}><Text style={styles.viewDetailText}>Xem chi tiết</Text></TouchableOpacity>
-          </View>
+          <Separator />
         </View>
-        <Separator />
-      </View >
-
+      </Swipeable>
     );
   };
   addToList = (e) => {
@@ -199,6 +284,7 @@ class SubTasksTab extends Component {
       if (this.state.data) {
         return (
           <Provider>
+            <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
             <View style={styles.formContainer}>
               <View
                 style={{

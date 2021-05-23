@@ -15,13 +15,12 @@ import {
 import { View, Text } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import Swiper from "react-native-swiper";
-
 import HomeActionItem from "../components/Home/HomeActionItem";
-
 import Indicator from "../components/helper/Loading";
 import { RefreshControl } from "react-native";
 import ApiFailHandler from '../components/helper/ApiFailHandler'
 import { Redirect } from "react-router";
+import getPermission from "../components/helper/Credentials"
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
@@ -138,7 +137,8 @@ class Home extends Component {
       refreshing: false,
       totalActionDoneLoading: 0,
       ActionDoneLoading: false,
-      loggout: false
+      loggout: false,
+      currentPermissions: [],
     };
     this._isMounted = false;
   }
@@ -148,7 +148,7 @@ class Home extends Component {
       refreshing: true,
       totalActionDoneLoading: 0,
     });
-    const [listactions] = await Promise.all([
+    const [listactions, permissions] = await Promise.all([
       axios
         .post(
           `${Url()}/api/actions/getAll`,
@@ -166,11 +166,13 @@ class Home extends Component {
             loggout: errResult.isExpired
           })
         }),
+      getPermission(obj.id).then(res => res)
     ]);
     if (this._isMounted) {
       this.setState({
         listTasks: listactions,
         refreshing: false,
+        currentPermissions: permissions
       });
     }
   };
@@ -321,7 +323,8 @@ class Home extends Component {
       <TouchableOpacity
         onPress={() => {
           this.props.navigation.navigate("TaskDetail", {
-            data: e.item
+            data: e.item,
+            currentPermissions: this.state.currentPermissions
           });
         }}
       >
