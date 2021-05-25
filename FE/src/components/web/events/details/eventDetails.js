@@ -28,6 +28,9 @@ import ListAvailUser from './forAvailUser/listAvailUser'
 import EventAssign from './EventAssign/EventAssign'
 import ListGuest from './forGuest/listGuest'
 import GuestView from "./forGuest/guestView";
+// import ListParticipants from './Participants/list'
+import ParticipantsView from "./Participants/View";
+import ListParticipants from "../editevent/Participants/participantsView";
 import { Link, Redirect } from "react-router-dom";
 import moment from 'moment';
 import ChatRoom from '../../chat/ChatRoom'
@@ -35,6 +38,7 @@ import * as constants from "../../constant/actions"
 import getPermission from "../../helper/Credentials"
 import checkPermisson from "../../helper/checkPermissions"
 import ApiFailHandler from '../../helper/ApiFailHandler'
+import * as XLSX from 'xlsx'
 const { TabPane } = Tabs;
 
 class eventDetails extends Component {
@@ -43,6 +47,7 @@ class eventDetails extends Component {
     this.state = {
       modal2Visible: false,
       modal2Visible2: false,
+      modalParticipantsVisible: false,
       listguest: [],
       listguesttype: [],
       listgroups: [],
@@ -54,12 +59,13 @@ class eventDetails extends Component {
       listGroups: [],
       currentUser: JSON.parse(localStorage.getItem('login')),
       currentPermissions: [],
-      doneDelete: false
+      doneDelete: false,
+      currentUserInEvent: {},
+      lissParticipants: [],
     }
   }
 
   updateguest = (e) => {
-    console.log(e);
     this.setState({
       listguest: e
     })
@@ -68,7 +74,7 @@ class eventDetails extends Component {
 
   async componentDidMount() {
     this._isMounted = true;
-    const [event, guestTypes, listEventAssign, faculties, roles, groups, permissons] = await trackPromise(Promise.all([
+    const [event, guestTypes, listEventAssign, faculties, roles, groups, permissons, lissParticipants] = await trackPromise(Promise.all([
       axios.get('/api/events/' + this.props.match.params.id, {
         headers: {
           'Authorization': { AUTH }.AUTH
@@ -135,9 +141,20 @@ class eventDetails extends Component {
         .catch(err => {
           ApiFailHandler(err.response?.data?.error)
         }),
-      getPermission(this.props.match.params.id).then(res => res)
-
+      getPermission(this.props.match.params.id).then(res => res),
+      axios.post('/api/participants/getAll', { eventId: this.props.match.params.id }, {
+        headers: {
+          'Authorization': { AUTH }.AUTH
+        }
+      })
+        .then((res) =>
+          res.data.data
+        )
+        .catch(err => {
+          ApiFailHandler(err.response?.data?.error)
+        }),
     ]));
+
 
     let guests = null
     if (guestTypes !== undefined) {
@@ -175,6 +192,9 @@ class eventDetails extends Component {
 
         // let permissions = await getPermission(this.props.match.params.id)
         // console.log(permissons)
+        let currentUserInEvent = listEventAssign.filter((e) => {
+          return e.userId._id === this.state.currentUser.id
+        })
 
         this.setState({
           data: event,
@@ -183,7 +203,9 @@ class eventDetails extends Component {
           listFaculty: faculties,
           // status: status,
           listGroups: groups,
-          currentPermissions: permissons
+          currentPermissions: permissons,
+          currentUserInEvent: currentUserInEvent[0],
+          listParticipants: lissParticipants
         })
         if (guestTypes !== undefined) {
           this.setState({
@@ -214,9 +236,31 @@ class eventDetails extends Component {
     this.setState({ modal2Visible2 });
   }
 
+  setModalParticipantsVisible(modalParticipantsVisible) {
+    this.setState({ modalParticipantsVisible });
+  }
+
+  renderModalParticipants = () => {
+    return (
+      // <ListParticipants canEdit={checkPermisson(this.state.currentPermissions, constants.QL_NGUOITHAMGIA_PERMISSION)} list={this.state.listParticipants} uploadExcelFile={this.uploadExcelFile} />
+      <ListParticipants canEdit={checkPermisson(this.state.currentPermissions, constants.QL_NGUOITHAMGIA_PERMISSION)} canDelete={true} eventId={this.props.match.params.id} data={this.state.listParticipants} uploadExcelFile={this.uploadExcelFile} update={this.updatelistparticipants} />
+    )
+  }
+  updatelistparticipants = (e) => {
+    this.setState({
+      listParticipants: e
+    })
+  }
+
   renderguest = () => this.state.listguesttype.map((e, key) =>
     <TabPane tab={e.name} key={key}><GuestView type={e._id} list={this.state.listguest} /></TabPane>
   )
+
+  renderParticipants = () => {
+    return (
+      <ParticipantsView list={this.state.listParticipants} />
+    )
+  }
 
   renderGroups = () => this.state.listGroups.map((e, key) =>
     <TabPane tab={e.name} key={key}><ChatRoom videocall={true} roomId={e._id} /></TabPane>
@@ -288,6 +332,105 @@ class eventDetails extends Component {
     }
   }
 
+  uploadExcelFile = (file) => {
+    const promise = new Promise((resolve, reject) => {
+
+      const fileReader = new FileReader();
+
+      fileReader.readAsArrayBuffer(file)
+      fileReader.onload = (e) => {
+        const bufferArray = e.target.result
+
+        const wb = XLSX.read(bufferArray, { type: 'buffer' });
+
+        const wsname = wb.SheetNames[0]
+
+        const ws = wb.Sheets[wsname]
+
+        const data = XLSX.utils.sheet_to_json(ws)
+
+        resolve(data)
+      }
+      fileReader.onerror = (err) => {
+        reject(err)
+      }
+    })
+
+    promise.then((result) => {
+      result.forEach(e => {
+        e.eventId = this.props.match.params.id
+      })
+      this.CreateParticipants(result)
+    })
+  }
+
+  CreateParticipants = async (data) => {
+    let temp = {
+      data,
+      eventId: this.props.match.params.id
+    }
+
+    await trackPromise(
+      axios.post('/api/participants', temp, {
+        headers: {
+          'Authorization': { AUTH }.AUTH
+        }
+      })
+        .then(res => {
+          let data = res.data.data
+
+          this.setState({
+            listParticipants: [...this.state.listParticipants, ...data]
+          })
+
+
+          message.success('Thêm thành công')
+        })
+        .catch(err => {
+          message.error('Thêm thất bại')
+        }))
+
+  }
+
+  renderCurrentUserInEvent = () => {
+    return (
+      // <Row>
+      //   <Col>
+      //     <div className="flex-container-row">
+      //       <img className="event-user-avartar" alt="avatar" src={`/api/images/${this.state.currentUserInEvent.userId.photoUrl}`}></img>
+      //       <div>
+      //         <Title style={{ color: '#264653', margin: 'unset', fontSize: 20 }} level={3}>{this.state.currentUserInEvent.userId.name}</Title>
+      //         <p style={{ color: '#AAB0B6' }}>{this.state.currentUserInEvent.userId.phone}</p>
+      //       </div>
+      //     </div>
+      //   </Col>
+      //   <Col>
+      //     <Row>
+      //       <Title className="event-detail-title" level={4}>Ban</Title>
+      //     </Row>
+      //     <Row>
+
+      //     </Row>
+      //   </Col>
+      // </Row>
+      <div className="flex-container-row" style={{ width: '100%' }}>
+        <img className="event-user-avartar" alt="avatar" src={`/api/images/${this.state.currentUserInEvent.userId.photoUrl}`}></img>
+        <div>
+          <Title style={{ color: '#264653', margin: 'unset', fontSize: 20 }} level={3}>{this.state.currentUserInEvent.userId.name}</Title>
+          <p style={{ color: '#AAB0B6' }}>{this.state.currentUserInEvent.userId.phone}</p>
+        </div>
+        <div className="flex-row-item-right" style={{ textAlign: 'right' }}>
+          <Title style={{ color: '#AAB0B6', margin: 'unset' }} level={4}>Ban</Title>
+          {/* <p>{this.state.currentUserInEvent.facultyId.name}</p> */}
+          <Title style={{ color: '#264653', margin: 'unset' }} level={4}>{this.state.currentUserInEvent.facultyId?.name}</Title>
+          <Title style={{ color: '#AAB0B6', margin: 'unset' }} level={4}>Vị trí</Title>
+          {/* <p>{this.state.currentUserInEvent.roleId.name}</p> */}
+          <Title style={{ color: '#264653', margin: 'unset' }} level={4}>{this.state.currentUserInEvent.roleId?.name}</Title>
+        </div>
+      </div>
+    )
+  }
+
   render() {
     if (this.state.doneDelete) {
       return (
@@ -305,7 +448,7 @@ class eventDetails extends Component {
                   </Breadcrumb.Item>
                   <Breadcrumb.Item>
                     Chi tiết
-                                  </Breadcrumb.Item>
+                  </Breadcrumb.Item>
                 </Breadcrumb>
                 {checkPermisson(this.state.currentPermissions, constants.QL_SUKIEN_PERMISSION) ?
                   <div className="flex-row-item-right">
@@ -328,38 +471,44 @@ class eventDetails extends Component {
 
             <div className="site-layout-background-main">
               <Row style={{ height: '95%' }}>
-                <Col sm={24} xl={6} className="event-detail">
-                  <Title className="event-detail-title" level={4}>Hình thức</Title>
-                  {this.state.data.eventTypeId.name}
-
-                  <Title className="event-detail-title" level={4}>Ban tổ chức</Title>
-                  <div className="event-detail-user-container">
-                    <Avatar.Group
-                      maxCount={2}
-                      maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}
-                    >
-                      {this.renderAvailUser()}
-                    </Avatar.Group>
-                    <Button className="event-detail-user" onClick={() => this.setModal2Visible(true)}>Xem</Button>
-                  </div>
-
-                  <Title className="event-detail-title" level={4}>Tags</Title>
-                  {this.state.data.tagId.map((value, key) => <Tag style={{ width: 'auto', background: value.background, color: value.color }} key={key}>{value.name}</Tag>)}
+                <Col sm={24} xl={7} className="event-detail">
+                  <Title className="event-detail-title" level={3}>Theo dõi sự kiện</Title>
 
                   <div className="flex-container-row" style={{ marginTop: '10px' }}>
-                    <Title className="event-detail-title" level={4}>Khách mời</Title>
+                    <Title level={4}>Khách mời</Title>
                     {checkPermisson(this.state.currentPermissions, constants.QL_KHACHMOI_PERMISSION) ?
-                      <Button className="flex-row-item-right" onClick={() => this.setModal2Visible2(true)}>Chỉnh sửa</Button>
+                      <Button className="flex-row-item-right no-border" onClick={() => this.setModal2Visible2(true)}>Xem tất cả</Button>
                       : null}
                   </div>
 
                   <Tabs defaultActiveKey="1" >
                     {this.renderguest()}
                   </Tabs>
+
+                  <div className="flex-container-row" style={{ marginBottom: 10, marginTop: 10 }}>
+                    {/* <Title className="event-detail-title" level={3}>Kịch bản</Title> */}
+                    <Title level={4}>Kịch bản</Title>
+                    {checkPermisson(this.state.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
+                      <Button className="flex-row-item-right add" ><Link to={`/addscripts/${this.props.match.params.id}`}>Thêm</Link></Button>
+                      : null}
+                  </div>
+                  <ListScripts currentPermissions={this.state.currentPermissions} eventId={this.props.match.params.id} />
+
+                  <div className="flex-container-row" style={{ marginBottom: 10, marginTop: 10 }}>
+                    <Title level={4}>Người tham gia</Title>
+                    {checkPermisson(this.state.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
+                      <Button className="flex-row-item-right no-border" onClick={() => this.setModalParticipantsVisible(true)}>Xem tất cả</Button>
+                      : null}
+                  </div>
+                  {this.renderParticipants()}
+                  {/* <ListScripts currentPermissions={this.state.currentPermissions} eventId={this.props.match.params.id} /> */}
                 </Col>
-                <Col sm={24} xl={10} className="event-detail">
-                  {/* <Tag className="event-detail-status" style={{ marginTop: '15px' }}>{this.state.status}</Tag> */}
-                  <Title style={{ color: '#017567', margin: 'unset' }} level={1}>{this.state.data.name}</Title>
+                <Col sm={24} xl={9} className="event-detail">
+                  <div className="vl"></div>
+
+                  <Title className="event-detail-title" level={3}>Thông tin sự kiện</Title>
+
+                  <Title style={{ color: '#264653', margin: 'unset' }} level={1}>{this.state.data.name}</Title>
                   <Title style={{ margin: 'unset' }} level={4}>Mô tả</Title>
                   {this.state.data.description}
 
@@ -377,21 +526,35 @@ class eventDetails extends Component {
                     </div>
                   </div>
 
+                  <Title level={4}>Hình thức</Title>
+                  {this.state.data.eventTypeId.name}
 
-                  <Image style={{ maxWidth: '150px' }} src={`/api/images/${this.state.data.posterUrl}`} alt="poster"></Image>
-
-                  <div className="flex-container-row" style={{ marginBottom: '10px' }}>
-                    {/* <Title className="event-detail-title" level={3}>Kịch bản</Title> */}
-                    <Title level={4}>Kịch bản</Title>
-                    {checkPermisson(this.state.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
-                      <Button className="flex-row-item-right add" ><Link to={`/addscripts/${this.props.match.params.id}`}>Thêm</Link></Button>
-                      : null}
+                  <Title level={4}>Ban tổ chức</Title>
+                  <div className="event-detail-user-container">
+                    <Avatar.Group
+                      maxCount={2}
+                      maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}
+                    >
+                      {this.renderAvailUser()}
+                    </Avatar.Group>
+                    <Button className="event-detail-user" onClick={() => this.setModal2Visible(true)}>Xem</Button>
                   </div>
-                  <ListScripts currentPermissions={this.state.currentPermissions} eventId={this.props.match.params.id} />
+
+                  <Title level={4}>Tags</Title>
+                  {this.state.data.tagId.map((value, key) => <Tag style={{ width: 'auto', background: value.background, color: value.color }} key={key}>{value.name}</Tag>)}
+
+                  <div style={{ marginTop: 10 }}>
+                    <Title level={4}>Poster</Title>
+                    <Image style={{ maxWidth: '150px' }} src={`/api/images/${this.state.data.posterUrl}`} alt="poster"></Image>
+                  </div>
                 </Col>
                 <Col sm={24} xl={8} className="event-detail">
-                  {/* <Title className="event-detail-title" level={3}>Phòng hội thoại</Title> */}
+                  <div className="vl"></div>
+                  <Title className="event-detail-title" level={3}>Thông tin thành viên</Title>
+                  {this.renderCurrentUserInEvent()}
 
+
+                  <Title className="event-detail-title" level={3}>Phòng hội thoại</Title>
                   <Tabs className="chat-tabs" defaultActiveKey="1" >
                     {this.renderGroups()}
                   </Tabs>
@@ -424,6 +587,18 @@ class eventDetails extends Component {
               footer={false}
             >
               {this.renderModel2(this.state.listusers)}
+            </Modal>
+            <Modal
+              title="Danh sách khách mời"
+              centered
+              visible={this.state.modalParticipantsVisible}
+              onOk={() => this.setModalParticipantsVisible(false)}
+              onCancel={() => this.setModalParticipantsVisible(false)}
+              width="70%"
+              pagination={false}
+              footer={false}
+            >
+              {this.renderModalParticipants(this.state.listusers)}
             </Modal>
           </Content >
         );

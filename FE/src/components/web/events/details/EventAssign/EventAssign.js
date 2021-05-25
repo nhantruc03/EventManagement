@@ -147,6 +147,7 @@ class EventAssign extends Component {
                                 onChange={e => {
                                     const file = e.target.files[0];
                                     this.props.uploadExcelFile(file)
+                                    this.selectedFile.value = ""
                                 }}
                                 style={{ display: 'none' }}
                             />

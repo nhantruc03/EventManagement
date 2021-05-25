@@ -171,6 +171,7 @@ app.use("/api/guest-types", authenticateToken, require("./routes/guestTypes"));
 app.use("/api/faculties", authenticateToken, require("./routes/faculties"));
 app.use("/api/notifications", authenticateToken, require("./routes/notifications"));
 app.use("/api/script-histories", authenticateToken, require("./routes/scriptHistories"));
+app.use("/api/participants", authenticateToken, require("./routes/participants"));
 
 app.post("/api/uploads", (req, res) => {
   if (req.body.mobile) {

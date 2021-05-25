@@ -30,7 +30,7 @@ const create = async (req, res) => {
     } // for oldDocs
 
     let body = []
-    req.body.forEach(element => {
+    req.body.data.forEach(element => {
       let temp = {
         ...pick(element,
           "userId",

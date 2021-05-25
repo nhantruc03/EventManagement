@@ -35,7 +35,7 @@ class list extends Component {
                         return (
                             <div>
                                 <Title level={2}>{e.name}</Title>
-                                <p style={{ color: '#AAB0B6' }}>Tạo lúc: {moment(e.createdAt).format('HH:mm')} | {moment(e.createdAt).format('DD/MM/YYY')} bởi <span style={{ color: '#2A9D8F' }}>{e.writerId ? e.writerId.name : null}</span></p>
+                                <p style={{ color: '#AAB0B6', fontSize: 13 }}>Tạo lúc: {moment(e.createdAt).format('HH:mm')} | {moment(e.createdAt).format('DD/MM/YYY')} bởi <span style={{ color: '#2A9D8F' }}>{e.writerId ? e.writerId.name : null}</span></p>
                             </div>
                         )
                     }
@@ -44,7 +44,7 @@ class list extends Component {
                     title: 'Hành động',
                     dataIndex: '_id',
                     key: '_id',
-                    width: '30%',
+                    width: '40%',
                     render: (e) =>
                         <div className="btn-group">
                             {checkPermission(this.props.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?

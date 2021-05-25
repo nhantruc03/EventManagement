@@ -30,6 +30,7 @@ import EventAssign from "../details/EventAssign/EventAssign";
 import GuestTypeView from "./GuestType/guestTypeView";
 import GuestView from "./Guest/guestView";
 import GroupView from "./Group/groupView";
+import ParticipantsView from "./Participants/participantsView";
 import { w3cwebsocket } from 'websocket';
 import * as XLSX from 'xlsx'
 import Credentials from "./Credentials/Credentials";
@@ -73,16 +74,17 @@ class editevent extends Component {
             listCredentials: [],
             data: null,
             currentPermission: [],
+            listparticipants: []
         }
     }
 
     addusertoevent = async (e) => {
         let temp_eventAssign = {
-            userId: e,
+            data: [{ userId: e, eventId: this.props.match.params.id }],
             eventId: this.props.match.params.id,
         }
         await trackPromise(
-            axios.post('/api/event-assign', [temp_eventAssign], {
+            axios.post('/api/event-assign', temp_eventAssign, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
@@ -109,8 +111,12 @@ class editevent extends Component {
     }
 
     addlistusertoevent = async (data) => {
+        let temp = {
+            data: data,
+            eventId: this.props.match.params.id
+        }
         await trackPromise(
-            axios.post('/api/event-assign', data, {
+            axios.post('/api/event-assign', temp, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
@@ -165,7 +171,7 @@ class editevent extends Component {
 
     async componentDidMount() {
         this._isMounted = true;
-        const [users, eventTypes, tags, faculties, roles, event, listeventassign, guesttypes, groups, credentials, permissions] = await trackPromise(Promise.all([
+        const [users, eventTypes, tags, faculties, roles, event, listeventassign, guesttypes, groups, credentials, permissions, listparticipants] = await trackPromise(Promise.all([
             axios.post('/api/users/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -277,8 +283,18 @@ class editevent extends Component {
                     ApiFailHandler(err.response?.data?.error)
                 }),
             getPermission(this.props.match.params.id)
-                .then(res => res)
-
+                .then(res => res),
+            axios.post('/api/participants/getAll', { eventId: this.props.match.params.id }, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then((res) =>
+                    res.data.data
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
 
         let guests = []
@@ -333,7 +349,8 @@ class editevent extends Component {
                     listguest: guests,
                     listgroups: groups,
                     listCredentials: credentials,
-                    currentPermission: permissions
+                    currentPermission: permissions,
+                    listparticipants: listparticipants
                 })
             }
         }
@@ -379,6 +396,14 @@ class editevent extends Component {
             listguesttype: values,
         })
     }
+
+    updatelistparticipants = (values) => {
+        this.setState({
+            listparticipants: values
+        })
+    }
+
+
     updatelistgroup = (values) => {
         this.setState({
             listgroups: values,
@@ -398,9 +423,7 @@ class editevent extends Component {
 
     uploadExcelFile = (file) => {
         const promise = new Promise((resolve, reject) => {
-
             const fileReader = new FileReader();
-
             fileReader.readAsArrayBuffer(file)
             fileReader.onload = (e) => {
                 const bufferArray = e.target.result
@@ -448,6 +471,63 @@ class editevent extends Component {
             this.addlistusertoevent(temp_EventAssign)
         })
     }
+
+    uploadExcelFileForParticipants = (file) => {
+        const promise = new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            fileReader.readAsArrayBuffer(file)
+            fileReader.onload = (e) => {
+                const bufferArray = e.target.result
+
+                const wb = XLSX.read(bufferArray, { type: 'buffer' });
+
+                const wsname = wb.SheetNames[0]
+
+                const ws = wb.Sheets[wsname]
+
+                const data = XLSX.utils.sheet_to_json(ws)
+
+                resolve(data)
+            }
+            fileReader.onerror = (err) => {
+                reject(err)
+            }
+        })
+
+        promise.then((result) => {
+            result.forEach(e => {
+                e.eventId = this.props.match.params.id
+            })
+            this.CreateParticipants(result)
+        })
+    }
+
+    CreateParticipants = async (data) => {
+        let temp = {
+            data,
+            eventId: this.props.match.params.id
+        }
+
+        await trackPromise(
+            axios.post('/api/participants', temp, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then(res => {
+                    let data = res.data.data
+
+                    this.setState({
+                        listparticipants: [...this.state.listparticipants, ...data]
+                    })
+                    message.success('Thêm thành công')
+                })
+                .catch(err => {
+                    message.error('Thêm thất bại')
+                }))
+
+    }
+
 
     getUserByMSSV = (mssv) => {
         let result
@@ -673,10 +753,13 @@ class editevent extends Component {
                                     <TabPane tab='Khách mời' key={3}>
                                         <GuestView canDelete={true} data={this.state.listguest} listguesttype={this.state.listguesttype} update={this.updateguest} />
                                     </TabPane>
-                                    <TabPane tab='Phòng hội thoại' key={4}>
+                                    <TabPane tab='Người tham gia' key={4}>
+                                        <ParticipantsView canEdit={true} canDelete={true} eventId={this.props.match.params.id} data={this.state.listparticipants} uploadExcelFile={this.uploadExcelFileForParticipants} update={this.updatelistparticipants} />
+                                    </TabPane>
+                                    <TabPane tab='Phòng hội thoại' key={5}>
                                         <GroupView canDelete={true} eventId={this.props.match.params.id} update={this.updatelistgroup} data={this.state.listgroups}></GroupView>
                                     </TabPane>
-                                    <TabPane tab='Phân quyền' key={5}>
+                                    <TabPane tab='Phân quyền' key={6}>
                                         <Credentials canDelete={false} update={this.updateEventAssign} eventId={this.props.match.params.id} listCredentials={this.state.listCredentials} data={this.state.listEventAssign} />
                                     </TabPane>
                                 </Tabs>
