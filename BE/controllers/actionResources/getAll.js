@@ -14,6 +14,7 @@ const getAll = async (req, res) => {
     }
     else {
       docs = await actionResources.find(query)
+        .populate({ path: 'userId', select: 'name' })
         .skip(limit * (page - 1))
         .limit(limit)
     }

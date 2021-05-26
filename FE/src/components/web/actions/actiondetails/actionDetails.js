@@ -245,7 +245,8 @@ class actionDetails extends Component {
     uploadResources = async (e) => {
         let data = {
             ...e,
-            actionId: this.props.match.params.id
+            actionId: this.props.match.params.id,
+            userId: this.state.currentUser.id
         }
         await trackPromise(
             axios.post('/api/action-resources', data, {

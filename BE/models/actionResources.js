@@ -10,6 +10,12 @@ const actionResources = new Schema(
             index: true,
             required: true
         },
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "users",
+            index: true,
+            required: true
+        },
         url: {
             type: String,
             required: true,

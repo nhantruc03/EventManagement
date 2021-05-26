@@ -230,7 +230,12 @@ class header extends Component {
             let temp = this.state.notifications
             temp.map(e => e.watch = true)
             this.setState({
-                notifications: temp
+                notifications: temp,
+                dropdownVisible: e
+            })
+        }else{
+            this.setState({
+                dropdownVisible: e
             })
         }
     }
@@ -240,7 +245,7 @@ class header extends Component {
             <Header className="site-layout-background flex-container-row" >
                 <div className="flex-row-item-right">
                     <div className="flex-container-row">
-                        <Dropdown onVisibleChange={this.onVisibleChange} overlayClassName='dropdown' overlay={this.renderNotifications} placement='bottomRight'>
+                        <Dropdown visible={this.state.dropdownVisible}  onVisibleChange={this.onVisibleChange} overlayClassName='dropdown' overlay={this.renderNotifications} placement='bottomRight'>
                             <Badge count={this.state.notifications.filter(e => e.watch === false).length}>
                                 <Button style={{ border: 'none' }}><BellOutlined /></Button>
                             </Badge>

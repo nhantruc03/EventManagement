@@ -1633,3 +1633,10 @@ label.calendar-label{
 .guest td.ant-table-cell {
   text-align: unset !important;
 }
+
+.report-container{
+  height: 100%;
+  padding: 10px;
+  margin: 0px 40px 0 40px;
+  min-height: 360px;
+}

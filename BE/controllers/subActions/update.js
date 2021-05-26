@@ -1,4 +1,5 @@
 const subActions = require('../../models/subActions')
+const actions = require('../../models/actions')
 const { handleBody } = require('./handleBody')
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
@@ -56,11 +57,34 @@ const update = async (req, res) => {
       })
     }
 
+    let listsubaction = await subActions.find({ actionId: updated.actionId, isDeleted: false }, null, { session })
+    let status = false;
+    if (listsubaction) {
+      let temp = listsubaction.filter(e => e.status === false)
+      if (temp.length > 0) {
+        let updateaction = await actions.findOneAndUpdate(
+          { _id: updated.actionId, isDeleted: false },
+          { status: false },
+          { session, new: true }
+        )
+        status = false
+      } else {
+        let updateaction = await actions.findOneAndUpdate(
+          { _id: updated.actionId, isDeleted: false },
+          { status: true },
+          { session, new: true }
+        )
+        status = true
+      }
+    }
+
+
     // Updated Successfully
     await commitTransactions(sessions)
     return res.status(200).json({
       success: true,
-      data: updated
+      data: updated,
+      actionStatus: status
     })
   } catch (error) {
     await abortTransactions(sessions)

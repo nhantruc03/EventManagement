@@ -76,6 +76,8 @@ import actiondetails from '../components/web/actions/actiondetails/actionDetails
 import listactionsForClone from '../components/web/actions/forClone/listactions/listactions'
 import actiondetailsForClone from '../components/web/actions/forClone/actiondetails/actionDetails'
 
+import eventreport from '../components/web/reports/report'
+
 import videocall from '../components/web/chat/VideoCallRoom'
 
 class router extends Component {
@@ -132,6 +134,7 @@ class router extends Component {
                 <SecureRouteAdmin exact path="/events/:id" component={eventDetails} layout={Page} />
                 <SecureRouteAdmin exact path="/editevent/:id" component={editevent} layout={Page} />
                 <SecureRouteAdmin exact path="/addevents" component={addevents} layout={Page} />
+                <SecureRouteAdmin exact path="/eventreport/:id" component={eventreport} layout={Page} />
 
                 <SecureRouteAdmin exact path="/eventclones" component={eventClones} layout={Page} />
                 {/* <SecureRouteAdmin exact path="/eventclones/:id" component={eventcloneDetails} layout={Page} /> */}
