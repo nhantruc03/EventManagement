@@ -132,6 +132,7 @@ class SubTaskCreateModal extends ValidationComponent {
             alert("Tạo subtask thành công");
             this.props.onClose();
             this.props.addToList(res.data.data);
+
           })
           .catch((err) => {
             console.log(err);

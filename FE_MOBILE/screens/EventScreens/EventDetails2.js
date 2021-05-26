@@ -16,6 +16,7 @@ import Indicator from "../../components/helper/Loading";
 import getPermission from "../../components/helper/Credentials"
 import ApiFailHandler from '../../components/helper/ApiFailHandler'
 import { Redirect } from "react-router";
+import ParticipantTab from "../../components/EventTabs/ParticipantTab";
 
 const styles = StyleSheet.create({
   container: {
@@ -51,6 +52,7 @@ export default class EventDetail2 extends Component {
       listguesttype: null,
       listscripts: null,
       listgroups: null,
+      listParticipants: null,
       loading: true,
       index: 0,
       loggout: false,
@@ -60,6 +62,7 @@ export default class EventDetail2 extends Component {
         { key: "3", title: "Kịch bản" },
         { key: "4", title: "Hội thoại" },
         { key: "5", title: "Khách mời" },
+        { key: "6", title: "Người tham gia" },
       ],
       loadingBigBO: this.props.route.params.loadBySelf ? true : false,
       currentPermissions: []
@@ -71,6 +74,7 @@ export default class EventDetail2 extends Component {
       3: this.Route3,
       4: this.Route4,
       5: this.Route5,
+      6: this.Route6,
     });
   }
   Route1 = () => <Eventdetails data={this.props.route.params.loadBySelf ? this.state.event : this.props.route.params.data} />;
@@ -124,6 +128,16 @@ export default class EventDetail2 extends Component {
         <Indicator />
       </View>
     );
+  Route6 = () =>
+    this.state.listParticipants && !this.state.loading ? (
+      <ParticipantTab
+        data={this.state.listParticipants}
+        eventId={this.props.route.params.data._id} />
+    ) : (
+      <View style={styles.Loading}>
+        <Indicator />
+      </View>
+    );
 
   updateListScript = (e) => {
     this.setState({
@@ -140,6 +154,7 @@ export default class EventDetail2 extends Component {
       scripts,
       event,
       permissons,
+      participants,
     ] = await Promise.all([
       axios
         .post(
@@ -233,7 +248,21 @@ export default class EventDetail2 extends Component {
             loggout: errResult.isExpired
           })
         }),
-      getPermission(this.props.route.params.data._id).then(res => res)
+      getPermission(this.props.route.params.data._id).then(res => res),
+      axios.post(`${Url()}/api/participants/getAll`, { eventId: this.props.route.params.data._id }, {
+        headers: {
+          'Authorization': await getToken(),
+        }
+      })
+        .then((res) =>
+          res.data.data
+        )
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
     ]);
 
     let guests = [];
@@ -275,7 +304,8 @@ export default class EventDetail2 extends Component {
         loading: false,
         listscripts: scripts,
         loadingBigBO: false,
-        currentPermissions: permissons
+        currentPermissions: permissons,
+        listParticipants: participants,
       });
     }
   }
@@ -291,7 +321,7 @@ export default class EventDetail2 extends Component {
       activeColor="#2A9D8F"
       inactiveColor="#AAB0B6"
       style={{
-        backgroundColor: "F6F7F8",
+        backgroundColor: "#F6F7F8",
         paddingVertical: 5,
       }}
       scrollEnabled={true}
@@ -305,6 +335,7 @@ export default class EventDetail2 extends Component {
   };
 
   render() {
+    console.log(this.state.listParticipants)
     if (this.state.loggout) {
       return (
         <Redirect

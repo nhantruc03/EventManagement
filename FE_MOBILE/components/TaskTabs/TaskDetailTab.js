@@ -18,10 +18,12 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 40,
+    marginRight: 8,
   },
   coverImg: {
     width: 400,
     height: 200,
+
   },
   description: {
     fontFamily: "regular",
@@ -160,7 +162,7 @@ class TaskDetailTab extends Component {
               <View style={styles.managerContainer}>
                 <View
                   style={{
-                    borderRadius: 16,
+
                     flexDirection: "row",
                     alignItems: "center",
                   }}
@@ -184,18 +186,26 @@ class TaskDetailTab extends Component {
               {this.props.data.availUser.map((value, key) => (
                 <View
                   style={{
-                    marginRight: 10,
-                    paddingHorizontal: 10,
+
+
                     borderRadius: 16,
                   }}
                   key={key}
                 >
-                  <Image
-                    style={styles.avaImage}
-                    source={{
-                      uri: `${Url()}/api/images/${value.photoUrl}`,
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
                     }}
-                  ></Image>
+                  >
+                    <Image
+                      style={styles.avaImage}
+                      source={{
+                        uri: `${Url()}/api/images/${value.photoUrl}`,
+                      }}
+                    ></Image>
+                    <Text>{value.name}</Text>
+                  </View>
                 </View>
               ))}
             </View>

@@ -129,6 +129,7 @@ class SubTasksTab extends Component {
             element.status = !e.status;
           }
         });
+        this.props.updateFullListSub(temp_data)
         this.setState({
           data: temp_data,
           loading: false
@@ -180,7 +181,7 @@ class SubTasksTab extends Component {
       deleteLoading: true,
     });
   }
-
+  // addNeedUpdateForObject
   deleteSubAction = async (e) => {
     this.onLoading()
     await (
@@ -192,6 +193,7 @@ class SubTasksTab extends Component {
         .then((res) => {
           alert(`${res.data.data.name} xóa thành công`);
           let temp = this.state.data.filter(x => x._id !== e._id)
+          this.props.updateFullListSub(temp)
           this.setState({
             data: temp,
             deleteLoading: false,
@@ -200,7 +202,8 @@ class SubTasksTab extends Component {
         .catch(err => {
           let errResult = ApiFailHandler(err.response?.data?.error)
           this.setState({
-            loggout: errResult.isExpired
+            loggout: errResult.isExpired,
+            loading: false
           })
         })
     )
@@ -247,12 +250,20 @@ class SubTasksTab extends Component {
       </Swipeable>
     );
   };
+
+
   addToList = (e) => {
+    let temp = [...this.state.data, e]
     this.setState({
-      data: [...this.state.data, e],
+      data: temp,
     });
-    // this.props.updateListSubTask(e);
+    this.props.updateFullListSub(temp)
   };
+
+
+
+
+
   updateToList = (e) => {
     let temp = this.state.data
     temp.forEach(x => {
@@ -328,6 +339,7 @@ class SubTasksTab extends Component {
                   actionId={this.state.actionId}
                   addToList={(e) => this.addToList(e)}
                   updateToList={(e) => this.updateToList(e)}
+
                 />
               </Modal>
             </View>

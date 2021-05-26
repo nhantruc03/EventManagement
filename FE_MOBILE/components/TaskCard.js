@@ -7,6 +7,7 @@ import axios from "axios";
 import getToken from "../Auth";
 import ApiFailHandler from '../components/helper/ApiFailHandler'
 import { Redirect } from 'react-router';
+import Loader from 'react-native-modal-loader';
 
 const styles = StyleSheet.create({
   cardImage: {
@@ -73,6 +74,9 @@ export default class TaskCard extends Component {
       totalSubAction: [],
       resources: [],
       loggout: false,
+      needUpdate: undefined,
+      loading: true,
+
     };
   }
 
@@ -121,9 +125,10 @@ export default class TaskCard extends Component {
         })
         this.setState({
           totalSubAction: subActions,
-          resources: resources
+          resources: resources,
+          needUpdate: this.props.data.needUpdate,
+          loading: false,
         })
-
         let temp = {
           _id: this.props.data._id,
           total: subActions.length
@@ -132,6 +137,75 @@ export default class TaskCard extends Component {
       }
     }
   }
+
+  async UNSAFE_componentWillUpdate(e) {
+    if (e.data.needUpdate !== this.state.needUpdate) {
+      this.setState({
+        needUpdate: e.data.needUpdate,
+      })
+      if (e.data.needUpdate === true) {
+        this.setState({
+          loading: true
+        })
+        const [subActions, resources] = await Promise.all([
+          axios.post(`${Url()}/api/sub-actions/getAll`, { actionId: this.props.data._id }, {
+            headers: {
+              'Authorization': await getToken()
+            }
+          })
+            .then((res) =>
+              res.data.data
+            )
+            .catch(err => {
+              let errResult = ApiFailHandler(err.response?.data?.error)
+              this.setState({
+                loggout: errResult.isExpired
+              })
+            }),
+          axios.post(`${Url()}/api/action-resources/getAll`, { actionId: this.props.data._id }, {
+            headers: {
+              'Authorization': await getToken()
+            }
+          })
+            .then((res) =>
+              res.data.data)
+            .catch(err => {
+              let errResult = ApiFailHandler(err.response?.data?.error)
+              this.setState({
+                loggout: errResult.isExpired
+              })
+            }),
+        ]);
+
+
+        if (subActions !== null) {
+          let temp = []
+          subActions.forEach(e => {
+            if (e.status) {
+              temp.push(e)
+            }
+          })
+          this.setState({
+            completeSubAction: temp,
+            totalSubAction: subActions,
+            resources: resources,
+            needUpdate: undefined,
+            loading: false
+          })
+          this.props.removeNeedUpdateForObject(this.props.data._id)
+          // let temp = {
+          //   _id: this.props.data._id,
+          //   total: subActions.length
+          // }
+          // this.props.addTotalSubOfAction(temp)
+        }
+      }
+    }
+  }
+
+
+
+
 
   componentWillUnmount() {
     this._isMounted = false;
@@ -150,7 +224,8 @@ export default class TaskCard extends Component {
     } else {
       return (
         <EventCard>
-          <View >
+          <View>
+            <Loader loading={this.state.loading} color="white" size="large" />
             <Image style={styles.cardImage} source={{ uri: `${Url()}/api/images/${item.coverUrl}` }} />
             <Text style={styles.titleText}>{item.name}</Text>
             <View style={styles.datetime}>

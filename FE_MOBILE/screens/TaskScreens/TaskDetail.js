@@ -97,11 +97,16 @@ class TaskDetail extends Component {
         updateListSubTask={(e) => this.updateListSubTask(e)}
         data={this.state.subActions}
         actionId={this.state.data._id}
+        // updateToCard={(e) => this.updateToCard(e)}
+        updateFullListSub={(e) => this.updateFullListSub(e)}
       />
     ) : (
       <Indicator />
     );
   Route3 = () => <CommentTab actionId={this.state.data._id} />;
+
+
+
 
   updateListSubTask = (e) => {
     this.setState({
@@ -269,6 +274,15 @@ class TaskDetail extends Component {
       data: temp_data,
       loadingBigObject: false
     });
+  }
+
+  updateFullListSub = (e) => {
+    if (!this.props.route.params.loadBySelf) {
+      this.props.route.params.addNeedUpdateForObject(this.state.data._id)
+    }
+    this.setState({
+      subActions: e
+    })
   }
 
   renderTabBar = (props) => (

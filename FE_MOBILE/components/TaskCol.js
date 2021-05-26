@@ -66,6 +66,7 @@ class TaskCol extends Component {
             SearchData: [],
             refreshing: false,
             loggout: false,
+            updatesubtask: null,
             listCheckbox: [
                 {
                     label: "Tên", // label for checkbox item
@@ -172,6 +173,24 @@ class TaskCol extends Component {
         }
     }
 
+
+
+    addNeedUpdateForObject = (id) => {
+        this.state.SearchData.forEach(e => {
+            if (e._id === id) {
+                e.needUpdate = true
+            }
+        })
+    }
+
+    removeNeedUpdateForObject = (id) => {
+        this.state.SearchData.forEach(e => {
+            if (e._id === id) {
+                e.needUpdate = undefined
+            }
+        })
+    }
+
     renderItem = (item) => {
         return (
             <TouchableOpacity
@@ -179,12 +198,15 @@ class TaskCol extends Component {
                     this.props.navigation.navigate("TaskDetail", {
                         currentPermissions: this.props.currentPermissions,
                         data: item,
-                        deleteItemInCurrentActions: (e) => this.props.deleteItemInCurrentActions(e)
+                        addNeedUpdateForObject: (e) => this.addNeedUpdateForObject(e),
+                        removeNeedUpdateForObject: (e) => this.removeNeedUpdateForObject(e),
+                        deleteItemInCurrentActions: (e) => this.props.deleteItemInCurrentActions(e),
+                        updateToCard: (e) => this.updateToCard(e)
                     })
                 }
             >
-                <TaskCard data={item} addTotalSubOfAction={this.addTotalSubOfAction} />
-            </TouchableOpacity>
+                <TaskCard data={item} addTotalSubOfAction={this.addTotalSubOfAction} removeNeedUpdateForObject={(e) => this.removeNeedUpdateForObject(e)} />
+            </TouchableOpacity >
         );
     };
 
@@ -230,10 +252,15 @@ class TaskCol extends Component {
             )
             .then((res) => {
                 this.props.updateFullListCurrentAction(res.data.data);
+                let temp = res.data.data
+
                 this.setState({
                     refreshing: false,
-                    SearchData: res.data.data
+                    SearchData: temp
                 });
+                temp.forEach(e => {
+                    this.addNee, dUpdateForObject(e._id)
+                })
             })
             .catch(err => {
                 let errResult = ApiFailHandler(err.response?.data?.error)
@@ -241,6 +268,7 @@ class TaskCol extends Component {
                     loggout: errResult.isExpired
                 })
             });
+
     }
 
     render() {

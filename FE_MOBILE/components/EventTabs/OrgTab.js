@@ -138,14 +138,14 @@ class OrgTab extends Component {
               <View style={styles.secondColumn}>
                 <Text style={styles.textName}>{item.userId.name}</Text>
                 {!item.hasOwnProperty("roleId") ? (
-                  <Text>Chưa có</Text>
+                  <Text style={styles.textRole}>Chưa có</Text>
                 ) : (
                   <Text style={styles.textRole}>{item.roleId.name}</Text>
                 )}
               </View>
               <View style={styles.thirdColumn}>
                 {!item.hasOwnProperty("facultyId") ? (
-                  <Text>Chưa có</Text>
+                  <Text style={styles.textFaculty}>Chưa có</Text>
                 ) : (
                   <Text style={styles.textFaculty}>{item.facultyId.name}</Text>
                 )}
@@ -178,14 +178,8 @@ class OrgTab extends Component {
             data={this.state.data}
             getSearchData={(e) => this.getSearchData1(e)}
           ></Search>
+          {this.renderList()}
 
-          {this.state.loading ? (
-            <View>
-              <ActivityIndicator size="large" animating color="#2A9D8F"></ActivityIndicator>
-            </View>
-          ) : (
-            this.renderList()
-          )}
         </SafeAreaView>
       );
     }

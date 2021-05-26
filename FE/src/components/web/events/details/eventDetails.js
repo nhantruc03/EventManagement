@@ -589,7 +589,7 @@ class eventDetails extends Component {
               {this.renderModel2(this.state.listusers)}
             </Modal>
             <Modal
-              title="Danh sách khách mời"
+              title="Danh sách người tham gia"
               centered
               visible={this.state.modalParticipantsVisible}
               onOk={() => this.setModalParticipantsVisible(false)}

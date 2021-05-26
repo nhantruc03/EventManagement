@@ -430,9 +430,13 @@ class Taskscreen extends Component {
         data={temp_listActions}
         EditActionType={(e) => this.EditActionType(e)}
         DeleteAlert={(e) => this.DeleteAlert(e)}
-        updateFullListCurrentAction={(e) => this.updateFullListCurrentAction(e)} />
+        updateFullListCurrentAction={(e) => this.updateFullListCurrentAction(e)}
+      />
     )
   };
+
+
+
   updateFullListCurrentAction = (e) => {
     this.setState({
       currentActions: e
