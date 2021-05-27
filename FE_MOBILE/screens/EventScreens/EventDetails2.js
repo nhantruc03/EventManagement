@@ -17,6 +17,8 @@ import getPermission from "../../components/helper/Credentials"
 import ApiFailHandler from '../../components/helper/ApiFailHandler'
 import { Redirect } from "react-router";
 import ParticipantTab from "../../components/EventTabs/ParticipantTab";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const styles = StyleSheet.create({
   container: {
@@ -35,6 +37,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: "center",
     justifyContent: "center",
+  },
+  IconRight: {
+    right: 16,
   },
 });
 
@@ -146,6 +151,18 @@ export default class EventDetail2 extends Component {
   };
 
   async componentDidMount() {
+    this.props.navigation.setOptions({
+      headerRight: () => (
+        <View style={styles.IconRight}>
+          <TouchableOpacity onPress={() =>
+            this.props.navigation.navigate("Report", {
+              id: this.props.route.params.data._id
+            })}>
+            < Ionicons name='documents-outline' size={24} color='white' />
+          </TouchableOpacity>
+        </View>
+      ),
+    });
     this._isMounted = true;
     const [
       listgroups,

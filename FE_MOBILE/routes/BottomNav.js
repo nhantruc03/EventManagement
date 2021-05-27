@@ -224,11 +224,12 @@ export default class BottomNav extends React.Component {
                 const routeName = getFocusedRouteNameFromRoute(route) ?? "";
                 let temp_list = [
                   "EventDetail2",
+                  "Report",
                   "scriptdetail",
                   "Phòng hội thoại",
                   "scriptview",
                   "history",
-                  "CreateTask", "TaskDetail", "EditTask"
+                  "CreateTask", "TaskDetail", "EditTask",
                 ];
                 if (temp_list.includes(routeName)) {
                   return false;
@@ -251,6 +252,7 @@ export default class BottomNav extends React.Component {
                 const routeName = getFocusedRouteNameFromRoute(route) ?? "";
                 let temp_list = [
                   "EventDetail2",
+                  "Report",
                   "scriptdetail",
                   "Phòng hội thoại",
                   "scriptview",

@@ -217,7 +217,7 @@ export default class GuestTab extends Component {
     } else {
       return (
         <SafeAreaView>
-          <Loader loading={this.state.updateLoading} color="#2A9D8F" />
+          <Loader loading={this.state.updateLoading} color="white" size="large" />
           <Search
             target={["name", "phone"]}
             multi={true}

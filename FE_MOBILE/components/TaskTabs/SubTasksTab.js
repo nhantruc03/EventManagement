@@ -18,6 +18,7 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 import ApiFailHandler from '../helper/ApiFailHandler'
 import Animated from "react-native-reanimated";
 import { Alert } from "react-native";
+import { RefreshControl } from "react-native";
 
 const styles = StyleSheet.create({
   formContainer: { paddingHorizontal: 16, zIndex: 3 },
@@ -89,6 +90,7 @@ class SubTasksTab extends Component {
       onEditSubtask: null,
       visible: false,
       deleteLoading: false,
+      refreshing: false,
     };
   }
 
@@ -260,7 +262,31 @@ class SubTasksTab extends Component {
     this.props.updateFullListSub(temp)
   };
 
-
+  onRefresh = async () => {
+    this.setState({
+      refreshing: true
+    })
+    await axios
+      .post(`${Url()}/api/sub-actions/getAll`,
+        { actionId: this.props.actionId },
+        {
+          headers: {
+            'Authorization': await getToken(),
+          }
+        })
+      .then((res) =>
+        this.setState({
+          refreshing: false,
+          data: res.data.data
+        })
+      )
+      .catch(err => {
+        let errResult = ApiFailHandler(err.response?.data?.error)
+        this.setState({
+          loggout: errResult.isExpired
+        })
+      });
+  }
 
 
 
@@ -318,6 +344,12 @@ class SubTasksTab extends Component {
 
               </View>
               <FlatList
+                refreshControl={
+                  <RefreshControl
+                    refreshing={this.state.refreshing}
+                    onRefresh={this.onRefresh}
+                  />
+                }
                 data={this.state.data}
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => this.renderItem(item)}

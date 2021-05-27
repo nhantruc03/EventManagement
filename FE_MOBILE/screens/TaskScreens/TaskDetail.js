@@ -24,6 +24,7 @@ import { Alert } from "react-native";
 import Loader from "react-native-modal-loader"
 import { Redirect } from "react-router";
 import ApiFailHandler from '../../components/helper/ApiFailHandler'
+import AttachmentTab from "../../components/TaskTabs/AttachmentTab";
 
 const initialLayout = { width: Dimensions.get("window").width };
 const styles = StyleSheet.create({
@@ -72,6 +73,7 @@ class TaskDetail extends Component {
       data: {},
       loadingBigObject: true,
       subActions: null,
+      resources: [],
       currentSubAction: null,
       index: 0,
       loading: false,
@@ -81,12 +83,14 @@ class TaskDetail extends Component {
         { key: "1", title: "Thông tin chung" },
         { key: "2", title: "Danh sách cần làm" },
         { key: "3", title: "Bình luận" },
+        { key: "4", title: "Tệp đính kèm" },
       ],
     };
     this.renderScene = SceneMap({
       1: this.Route1,
       2: this.Route2,
       3: this.Route3,
+      4: this.Route4,
     });
   }
   Route1 = () => <TaskDetailTab data={this.state.data} />;
@@ -104,7 +108,15 @@ class TaskDetail extends Component {
       <Indicator />
     );
   Route3 = () => <CommentTab actionId={this.state.data._id} />;
-
+  Route4 = () =>
+    this.state.resources && !this.state.loading ? (
+      <AttachmentTab
+        data={this.state.resources}
+        actionId={this.state.data._id}
+      />
+    ) : (
+      <Indicator />
+    );
 
 
 
@@ -252,7 +264,7 @@ class TaskDetail extends Component {
 
       ),
     });
-    const subActions = await axios
+    const [subActions, resources] = await Promise.all([axios
       .post(
         `${Url()}/api/sub-actions/getAll`,
         { actionId: temp_data._id },
@@ -268,10 +280,26 @@ class TaskDetail extends Component {
         this.setState({
           loggout: errResult.isExpired
         })
-      });
+      }),
+    axios.post(`${Url()}/api/action-resources/getAll`, { actionId: temp_data._id }, {
+      headers: {
+        'Authorization': await getToken(),
+      }
+    })
+      .then((res) =>
+        res.data.data
+      )
+      .catch(err => {
+        let errResult = ApiFailHandler(err.response?.data?.error)
+        this.setState({
+          loggout: errResult.isExpired
+        })
+      }),
+    ]);
     this.setState({
       subActions: subActions,
       data: temp_data,
+      resources: resources,
       loadingBigObject: false
     });
   }
@@ -317,7 +345,7 @@ class TaskDetail extends Component {
       if (!this.state.loadingBigObject) {
         return (
           <View style={styles.container}>
-            <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
+            <Loader loading={this.state.deleteLoading} color="white" size="large" />
             <TabView
               renderTabBar={this.renderTabBar}
               navigationState={{

@@ -296,7 +296,7 @@ export default class ScriptTab extends Component {
       if (this.state.data) {
         return (
           <Provider>
-            <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
+            <Loader loading={this.state.deleteLoading} color="white" size="large" />
             <View>
               <FlatList
                 refreshControl={

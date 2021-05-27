@@ -14,6 +14,7 @@ import scriptdetail from "../screens/EventScreens/scriptdetail";
 import scriptview from "../screens/EventScreens/scriptview";
 import history from "../screens/EventScreens/history";
 import ChatRoom from "../screens/EventScreens/ChatRoom";
+import Report from "../screens/EventScreens/Report";
 // import Modal from "@ant-design/react-native";
 
 const Stack = createStackNavigator();
@@ -48,6 +49,19 @@ class StackNav extends Component {
           component={EventDetail2}
           options={{
             title: "Chi tiết sự kiện",
+            headerStyle: {
+              backgroundColor: "#2A9D8F",
+            },
+            headerTitleStyle: {},
+            headerBackTitleVisible: false,
+            headerTintColor: "#fff",
+          }}
+        />
+        <Stack.Screen
+          name="Report"
+          component={Report}
+          options={{
+            title: "Báo cáo",
             headerStyle: {
               backgroundColor: "#2A9D8F",
             },

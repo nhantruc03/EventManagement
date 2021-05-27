@@ -601,7 +601,7 @@ class Taskscreen extends Component {
     }
     else return (
       <Provider>
-        <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
+        <Loader loading={this.state.deleteLoading} color="white" size="large" />
         <View
           style={
             Platform.OS == "ios" ? styles.containerIOS : styles.containerAndroid
