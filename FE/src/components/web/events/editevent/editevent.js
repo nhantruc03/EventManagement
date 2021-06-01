@@ -17,6 +17,7 @@ import {
     Breadcrumb,
     Image,
     Tabs,
+    Popconfirm,
 } from "antd";
 import {
     UploadOutlined,
@@ -74,7 +75,75 @@ class editevent extends Component {
             listCredentials: [],
             data: null,
             currentPermission: [],
-            listparticipants: []
+            listparticipants: [],
+            modalCloneVisible: false
+        }
+    }
+
+    setModalCloneVisible = (modalCloneVisible) => {
+        this.setState({
+            modalCloneVisible
+        })
+    }
+
+    formClone = React.createRef()
+    renderModelClone = () =>{
+        return (
+            <Form
+                ref={this.formClone}
+                name="validate_other"
+                {...formItemLayout}
+                onFinish={(e) => this.onFinishClone(e)}
+                layout="vertical"
+                initialValues={this.state.ActionTypeForEdit}
+            >
+                <Form.Item
+                    wrapperCol={{ sm: 24 }}
+                    name="name"
+                    rules={[{ required: true, message: "Cần nhập tên sự kiện" }]}
+                >
+                    <Input placeholder="Tên sự kiện..." />
+                </Form.Item>
+                <br></br>
+                <div className="flex-container-row">
+                    <div className="flex-container-row flex-row-item-right">
+                        <Button onClick={() => this.setModalVisible(false)} style={{ marginRight: 5 }} className="back">
+                            Hủy
+                  </Button>
+                        <Button htmlType="submit" className="add">
+                            Tạo
+                </Button>
+                    </div>
+                </div>
+            </Form>
+        )
+    }
+
+    onFinishClone = async (e) => {
+        let data = {
+            ...e,
+            eventId: this.props.match.params.id
+        }
+
+        const result = await trackPromise(
+            axios.post('/api/events/start-clone', data, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then(res => {
+                    message.success('Tạo thành công');
+                    return true
+                })
+                .catch(err => {
+                    message.error('Tạo thất bại');
+                    ApiFailHandler(err.response?.data?.error)
+                    return false
+                })
+        )
+        if (result) {
+            this.formClone.current.resetFields()
+            this.setModalCloneVisible(false)
         }
     }
 
@@ -559,13 +628,35 @@ class editevent extends Component {
         return result
     }
 
+    deleteEvent = async () => {
+        const result = await trackPromise(axios.delete(`/api/events/${this.props.match.params.id}`, {
+            headers: {
+                'Authorization': { AUTH }.AUTH
+            }
+        })
+            .then(res => {
+                message.success('Xóa sự kiện thành công')
+                return res.data.data
+            })
+            .catch(err => {
+                message.error('Xóa sự kiện thất bại')
+                ApiFailHandler(err.response?.data?.error)
+            })
+        )
+        if (result) {
+            this.setState({
+                doneDelete: true
+            })
+        }
+    }
+
     render() {
         if (this.state.data) {
             return (
                 <Content style={{ margin: "0 16px" }}>
                     < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }
                     }>
-                        <Col span={8}>
+                        <div className="flex-container-row" style={{ width: '100%', padding: '0 10px' }}>
                             <Breadcrumb separator=">">
                                 <Breadcrumb.Item >
                                     <Link to="/events">Sự kiện</Link>
@@ -577,7 +668,22 @@ class editevent extends Component {
                                     Chỉnh sửa
                                     </Breadcrumb.Item>
                             </Breadcrumb>
-                        </Col>
+                            {checkPermission(this.state.currentPermission, constants.QL_SUKIEN_PERMISSION) ?
+                                <div className="flex-row-item-right">
+                                    <Popconfirm
+                                        title="Bạn có chắc muốn xóa chứ?"
+                                        onConfirm={this.deleteEvent}
+                                        okText="Đồng ý"
+                                        cancelText="Hủy"
+                                    >
+                                        <Button className="delete">Xóa</Button>
+                                    </Popconfirm>
+                                    <Button style={{ marginLeft: 10 }} onClick={() => this.setModalCloneVisible(true)} className="add">Tạo bản sao</Button>
+                                    <Button style={{ marginLeft: 10 }} onClick={() => { this.props.history.push(`/eventreport/${this.props.match.params.id}`) }} className="add">Báo cáo</Button>
+                                </div>
+                                : null
+                            }
+                        </div>
                     </Row >
 
                     <div className="site-layout-background-main">
@@ -779,6 +885,19 @@ class editevent extends Component {
                         footer={false}
                     >
                         {this.renderModel()}
+                    </Modal>
+
+                    <Modal
+                        title="Tạo bản sao sự kiện"
+                        centered
+                        visible={this.state.modalCloneVisible}
+                        onOk={() => this.setModalCloneVisible(false)}
+                        onCancel={() => this.setModalCloneVisible(false)}
+                        width="30%"
+                        pagination={false}
+                        footer={false}
+                    >
+                        {this.renderModelClone()}
                     </Modal>
                 </Content >
             );

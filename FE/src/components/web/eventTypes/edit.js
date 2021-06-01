@@ -88,10 +88,10 @@ class edit extends Component {
                     < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }}>
                         <Breadcrumb separator=">">
                             <Breadcrumb.Item >
-                                <Link to="/listeventtypes">Sự kiện</Link>
+                                <Link to="/admin/listeventtypes">Danh sách</Link>
                             </Breadcrumb.Item>
                             <Breadcrumb.Item>
-                                Chỉnh sửa sự kiện
+                                Chỉnh sửa hình thức sự kiện
                             </Breadcrumb.Item>
                         </Breadcrumb>
                     </Row>

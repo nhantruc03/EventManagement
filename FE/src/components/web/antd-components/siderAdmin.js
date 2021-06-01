@@ -2,9 +2,6 @@ import { Layout, Menu } from 'antd';
 import React from 'react';
 import {
     HomeOutlined,
-    FireOutlined,
-    FileDoneOutlined,
-    TeamOutlined,
 
 } from '@ant-design/icons';
 import Title from 'antd/lib/typography/Title';
@@ -55,14 +52,32 @@ class SiderDemo extends React.Component {
                     <Menu.Item key="/" icon={<HomeOutlined />}>
                         <Link to="/" className="nav-text">Trang chủ</Link>
                     </Menu.Item>
-                    <Menu.Item key="/events" icon={<FireOutlined />}>
-                        <Link to="/events" className="nav-text">Sự kiện</Link>
+                    <Menu.Item key="/admin/listusers">
+                        <Link to="/admin/listusers" className="nav-text">Người dùng</Link>
                     </Menu.Item>
-                    <Menu.Item key="/actions" icon={<FileDoneOutlined />}>
-                        <Link to="/actions" className="nav-text">Công việc</Link>
+                    <Menu.Item key="/admin/listroles">
+                        <Link to="/admin/listroles" className="nav-text">Quyền</Link>
                     </Menu.Item>
-                    <Menu.Item key="/eventclones" icon={<TeamOutlined />}>
-                        <Link to="/eventclones" className="nav-text">Hồ sơ</Link>
+                    <Menu.Item key="/admin/listcredentials">
+                        <Link to="/admin/listcredentials" className="nav-text">Quyền thực thi</Link>
+                    </Menu.Item>
+                    <Menu.Item key="/admin/listsystemroles">
+                        <Link to="/admin/listsystemroles" className="nav-text">Quyền hệ thống</Link>
+                    </Menu.Item>
+                    <Menu.Item key="/admin/listfaculties">
+                        <Link to="/admin/listfaculties" className="nav-text">Ban</Link>
+                    </Menu.Item>
+                    <Menu.Item key="/admin/listEventTypes">
+                        <Link to="/admin/listEventTypes" className="nav-text">Hình thức sự kiện</Link>
+                    </Menu.Item>
+                    <Menu.Item key="/admin/listtags">
+                        <Link to="/admin/listtags" className="nav-text">Tags sự kiện</Link>
+                    </Menu.Item>
+                    <Menu.Item key="/admin/listactiontags">
+                        <Link to="/admin/listactiontags" className="nav-text">Tags công việc</Link>
+                    </Menu.Item>
+                    <Menu.Item key="/admin/listactionpriorities">
+                        <Link to="/admin/listactionpriorities" className="nav-text">Độ ưu tiên công việc</Link>
                     </Menu.Item>
                 </Menu>
             </Sider>

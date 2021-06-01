@@ -29,7 +29,7 @@ class listevents extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 })
         ]));
@@ -86,12 +86,12 @@ class listevents extends Component {
                 </Row>
 
                 <Row>
-                    <Col sm={24} lg={8} style={{ padding: 20 }}>
-                        {/* <Title level={3}>Sắp diễn ra</Title> */}
-                        {this.state.SearchData.map((value, key) =>
+                    {/* <Title level={3}>Sắp diễn ra</Title> */}
+                    {this.state.SearchData.map((value, key) =>
+                        <Col sm={24} lg={8} style={{ padding: 20 }}>
                             <EventCard data={value} key={key} />
-                        )}
-                    </Col>
+                        </Col>
+                    )}
                 </Row>
 
             </Content>

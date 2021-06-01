@@ -17,6 +17,7 @@ import {
     Image,
     Tabs,
     Popconfirm,
+    Modal,
 } from "antd";
 import {
     UploadOutlined,
@@ -58,6 +59,74 @@ class editevent extends Component {
             data: null,
             currentUser: JSON.parse(localStorage.getItem('login')),
             currentPermissions: [],
+            modalVisible: false
+        }
+    }
+
+    setModalVisible = (modalVisible) => {
+        this.setState({
+            modalVisible
+        })
+    }
+
+    form = React.createRef()
+    renderModel = () => {
+        return (
+            <Form
+                ref={this.form}
+                name="validate_other"
+                {...formItemLayout}
+                onFinish={(e) => this.onFinishClone(e)}
+                layout="vertical"
+                initialValues={this.state.ActionTypeForEdit}
+            >
+                <Form.Item
+                    wrapperCol={{ sm: 24 }}
+                    name="name"
+                    rules={[{ required: true, message: "Cần nhập tên sự kiện" }]}
+                >
+                    <Input placeholder="Tên sự kiện..." />
+                </Form.Item>
+                <br></br>
+                <div className="flex-container-row">
+                    <div className="flex-container-row flex-row-item-right">
+                        <Button onClick={() => this.setModalVisible(false)} style={{ marginRight: 5 }} className="back">
+                            Hủy
+                  </Button>
+                        <Button htmlType="submit" className="add">
+                            Tạo
+                </Button>
+                    </div>
+                </div>
+            </Form>
+        )
+    }
+
+    onFinishClone = async (e) => {
+        let data = {
+            ...e,
+            eventId: this.props.match.params.id
+        }
+
+        const result = await trackPromise(
+            axios.post('/api/events/start-clone', data, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then(res => {
+                    message.success('Tạo thành công');
+                    return true
+                })
+                .catch(err => {
+                    message.error('Tạo thất bại');
+                    ApiFailHandler(err.response?.data?.error)
+                    return false
+                })
+        )
+        if (result) {
+            this.form.current.resetFields()
+            this.setModalVisible(false)
         }
     }
 
@@ -301,8 +370,6 @@ class editevent extends Component {
             }
         }
 
-        console.log('Received values of form: ', data);
-
         await trackPromise(axios.put('/api/events/' + this.state.data._id, data, {
             headers: {
                 'Authorization': { AUTH }.AUTH
@@ -316,10 +383,6 @@ class editevent extends Component {
                 ApiFailHandler(err.response?.data?.error)
             }))
     };
-
-    setModal2Visible(modal2Visible) {
-        this.setState({ modal2Visible });
-    }
 
     updatelistguesttype = (values) => {
         this.setState({
@@ -395,7 +458,7 @@ class editevent extends Component {
                                     >
                                         <Button className="delete">Xóa</Button>
                                     </Popconfirm>
-                                    <Button onClick={this.onClickAddEvent} className="add ">Tạo sự kiện</Button>
+                                    <Button style={{ marginLeft: 10 }} onClick={() => this.setModalVisible(true)} className="add ">Tạo sự kiện</Button>
                                 </div>
                                 : null
                             }
@@ -583,7 +646,18 @@ class editevent extends Component {
                         </Tabs>
                     </div>
 
-
+                    <Modal
+                        title="Tạo sự kiện"
+                        centered
+                        visible={this.state.modalVisible}
+                        onOk={() => this.setModalVisible(false)}
+                        onCancel={() => this.setModalVisible(false)}
+                        width="30%"
+                        pagination={false}
+                        footer={false}
+                    >
+                        {this.renderModel()}
+                    </Modal>
                 </Content >
             );
         }

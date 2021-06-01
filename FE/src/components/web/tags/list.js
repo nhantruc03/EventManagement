@@ -34,7 +34,7 @@ class list extends Component {
 
     renderAction = (e) =>
         <div className="center">
-            <Button className="add"><Link to={`/edittags/${e._id}`}>Sửa</Link></Button >
+            <Button className="add"><Link to={`/admin/edittags/${e._id}`}>Sửa</Link></Button >
             <Popconfirm
                 title="Bạn có chắc muốn xóa chứ?"
                 onConfirm={() => this.onDelete(e)}
@@ -108,7 +108,7 @@ class list extends Component {
                 <div className="flex-container-row" style={{ marginBottom: 20 }}>
                     <Search target="name" data={this.state.data} getSearchData={(e) => this.getSearchData(e)} />
                     <Button className="flex-row-item-right add">
-                        <Link to={`/addtags`} >
+                        <Link to={`/admin/addtags`} >
                             <div className="btn btn-createnew">Tạo mới</div>
                         </Link>
                     </Button>

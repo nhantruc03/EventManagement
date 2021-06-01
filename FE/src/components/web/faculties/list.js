@@ -31,7 +31,7 @@ class list extends Component {
 
     renderAction = (e) =>
         <div className="center">
-            <Button className="add"><Link to={`/editfaculties/${e._id}`}>Sửa</Link></Button >
+            <Button className="add"><Link to={`/admin/editfaculties/${e._id}`}>Sửa</Link></Button >
             <Popconfirm
                 title="Bạn có chắc muốn xóa chứ?"
                 onConfirm={() => this.onDelete(e)}

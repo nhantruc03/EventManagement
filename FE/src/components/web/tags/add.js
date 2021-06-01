@@ -79,10 +79,10 @@ class add extends Component {
                 < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }}>
                     <Breadcrumb separator=">">
                         <Breadcrumb.Item >
-                            <Link to="/events">Sự kiện</Link>
+                            <Link to="/admin/listtags">Danh sách</Link>
                         </Breadcrumb.Item>
                         <Breadcrumb.Item>
-                            Thêm mới sự kiện
+                            Thêm mới tags sự kiện
                             </Breadcrumb.Item>
                     </Breadcrumb>
                 </Row>

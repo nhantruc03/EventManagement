@@ -42,10 +42,10 @@ class add extends Component {
                 < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }}>
                     <Breadcrumb separator=">">
                         <Breadcrumb.Item >
-                            <Link to="/listsystemroles">Danh sách</Link>
+                            <Link to="/admin/listsystemroles">Danh sách</Link>
                         </Breadcrumb.Item>
                         <Breadcrumb.Item>
-                            Chỉnh sửa quyền
+                            Chỉnh sửa quyền hệ thống
                             </Breadcrumb.Item>
                     </Breadcrumb>
                 </Row>

@@ -393,42 +393,27 @@ class eventDetails extends Component {
   }
 
   renderCurrentUserInEvent = () => {
-    return (
-      // <Row>
-      //   <Col>
-      //     <div className="flex-container-row">
-      //       <img className="event-user-avartar" alt="avatar" src={`/api/images/${this.state.currentUserInEvent.userId.photoUrl}`}></img>
-      //       <div>
-      //         <Title style={{ color: '#264653', margin: 'unset', fontSize: 20 }} level={3}>{this.state.currentUserInEvent.userId.name}</Title>
-      //         <p style={{ color: '#AAB0B6' }}>{this.state.currentUserInEvent.userId.phone}</p>
-      //       </div>
-      //     </div>
-      //   </Col>
-      //   <Col>
-      //     <Row>
-      //       <Title className="event-detail-title" level={4}>Ban</Title>
-      //     </Row>
-      //     <Row>
-
-      //     </Row>
-      //   </Col>
-      // </Row>
-      <div className="flex-container-row" style={{ width: '100%' }}>
-        <img className="event-user-avartar" alt="avatar" src={`/api/images/${this.state.currentUserInEvent.userId.photoUrl}`}></img>
-        <div>
-          <Title style={{ color: '#264653', margin: 'unset', fontSize: 20 }} level={3}>{this.state.currentUserInEvent.userId.name}</Title>
-          <p style={{ color: '#AAB0B6' }}>{this.state.currentUserInEvent.userId.phone}</p>
+    if (this.state.currentUserInEvent) {
+      return (
+        <div className="flex-container-row" style={{ width: '100%' }}>
+          <img className="event-user-avartar" alt="avatar" src={`/api/images/${this.state.currentUserInEvent.userId.photoUrl}`}></img>
+          <div>
+            <Title style={{ color: '#264653', margin: 'unset', fontSize: 20 }} level={3}>{this.state.currentUserInEvent.userId.name}</Title>
+            <p style={{ color: '#AAB0B6' }}>{this.state.currentUserInEvent.userId.phone}</p>
+          </div>
+          <div className="flex-row-item-right" style={{ textAlign: 'right' }}>
+            <Title style={{ color: '#AAB0B6', margin: 'unset' }} level={4}>Ban</Title>
+            {/* <p>{this.state.currentUserInEvent.facultyId.name}</p> */}
+            <Title style={{ color: '#264653', margin: 'unset' }} level={4}>{this.state.currentUserInEvent.facultyId?.name}</Title>
+            <Title style={{ color: '#AAB0B6', margin: 'unset' }} level={4}>Vị trí</Title>
+            {/* <p>{this.state.currentUserInEvent.roleId.name}</p> */}
+            <Title style={{ color: '#264653', margin: 'unset' }} level={4}>{this.state.currentUserInEvent.roleId?.name}</Title>
+          </div>
         </div>
-        <div className="flex-row-item-right" style={{ textAlign: 'right' }}>
-          <Title style={{ color: '#AAB0B6', margin: 'unset' }} level={4}>Ban</Title>
-          {/* <p>{this.state.currentUserInEvent.facultyId.name}</p> */}
-          <Title style={{ color: '#264653', margin: 'unset' }} level={4}>{this.state.currentUserInEvent.facultyId?.name}</Title>
-          <Title style={{ color: '#AAB0B6', margin: 'unset' }} level={4}>Vị trí</Title>
-          {/* <p>{this.state.currentUserInEvent.roleId.name}</p> */}
-          <Title style={{ color: '#264653', margin: 'unset' }} level={4}>{this.state.currentUserInEvent.roleId?.name}</Title>
-        </div>
-      </div>
-    )
+      )
+    } else {
+      return null
+    }
   }
 
   render() {
