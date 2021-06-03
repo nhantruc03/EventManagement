@@ -88,8 +88,8 @@ class listevents extends Component {
                 <Row>
                     {/* <Title level={3}>Sắp diễn ra</Title> */}
                     {this.state.SearchData.map((value, key) =>
-                        <Col sm={24} lg={8} style={{ padding: 20 }}>
-                            <EventCard data={value} key={key} />
+                        <Col sm={24} lg={8} key={key} style={{ padding: 20 }}>
+                            <EventCard data={value} />
                         </Col>
                     )}
                 </Row>

@@ -10,7 +10,8 @@ import {
 import Dragger from 'antd/lib/upload/Dragger';
 import { w3cwebsocket } from 'websocket';
 import ApiFailHandler from '../../../helper/ApiFailHandler'
-const client = new w3cwebsocket('ws://localhost:3001');
+import { WebSocketServer } from '../../../../env'
+const client = new w3cwebsocket(WebSocketServer);
 const { Step } = Steps;
 const { Option } = Select;
 const steps = [
@@ -192,7 +193,7 @@ class addactions extends Component {
                             </Col>
                             <Col span={24}>
                                 <Row>
-                                <Col sm={24} md={8}>
+                                    <Col sm={24} md={8}>
                                         <Form.Item
                                             wrapperCol={{ sm: 24 }}
                                             label="Ngày kết thúc"

@@ -12,7 +12,8 @@ import moment from 'moment'
 import { w3cwebsocket } from 'websocket';
 import * as PushNoti from '../../../helper/pushNotification'
 import ApiFailHandler from '../../../helper/ApiFailHandler'
-const client = new w3cwebsocket('ws://localhost:3001');
+import { WebSocketServer } from '../../../../env'
+const client = new w3cwebsocket(WebSocketServer);
 const { Option } = Select;
 const formItemLayout = {
     labelCol: {
@@ -49,7 +50,7 @@ class editAction extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
             axios.post('/api/action-tags/getAll', {}, {
@@ -60,7 +61,7 @@ class editAction extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
             axios.post('/api/action-priorities/getAll', {}, {
@@ -71,7 +72,7 @@ class editAction extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
             axios.post('/api/faculties/getAll', {}, {
@@ -82,7 +83,7 @@ class editAction extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
             axios.post('/api/action-types/getAll', { eventId: this.props.data.eventId._id }, {
@@ -93,7 +94,7 @@ class editAction extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
         ]))

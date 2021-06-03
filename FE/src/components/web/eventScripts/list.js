@@ -17,7 +17,8 @@ import checkPermission from "../helper/checkPermissions"
 import { w3cwebsocket } from 'websocket';
 import * as PushNoti from '../helper/pushNotification'
 import ApiFailHandler from '../helper/ApiFailHandler'
-const client = new w3cwebsocket('ws://localhost:3001');
+import { WebSocketServer } from '../../env'
+const client = new w3cwebsocket(WebSocketServer);
 class list extends Component {
     constructor(props) {
         super(props);

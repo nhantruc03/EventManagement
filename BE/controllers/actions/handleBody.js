@@ -22,7 +22,8 @@ const handleBody = (body) => {
         "coverUrl",
         "availUser",
         "actionTypeId",
-        "managerId"
+        "managerId",
+        "isClone"
       )
     }
   }

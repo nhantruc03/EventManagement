@@ -33,7 +33,8 @@ import ListActionsClone from '../../actions/forClone/listactions/listactions'
 import { w3cwebsocket } from 'websocket';
 import ApiFailHandler from '../../helper/ApiFailHandler'
 import getPermission from "../../helper/Credentials"
-const client = new w3cwebsocket('ws://localhost:3001');
+import { WebSocketServer } from '../../../env'
+const client = new w3cwebsocket(WebSocketServer);
 const { Option } = Select;
 const { TabPane } = Tabs;
 const formItemLayout = {

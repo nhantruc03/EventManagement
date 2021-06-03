@@ -13,7 +13,8 @@ import { Link } from 'react-router-dom';
 import { Upload } from 'antd';
 import { AUTH } from '../../env'
 import ApiFailHandler from '../helper/ApiFailHandler'
-const client = new w3cwebsocket('ws://localhost:3001');
+import { WebSocketServer } from '../../env' 
+const client = new w3cwebsocket(WebSocketServer);
 class ChatRoom extends Component {
     constructor(props) {
         super(props);

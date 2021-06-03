@@ -38,7 +38,7 @@ class home extends Component {
                 .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
-            axios.post('/api/actions/getAll', { availUser: obj.id }, {
+            axios.post('/api/actions/getAll', { availUser: obj.id, isClone:false }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
@@ -50,7 +50,7 @@ class home extends Component {
                     ApiFailHandler(err.response?.data?.error)
                 }),
         ]));
-        
+        console.log(actions)
 
         if (events !== null) {
             if (this._isMounted) {
@@ -198,7 +198,7 @@ class home extends Component {
                                     </Col>
                                 </Row>
                                 <Row style={{ height: '48%' }}>
-                                    <Col sm={24} xl={24} style={{ padding: '10px', height: '100%' }}>
+                                    <Col span={24} style={{ padding: '10px', height: '100%' }}>
                                         <div className="flex-container-row" style={{ width: '100%' }}>
                                             <Title level={3}>Công việc</Title>
                                             <Link className="flex-row-item-right" to="/actions">Xem tất cả</Link>

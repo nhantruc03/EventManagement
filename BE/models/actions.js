@@ -66,6 +66,12 @@ const Actions = new Schema(
       required: true,
       default: false,
     },
+    isClone: {
+      type: Boolean,
+      index: true,
+      required: true,
+      default: false,
+    },
     availUser: [
       {
         type: mongoose.Schema.Types.ObjectId,

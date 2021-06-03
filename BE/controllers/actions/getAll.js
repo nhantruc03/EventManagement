@@ -8,9 +8,10 @@ const getAll = async (req, res) => {
   try {
 
     // let currentUser = { ...pick(req.body, "currentUser") }
-    let query = { ...pick(req.body, "eventId", "availUser"), isDeleted: false }
+    let query = { ...pick(req.body, "eventId", "availUser", "isClone"), isDeleted: false }
 
     let docs;
+
     if (!page || !limit) {
       docs = await Actions.find(query)
         .populate({ path: 'availUser', select: 'name photoUrl' })
