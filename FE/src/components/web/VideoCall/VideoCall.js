@@ -8,7 +8,8 @@ import {
     SoundOutlined,
     MessageOutlined,
 } from '@ant-design/icons';
-const client = new w3cwebsocket('ws://localhost:3001');
+import { WebSocketServer } from '../../env'
+const client = new w3cwebsocket(WebSocketServer);
 
 
 const videoConstraints = {

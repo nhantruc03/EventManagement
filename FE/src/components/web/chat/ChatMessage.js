@@ -4,6 +4,10 @@ import React, { Component } from 'react';
 class ChatMessage extends Component {
   renderIcon = (extension) => {
     switch (extension) {
+      case 'xls': case 'xlsx':
+        return (
+          <img style={{ maxWidth: '30px' }} alt="icon" src='/excel-icon.png'></img>
+        )
       case 'doc': case 'docx':
         return (
           <img style={{ maxWidth: '30px' }} alt="icon" src='/word-icon.png'></img>

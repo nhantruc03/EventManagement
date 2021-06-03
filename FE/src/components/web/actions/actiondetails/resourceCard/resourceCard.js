@@ -8,7 +8,12 @@ class resourceCard extends Component {
 
 
     renderIcon = () => {
+        console.log(this.props.data.extension)
         switch (this.props.data.extension) {
+            case 'xls': case 'xlsx':
+                return (
+                    <img style={{ maxWidth: '30px' }} alt="icon" src='/excel-icon.png'></img>
+                )
             case 'doc': case 'docx':
                 return (
                     <img style={{ maxWidth: '30px' }} alt="icon" src='/word-icon.png'></img>

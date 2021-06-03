@@ -14,8 +14,9 @@ import History from './history';
 import moment from 'moment'
 import * as PushNoti from '../helper/pushNotification'
 import ApiFailHandler from '../helper/ApiFailHandler'
+import { WebSocketServer } from '../../env'
 const { TabPane } = Tabs;
-const client = new w3cwebsocket('ws://localhost:3001');
+const client = new w3cwebsocket(WebSocketServer);
 const { Option } = Select;
 const formItemLayout = {
     labelCol: {
@@ -58,7 +59,7 @@ class edit extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
             Axios.post('/api/script-histories/getAll', { scriptId: this.props.match.params.id }, {
@@ -69,7 +70,7 @@ class edit extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
         ]))
@@ -82,7 +83,7 @@ class edit extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
             Axios.post('/api/script-details/getAll', { scriptId: this.props.match.params.id }, {
@@ -93,7 +94,7 @@ class edit extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
         ]));
@@ -206,12 +207,12 @@ class edit extends Component {
 
     onAddDetail = async (value) => {
         value.scriptId = this.props.match.params.id
-        let temp ={
+        let temp = {
             ...value,
             scriptId: this.props.match.params.id,
             updateUserId: this.state.currentUser.id,
         }
-        
+
         this.setState({
             listscriptdetails: this.state.listscriptdetails.filter(e => e._id !== value._id)
         })

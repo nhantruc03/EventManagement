@@ -210,6 +210,7 @@ const startClone = async (req, res) => {
                         "coverUrl",
                         "availUser",
                     ),
+                    isClone: !a.isClone,
                     eventId: newDoc[0]._id,
                     actionTypeId: new_ActionTypes[0]._id
                 }

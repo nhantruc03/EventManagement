@@ -11,7 +11,8 @@ import { w3cwebsocket } from 'websocket';
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
 import ApiFailHandler from '../helper/ApiFailHandler'
-const client = new w3cwebsocket('ws://localhost:3001');
+import { WebSocketServer } from '../../env' 
+const client = new w3cwebsocket(WebSocketServer);
 const { Header } = Layout;
 class header extends Component {
     constructor(props) {
@@ -233,7 +234,7 @@ class header extends Component {
                 notifications: temp,
                 dropdownVisible: e
             })
-        }else{
+        } else {
             this.setState({
                 dropdownVisible: e
             })
@@ -245,7 +246,7 @@ class header extends Component {
             <Header className="site-layout-background flex-container-row" >
                 <div className="flex-row-item-right">
                     <div className="flex-container-row">
-                        <Dropdown visible={this.state.dropdownVisible}  onVisibleChange={this.onVisibleChange} overlayClassName='dropdown' overlay={this.renderNotifications} placement='bottomRight'>
+                        <Dropdown visible={this.state.dropdownVisible} onVisibleChange={this.onVisibleChange} overlayClassName='dropdown' overlay={this.renderNotifications} placement='bottomRight'>
                             <Badge count={this.state.notifications.filter(e => e.watch === false).length}>
                                 <Button style={{ border: 'none' }}><BellOutlined /></Button>
                             </Badge>

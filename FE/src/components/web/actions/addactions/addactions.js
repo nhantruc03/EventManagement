@@ -12,7 +12,8 @@ import { w3cwebsocket } from 'websocket';
 import moment from 'moment'
 import * as PushNoti from '../../helper/pushNotification'
 import ApiFailHandler from '../../helper/ApiFailHandler'
-const client = new w3cwebsocket('ws://localhost:3001');
+import { WebSocketServer } from '../../../env'
+const client = new w3cwebsocket(WebSocketServer);
 const { Step } = Steps;
 const { Option } = Select;
 const steps = [
@@ -55,7 +56,7 @@ class addactions extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
             axios.post('/api/action-priorities/getAll', {}, {
@@ -66,7 +67,7 @@ class addactions extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
         ]))

@@ -40,7 +40,8 @@ import checkPermission from "../../helper/checkPermissions"
 import getPermission from "../../helper/Credentials"
 import * as PushNoti from "../../helper/pushNotification"
 import ApiFailHandler from '../../helper/ApiFailHandler'
-const client = new w3cwebsocket('ws://localhost:3001');
+import { WebSocketServer } from '../../../env'
+const client = new w3cwebsocket(WebSocketServer);
 const { Option } = Select;
 const { TabPane } = Tabs;
 const formItemLayout = {
@@ -87,7 +88,7 @@ class editevent extends Component {
     }
 
     formClone = React.createRef()
-    renderModelClone = () =>{
+    renderModelClone = () => {
         return (
             <Form
                 ref={this.formClone}
