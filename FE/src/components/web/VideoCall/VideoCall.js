@@ -178,11 +178,13 @@ class VideoCall extends Component {
 
     stopAudio = () => {
         let temp = this.state.stream;
-        temp.getAudioTracks()[0].enabled = !(temp.getAudioTracks()[0].enabled);
-        this.setState({
-            stream: temp,
-            audio: !this.state.audio
-        })
+        if (temp) {
+            temp.getAudioTracks()[0].enabled = !(temp.getAudioTracks()[0].enabled);
+            this.setState({
+                stream: temp,
+                audio: !this.state.audio
+            })
+        }
     }
 
     render1pageofListVideo = (i) => {

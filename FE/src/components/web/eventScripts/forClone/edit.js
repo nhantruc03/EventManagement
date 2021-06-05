@@ -224,6 +224,28 @@ class edit extends Component {
         }
     }
 
+    export = async () => {
+        await trackPromise(
+            Axios.post("/api/scripts/genDoc", { scriptId: this.props.match.params.id }, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then((res) => {
+                    console.log(res)
+                    // FileDownload(res.data, 'report.docx');
+                    var win = window.open(res.data.url, '_blank');
+                    win.focus();
+                    message.success("tạo file thành công")
+                })
+                .catch(err => {
+                    // console.log(err)
+                    message.error("Tạo file thất bại")
+                    ApiFailHandler(err.response?.data?.error)
+                })
+        )
+    }
+
     render() {
         if (!this.state.name) {
             return null;
@@ -232,7 +254,7 @@ class edit extends Component {
             return (
                 <Content style={{ margin: "0 16px" }}>
                     < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }}>
-                        <Col span={8}>
+                        <div style={{ width: '100%', padding: '0 10px' }} className="flex-container-row">
                             <Breadcrumb separator=">">
                                 <Breadcrumb.Item >
                                     <Link to="/eventclones">Hồ sơ sự kiện</Link>
@@ -244,7 +266,9 @@ class edit extends Component {
                                     Sửa kịch bản
                                 </Breadcrumb.Item>
                             </Breadcrumb>
-                        </Col>
+
+                            <Button className="flex-row-item-right add" onClick={this.export}>Xuất file</Button>
+                        </div>
                     </Row >
 
                     <div className="add-scripts site-layout-background-main">

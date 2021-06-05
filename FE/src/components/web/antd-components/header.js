@@ -11,14 +11,14 @@ import { w3cwebsocket } from 'websocket';
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
 import ApiFailHandler from '../helper/ApiFailHandler'
-import { WebSocketServer } from '../../env' 
+import { WebSocketServer } from '../../env'
 const client = new w3cwebsocket(WebSocketServer);
 const { Header } = Layout;
 class header extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentUser: null,
+            currentUser: JSON.parse(localStorage.getItem('login')),
             modal2Visible: false,
             model: { dondathang: [] },
             notifications: [],
@@ -32,8 +32,6 @@ class header extends Component {
     async componentDidMount() {
         this._isMounted = true
         if (this._isMounted) {
-            var login = localStorage.getItem('login');
-            var obj = JSON.parse(login);
             client.onopen = () => {
                 console.log('Connect to ws')
             }
@@ -60,7 +58,7 @@ class header extends Component {
             };
 
             const [notifications] = await trackPromise(Promise.all([
-                axios.post('/api/notifications/getAll', { userId: obj.id }, {
+                axios.post('/api/notifications/getAll', { userId: this.state.currentUser.id }, {
                     headers: {
                         'Authorization': { AUTH }.AUTH
                     }
@@ -75,8 +73,7 @@ class header extends Component {
             if (notifications) {
                 if (this._isMounted) {
                     this.setState({
-                        notifications: notifications.reverse(),
-                        currentUser: obj
+                        notifications: notifications.reverse()
                     })
                 }
             }
@@ -150,6 +147,7 @@ class header extends Component {
             return (
                 <Link className={e.status ? 'noti-watched' : 'noti'} onClick={(x) => this.updateNoti(x, e._id, `/events/${e.eventId}`)} to={'/#'}>
                     <Tooltip
+                        placement="leftTop"
                         title={
                             <div>
                                 <p>Thông báo: {e.name}</p>
@@ -157,7 +155,7 @@ class header extends Component {
                                 <p>Mô tả: {e.description}</p>
                             </div>
                         }
-                        placement="top">
+                    >
                         <div>
                             <p style={{ fontWeight: 'bold' }} >{e.name}</p>
                             <p className="cut-text">{e.description}</p>
@@ -169,13 +167,16 @@ class header extends Component {
         else if (e.actionId) {
             return (
                 <Link className={e.status ? 'noti-watched' : 'noti'} onClick={(x) => this.updateNoti(x, e._id, `/actions/${e.actionId}`)} to={"/#"}>
-                    <Tooltip title={
-                        <div>
-                            <p>Thông báo: {e.name}</p>
-                            <br></br>
-                            <p>Mô tả: {e.description}</p>
-                        </div>
-                    } placement="top">
+                    <Tooltip
+                        placement="leftTop"
+                        title={
+                            <div>
+                                <p>Thông báo: {e.name}</p>
+                                <br></br>
+                                <p>Mô tả: {e.description}</p>
+                            </div>
+                        }
+                    >
                         <div >
                             <p style={{ fontWeight: 'bold' }}>{e.name}</p>
                             <p className="cut-text">{e.description}</p>
@@ -187,13 +188,15 @@ class header extends Component {
         else if (e.scriptId) {
             return (
                 <Link className={e.status ? 'noti-watched' : 'noti'} onClick={(x) => this.updateNoti(x, e._id, `/viewscripts/${e.scriptId}`)} to={"/#"}>
-                    <Tooltip title={
-                        <div>
-                            <p>Thông báo: {e.name}</p>
-                            <br></br>
-                            <p>Mô tả: {e.description}</p>
-                        </div>
-                    } placement="top">
+                    <Tooltip
+                        placement="leftTop"
+                        title={
+                            <div>
+                                <p>Thông báo: {e.name}</p>
+                                <br></br>
+                                <p>Mô tả: {e.description}</p>
+                            </div>
+                        }>
                         <div>
 
                             <p style={{ fontWeight: 'bold' }}>{e.name}</p>

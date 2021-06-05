@@ -16,7 +16,7 @@ class View extends Component {
                     key: 'name',
                 },
             ],
-            postsPerPage: 5
+            postsPerPage: 3
         }
     }
     getlistpage = (SearchData) => {

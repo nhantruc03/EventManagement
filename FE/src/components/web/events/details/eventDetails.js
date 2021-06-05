@@ -263,7 +263,9 @@ class eventDetails extends Component {
   }
 
   renderGroups = () => this.state.listGroups.map((e, key) =>
-    <TabPane tab={e.name} key={key}><ChatRoom videocall={true} roomId={e._id} /></TabPane>
+    <TabPane tab={e.name} key={key}>
+      <ChatRoom videocall={true} roomId={e._id} />
+    </TabPane>
   )
 
   updateEventAssign = (e) => {
