@@ -321,7 +321,7 @@ class SubTasksTab extends Component {
       if (this.state.data) {
         return (
           <Provider>
-            <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
+            <Loader loading={this.state.deleteLoading} color="white" size="large" />
             <View style={styles.formContainer}>
               <View
                 style={{
@@ -354,7 +354,7 @@ class SubTasksTab extends Component {
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => this.renderItem(item)}
               />
-              <Loader loading={this.state.loading} color="#2A9D8F" />
+              <Loader loading={this.state.loading} color="white" size="large"/>
               <Modal
                 title="Tạo mới"
                 animationType="slide-up"

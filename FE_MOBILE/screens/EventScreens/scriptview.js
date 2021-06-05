@@ -16,6 +16,7 @@ import Icon from "../../assets/images/more.png";
 import Indicator from "../../components/helper/Loading"
 import { Redirect } from "react-router";
 import ApiFailHandler from '../../components/helper/ApiFailHandler'
+import * as WebBrowser from 'expo-web-browser';
 const Step = Steps.Step;
 
 const styles = StyleSheet.create({
@@ -146,6 +147,32 @@ class scriptview extends Component {
   test = () => {
     console.log('test')
   }
+
+  export = async () => {
+    await
+      axios.post(`${Url()}/api/scripts/genDoc`, { scriptId: this.props.route.params.id }, {
+        headers: {
+          Authorization: await getToken(),
+        }
+      })
+        .then((res) => {
+          console.log(res)
+          // FileDownload(res.data, 'report.docx');
+          this.Download(`${Url()}${res.data.url}`, res.data.url)
+          alert("tạo file thành công")
+        })
+        .catch(err => {
+
+          // console.log(err)
+          alert("Tạo file thất bại")
+
+        })
+  }
+  Download = async (uri, name) => {
+    await WebBrowser.openBrowserAsync(uri);
+  }
+
+
   async componentDidMount() {
     this.props.navigation.setOptions({
       headerRight: () => (
@@ -153,8 +180,8 @@ class scriptview extends Component {
           <OptionsMenu
             button={Icon}
             destructiveIndex={1}
-            options={["Lịch sử thay đổi", "Huỷ bỏ"]}
-            actions={[this.ViewHistory, this.test]}
+            options={["Xuất kịch bản", "Lịch sử thay đổi", "Huỷ bỏ"]}
+            actions={[this.export, this.ViewHistory, this.test]}
           />
         </View>
       ),

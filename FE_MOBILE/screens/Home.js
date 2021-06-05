@@ -223,7 +223,7 @@ class Home extends Component {
       axios
         .post(
           `${Url()}/api/actions/getAll`,
-          { availUser: obj.id },
+          { availUser: obj.id, isClone: false },
           {
             headers: {
               Authorization: await getToken(),

@@ -597,7 +597,7 @@ class scriptdetail extends ValidationComponent {
       if (!this.state.isLoading) {
         return (
           <Provider>
-            <Loader loading={this.state.deleteLoading} color="#2A9D8F" />
+            <Loader loading={this.state.deleteLoading} color="white" size="large" />
             <View style={styles.Container}>
               <View styles={styles.ScriptNameContainer}>
                 <Text style={styles.Label}>Tên kịch bản</Text>
