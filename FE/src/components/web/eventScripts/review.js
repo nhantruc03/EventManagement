@@ -82,7 +82,7 @@ class review extends Component {
 
     render() {
         return (
-            <div >
+            <div className="script-view">
                 <Title level={3}>{this.props.onGoing ? "Đang diễn ra" : "Chưa diễn ra"}</Title>
                 <Steps className="scrips-view" current={this.state.currentScript} direction="vertical">
                     {this.renderView2()}

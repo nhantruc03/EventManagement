@@ -567,7 +567,7 @@ span.ant-tag.event-detail-status {
   border-radius: 6px;
   padding: 10px;
   word-break: break-word;
-  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .add-btn-scripdetail{
@@ -1225,8 +1225,8 @@ label {
 
 .timeline-container{
   /* height: 100%; */
-  min-height: 80vh;
-  max-height: 80vh;
+  min-height: 78vh;
+  max-height: 78vh;
   padding: 20px;
   border: 1px solid #AAB0B6;
   border-radius: 8px;
@@ -1639,4 +1639,14 @@ label.calendar-label{
   padding: 10px;
   margin: 0px 40px 0 40px;
   min-height: 360px;
+}
+
+.script-view{
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.list-script-details{
+  max-height: 57vh;
+  overflow-y: auto;
 }

@@ -13,7 +13,7 @@ import { Link } from 'react-router-dom';
 import { Upload } from 'antd';
 import { AUTH } from '../../env'
 import ApiFailHandler from '../helper/ApiFailHandler'
-import { WebSocketServer } from '../../env' 
+import { WebSocketServer } from '../../env'
 const client = new w3cwebsocket(WebSocketServer);
 class ChatRoom extends Component {
     constructor(props) {
@@ -179,7 +179,7 @@ class ChatRoom extends Component {
                             messages: [...temp.reverse(), ...this.state.messages]
                         })
                     })
-                    .catch(err=>{
+                    .catch(err => {
                         ApiFailHandler(err.response?.data?.error)
                     })
             }
@@ -218,7 +218,11 @@ class ChatRoom extends Component {
                                 <input className="input-chat" value={this.state.formValue} onChange={(e) => this.setFormValue(e.target.value)} placeholder="Hãy chia sẻ ý kiến của bạn" />
                                 <button className="chat-button"><Link to={`/videocall/${this.props.roomId}`} style={{ color: 'black' }} ><VideoCameraOutlined /></Link></button>
                             </>
-                            : null}
+                            :
+                            <>
+                                <input className="input-chat" value={this.state.formValue} onChange={(e) => this.setFormValue(e.target.value)} placeholder="Hãy chia sẻ ý kiến của bạn" />
+                            </>
+                        }
                         <Upload
                             className="flex-row-item-right"
                             fileList={this.state.fileList}

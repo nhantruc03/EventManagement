@@ -15,7 +15,9 @@ class list extends Component {
     render() {
         return (
             <div style={{ width: '90%' }}>
-                {this.printData(this.props.data)}
+                <div className="list-script-details">
+                    {this.printData(this.props.data)}
+                </div>
                 <Button onClick={this.props.onAddWithoutApi} className="add-btn-scripdetail">
                     +
                 </Button>

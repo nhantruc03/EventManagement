@@ -178,7 +178,7 @@ class edit extends Component {
                     temp_list.forEach(e => {
                         if (e._id === temp._id) {
                             e.name = value.name
-                            e.time = value.time.toDate()
+                            e.time = value.time
                             e.description = value.description
                             e.noinfo = value.noinfo
                         }
@@ -224,8 +224,13 @@ class edit extends Component {
             })
                 .then((res) => {
                     let result = res.data.data[0];
+                    let temp_list = [...this.state.listscriptdetails, result]
                     this.setState({
-                        listscriptdetails: [...this.state.listscriptdetails, result],
+                        listscriptdetails: temp_list.sort((a, b) => {
+                            let temp_a = moment(`0001-01-01 ${moment(a.time).utcOffset(0).format("HH:mm")}`)
+                            let temp_b = moment(`0001-01-01 ${moment(b.time).utcOffset(0).format("HH:mm")}`)
+                            return temp_b.isBefore(temp_a) ? 1 : -1;
+                        }),
                         history: [...this.state.history, res.data.history]
                     })
                     client.send(JSON.stringify({
@@ -252,8 +257,15 @@ class edit extends Component {
             time: moment(new Date()).utc(true),
             noinfo: true
         }
+        let temp_list = this.state.listscriptdetails
+        temp_list = temp_list.sort((a, b) => {
+            let temp_a = moment(`0001-01-01 ${moment(a.time).utcOffset(0).format("HH:mm")}`)
+            let temp_b = moment(`0001-01-01 ${moment(b.time).utcOffset(0).format("HH:mm")}`)
+            return temp_b.isBefore(temp_a) ? 1 : -1;
+        })
+        temp_list.push(temp)
         this.setState({
-            listscriptdetails: [...this.state.listscriptdetails, temp],
+            listscriptdetails: temp_list
         })
     }
 
@@ -290,7 +302,27 @@ class edit extends Component {
         }
     }
 
-
+    export = async () => {
+        await trackPromise(
+            Axios.post("/api/scripts/genDoc", { scriptId: this.props.match.params.id }, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then((res) => {
+                    console.log(res)
+                    // FileDownload(res.data, 'report.docx');
+                    var win = window.open(res.data.url, '_blank');
+                    win.focus();
+                    message.success("tạo file thành công")
+                })
+                .catch(err => {
+                    // console.log(err)
+                    message.error("Tạo file thất bại")
+                    ApiFailHandler(err.response?.data?.error)
+                })
+        )
+    }
 
     render() {
         if (!this.state.name) {
@@ -300,7 +332,7 @@ class edit extends Component {
             return (
                 <Content style={{ margin: "0 16px" }}>
                     < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }}>
-                        <Col span={8}>
+                        <div style={{ width: '100%', padding: '0 10px' }} className="flex-container-row">
                             <Breadcrumb separator=">">
                                 <Breadcrumb.Item >
                                     <Link to="/events">Sự kiện</Link>
@@ -312,7 +344,9 @@ class edit extends Component {
                                     Kịch bản
                                 </Breadcrumb.Item>
                             </Breadcrumb>
-                        </Col>
+
+                            <Button className="flex-row-item-right add" onClick={this.export}>Xuất file</Button>
+                        </div>
                     </Row >
 
                     <div className="add-scripts site-layout-background-main">
@@ -362,13 +396,13 @@ class edit extends Component {
                                         </Col>
                                     </Row>
                                     <div style={{ marginTop: '30px', textAlign: 'center' }}>
-                                        <Button
+                                        {/* <Button
                                             onClick={this.goBack}
                                             className="back"
                                             style={{ width: 150, marginRight: 20 }}
                                         >
                                             Hủy
-                                        </Button>
+                                        </Button> */}
                                         <Button htmlType="submit" className="add" style={{ width: 150 }}>
                                             Cập nhật
                                         </Button>

@@ -207,6 +207,9 @@ app.post("/api/uploads", (req, res) => {
 
 
 app.post("/api/upload-resources/:id", (req, res) => {
+  if (!fs.existsSync(`./resources/${req.params.id}`)) {
+    fs.mkdirSync(`./resources/${req.params.id}`);
+  }
   if (req.body.mobile) {
     let result = storeImage(req.body.file, `/resources/${req.params.id}/`)
     if (result) {
@@ -226,9 +229,7 @@ app.post("/api/upload-resources/:id", (req, res) => {
     const uniqueSuffix = Date.now()
     let filename = uniqueSuffix + '-' + req.files.file.name;
     // Use the mv() method to place the file somewhere on your server
-    if (!fs.existsSync(`./resources/${req.params.id}`)) {
-      fs.mkdirSync(`./resources/${req.params.id}`);
-    }
+    
     sampleFile.mv(`./resources/${req.params.id}/` + filename, function (err) {
       if (err)
         return res.status(500).send(err);

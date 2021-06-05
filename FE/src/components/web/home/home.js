@@ -210,7 +210,7 @@ class home extends Component {
                                 </Row>
                             </Col>
                             <Col xs={24} sm={24} xl={8}>
-                                <div style={{ padding: '10px', height: '100%' }}>
+                                <div style={{ padding: '5px 10px', height: '100%' }}>
                                     <CalendarSection listActions={this.state.actions} />
                                 </div>
 

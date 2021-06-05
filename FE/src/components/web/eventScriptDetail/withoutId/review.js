@@ -22,8 +22,8 @@ class review extends Component {
         return (
             this.props.data.sort((a, b) => {
                 if (!a.noinfo && !b.noinfo) {
-                    let temp_a = a.time.setFullYear(1, 1, 1);
-                    let temp_b = b.time.setFullYear(1, 1, 1);
+                    let temp_a = new Date(a.time).setFullYear(1, 1, 1);
+                    let temp_b = new Date(b.time).setFullYear(1, 1, 1);
                     return temp_a > temp_b ? 1 : -1
                 }
                 else {
