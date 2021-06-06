@@ -2,8 +2,7 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import auth from '../../../router/auth';
 import { trackPromise } from 'react-promise-tracker';
-import { LoadingIndicator } from '../helper/Loading';
-import { Button, Col, Form, Image, Input, message, Row } from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import Title from 'antd/lib/typography/Title';
 
 const formItemLayout = {
@@ -63,57 +62,48 @@ class login extends Component {
     }
     render() {
         return (
-            <div className="login-page">
-                <div className="login-container">
-                    <Row>
-                        <Col span={12} className="login-container-col1">
-                            <Title className="title" level={1}>EM!</Title>
-                            <div style={{ alignSelf: 'center' }}>
-                                <Image src="/login-asset.svg" preview={false} />
-                            </div>
-                        </Col>
-                        <Col span={12} className="login-container-col2">
-                            <Title className="title" level={2}>Đăng nhập</Title>
-                            <Form
-                                name="validate_other"
-                                {...formItemLayout}
-                                onFinish={(e) => this.onSubmit(e)}
-                                layout="vertical"
-                                requiredMark={false}
-                            >
-                                <Form.Item
-                                    wrapperCol={{ sm: 24 }}
-                                    name="username"
-                                    label={<Title level={4}>Tên tài khoản</Title>}
-                                    rules={[{ required: true, message: 'Cần nhập tên tài khoản!' }]}
-                                // requiredmark='optional'
-                                >
-                                    <Input onChange={(e) => { this.setState({ username: e.target.value }) }} placeholder="Nhập tên tài khoản..."></Input>
-                                </Form.Item>
-                                <Form.Item
-                                    wrapperCol={{ sm: 24 }}
-                                    name="password"
-                                    label={<Title level={4}>Mật khẩu</Title>}
-                                    rules={[{ required: true, message: 'Cần mật khẩu!' }]}
-                                // requiredmark='optional'
-                                >
-                                    <Input.Password onChange={(e) => { this.setState({ password: e.target.value }) }} placeholder="Nhập địa chỉ..."></Input.Password>
-                                </Form.Item>
+            <>
+                <Title className="title" level={2}>Đăng nhập</Title>
+                <Form
+                    name="validate_other"
+                    {...formItemLayout}
+                    onFinish={(e) => this.onSubmit(e)}
+                    layout="vertical"
+                    requiredMark={false}
+                >
+                    <Form.Item
+                        wrapperCol={{ sm: 24 }}
+                        name="username"
+                        label={<Title level={4}>Tên tài khoản</Title>}
+                        rules={[{ required: true, message: 'Cần nhập tên tài khoản!' }]}
+                    // requiredmark='optional'
+                    >
+                        <Input onChange={(e) => { this.setState({ username: e.target.value }) }} placeholder="Nhập tên tài khoản..."></Input>
+                    </Form.Item>
+                    <Form.Item
+                        wrapperCol={{ sm: 24 }}
+                        name="password"
+                        label={<Title level={4}>Mật khẩu</Title>}
+                        rules={[{ required: true, message: 'Cần mật khẩu!' }]}
+                    // requiredmark='optional'
+                    >
+                        <Input.Password onChange={(e) => { this.setState({ password: e.target.value }) }} placeholder="Nhập địa chỉ..."></Input.Password>
+                    </Form.Item>
 
-                                <div style={{ marginTop: '30px' }}>
-                                    <Form.Item wrapperCol={{ span: 24 }}>
-                                        <Button disabled={(this.state.username !== '' && this.state.password !== '') ? false : true} htmlType="submit" className="add">
-                                            Đăng nhập
-                                    </Button>
-                                    </Form.Item>
-                                </div>
-                            </Form>
-                        </Col>
-                    </Row>
-
-                </div>
-                <LoadingIndicator />
-            </div >
+                    <div style={{ marginTop: '30px' }}>
+                        <Form.Item wrapperCol={{ span: 24 }}>
+                            <Button disabled={(this.state.username !== '' && this.state.password !== '') ? false : true} htmlType="submit" className="add">
+                                Đăng nhập
+                            </Button>
+                            <Button onClick={()=>{
+                                this.props.history.push('/forgot-password')
+                            }} style={{ width: '100%', marginTop: 10 }} className="back">
+                                Quên mật khẩu
+                            </Button>
+                        </Form.Item>
+                    </div>
+                </Form>
+            </>
         );
     }
 }

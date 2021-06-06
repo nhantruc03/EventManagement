@@ -11,6 +11,8 @@ const { updatePass } = require('../controllers/users/updatePass')
 const { _delete } = require('../controllers/users/delete')
 const { login } = require('../controllers/users/login')
 const { updatePushToken } = require('../controllers/users/updatePushToken')
+const { forgotPassword } = require('../controllers/users/forgotPassword')
+
 router.post("/", authenticateToken, isAdmin, create)
 router.post("/createMany", authenticateToken, isAdmin, createMany)
 router.get("/:id", authenticateToken, get)
@@ -20,5 +22,6 @@ router.put("/updatePass/:id", authenticateToken, isAdmin, updatePass)
 router.put("/updatePushToken/:id", authenticateToken, updatePushToken)
 router.delete("/:id", authenticateToken, isAdmin, _delete)
 router.post("/login", login)
+router.post("/forgot-password", forgotPassword)
 
 module.exports = router

@@ -65,12 +65,11 @@ class thongtincanhan extends Component {
             })
                 .then(res => {
                     message.success('Cập nhật thành công')
-                    // Message('Sửa thành công', true, this.props);
+                    this.goBack()
                 })
                 .catch(err => {
                     message.error('Cập nhật thất bại')
                     ApiFailHandler(err.response?.data?.error)
-                    // Message('Sửa thất bại', false);
                 }))
     }
 
@@ -94,7 +93,7 @@ class thongtincanhan extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
             Axios.post('/api/system-roles/getAll', {}, {
@@ -105,7 +104,7 @@ class thongtincanhan extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
         ]));
@@ -129,7 +128,7 @@ class thongtincanhan extends Component {
     }
 
     goBack = () => {
-        this.props.history.goBack();
+        this.props.history.push("/");
     }
     render() {
         if (this.state.data) {
