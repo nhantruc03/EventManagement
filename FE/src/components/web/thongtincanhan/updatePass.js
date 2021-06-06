@@ -38,6 +38,7 @@ class updatePass extends Component {
             })
                 .then(res => {
                     message.success('Cập nhật thành công')
+                    this.goBack()
                     // Message('Sửa thành công', true, this.props);
                 })
                 .catch(err => {
@@ -54,7 +55,7 @@ class updatePass extends Component {
     }
 
     goBack = () => {
-        this.props.history.goBack();
+        this.props.history.push("/");
     }
     render() {
         return (

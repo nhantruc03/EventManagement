@@ -81,7 +81,7 @@ import eventreport from '../components/web/reports/report'
 import videocall from '../components/web/chat/VideoCallRoom'
 import home from '../components/web/home/Admin/home';
 import pageAdmin from '../components/web/pageAdmin';
-
+import forgotpassword from '../components/web/forgotpassword/forgotPassword'
 class router extends Component {
     render() {
         return (
@@ -90,6 +90,7 @@ class router extends Component {
 
 
 
+                <AppRoute exact path="/forgot-password" component={forgotpassword} layout={loginpage} />
                 <AppRoute exact path="/login" component={login} layout={loginpage} />
                 <AppRoute exact path="/khongcoquyen" component={loginfail} layout={Page} />
 
