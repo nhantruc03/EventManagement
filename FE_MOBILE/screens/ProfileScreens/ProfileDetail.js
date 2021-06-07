@@ -17,6 +17,7 @@ import SearchableDropDown from 'react-native-searchable-dropdown';
 import { Redirect } from 'react-router';
 import ApiFailHandler from '../../components/helper/ApiFailHandler'
 import ValidationComponent from 'react-native-form-validator';
+import { KeyboardAvoidingView } from 'react-native';
 const styles = StyleSheet.create({
     avaContainer: {
         zIndex: 3,
@@ -95,8 +96,14 @@ const styles = StyleSheet.create({
         color: "red",
         fontFamily: "semibold",
         fontSize: 12,
-
-    }
+    },
+    LoadingBtn: {
+        borderRadius: 8,
+        padding: 12,
+        margin: 16,
+        justifyContent: "center",
+        alignContent: "center",
+    },
 })
 
 class ProfileDetail extends ValidationComponent {
@@ -120,6 +127,7 @@ class ProfileDetail extends ValidationComponent {
             profilename: "",
             profilephone: "",
             profileemail: "",
+            enableScrollViewScroll: true,
         };
 
     }
@@ -330,10 +338,30 @@ class ProfileDetail extends ValidationComponent {
         }
         else {
             return (
-                <Button loading>loading</Button>
+                <Button style={styles.LoadingBtn} loading>loading</Button>
             )
         }
     }
+    onEnableScroll = (value) => {
+        this.setState({
+            enableScrollViewScroll: value,
+        });
+    };
+    scrollToView = async (e) => {
+        if (e) {
+            console.log(e)
+            if (Platform.OS === "ios") {
+                e.measure((fx, fy, width, height, px, py) => {
+                    let offset = height + py;
+                    this.scroller.scrollTo({ x: 0, y: offset });
+                });
+            } else {
+                e.measureLayout(await findNodeHandle(this.scroller), (x, y) => {
+                    this.scroller.scrollTo({ x: 0, y: y });
+                });
+            }
+        }
+    };
 
     render() {
         if (this.state.loggout) {
@@ -348,147 +376,163 @@ class ProfileDetail extends ValidationComponent {
             if (!this.state.isLoading) {
                 return (
                     <Provider>
-                        <ScrollView>
-                            <View style={styles.avaContainer}>
-                                {this.state.edit ? <UploadImage
-                                    Save={(e, b) => {
-                                        this.setState({ photoUrl: e, photoUrl_localPath: b });
-                                    }}
-                                    localPath={this.state.photoUrl_localPath}
-                                /> : <Image
-                                    style={styles.avaImg}
-                                    source={{
-                                        uri: `${Url()}/api/images/${this.state.data.photoUrl}`,
-                                    }}
-                                />}
+                        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "height" : ""}>
+                            <ScrollView ref={(scroller) => {
+                                this.scroller = scroller;
+                            }}>
+                                <View style={styles.avaContainer}>
+                                    {this.state.edit ? <UploadImage
+                                        Save={(e, b) => {
+                                            this.setState({ photoUrl: e, photoUrl_localPath: b });
+                                        }}
+                                        localPath={this.state.photoUrl_localPath}
+                                    /> : <Image
+                                        style={styles.avaImg}
+                                        source={{
+                                            uri: `${Url()}/api/images/${this.state.data.photoUrl}`,
+                                        }}
+                                    />}
 
-                            </View>
-                            <View style={!this.state.edit ? styles.infoContainer : styles.editInfoContainer}>
-                                <View style={styles.InputContainer}>
-                                    <Text style={styles.TextLabel}>Họ và Tên</Text>
-                                    <TextInput style={this.state.edit ? styles.ActiveInputText : styles.Text}
-                                        onChangeText={this.onChangeName}
-                                        editable={this.state.edit}>
-                                        {this.state.data.name}
-                                    </TextInput>
-                                    {this.isFieldInError('profilename') && this.getErrorsInField('profilename').map((errorMessage, key) =>
-                                        <Text style={styles.error} key={key}>
-                                            {errorMessage}
-                                        </Text>
-                                    )}
                                 </View>
-                                <View style={styles.InputContainer}>
-                                    <Text style={styles.TextLabel}>Giới tính</Text>
-                                    {!this.state.edit ?
-                                        <TextInput style={styles.Text}>
-                                            {this.state.curGender.id === "nam" ? "Nam" : "Nữ"}
+                                <View style={!this.state.edit ? styles.infoContainer : styles.editInfoContainer}>
+                                    <View style={styles.InputContainer}>
+                                        <Text style={styles.TextLabel}>Họ và Tên</Text>
+                                        <TextInput style={this.state.edit ? styles.ActiveInputText : styles.Text}
+                                            onChangeText={this.onChangeName}
+                                            editable={this.state.edit}>
+                                            {this.state.data.name}
                                         </TextInput>
-                                        :
-                                        <View style={styles.Box}>
-                                            <SearchableDropDown
-                                                onItemSelect={(item) => {
-                                                    this.setState({
-                                                        curGender: item,
-                                                    });
-                                                }}
-                                                selectedItems={this.state.curGender}
-                                                defaultIndex={
-                                                    this.state.listGender.indexOf(
-                                                        this.state.curGender
-                                                    ) !== -1
-                                                        ? this.state.listGender.indexOf(
+                                        {this.isFieldInError('profilename') && this.getErrorsInField('profilename').map((errorMessage, key) =>
+                                            <Text style={styles.error} key={key}>
+                                                {errorMessage}
+                                            </Text>
+                                        )}
+                                    </View>
+                                    <View style={styles.InputContainer}>
+                                        <Text style={styles.TextLabel}>Giới tính</Text>
+                                        {!this.state.edit ?
+                                            <TextInput style={styles.Text}>
+                                                {this.state.curGender.id === "nam" ? "Nam" : "Nữ"}
+                                            </TextInput>
+                                            :
+                                            <View style={styles.Box}>
+                                                <SearchableDropDown
+                                                    onItemSelect={(item) => {
+                                                        this.setState({
+                                                            curGender: item,
+                                                        });
+                                                    }}
+                                                    selectedItems={this.state.curGender}
+                                                    defaultIndex={
+                                                        this.state.listGender.indexOf(
                                                             this.state.curGender
-                                                        ).toString()
-                                                        : undefined
-                                                }
-                                                containerStyle={{}}
-                                                itemStyle={{
-                                                    padding: 10,
-                                                    marginTop: 2,
-                                                    backgroundColor: "#ddd",
-                                                    borderColor: "#bbb",
-                                                    borderWidth: 1,
-                                                    borderRadius: 5,
-                                                }}
-                                                itemTextStyle={{ color: "#222" }}
-                                                itemsContainerStyle={{ maxHeight: 140 }}
-                                                items={this.state.listGender}
-                                                resetValue={false}
-                                                textInputProps={{
-                                                    placeholder: "Chọn giới tính",
-                                                    underlineColorAndroid: "transparent",
-                                                    style: {
-                                                        padding: 12,
+                                                        ) !== -1
+                                                            ? this.state.listGender.indexOf(
+                                                                this.state.curGender
+                                                            ).toString()
+                                                            : undefined
+                                                    }
+                                                    containerStyle={{}}
+                                                    itemStyle={{
+                                                        padding: 10,
+                                                        marginTop: 2,
+                                                        backgroundColor: "#ddd",
+                                                        borderColor: "#bbb",
                                                         borderWidth: 1,
-                                                        borderColor: "#ccc",
                                                         borderRadius: 5,
-                                                    },
-                                                }}
-                                                listProps={{
-                                                    nestedScrollEnabled: true,
-                                                }}
-                                            />
-                                        </View>}
-                                </View>
-                                <View style={styles.InputContainer}>
-                                    <Text style={styles.TextLabel}>Ngày sinh</Text>
-                                    {!this.state.edit ? <TextInput style={styles.Text}
-                                    >
-                                        {moment(this.state.data.birthday).utcOffset(0).format("DD/MM/YYYY")}
-                                    </TextInput> :
-                                        <Customdatetime
-                                            containerStyle={styles.ScriptNameContainer}
-                                            BoxInput={styles.BoxInput}
-                                            Save={(e) => this.onChangeTime(e)}
-                                            data={this.state.data.time}
-                                            mode="date"
-                                        />}
+                                                    }}
+                                                    itemTextStyle={{ color: "#222" }}
+                                                    itemsContainerStyle={{ maxHeight: 140 }}
+                                                    items={this.state.listGender}
+                                                    resetValue={false}
+                                                    textInputProps={{
+                                                        placeholder: "Chọn giới tính",
+                                                        underlineColorAndroid: "transparent",
+                                                        style: {
+                                                            padding: 12,
+                                                            borderWidth: 1,
+                                                            borderColor: "#ccc",
+                                                            borderRadius: 5,
+                                                        },
+                                                    }}
+                                                    listProps={{
+                                                        nestedScrollEnabled: true,
+                                                    }}
+                                                />
+                                            </View>}
+                                    </View>
+                                    <View style={styles.InputContainer}>
+                                        <Text style={styles.TextLabel}>Ngày sinh</Text>
+                                        {!this.state.edit ? <TextInput style={styles.Text}
+                                        >
+                                            {moment(this.state.data.birthday).utcOffset(0).format("DD/MM/YYYY")}
+                                        </TextInput> :
+                                            <Customdatetime
+                                                containerStyle={styles.ScriptNameContainer}
+                                                BoxInput={styles.BoxInput}
+                                                Save={(e) => this.onChangeTime(e)}
+                                                data={this.state.data.time}
+                                                mode="date"
+                                            />}
 
+                                    </View>
+                                    <View style={styles.InputContainer} >
+                                        <Text style={styles.TextLabel}>Số điện thoại</Text>
+                                        <View onFocus={() => this.scrollToView(this.phone_view)}
+                                            ref={(e) => {
+                                                this.phone_view = e;
+                                            }}>
+                                            <TextInput style={this.state.edit ? styles.ActiveInputText : styles.Text}
+                                                onChangeText={this.onChangePhone}
+                                                editable={this.state.edit}>
+                                                {this.state.data.phone}
+                                            </TextInput>
+
+                                            {this.isFieldInError('profilephone') && this.getErrorsInField('profilephone').map((errorMessage, key) =>
+                                                <Text style={styles.error} key={key}>
+                                                    {errorMessage}
+                                                </Text>
+                                            )}
+                                        </View>
+                                    </View>
+                                    <View style={styles.InputContainer}>
+                                        <Text style={styles.TextLabel}>Email</Text>
+                                        <View onFocus={() => this.scrollToView(this.email_view)}
+                                            ref={(e) => {
+                                                this.email_view = e;
+                                            }}>
+                                            <TextInput style={this.state.edit ? styles.ActiveInputText : styles.Text}
+
+                                                onChangeText={this.onChangeEmail}
+                                                editable={this.state.edit}>
+                                                {this.state.data.email}
+                                            </TextInput>
+                                        </View>
+                                        {this.isFieldInError('profileemail') && this.getErrorsInField('profileemail').map((errorMessage, key) =>
+                                            <Text style={styles.error} key={key}>
+                                                {errorMessage}
+                                            </Text>
+                                        )}
+                                    </View>
+                                    {!this.state.edit ?
+                                        <TouchableOpacity onPress={() => this.setState({ visible: true })}>
+                                            <Text style={styles.TextUpdate}>Cập nhật mật khẩu</Text>
+                                        </TouchableOpacity>
+                                        : null}
                                 </View>
-                                <View style={styles.InputContainer}>
-                                    <Text style={styles.TextLabel}>Số điện thoại</Text>
-                                    <TextInput style={this.state.edit ? styles.ActiveInputText : styles.Text}
-                                        onChangeText={this.onChangePhone}
-                                        editable={this.state.edit}>
-                                        {this.state.data.phone}
-                                    </TextInput>
-                                    {this.isFieldInError('profilephone') && this.getErrorsInField('profilephone').map((errorMessage, key) =>
-                                        <Text style={styles.error} key={key}>
-                                            {errorMessage}
-                                        </Text>
-                                    )}
-                                </View>
-                                <View style={styles.InputContainer}>
-                                    <Text style={styles.TextLabel}>Email</Text>
-                                    <TextInput style={this.state.edit ? styles.ActiveInputText : styles.Text}
-                                        onChangeText={this.onChangeEmail}
-                                        editable={this.state.edit}>
-                                        {this.state.data.email}
-                                    </TextInput>
-                                    {this.isFieldInError('profileemail') && this.getErrorsInField('profileemail').map((errorMessage, key) =>
-                                        <Text style={styles.error} key={key}>
-                                            {errorMessage}
-                                        </Text>
-                                    )}
-                                </View>
-                                {!this.state.edit ?
-                                    <TouchableOpacity onPress={() => this.setState({ visible: true })}>
-                                        <Text style={styles.TextUpdate}>Cập nhật mật khẩu</Text>
-                                    </TouchableOpacity>
-                                    : null}
-                            </View>
-                            <Modal
-                                title="Đổi mật khẩu"
-                                transparent
-                                onClose={this.onClose}
-                                maskClosable
-                                visible={this.state.visible}
-                                closable
-                            >
-                                <ChangePasswordModal onClose={this.onClose} />
-                            </Modal>
-                            {this.state.edit ? this.renderBtnLoading() : null}
-                        </ScrollView>
+                                <Modal
+                                    title="Đổi mật khẩu"
+                                    transparent
+                                    onClose={this.onClose}
+                                    maskClosable
+                                    visible={this.state.visible}
+                                    closable
+                                >
+                                    <ChangePasswordModal onClose={this.onClose} />
+                                </Modal>
+                                {this.state.edit ? this.renderBtnLoading() : null}
+                            </ScrollView>
+                        </KeyboardAvoidingView>
                     </Provider>
                 );
             } else return <Indicator />;

@@ -386,6 +386,7 @@ class CreateTask extends ValidationComponent {
   };
   scrollToView = async (e) => {
     if (e) {
+      console.log(e)
       if (Platform.OS === "ios") {
         e.measure((fx, fy, width, height, px, py) => {
           let offset = height + py;

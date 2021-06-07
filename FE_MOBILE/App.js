@@ -21,6 +21,7 @@ const Stack = createStackNavigator();
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 import AsyncStorage from "@react-native-community/async-storage";
+import ForgotPassword from "./screens/ForgotPassword";
 
 export default class App extends Component {
   constructor(props) {
@@ -37,6 +38,7 @@ export default class App extends Component {
       bold: require("./assets/fonts/Nunito-Bold.ttf"),
       semibold: require("./assets/fonts/Nunito-SemiBold.ttf"),
       light: require("./assets/fonts/Nunito-Light.ttf"),
+      semibolditalic: require("./assets/fonts/Nunito-SemiBoldItalic.ttf"),
     });
     this.setState({ fontsLoaded: true });
   }
@@ -63,6 +65,7 @@ export default class App extends Component {
             pathname: "/",
           }} />
           <AppRoute exact path="/login" component={LoginScreen} />
+          <AppRoute exact path="/forgotpassword" component={ForgotPassword} />
           <SecureRouteAdmin exact path="/" component={AppMain} />
 
         </NativeRouter>

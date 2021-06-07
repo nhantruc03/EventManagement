@@ -352,7 +352,7 @@ export default class EventDetail2 extends Component {
   };
 
   render() {
-    console.log(this.state.listParticipants)
+
     if (this.state.loggout) {
       return (
         <Redirect

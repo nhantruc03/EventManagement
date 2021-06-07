@@ -2,7 +2,6 @@ import React, { Component } from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
 import Profilescreen from "../screens/ProfileScreens/Profile";
-import Loginscreen from "../screens/Login";
 import ProfileDetail from "../screens/ProfileScreens/ProfileDetail";
 
 
@@ -41,12 +40,6 @@ class ProfileStackNav extends Component {
                         headerTintColor: "#fff",
                     }}
                 />
-                <Stack.Screen
-                    name="Login"
-                    component={Loginscreen}
-                    options={{ headerShown: false }}
-                />
-
             </Stack.Navigator>
         );
     }

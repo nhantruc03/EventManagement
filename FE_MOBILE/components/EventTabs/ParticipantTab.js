@@ -63,7 +63,7 @@ class ParticipantTab extends Component {
             data: [],
             error: null,
             search: null,
-            SearchData1: [],
+            SearchData: [],
             loading: true,
             refreshing: false,
             loggout: false,

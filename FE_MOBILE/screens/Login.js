@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Image,
   Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import getToken from "../Auth";
 import Icon from "../assets/images/Show.png";
@@ -20,6 +21,8 @@ import * as Permissions from 'expo-permissions'
 import { Redirect } from 'react-router';
 import auth from '../router/auth'
 import ValidationComponent from 'react-native-form-validator';
+import { KeyboardAvoidingView } from 'react-native';
+import Loader from 'react-native-modal-loader';
 
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
@@ -34,6 +37,7 @@ export default class Login extends ValidationComponent {
       showPassword: true,
       focusInputType: "",
       loggined: false,
+      Loading: false,
     };
   }
 
@@ -85,13 +89,21 @@ export default class Login extends ValidationComponent {
 
   // }
 
+  onLoading() {
+    this.setState({
+      Loading: true,
+    });
+  }
   handleSubmitPress = async () => {
     let temp_validate = this.validate({
-      username: { minlength: 3, maxlength: 7, required: true },
-      password: { minlength: 3, maxlength: 8, required: true },
+      username: { minlength: 3, required: true },
+      password: { minlength: 3, required: true },
     });
 
     if (temp_validate) {
+      this.setState({
+        Loading: true
+      })
       var data = new FormData();
 
       data.append("username", this.state.username);
@@ -105,7 +117,8 @@ export default class Login extends ValidationComponent {
               var login = await AsyncStorage.getItem('login');
               if (login !== null) {
                 this.setState({
-                  loggined: true
+                  loggined: true,
+                  Loading: false,
                 })
               }
             }
@@ -158,81 +171,88 @@ export default class Login extends ValidationComponent {
       )
     }
     else return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.formcontainer}>
-          <Text style={styles.h1}>XIN CHÀO</Text>
-          <Text style={styles.h2}>Đăng nhập để tiếp tục</Text>
-          <View
-            style={{ marginBottom: (H * 21) / 667, marginTop: (H * 48) / 667 }}
-          >
-            <Text style={styles.textBox}>Tên đăng nhập</Text>
-            <View style={styles.boxSection}>
-              <TextInput
-                ref="username"
-                onFocus={this.setUsernameFocusInputType}
-                style={
-                  this.state.focusInputType === "username" ? styles.inputActive : styles.input
-                }
-                placeholder="Nhập tên đăng nhập của bạn"
-                onChangeText={this.onChangeUsername}
-                value={this.state.username}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-              />
-            </View>
-            {this.isFieldInError('username') && this.getErrorsInField('username').map((errorMessage, key) =>
-              <Text style={styles.error} key={key}>
-                {errorMessage}
-              </Text>
-            )}
-          </View>
+      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
 
-          <View>
-            <Text style={styles.textBox}>Mật khẩu</Text>
-            <View style={styles.boxSection}>
-              <TouchableOpacity
-                style={styles.Icon}
-                onPress={() => this.setState({ showPassword: !this.state.showPassword })}
-              >
-                <Image source={Icon} />
-              </TouchableOpacity>
-
-              <TextInput
-                ref="password"
-                onFocus={this.setPasswordFocusInputType}
-                style={
-                  this.state.focusInputType == "password" ? styles.inputActive : styles.input
-                }
-                placeholder="Nhập mật khẩu của bạn"
-                onChangeText={this.onChangePassword}
-                value={this.state.password}
-                secureTextEntry={this.state.showPassword}
-                underlineColorAndroid="transparent"
-              />
-            </View>
-
-          </View>
-
-          <View style={styles.containerBoxSubmit}>
-            <TouchableOpacity
-              onPress={this.handleSubmitPress}
-              title="Đăng nhập"
-              style={styles.btnSubmit}
-              underlayColor="#fff"
+          <View style={styles.formcontainer}>
+            <Loader loading={this.state.Loading} color="white" size="large" />
+            <Text style={styles.h1}>XIN CHÀO</Text>
+            <Text style={styles.h2}>Đăng nhập để tiếp tục</Text>
+            <View
+              style={{ marginBottom: (H * 21) / 667, marginTop: (H * 40) / 667 }}
             >
-              <Text style={styles.textSubmit}>Đăng nhập</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <View style={{ flex: 1, height: 1, backgroundColor: "#AAB0B6" }} />
-            <View>
-              <Text style={{ width: 60, textAlign: "center" }}>Hoặc</Text>
+              <Text style={styles.textBox}>Tên đăng nhập</Text>
+              <View style={styles.boxSection}>
+                <TextInput
+                  ref="username"
+                  onFocus={this.setUsernameFocusInputType}
+                  style={
+                    this.state.focusInputType === "username" ? styles.inputActive : styles.input
+                  }
+                  placeholder="Nhập tên đăng nhập của bạn"
+                  onChangeText={this.onChangeUsername}
+                  value={this.state.username}
+                  underlineColorAndroid="transparent"
+                  autoCapitalize="none"
+                />
+              </View>
+              {this.isFieldInError('username') && this.getErrorsInField('username').map((errorMessage, key) =>
+                <Text style={styles.error} key={key}>
+                  {errorMessage}
+                </Text>
+              )}
             </View>
-            <View style={{ flex: 1, height: 1, backgroundColor: "#AAB0B6" }} />
+
+            <View>
+              <Text style={styles.textBox}>Mật khẩu</Text>
+              <View style={styles.boxSection}>
+                <TouchableOpacity
+                  style={styles.Icon}
+                  onPress={() => this.setState({ showPassword: !this.state.showPassword })}
+                >
+                  <Image source={Icon} />
+                </TouchableOpacity>
+
+                <TextInput
+                  ref="password"
+                  onFocus={this.setPasswordFocusInputType}
+                  style={
+                    this.state.focusInputType == "password" ? styles.inputActive : styles.input
+                  }
+                  placeholder="Nhập mật khẩu của bạn"
+                  onChangeText={this.onChangePassword}
+                  value={this.state.password}
+                  secureTextEntry={this.state.showPassword}
+                  underlineColorAndroid="transparent"
+                />
+              </View>
+              {this.isFieldInError('password') && this.getErrorsInField('password').map((errorMessage, key) =>
+                <Text style={styles.error} key={key}>
+                  {errorMessage}
+                </Text>
+              )}
+            </View>
+            <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8, justifyContent: 'flex-end' }}>
+              <TouchableOpacity onPress={() => {
+                this.props.history.push('/forgotpassword')
+              }}>
+                <Text style={styles.forgot}>Quên mật khẩu ?</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.containerBoxSubmit}>
+              <TouchableOpacity
+
+                onPress={this.handleSubmitPress}
+                title="Đăng nhập"
+                style={styles.btnSubmit}
+                underlayColor="#fff"
+              >
+                <Text style={styles.textSubmit}>Đăng nhập</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </SafeAreaView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -275,6 +295,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   Icon: {
+    alignItems: 'center',
     position: "absolute",
     zIndex: 9,
     right: 16,
@@ -312,6 +333,11 @@ const styles = StyleSheet.create({
     },
     shadowRadius: 4,
   },
+  forgot: {
+    fontFamily: "semibolditalic",
+    fontSize: 14,
+    color: '#2495D1',
+  },
   btnSubmit: {
     color: "#fff",
     height: (H * 48) / 667,
@@ -330,4 +356,9 @@ const styles = StyleSheet.create({
     marginTop: (H * 16) / 667,
     marginBottom: (H * 32) / 667,
   },
+  error: {
+    color: "red",
+    fontFamily: "semibold",
+    fontSize: 12,
+  }
 });

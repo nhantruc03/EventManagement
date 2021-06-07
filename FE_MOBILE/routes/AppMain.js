@@ -3,8 +3,9 @@ import { View, Text } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import BottomNav from "../routes/BottomNav";
-import SplashScreen from "../screens/SplashScreen";
-import LoginScreen from "../screens/Login";
+
+
+
 
 const Stack = createStackNavigator();
 
