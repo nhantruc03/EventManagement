@@ -167,7 +167,7 @@ class addevents extends Component {
                         className="event-form"
                     >
                         <Row>
-                            <Col className="event-col" sm={24} lg={10}>
+                            <Col className="event-col" sm={24} lg={12}>
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
                                     name="eventTypeId"
@@ -208,9 +208,15 @@ class addevents extends Component {
                                 >
                                     <AddTagType update={(e) => this.updatelistguesttype(e)} />
                                 </Form.Item>
-
+                                <Form.Item
+                                    wrapperCol={{ sm: 24 }}
+                                    label={<Title level={4}>Phòng hội thoại</Title>}
+                                    hasFeedback
+                                >
+                                    <AddTagType update={(e) => this.updatelistgroup(e)} />
+                                </Form.Item>
                             </Col>
-                            <Col className="event-col" sm={24} lg={10}>
+                            <Col className="event-col" sm={24} lg={12}>
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
                                     name="name"
@@ -296,7 +302,7 @@ class addevents extends Component {
                                     </Upload>
                                 </Form.Item>
                             </Col>
-                            <Col className="event-col" sm={24} lg={4}>
+                            {/* <Col className="event-col" sm={24} lg={4}>
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
                                     label={<Title level={4}>Phòng hội thoại</Title>}
@@ -305,7 +311,7 @@ class addevents extends Component {
                                     <AddTagType update={(e) => this.updatelistgroup(e)} />
                                 </Form.Item>
 
-                            </Col>
+                            </Col> */}
                         </Row>
                         <br></br>
                         <Form.Item wrapperCol={{ span: 24, offset: 9 }}>
