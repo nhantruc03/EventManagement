@@ -4,7 +4,7 @@ import {
     HomeOutlined,
     FireOutlined,
     FileDoneOutlined,
-    TeamOutlined,
+    BlockOutlined
 
 } from '@ant-design/icons';
 import Title from 'antd/lib/typography/Title';
@@ -61,8 +61,8 @@ class SiderDemo extends React.Component {
                     <Menu.Item key="/actions" icon={<FileDoneOutlined />}>
                         <Link to="/actions" className="nav-text">Công việc</Link>
                     </Menu.Item>
-                    <Menu.Item key="/eventclones" icon={<TeamOutlined />}>
-                        <Link to="/eventclones" className="nav-text">Hồ sơ</Link>
+                    <Menu.Item key="/eventclones" icon={<BlockOutlined />}>
+                        <Link to="/eventclones" className="nav-text">Bản sao</Link>
                     </Menu.Item>
                 </Menu>
             </Sider>

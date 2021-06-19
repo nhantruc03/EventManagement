@@ -749,10 +749,10 @@ class editevent extends Component {
                                                     action='/api/uploads'
                                                     listType="picture"
                                                     beforeUpload={file => {
-                                                        if (file.type !== 'image/png') {
-                                                            message.error(`${file.name} is not a png file`);
+                                                        if (!['image/jpeg','image/png'].includes(file.type)) {
+                                                            message.error(`${file.name} không phải dạng ảnh`);
                                                         }
-                                                        return file.type === 'image/png';
+                                                        return ['image/jpeg','image/png'].includes(file.type);
                                                     }}
                                                     onChange={(info) => {
                                                         // file.status is empty when beforeUpload return false

@@ -397,10 +397,11 @@ class editAction extends Component {
                                     listType="picture"
                                     showUploadList={false}
                                     beforeUpload={file => {
-                                        if (file.type !== 'image/png') {
-                                            message.error(`${file.name} is not a png file`);
+                                        console.log(file.type)
+                                        if (!['image/jpeg','image/png'].includes(file.type)) {
+                                            message.error(`${file.name} không phải dạng ảnh`);
                                         }
-                                        return file.type === 'image/png';
+                                        return ['image/jpeg','image/png'].includes(file.type);
                                     }}
                                     onChange={(info) => {
                                         // file.status is empty when beforeUpload return false

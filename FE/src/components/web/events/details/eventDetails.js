@@ -497,8 +497,11 @@ class eventDetails extends Component {
                   <Title className="event-detail-title" level={3}>Thông tin sự kiện</Title>
 
                   <Title style={{ color: '#264653', margin: 'unset' }} level={1}>{this.state.data.name}</Title>
-                  <Title style={{ margin: 'unset' }} level={4}>Mô tả</Title>
-                  {this.state.data.description}
+                  <Title style={{ margin: 'unset', marginTop: 10 }} level={4}>Mô tả</Title>
+                  <div style={{ fontWeight: 500, fontSize: 18 }}>
+                    {this.state.data.description}
+
+                  </div>
 
                   <div className="event-detail-time-date-address">
                     <div className="flex-container-row" style={{ justifyContent: 'space-between' }}>

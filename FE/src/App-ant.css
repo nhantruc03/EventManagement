@@ -693,7 +693,7 @@ ul, li {
   flex-direction: column;
 }
 .event-detail .ChatBox {
-  max-height: 500px;
+  max-height: 550px;
   height: 100%;
   overflow-y: auto;
   display: flex;

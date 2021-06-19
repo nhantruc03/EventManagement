@@ -29,7 +29,7 @@ class edit extends Component {
     onFinish = async (e) => {
         let data = {
             ...e,
-            time: e.time,
+            time: e.time.utc(true),
             _id: this.props.data._id,
             noinfo: false,
         };

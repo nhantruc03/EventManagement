@@ -141,6 +141,7 @@ class addactions extends Component {
                 let temp = res.data.action
                 temp.endTime = moment(temp.endTime).utcOffset(0)
                 temp.endDate = moment(temp.endDate).utcOffset(0)
+                
                 this.props.done(temp)
             })
             .catch(err => {
@@ -242,10 +243,10 @@ class addactions extends Component {
                                         action='/api/uploads'
                                         listType="picture"
                                         beforeUpload={file => {
-                                            if (file.type !== 'image/png' || file.type !== 'image/jpg') {
-                                                message.error(`${file.name} is not a png file`);
+                                            if (!['image/jpeg','image/png'].includes(file.type)) {
+                                                message.error(`${file.name} không phải dạng ảnh`);
                                             }
-                                            return (file.type !== 'image/png' || file.type !== 'image/jpg')
+                                            return ['image/jpeg','image/png'].includes(file.type);
                                         }}
                                         onChange={(info) => {
                                             // file.status is empty when beforeUpload return false

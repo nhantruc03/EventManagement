@@ -334,7 +334,7 @@ class actionDetails extends Component {
     renderSubActions = () => {
         return (
             <div style={{ marginTop: '10px' }}>
-                { this.state.subActions.map((e, key) =>
+                {this.state.subActions.map((e, key) =>
                     <div className="flex-container-row" style={{ marginTop: '10px' }} key={key}>
                         {checkPermission(this.state.currentPermissions, constants.QL_CONGVIEC_PERMISSION) || this.state.currentUser.id === this.state.data.managerId._id ?
                             <>
@@ -372,7 +372,7 @@ class actionDetails extends Component {
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
                                     Chi tiết
-                            </Breadcrumb.Item>
+                                </Breadcrumb.Item>
                             </Breadcrumb>
                             {checkPermission(this.state.currentPermissions, constants.QL_CONGVIEC_PERMISSION) || this.state.currentUser.id === this.state.data.managerId._id ?
                                 <div className="flex-row-item-right">
@@ -432,7 +432,7 @@ class actionDetails extends Component {
                                 </div>
 
                                 <Title level={4}>Mô tả</Title>
-                                <p style={{ color: '#001529' }}>{this.state.data.description}</p>
+                                <p style={{ color: '#001529', fontSize: 20, lineHeight: 1.5 }}>{this.state.data.description}</p>
 
 
 
@@ -476,7 +476,7 @@ class actionDetails extends Component {
                                 {/* <Image style={{ maxWidth: '300px' }} src={`/api/images/${this.state.data.coverUrl}`}></Image> */}
                                 {this.state.data.tagsId.map((e, key) => <Tag style={{ width: 'auto', background: e.background, color: e.color }} key={key}>{e.name}</Tag>)}
                             </Col>
-                            <Col sm={24} xl={7} className="event-detail">
+                            <Col sm={24} xl={7} className="action-detail">
                                 {/* <div className="vl"></div> */}
                                 <Tabs className="chat-tabs" defaultActiveKey="1" >
                                     <TabPane tab="Bình luận" key="1"><ChatRoom videocall={true} roomId={this.props.match.params.id} /></TabPane>
