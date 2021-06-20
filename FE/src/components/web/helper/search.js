@@ -8,7 +8,7 @@ class ss extends Component {
             this.props.data.forEach((item) => {
                 if (this.props.multi === true) {
                     this.props.target.every(x => {
-                        if (item[x].toString().toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1) {
+                        if (item[x]?.toString().toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1) {
                             ketqua.push(item);
                             return false;
                         }
