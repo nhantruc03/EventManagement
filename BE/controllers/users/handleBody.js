@@ -25,6 +25,7 @@ const handleBody = (body) => {
         "roleId",
         "gender",
         "mssv",
+        "photoUrl",
         "push_notification_token")
     }
   }

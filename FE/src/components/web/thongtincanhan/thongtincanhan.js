@@ -64,6 +64,10 @@ class thongtincanhan extends Component {
                 }
             })
                 .then(res => {
+                    let data_from_res = res.data.data
+                    obj.photoUrl = data_from_res.photoUrl
+                    obj.name = data_from_res.name
+                    localStorage.setItem('login', JSON.stringify(obj));
                     message.success('Cập nhật thành công')
                     this.goBack()
                 })
@@ -142,7 +146,7 @@ class thongtincanhan extends Component {
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
                                     Chi tiết
-                            </Breadcrumb.Item>
+                                </Breadcrumb.Item>
                             </Breadcrumb>
                             <Button onClick={() => this.setModalEditActionVisible(true)} className="flex-row-item-right add">Chỉnh sửa</Button>
                         </div>
@@ -256,10 +260,10 @@ class thongtincanhan extends Component {
                                             action='/api/uploads'
                                             listType="picture"
                                             beforeUpload={file => {
-                                                if (file.type !== 'image/png') {
-                                                    message.error(`${file.name} is not a png file`);
+                                                if (!['image/jpeg', 'image/png'].includes(file.type)) {
+                                                    message.error(`${file.name} không phải dạng ảnh`);
                                                 }
-                                                return file.type === 'image/png';
+                                                return ['image/jpeg', 'image/png'].includes(file.type);
                                             }}
                                             onChange={(info) => {
                                                 // file.status is empty when beforeUpload return false
@@ -290,10 +294,10 @@ class thongtincanhan extends Component {
                                     style={{ width: 150, marginRight: 20 }}
                                 >
                                     Hủy
-                            </Button>
+                                </Button>
                                 <Button htmlType="submit" className="add" style={{ width: 150 }}>
                                     Cập nhật
-                            </Button>
+                                </Button>
                             </Form.Item>
                         </Form>
                     </div>

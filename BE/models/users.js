@@ -52,6 +52,7 @@ const Users = new Schema(
     photoUrl: {
       type: String,
       index: true,
+      default: "user_default.jpeg"
     },
     username: {
       type: String,
