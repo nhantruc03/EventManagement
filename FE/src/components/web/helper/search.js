@@ -16,12 +16,12 @@ class ss extends Component {
                     })
                 } else {
                     if (this.props.targetParent == null) {
-                        if (item[this.props.target].toString().toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1) {
+                        if (item[this.props.target]?.toString().toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1) {
                             ketqua.push(item);
                         }
                     }
                     else {
-                        if (item[this.props.targetParent][this.props.target].toString().toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1) {
+                        if (item[this.props.targetParent][this.props.target]?.toString().toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1) {
                             ketqua.push(item);
                         }
                     }
