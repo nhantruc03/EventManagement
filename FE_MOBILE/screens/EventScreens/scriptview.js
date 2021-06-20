@@ -309,10 +309,9 @@ class scriptview extends Component {
     }
   }
   timer = () => {
-    let temp = new Date();
     let current = null;
     this.state.data.forEach((e, i) => {
-      if (temp.getTime() > new Date(e.time)) {
+      if (moment().utc(true).toDate().getTime() > moment(e.time).utcOffset(0).toDate().getTime()) {
         current = i;
       }
     });

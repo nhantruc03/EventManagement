@@ -113,6 +113,7 @@ class ParticipantTab extends Component {
     };
 
     renderList = () => {
+
         if (this.state.data.length > 0) {
             return (
                 <FlatList
@@ -144,6 +145,7 @@ class ParticipantTab extends Component {
     };
 
     render() {
+
         if (this.state.loggout) {
             return (
                 <Redirect

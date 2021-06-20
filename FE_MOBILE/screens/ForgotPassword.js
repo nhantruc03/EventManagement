@@ -10,6 +10,7 @@ import axios from "axios";
 import Url from "../env";
 import moment from "moment";
 import getToken from "../Auth";
+import Loader from 'react-native-modal-loader';
 
 const styles = StyleSheet.create({
     container: {
