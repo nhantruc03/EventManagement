@@ -93,10 +93,10 @@ class editevent extends Component {
                     <div className="flex-container-row flex-row-item-right">
                         <Button onClick={() => this.setModalVisible(false)} style={{ marginRight: 5 }} className="back">
                             Hủy
-                  </Button>
+                        </Button>
                         <Button htmlType="submit" className="add">
                             Tạo
-                </Button>
+                        </Button>
                     </div>
                 </div>
             </Form>
@@ -614,10 +614,10 @@ class editevent extends Component {
                                                                         style={{ marginRight: 20 }}
                                                                     >
                                                                         Hủy
-                                                    </Button>
-                                                                    <Button htmlType="submit" className="add" >
+                                                                    </Button>
+                                                                    <Button htmlType="submit" className="back" >
                                                                         Cập nhật
-                                                    </Button>
+                                                                    </Button>
                                                                 </div>
                                                             </div>
                                                         </Col>

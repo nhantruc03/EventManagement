@@ -20,21 +20,28 @@ class ss extends Component {
       this.props.data.forEach((item) => {
         if (this.props.multi === true) {
           this.props.target.every(x => {
-            if (item[x].toString().toLowerCase().indexOf(e.toLowerCase()) !== -1) {
-              ketqua.push(item);
-              return false;
+            if (item[x]) {
+              if (item[x].toString().toLowerCase().indexOf(e.toLowerCase()) !== -1) {
+                ketqua.push(item);
+                return false;
+              }
             }
             return true;
           })
         } else {
           if (this.props.targetParent == null) {
-            if (item[this.props.target].toString().toLowerCase().indexOf(e.toLowerCase()) !== -1) {
-              ketqua.push(item);
+            if (item[this.props.target]) {
+              if (item[this.props.target].toString().toLowerCase().indexOf(e.toLowerCase()) !== -1) {
+                ketqua.push(item);
+
+              }
             }
           }
           else {
-            if (item[this.props.targetParent][this.props.target].toString().toLowerCase().indexOf(e.toLowerCase()) !== -1) {
-              ketqua.push(item);
+            if (item[this.props.targetParent][this.props.target]) {
+              if (item[this.props.targetParent][this.props.target].toString().toLowerCase().indexOf(e.toLowerCase()) !== -1) {
+                ketqua.push(item);
+              }
             }
           }
         }

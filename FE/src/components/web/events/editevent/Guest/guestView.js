@@ -152,7 +152,7 @@ class guestView extends Component {
                         <Search target={["name", "phone", "email"]} multi={true} data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
                     </Col>
                     <Col span={4}>
-                        <Button className="add" style={{ float: "right" }} onClick={() => this.TaoKM()}>Tạo khách mời</Button>
+                        <Button className="back" style={{ float: "right" }} onClick={() => this.TaoKM()}>Tạo khách mời</Button>
                     </Col>
                 </Row>
                 <TableData guestTypeId={this.props.guestTypeId} canDelete={this.props.canDelete} listguesttype={this.props.listguesttype} edit={(info) => this.edit(info)} deleteClick={(id) => this.deleteClick(id)} data={this.state.data} />

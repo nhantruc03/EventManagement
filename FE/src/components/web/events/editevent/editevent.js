@@ -110,10 +110,10 @@ class editevent extends Component {
                     <div className="flex-container-row flex-row-item-right">
                         <Button onClick={() => this.setModalVisible(false)} style={{ marginRight: 5 }} className="back">
                             Hủy
-                  </Button>
+                        </Button>
                         <Button htmlType="submit" className="add">
                             Tạo
-                </Button>
+                        </Button>
                     </div>
                 </div>
             </Form>
@@ -667,7 +667,7 @@ class editevent extends Component {
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
                                     Chỉnh sửa
-                                    </Breadcrumb.Item>
+                                </Breadcrumb.Item>
                             </Breadcrumb>
                             {checkPermission(this.state.currentPermission, constants.QL_SUKIEN_PERMISSION) ?
                                 <div className="flex-row-item-right">
@@ -679,8 +679,8 @@ class editevent extends Component {
                                     >
                                         <Button className="delete">Xóa</Button>
                                     </Popconfirm>
-                                    <Button style={{ marginLeft: 10 }} onClick={() => this.setModalCloneVisible(true)} className="add">Tạo bản sao</Button>
-                                    <Button style={{ marginLeft: 10 }} onClick={() => { this.props.history.push(`/eventreport/${this.props.match.params.id}`) }} className="add">Báo cáo</Button>
+                                    <Button style={{ marginLeft: 10 }} onClick={() => this.setModalCloneVisible(true)} className="back">Tạo bản sao</Button>
+                                    <Button style={{ marginLeft: 10 }} onClick={() => { this.props.history.push(`/eventreport/${this.props.match.params.id}`) }} className="back">Báo cáo</Button>
                                 </div>
                                 : null
                             }
@@ -749,10 +749,10 @@ class editevent extends Component {
                                                     action='/api/uploads'
                                                     listType="picture"
                                                     beforeUpload={file => {
-                                                        if (!['image/jpeg','image/png'].includes(file.type)) {
+                                                        if (!['image/jpeg', 'image/png'].includes(file.type)) {
                                                             message.error(`${file.name} không phải dạng ảnh`);
                                                         }
-                                                        return ['image/jpeg','image/png'].includes(file.type);
+                                                        return ['image/jpeg', 'image/png'].includes(file.type);
                                                     }}
                                                     onChange={(info) => {
                                                         // file.status is empty when beforeUpload return false
@@ -836,10 +836,10 @@ class editevent extends Component {
                                                             style={{ marginRight: 20 }}
                                                         >
                                                             Hủy
-                                                                 </Button>
+                                                        </Button>
                                                         <Button htmlType="submit" className="add" >
                                                             Cập nhật
-                                                                </Button>
+                                                        </Button>
                                                     </div>
                                                 </div>
                                             </Col>

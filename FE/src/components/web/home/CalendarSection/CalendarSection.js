@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { trackPromise } from 'react-promise-tracker';
 import { AUTH } from '../../../env'
 import moment from 'moment'
-import { CarryOutOutlined } from '@ant-design/icons';
+import { CarryOutOutlined, MinusOutlined } from '@ant-design/icons';
 import Title from 'antd/lib/typography/Title';
 import SubActionItems from './SubActionItems';
 import ActionItems from './ActionItem';
@@ -33,7 +33,7 @@ class CalendarSection extends Component {
                 .then((res) =>
                     res.data.data
                 )
-                .catch(err=>{
+                .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
         ]));
@@ -66,8 +66,8 @@ class CalendarSection extends Component {
         const listData = this.getListData(value);
         if (listData.length > 0) {
             return (
-                <div style={{ backgroundColor: '#2A9D8F' }}>
-                    <CarryOutOutlined />
+                <div className="data-date">
+                    <MinusOutlined />
                 </div>
             );
         }

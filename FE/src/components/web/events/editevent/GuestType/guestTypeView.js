@@ -173,7 +173,7 @@ class guestTypeView extends Component {
                         <Search target="name" data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
                     </Col>
                     <Col span={4}>
-                        <Button className="add" style={{ float: "right" }} onClick={() => this.setModalVisible(true)}>Thêm loại khách mời</Button>
+                        <Button className="back" style={{ float: "right" }} onClick={() => this.setModalVisible(true)}>Thêm loại khách mời</Button>
                     </Col>
                 </Row>
                 <TableData deleteClick={(id) => this.deleteClick(id)} canDelete={this.props.canDelete} listFaculty={this.props.listFaculty} listRole={this.props.listRole} edit={(info) => this.edit(info)} data={this.getCurData(this.state.data)} />

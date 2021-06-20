@@ -138,7 +138,7 @@ class EventAssign extends Component {
                     <Search targetParent="userId" target="name" data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
                     {!this.props.noBigAction ?
                         <>
-                            <Button className="flex-row-item-right add" style={{ marginRight: '10px' }} onClick={() => this.props.onAddClick()}>Thêm ban tổ chức</Button>
+                            <Button className="flex-row-item-right back" style={{ marginRight: '10px' }} onClick={() => this.props.onAddClick()}>Thêm ban tổ chức</Button>
                             <input
                                 // ref={this.selectedFile}
                                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
@@ -151,7 +151,7 @@ class EventAssign extends Component {
                                 }}
                                 style={{ display: 'none' }}
                             />
-                            <Button className="add" onClick={() => this.selectedFile.click()} >Tải lên file</Button>
+                            <Button className="back" onClick={() => this.selectedFile.click()} >Tải lên file</Button>
                         </> : null
                     }
                 </div>

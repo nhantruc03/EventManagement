@@ -205,7 +205,7 @@ class guestTypeView extends Component {
                     <Search multi={true} target={["name", "phone", "email", "mssv"]} data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
                     {this.props.canEdit ?
                         <>
-                            <Button className="add flex-row-item-right" style={{ marginRight: '10px' }} onClick={() => this.setModalVisible(true)}>Thêm người tham gia</Button>
+                            <Button className="back flex-row-item-right" style={{ marginRight: '10px' }} onClick={() => this.setModalVisible(true)}>Thêm người tham gia</Button>
                             <input
                                 // ref={this.selectedFile}
                                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
@@ -219,7 +219,7 @@ class guestTypeView extends Component {
                                 }}
                                 style={{ display: 'none' }}
                             />
-                            <Button className="add" onClick={() => this.selectedFile.click()} >Tải lên file</Button>
+                            <Button className="back" onClick={() => this.selectedFile.click()} >Tải lên file</Button>
                         </>
                         : null}
                 </div>

@@ -447,7 +447,7 @@ class eventDetails extends Component {
                     >
                       <Button className="delete">Xóa</Button>
                     </Popconfirm>
-                    <Button style={{ marginLeft: 10 }} onClick={() => { this.props.history.push(`/editevent/${this.props.match.params.id}`) }} className="add">Chỉnh sửa</Button>
+                    <Button style={{ marginLeft: 10 }} onClick={() => { this.props.history.push(`/editevent/${this.props.match.params.id}`) }} className="back">Chỉnh sửa</Button>
                     <Button style={{ marginLeft: 10 }} onClick={() => { this.props.history.push(`/eventreport/${this.props.match.params.id}`) }} className="add">Báo cáo</Button>
                   </div>
                   : null

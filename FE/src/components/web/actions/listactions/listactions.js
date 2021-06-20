@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, message, Modal, Row, Select } from "antd";
+import { Button, Col, Form, Input, message, Modal, Row, Select, Image } from "antd";
 import { Content } from "antd/lib/layout/layout";
 import Title from "antd/lib/typography/Title";
 import React, { Component } from "react";
@@ -127,7 +127,7 @@ class listactions extends Component {
             </Button>
             <Button htmlType="submit" className="add">
               Cập nhật
-          </Button>
+            </Button>
           </div>
         </div>
       </Form>
@@ -357,7 +357,14 @@ class listactions extends Component {
         </div>
       );
     } else {
-      return null;
+      return (
+        <div className="flex-container-row" style={{ width: "100%", justifyContent: "center", marginTop: 40 }}>
+          <div className="flex-container-colunm">
+            <Title level={3} style={{ color: "#AAB0B6" }}>Vui lòng chọn sự kiện</Title>
+            <Image preview={false} src={"/box.png"}></Image>
+          </div>
+        </div>
+      )
     }
   };
 

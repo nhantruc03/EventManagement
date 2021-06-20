@@ -1,8 +1,12 @@
 @import "~antd/dist/antd.css";
 .App {
   text-align: center;
+  
 }
 
+body{
+  font-family: Nunito !important;
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -85,9 +89,8 @@ button.ant-btn.add {
   border-radius: 6px;
   background-color: #2A9D8F;
   color: white;
-  font-family: Montserrat;
   font-style: normal;
-  font-weight: 600;
+  font-weight: bold;
   font-size: 16px;
   /* line-height: 140%; */
   /* or 22px */
@@ -100,9 +103,8 @@ button.ant-btn.back {
   border-radius: 6px;
   background-color: #fff;
   color: #2A9D8F;
-  font-family: Montserrat;
   font-style: normal;
-  font-weight: 600;
+  font-weight: bold;
   font-size: 16px;
   border: 2px solid #2A9D8F;
   height: 40px;
@@ -112,9 +114,9 @@ button.ant-btn.delete {
   border-radius: 6px;
   background-color: #fff;
   color: red;
-  font-family: Montserrat;
+
   font-style: normal;
-  font-weight: 600;
+  font-weight: bold;
   font-size: 16px;
   border: 2px solid red;
   height: 40px;
@@ -122,9 +124,9 @@ button.ant-btn.delete {
 }
 
 h4.ant-typography {
-  font-family: Open Sans;
+
   font-style: normal;
-  font-weight: 600;
+  font-weight: bold;
   font-size: 16px;
   /* line-height: 140%; */
   text-transform: none;
@@ -132,9 +134,9 @@ h4.ant-typography {
 }
 
 h3.ant-typography {
-  font-family: Open Sans;
+
   font-style: normal;
-  font-weight: 600px;
+  font-weight: bold;
   /* line-height: 140%; */
 }
 
@@ -144,9 +146,9 @@ h3.ant-typography {
 }
 
 span.ant-tag {
-  font-family: Open Sans;
+
   font-style: normal;
-  font-weight: normal;
+  font-weight: bold;
   font-size: 12px;
   text-align: center;
   /* line-height: 140%; */
@@ -260,9 +262,9 @@ td.ant-table-cell.sub {
 }
 
 label.ant-form-item-required {
-  font-family: Open Sans;
+
   font-style: normal;
-  font-weight: 500;
+  font-weight: bold;
   font-size: 14px;
   /* line-height: 140%; */
   color: #333333;
@@ -271,9 +273,9 @@ label.ant-form-item-required {
   margin-bottom: 0 !important;
 }
 label {
-  font-family: Open Sans !important;
+
   font-style: normal !important;
-  font-weight: 500 !important;
+  font-weight: bold !important;
   font-size: 14px !important;
   /* line-height: 140% !important; */
   color: #333333 !important;
@@ -324,7 +326,7 @@ ul.events {
 }
 label {
   color: #6e6e6e !important;
-  font-family: Open Sans !important;
+
   font-style: normal !important;
   font-weight: normal !important;
   font-size: 14px !important;
@@ -332,7 +334,7 @@ label {
 }
 
 p.special {
-  font-family: Open Sans !important;
+
   color: #000000 !important;
   font-style: normal !important;
   font-weight: normal !important;
@@ -354,13 +356,13 @@ input[type="radio"]:checked:after {
 }
 h1.ant-typography,
 .ant-modal-title {
-  font-family: Open Sans !important;
+
   font-style: normal !important;
   font-weight: 600 !important;
   /* line-height: 140% !important; */
 }
 p.ncc_label {
-  font-family: Open Sans;
+
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
@@ -369,7 +371,6 @@ p.ncc_label {
 }
 
 span.ncc_content {
-  font-family: Open Sans;
   font-style: normal;
   font-weight: normal;
   font-size: 13px;
@@ -378,9 +379,8 @@ span.ncc_content {
 }
 
 .title {
-  font-family: Open Sans;
   font-style: normal;
-  font-weight: normal;
+  font-weight: bold;
   font-size: 20px;
   /* line-height: 140%; */
   /* identical to box height, or 28px */
@@ -389,9 +389,8 @@ span.ncc_content {
 }
 
 .ant-drawer-title {
-  font-family: Open Sans;
   font-style: normal;
-  font-weight: normal;
+  font-weight: bold;
   font-size: 20px;
   /* line-height: 140%; */
   /* identical to box height, or 28px */
@@ -546,6 +545,13 @@ span.ant-tag.event-detail-status {
   background-color: #DF5533;
 }
 
+.data-date{
+  display: flex;
+  position: absolute; 
+  left: 50%;
+  transform: translate(-50%,-50%);
+  color:orange;
+}
 
 .flex-container-row{
   display: flex;
@@ -686,7 +692,7 @@ ul, li {
 
 
 .ChatBox {
-  max-height: 670px;
+  max-height: 68vh;
   height: 100%;
   overflow-y: auto;
   display: flex;
@@ -836,7 +842,6 @@ button.ant-btn {
 }
 
 .status-event-card .status-event-number{
-    font-family: Nunito;
     font-style: normal;
     font-weight: bold;
     font-size: 56px;
@@ -852,9 +857,8 @@ button.ant-btn {
 
 .status-event-card .status-event-info{
   margin-left: 10px;
-  font-family: Nunito;
   font-style: normal;
-  font-weight: 600;
+  font-weight: bold;
   font-size: 16px;
   line-height: 120%;
   /* or 19px */
@@ -890,7 +894,6 @@ button.ant-btn {
 .status-tag{
   background: #DF5533;
   border-radius: 14px;
-  font-family: Nunito;
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
@@ -983,7 +986,7 @@ button.ant-btn {
 
 .calendar-sub-action .title{
   color: black;
-  font-weight: 600;
+  font-weight: bold;
   font-size: 18px;
   line-height: 33px;
   /* margin-bottom: 6px; */
@@ -1056,7 +1059,7 @@ span.ant-badge.ant-dropdown-trigger {
 
 h3.ant-typography{
   color: #264653;
-  font-weight: 600;
+  font-weight: bold;
   font-size: 24px;
   line-height: 33px;
   font-style: normal;
@@ -1158,7 +1161,11 @@ label {
 .black-2{
   color: #001529 !important;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: bold;
+}
+
+.ant-card-meta-title {
+    font-weight: bold !important;
 }
 
 .action-details, .action-details a{
@@ -1209,7 +1216,7 @@ label {
 .timeline-name{
   font-size: 17px;
   color: #264653;
-  font-weight: 600;
+  font-weight: bold;
   margin-top: 5px;
 }
 
@@ -1412,6 +1419,7 @@ scrips-view
 
 .eventCard a{
   color: black !important;
+  
 }
 
 .horizontal-container{

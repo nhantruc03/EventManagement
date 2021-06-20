@@ -158,7 +158,8 @@ class ParticipantTab extends Component {
             return (
                 <SafeAreaView style={styles.Container}>
                     <Search
-                        target="name"
+                        target={["name", "mssv", "phone"]}
+                        multi={true}
                         data={this.state.data}
                         getSearchData={(e) => this.getSearchData1(e)}
                     ></Search>
