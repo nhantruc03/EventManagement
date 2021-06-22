@@ -66,6 +66,7 @@ const startClone = async (req, res) => {
         }
         let temp_body = {
             ...body,
+            availUser: [],
             isClone: !body.isClone,
             ...pick(req.body,
                 "name"

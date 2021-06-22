@@ -52,6 +52,7 @@ class CalendarSection extends Component {
 
     getListData = (value) => {
         let listData = [];
+        console.log(this.state.listSubActions)
         this.state.listSubActions.forEach(element => {
             if (!element.status) {
                 if (moment(element.endDate).utcOffset(0).format('YYYY-MM-DD') === value.utcOffset(0).format('YYYY-MM-DD')) {
@@ -87,8 +88,8 @@ class CalendarSection extends Component {
         const listData = this.getMonthData(value);
         if (listData.length > 0) {
             return (
-                <div style={{ backgroundColor: '#2A9D8F' }}>
-                    <CarryOutOutlined />
+                <div className="data-date">
+                    <MinusOutlined />
                 </div>
             )
         }

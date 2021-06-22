@@ -406,7 +406,7 @@ class editAction extends Component {
                                     onChange={(info) => {
                                         // file.status is empty when beforeUpload return false
                                         if (info.file.status === 'done') {
-                                            message.success(`${info.file.response.url} file uploaded successfully`);
+                                            message.success(`${info.file.response.url} tải lên thành công`);
                                             this.setState({
                                                 coverUrl: info.file.response.url
                                             })

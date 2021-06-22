@@ -210,7 +210,7 @@ class addevents extends Component {
         let data = {
             ...values,
             'availUser': this.state.listusersforevent.reduce((a, o) => { a.push(o._id); return a }, []),
-            'startDate': values['startDate'].utc(true).toDate(),
+            'startDate': values['startDate'].utc(true).format('YYYY-MM-DD'),
             'startTime': values['startTime'].utc(true).toDate(),
             // .toDate
             'posterUrl': values['posterUrl'].fileList[0].response.url,
@@ -228,6 +228,7 @@ class addevents extends Component {
         })
             .then(res => {
                 message.success('Tạo thành công');
+                this.props.history.goBack()
             })
             .catch(err => {
                 message.error('Tạo thất bại');
@@ -346,6 +347,10 @@ class addevents extends Component {
                     temp_EventAssign.push(temp)
                 }
             })
+            // console.log(this.state.listEventAssign)
+            // this.setState({
+            //     listEventAssign: [...this.state.listEventAssign,...temp_EventAssign]
+            // })
             this.updateEventAssign(temp_EventAssign)
         })
     }
@@ -437,7 +442,7 @@ class addevents extends Component {
                                     </Select>
 
 
-                                    <Button className="flex-row-item-right" onClick={() => this.setModal2Visible(true)}>Thêm</Button>
+                                    <Button className="flex-row-item-right back" onClick={() => this.setModal2Visible(true)}>Thêm</Button>
                                 </div>
 
                                 <div className="flex-container-row">
@@ -492,14 +497,17 @@ class addevents extends Component {
                                     <AddTagType update={(e) => this.updatelistguesttype(e)} />
                                 </Form.Item>
 
-                                <Form.Item
+                                {/* <Form.Item
                                     wrapperCol={{ sm: 24 }}
                                     name="guests"
                                     label={<Title level={4}>Khách mời</Title>}
                                     hasFeedback
                                 >
-                                    <Button onClick={() => this.setModal2Visible2(true)} >Chỉnh sửa</Button>
-                                </Form.Item>
+                                </Form.Item> */}
+                                <div style={{ width: '100%' }} className="flex-container-row">
+                                    <Title level={4}>Khách mời</Title>
+                                    <Button className="flex-row-item-right back" onClick={() => this.setModal2Visible2(true)}>Thêm</Button>
+                                </div>
                                 <Tabs style={{ width: '90%' }} defaultActiveKey="1" >
                                     {this.renderguest()}
                                 </Tabs>
@@ -565,15 +573,15 @@ class addevents extends Component {
                                         action='/api/uploads'
                                         listType="picture"
                                         beforeUpload={file => {
-                                            if (file.type !== 'image/png') {
-                                                message.error(`${file.name} is not a png file`);
+                                            if (!['image/jpeg', 'image/png'].includes(file.type)) {
+                                                message.error(`${file.name} không phải dạng ảnh`);
                                             }
-                                            return file.type === 'image/png';
+                                            return ['image/jpeg', 'image/png'].includes(file.type);
                                         }}
                                         onChange={(info) => {
                                             // file.status is empty when beforeUpload return false
                                             if (info.file.status === 'done') {
-                                                message.success(`${info.file.response.url} file uploaded successfully`);
+                                                message.success(`${info.file.response.url} tải lên thành công`);
                                                 this.setState({
                                                     posterUrl: info.file.response.url
                                                 })

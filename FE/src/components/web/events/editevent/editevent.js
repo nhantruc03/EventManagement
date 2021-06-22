@@ -436,7 +436,7 @@ class editevent extends Component {
     onFinish = async (values) => {
         let data = {
             ...values,
-            'startDate': values['startDate'].utc(true).toDate(),
+            'startDate': values['startDate'].utc(true).format('YYYY-MM-DD'),
             'startTime': values['startTime'].utc(true).toDate(),
         }
         if (this.state.posterUrl !== null) {
@@ -757,7 +757,7 @@ class editevent extends Component {
                                                     onChange={(info) => {
                                                         // file.status is empty when beforeUpload return false
                                                         if (info.file.status === 'done') {
-                                                            message.success(`${info.file.response.url} file uploaded successfully`);
+                                                            message.success(`${info.file.response.url} tải lên thành công`);
                                                             this.setState({
                                                                 posterUrl: info.file.response.url
                                                             })

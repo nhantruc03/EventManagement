@@ -11,7 +11,7 @@ const getAllWithUserId = async (req, res) => {
         }
         if (!isEmpty(body.availUser)) {
             let query_Actions = {
-                ...pick(req.body, 'availUser'), isDeleted: false
+                ...pick(req.body, 'availUser'), isDeleted: false, isClone: false
             }
             // let query_Actions = {
             //     availUser: {
@@ -23,7 +23,7 @@ const getAllWithUserId = async (req, res) => {
             //     }
             // }
             const docs = await Actions.find(query_Actions)
-            // console.log(docs)
+            console.log(docs)
             if (!isEmpty(docs)) {
                 let findSubActions = []
 
@@ -32,11 +32,12 @@ const getAllWithUserId = async (req, res) => {
                         subActions.find({
                             actionId: element._id,
                             isDeleted: false
-                        }, null)
+                        })
                     )
                 })
 
                 let listSubActions = await Promise.all(findSubActions)
+                console.log('listsubactions', listSubActions)
                 return res.status(200).json({
                     success: true,
                     data: listSubActions[0]

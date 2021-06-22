@@ -87,7 +87,7 @@ class listGuest extends Component {
     render() {
         return (
             <div>
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
                     <Search multi={true} target={["name", "phone", "email"]} data={this.state.data} getSearchData={(e) => this.getSearchData1(e)} />
                 </div>
                 <Table
