@@ -10,11 +10,9 @@ class numeric_input extends Component {
     }
     Check = (e) => {
         const { value } = e.target;
-        console.log(value)
         const reg = /^-?\d*(\.\d*)?$/;
 
         if ((!isNaN(value) && reg.test(value)) || value === '' || value === '-') {
-            console.log('here')
             this.props.onChange(value);
             this.setState({
                 data: value

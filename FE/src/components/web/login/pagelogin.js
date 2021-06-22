@@ -12,7 +12,7 @@ class pagelogin extends Component {
                     <div className="login-container">
                         <Row>
                             <Col span={12} className="login-container-col1">
-                                <Title className="title" level={1}>EM!</Title>
+                                <Title className="title" level={1}>EVENTGO</Title>
                                 <div style={{ alignSelf: 'center' }}>
                                     <Image src="/login-asset.svg" preview={false} />
                                 </div>

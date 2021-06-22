@@ -47,7 +47,7 @@ class SiderDemo extends React.Component {
                     // height: '100vh',
                     left: 0,
                 }}>
-                <Title className="logo" level={3}>EM!</Title>
+                <Title className="logo" level={3}>EVENTGO</Title>
                 <Menu selectedKeys={[this.props.location.pathname]} mode="inline" >
                     <Menu.Item key="/" icon={<HomeOutlined />}>
                         <Link to="/" className="nav-text">Trang chủ</Link>

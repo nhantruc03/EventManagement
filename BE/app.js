@@ -41,15 +41,15 @@ wsServer.on('request', function (request) {
           const roomID = dataFromClient.message
           if (users[roomID]) {
             const length = users[roomID].length;
-            if (length === 4) {
-              let result = JSON.stringify({
-                type: 'room full'
-              })
-              for (key in clients) {
-                clients[key].sendUTF(result);
-              }
-              break;
-            }
+            // if (length === 4) {
+            //   let result = JSON.stringify({
+            //     type: 'room full'
+            //   })
+            //   for (key in clients) {
+            //     clients[key].sendUTF(result);
+            //   }
+            //   break;
+            // }
             users[roomID].push(userID);
           } else {
             users[roomID] = [userID];

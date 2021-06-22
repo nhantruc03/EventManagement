@@ -121,7 +121,7 @@ class list extends Component {
             <div >
                 <Title level={4}>Danh sách người dùng</Title>
                 <div className="flex-container-row" style={{ marginBottom: 20 }}>
-                    <Search target="name" data={this.state.data} getSearchData={(e) => this.getSearchData(e)} />
+                    <Search target={["name","phone","email","mssv"]} multi={true} data={this.state.data} getSearchData={(e) => this.getSearchData(e)} />
                     <Button className="flex-row-item-right add">
                         <Link to={`/admin/addusers`} >
                             <div className="btn btn-createnew">Tạo mới</div>

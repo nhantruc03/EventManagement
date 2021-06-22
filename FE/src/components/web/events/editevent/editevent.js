@@ -830,13 +830,13 @@ class editevent extends Component {
                                             <Col span={24} style={{ marginTop: '20px' }}>
                                                 <div style={{ textAlign: 'center' }}>
                                                     <div >
-                                                        <Button
+                                                        {/* <Button
                                                             onClick={this.goBack}
                                                             className="back"
                                                             style={{ marginRight: 20 }}
                                                         >
                                                             Hủy
-                                                        </Button>
+                                                        </Button> */}
                                                         <Button htmlType="submit" className="add" >
                                                             Cập nhật
                                                         </Button>

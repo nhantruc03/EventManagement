@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { AUTH } from '../../env'
 import { trackPromise } from 'react-promise-tracker';
 import { Content } from 'antd/lib/layout/layout';
-import { Breadcrumb, Button, Col, DatePicker, Form, Image, Input, InputNumber, message, Row, Select, Upload } from 'antd';
+import { Breadcrumb, Button, Col, DatePicker, Form, Image, Input, message, Row, Select, Upload } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
 import moment from 'moment'
@@ -11,6 +11,7 @@ import {
     UploadOutlined,
 } from "@ant-design/icons";
 import ApiFailHandler from '../helper/ApiFailHandler'
+import NumericInput from '../helper/numericInput'
 // var Roles = [
 //     { value: 'admin', label: 'Quản trị viên' },
 //     { value: 'doctor', label: 'Bác sĩ' },
@@ -46,6 +47,7 @@ class thongtincanhan extends Component {
         let data = {
             ...e,
             phone: e.phone.toString(),
+            birthday: e.birthday.utc(true).toDate()
         }
 
         if (this.state.fileList.length > 0) {
@@ -118,7 +120,7 @@ class thongtincanhan extends Component {
                 this.setState({
                     data: {
                         ...data,
-                        phone: Number(data.phone),
+                        phone: data.phone,
                         birthday: moment(data.birthday)
                     },
                     listRoles: roles
@@ -189,7 +191,8 @@ class thongtincanhan extends Component {
                                 hasFeedback
                                 rules={[{ required: true, message: 'Cần nhập số điện thoại!' }, { type: 'number' }]}
                             >
-                                <InputNumber style={{ width: '100%' }} minLength={9} maxLength={11} placeholder="Nhập số điện thoại..."></InputNumber>
+                                {/* <InputNumber style={{ width: '100%' }} minLength={9} maxLength={11} placeholder="Nhập số điện thoại..."></InputNumber> */}
+                                <NumericInput placeholder="Nhập số điện thoại..." />
                             </Form.Item>
                             <Row>
                                 <Col span={12} style={{ padding: '0 10px' }}>

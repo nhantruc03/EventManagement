@@ -604,24 +604,25 @@ class editevent extends Component {
                                                     >
                                                         <Input placeholder="Địa điểm..." />
                                                     </Form.Item>
-                                                    <Row>
-                                                        <Col span={24} style={{ marginTop: '20px' }}>
-                                                            <div style={{ textAlign: 'center' }}>
-                                                                <div >
-                                                                    <Button
-                                                                        onClick={this.goBack}
-                                                                        className="back"
-                                                                        style={{ marginRight: 20 }}
-                                                                    >
-                                                                        Hủy
-                                                                    </Button>
-                                                                    <Button htmlType="submit" className="back" >
-                                                                        Cập nhật
-                                                                    </Button>
-                                                                </div>
-                                                            </div>
-                                                        </Col>
-                                                    </Row>
+
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col span={24} style={{ marginTop: '20px' }}>
+                                                    <div style={{ textAlign: 'center' }}>
+                                                        <div >
+                                                            {/* <Button
+                                                                onClick={this.goBack}
+                                                                className="back"
+                                                                style={{ marginRight: 20 }}
+                                                            >
+                                                                Hủy
+                                                            </Button> */}
+                                                            <Button htmlType="submit" className="add" >
+                                                                Cập nhật
+                                                            </Button>
+                                                        </div>
+                                                    </div>
                                                 </Col>
                                             </Row>
                                         </Form>

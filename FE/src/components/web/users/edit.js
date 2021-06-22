@@ -3,10 +3,12 @@ import React, { Component } from 'react';
 import { AUTH } from '../../env'
 import { trackPromise } from 'react-promise-tracker';
 import { Content } from 'antd/lib/layout/layout';
-import { Breadcrumb, Button, Form, Input, InputNumber, message, Row, Select, } from 'antd';
+import { Breadcrumb, Button, Form, Input, message, Row, Select, Col, DatePicker } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
 import ApiFailHandler from '../helper/ApiFailHandler'
+import NumericInput from '../helper/numericInput'
+import moment from 'moment'
 const { Option } = Select;
 const formItemLayout = {
     labelCol: {
@@ -25,8 +27,13 @@ class edit extends Component {
     }
 
     onSubmit = async (e) => {
+        let data = {
+            ...e,
+            phone: e.phone.toString(),
+            birthday: e.birthday.utc(true).toDate()
+        }
         await trackPromise(
-            Axios.put('/api/users/' + this.props.match.params.id, e, {
+            Axios.put('/api/users/' + this.props.match.params.id, data, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
@@ -78,7 +85,11 @@ class edit extends Component {
         if (data !== null && roles !== null) {
             if (this._isMounted) {
                 this.setState({
-                    data: data,
+                    data: {
+                        ...data,
+                        phone: data.phone,
+                        birthday: moment(data.birthday)
+                    },
                     listRoles: roles
                 })
             }
@@ -145,9 +156,10 @@ class edit extends Component {
                                 name="phone"
                                 label={<Title level={4}>Số điện thoại</Title>}
                                 hasFeedback
-                                rules={[{ required: true, message: 'Cần nhập số điện thoại!' }, { type: 'number' }]}
+                                rules={[{ required: true, message: 'Cần nhập số điện thoại!' }]}
                             >
-                                <InputNumber style={{ width: '100%' }} minLength={9} maxLength={11} placeholder="Nhập số điện thoại..."></InputNumber>
+                                {/* <InputNumber style={{ width: '100%' }} minLength={9} maxLength={11} placeholder="Nhập số điện thoại..."></InputNumber> */}
+                                <NumericInput style={{ width: '100%' }} minLength={9} maxLength={11} placeholder="Nhập số điện thoại..."></NumericInput>
                             </Form.Item>
                             <Form.Item
                                 wrapperCol={{ sm: 24 }}
@@ -158,18 +170,34 @@ class edit extends Component {
                             >
                                 <Input placeholder="Nhập địa chỉ..."></Input>
                             </Form.Item>
-                            <Form.Item
-                                wrapperCol={{ sm: 24 }}
-                                name="gender"
-                                label={<Title level={4}>Giới tính</Title>}
-                                hasFeedback
-                                rules={[{ required: true, message: 'Cần chọn giới tính!' }]}
-                            >
-                                <Select placeholder="Chọn giới tính">
-                                    <Option key="nam">Nam</Option>
-                                    <Option key="nữ">Nữ</Option>
-                                </Select>
-                            </Form.Item>
+                            <Row>
+                                <Col span={12} style={{ padding: '0 10px 0 0' }}>
+                                    <Form.Item
+                                        wrapperCol={{ sm: 24 }}
+                                        name="birthday"
+                                        label={<Title level={4}>Ngày sinh</Title>}
+                                        hasFeedback
+                                        rules={[{ required: true, message: 'Cần nhập ngày sinh!' }]}
+                                    >
+                                        <DatePicker format="DD/MM/YYYY" placeholder="Cần nhập ngày sinh" />
+                                    </Form.Item>
+
+                                </Col>
+                                <Col span={12} style={{ padding: '0 0 0 10px' }}>
+                                    <Form.Item
+                                        wrapperCol={{ sm: 24 }}
+                                        name="gender"
+                                        label={<Title level={4}>Giới tính</Title>}
+                                        hasFeedback
+                                        rules={[{ required: true, message: 'Cần chọn giới tính!' }]}
+                                    >
+                                        <Select placeholder="Chọn giới tính">
+                                            <Option key="nam">Nam</Option>
+                                            <Option key="nữ">Nữ</Option>
+                                        </Select>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
                             <Form.Item
                                 wrapperCol={{ sm: 24 }}
                                 name="roleId"
@@ -189,10 +217,10 @@ class edit extends Component {
                                     style={{ width: 150, marginRight: 20 }}
                                 >
                                     Hủy
-                            </Button>
+                                </Button>
                                 <Button htmlType="submit" className="add" style={{ width: 150 }}>
                                     Cập nhật
-                            </Button>
+                                </Button>
                             </Form.Item>
                         </Form>
                     </div>
