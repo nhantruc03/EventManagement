@@ -361,7 +361,7 @@ class editevent extends Component {
     onFinish = async (values) => {
         let data = {
             ...values,
-            'startDate': values['startDate'].utc(true).toDate(),
+            'startDate': values['startDate'].utc(true).format('YYYY-MM-DD'),
             'startTime': values['startTime'].utc(true).toDate(),
         }
         if (this.state.posterUrl !== null) {

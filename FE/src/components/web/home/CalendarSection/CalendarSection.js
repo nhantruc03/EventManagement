@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { trackPromise } from 'react-promise-tracker';
 import { AUTH } from '../../../env'
 import moment from 'moment'
-import { CarryOutOutlined, MinusOutlined } from '@ant-design/icons';
+import { MinusOutlined } from '@ant-design/icons';
 import Title from 'antd/lib/typography/Title';
 import SubActionItems from './SubActionItems';
 import ActionItems from './ActionItem';
@@ -52,7 +52,9 @@ class CalendarSection extends Component {
 
     getListData = (value) => {
         let listData = [];
-        console.log(this.state.listSubActions)
+        if (this.state.listSubActions.length > 0) {
+            console.log('list sub actions', this.state.listSubActions)
+        }
         this.state.listSubActions.forEach(element => {
             if (!element.status) {
                 if (moment(element.endDate).utcOffset(0).format('YYYY-MM-DD') === value.utcOffset(0).format('YYYY-MM-DD')) {

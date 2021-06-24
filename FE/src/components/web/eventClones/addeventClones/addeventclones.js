@@ -97,7 +97,7 @@ class addevents extends Component {
     onFinish = async (values) => {
         let data = {
             ...values,
-            'startDate': values['startDate'].utc(true).toDate(),
+            'startDate': values['startDate'].utc(true).format('YYYY-MM-DD'),
             'startTime': values['startTime'].utc(true).toDate(),
             'posterUrl': values['posterUrl'].fileList[0].response.url,
             'guestTypes': this.state.listguesttype,

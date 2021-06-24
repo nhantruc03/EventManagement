@@ -147,7 +147,7 @@ class editAction extends Component {
             coverUrl: this.state.coverUrl,
             eventId: this.props.data.eventId._id,
             endTime: e.endTime.utc(true).toDate(),
-            endDate: e.endDate.utc(true).toDate()
+            endDate: e.endDate.utc(true).format('YYYY-MM-DD')
         }
         console.log(data)
         let managerId_change = false

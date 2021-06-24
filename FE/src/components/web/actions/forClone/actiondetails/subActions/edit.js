@@ -25,7 +25,7 @@ class edit extends Component {
             ...e,
             actionId: this.props.actionId,
             endTime: e.endTime.utc(true).toDate(),
-            endDate: e.endDate.utc(true).toDate(),
+            endDate: e.endDate.utc(true).format('YYYY-MM-DD'),
         }
 
         await trackPromise(

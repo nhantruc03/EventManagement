@@ -101,7 +101,7 @@ class addactions extends Component {
         let data = {
             ...e,
             endTime: e.endTime.utc(true).toDate(),
-            endDate: e.endDate.utc(true).toDate(),
+            endDate: e.endDate.utc(true).format('YYYY-MM-DD'),
             eventId: this.props.event._id
         }
 
