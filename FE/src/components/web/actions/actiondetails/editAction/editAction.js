@@ -122,7 +122,7 @@ class editAction extends Component {
         let data = {
             ...this.props.data,
             facultyId: this.props.data.facultyId._id,
-            managerId: this.props.manager._id,
+            managerId: this.props.manager?._id,
             actionTypeId: this.props.data.actionTypeId._id,
             availUser: temp_availUser,
             tagsId: temp_tagsId,
