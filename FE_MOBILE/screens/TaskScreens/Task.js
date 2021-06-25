@@ -198,12 +198,12 @@ class Taskscreen extends Component {
     this._isMounted = true;
     var login = await AsyncStorage.getItem("login");
     var obj = JSON.parse(login);
-    let temp = moment(new Date()).format("YYYY-MM-DD");
+    let temp = moment(new Date()).utcOffset(0).format('YYYY-MM-DD')
     const [future_event, ongoing_event, past_event] = await Promise.all([
       axios
         .post(
           `${Url()}/api/events/getAll?gt=${temp}`,
-          { isClone: false, availUser: obj.id },
+          { isClone: false },
           {
             headers: {
               Authorization: await getToken(),
@@ -220,7 +220,7 @@ class Taskscreen extends Component {
       axios
         .post(
           `${Url()}/api/events/getAll?eq=${temp}`,
-          { isClone: false, availUser: obj.id },
+          { isClone: false },
           {
             headers: {
               Authorization: await getToken()
@@ -238,7 +238,7 @@ class Taskscreen extends Component {
       axios
         .post(
           `${Url()}/api/events/getAll?lt=${temp}`,
-          { isClone: false, availUser: obj.id },
+          { isClone: false },
           {
             headers: {
               Authorization: await getToken(),
@@ -361,7 +361,7 @@ class Taskscreen extends Component {
       //title
       'Xoá loại công việc',
       //body
-      `Bạn có chắc muốn xoá loại công việc ${this.state.currentActionTypes[0].name}? `,
+      `Bạn có chắc muốn xoá ? `,
       [
         {
           text: 'Cancel', onPress: () => console.log('Cancel')

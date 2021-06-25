@@ -160,7 +160,7 @@ class TaskDetailTab extends Component {
             </View>
             <View style={styles.section3}>
               <View style={styles.managerContainer}>
-                <View
+                {this.props.data.managerId ? <View
                   style={{
 
                     flexDirection: "row",
@@ -174,7 +174,7 @@ class TaskDetailTab extends Component {
                     }}
                   ></Image>
                   <Text style={styles.Text}>{this.props.data.managerId.name}</Text>
-                </View>
+                </View> : null}
               </View>
               <View>
                 <Text style={styles.Text}>{this.props.data.facultyId.name}</Text>

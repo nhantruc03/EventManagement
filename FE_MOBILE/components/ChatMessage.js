@@ -58,16 +58,20 @@ class ChatMessage extends Component {
       }
       else {
         return (
-          <Text
-            style={{
-              ...styles.ChatMessage,
-              color: "black",
-              backgroundColor: "#e5e5ea",
-              borderRadius: 50,
-            }}
-          >
-            {message.text}
-          </Text>
+          <View style={{
+            borderRadius: 24, backgroundColor: "#e5e5ea", paddingHorizontal: 24, paddingVertical: 12, marginHorizontal: 8
+          }} >
+            <Text
+              style={{
+                ...styles.ChatMessage,
+                color: "black",
+                backgroundColor: "#e5e5ea",
+                borderRadius: 50,
+              }}
+            >
+              {message.text}
+            </Text>
+          </View>
         )
       }
     } else {

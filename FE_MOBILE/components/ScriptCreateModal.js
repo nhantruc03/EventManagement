@@ -123,6 +123,7 @@ class ScriptCreateModal extends ValidationComponent {
         ...this.state.data,
         forId: forId,
       },
+      forId: forId,
     });
   };
 
@@ -133,6 +134,7 @@ class ScriptCreateModal extends ValidationComponent {
   }
 
   onFinish = async () => {
+    console.log(this.state.data.forId)
     let temp_validate = this.validate({
       scriptname: { required: true },
       forId: { arrayObjectHasValue: 1 },
@@ -156,7 +158,7 @@ class ScriptCreateModal extends ValidationComponent {
             },
           })
           .then((res) => {
-            // console.log("result", res.data.data);
+            console.log("result", res.data.data);
             this.props.updateListScript(res.data.data);
             this.props.onClose();
             //this.onLoading();

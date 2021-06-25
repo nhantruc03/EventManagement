@@ -69,7 +69,7 @@ class view extends Component {
                 let event_time = new Date(scripts.eventId.startTime)
 
                 if (now.getFullYear() === event_date.getFullYear() && now.getMonth() === event_date.getMonth() && now.getDate() === event_date.getDate()
-                    && now.getHours() >= event_time.getHours()) {
+                    && now.getHours() >= (event_time.getHours() - 7)) {
 
                     temp_onGoing = true
                 }

@@ -52,6 +52,7 @@ class review extends Component {
         let current = null
         this.state.data.forEach((e, i) => {
             if (moment().utc(true).toDate().getTime() > moment(e.time).utcOffset(0).toDate().getTime()) {
+
                 current = i
             }
         })

@@ -279,10 +279,12 @@ class scriptview extends Component {
           now.getFullYear() === event_date.getFullYear() &&
           now.getMonth() === event_date.getMonth() &&
           now.getDate() === event_date.getDate() &&
-          now.getHours() >= event_time.getHours()
+          now.getHours() >= (event_time.getHours() - 7)
         ) {
           temp_onGoing = true;
         }
+
+
         let temp = scripts_details.sort((a, b) => {
           if (!a.noinfo && !b.noinfo) {
             let temp_a = moment(`0001-01-01 ${moment(a.time).utcOffset(0).format("HH:mm")}`)
@@ -294,7 +296,7 @@ class scriptview extends Component {
         });
 
         if (temp_onGoing) {
-          let intervalId = setInterval(this.timer, 1000);
+          let intervalId = setInterval(this.timer, 5000);
           this.setState({
             intervalId: intervalId,
           });

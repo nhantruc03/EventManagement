@@ -34,9 +34,8 @@ const styles = StyleSheet.create({
   },
   checkboxContainer: {
     flexDirection: "row",
-    marginBottom: 8,
-    alignItems: "center",
 
+    alignItems: "center",
   },
   itemContainer: {
     flex: 2,
@@ -72,8 +71,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
 
   },
-  rightAction: {
-  },
+
   iconDelete: {
 
     paddingHorizontal: 16,
@@ -136,14 +134,14 @@ class SubTasksTab extends Component {
           data: temp_data,
           loading: false
         });
-        alert(`Trạng thái của khách mời ${e.name} cập nhật thành công`);
+        alert(`Trạng thái của ${e.name} cập nhật thành công`);
       })
       .catch(() => {
         let errResult = ApiFailHandler(err.response?.data?.error)
         this.setState({
           loggout: errResult.isExpired
         })
-        alert(`Trạng thái của khách mời ${e.name} cập nhật thất bại`);
+        alert(`Trạng thái của ${e.name} cập nhật thất bại`);
       });
   };
 
@@ -354,7 +352,7 @@ class SubTasksTab extends Component {
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => this.renderItem(item)}
               />
-              <Loader loading={this.state.loading} color="white" size="large"/>
+              <Loader loading={this.state.loading} color="white" size="large" />
               <Modal
                 title="Tạo mới"
                 animationType="slide-up"

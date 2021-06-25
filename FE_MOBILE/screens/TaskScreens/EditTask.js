@@ -895,7 +895,7 @@ class EditTask extends ValidationComponent {
               underlayColor="#fff"
               onPress={this.onFinish}
             >
-              <Text style={styles.textUpdate}>Xác nhận</Text>
+              <Text style={styles.textUpdate}>Cập nhật</Text>
             </TouchableOpacity>
           ) : (
             <Button loading style={styles.LoadingBtn}></Button>

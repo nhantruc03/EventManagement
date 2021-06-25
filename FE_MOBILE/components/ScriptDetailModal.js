@@ -153,7 +153,7 @@ class ScriptDetailModal extends ValidationComponent {
       let data = {
         ...this.state.data,
         _id: this.props.data._id,
-        time: this.state.data.time.utc(true),
+        time: this.state.data.time,
         scriptId: this.props.scriptId,
         updateUserId: obj.id
       };

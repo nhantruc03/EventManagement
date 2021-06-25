@@ -16,6 +16,7 @@ import { TabView, SceneMap } from "react-native-tab-view";
 import { TabBar } from "react-native-tab-view";
 import Thongke from '../../components/ReportTab/Thongke';
 import Tainguyen from '../../components/ReportTab/Tainguyen';
+import { Button } from '@ant-design/react-native';
 
 const styles = StyleSheet.create({
     IconRight: {
@@ -85,6 +86,13 @@ const styles = StyleSheet.create({
     Tabcontainer: {
         flex: 2,
         height: 50,
+    },
+    LoadingBtn: {
+        borderRadius: 8,
+        padding: 12,
+        margin: 16,
+        justifyContent: "center",
+        alignContent: "center",
     },
 })
 
@@ -167,6 +175,7 @@ export default class Report extends Component {
     createReport = async () => {
         this.setState({
             loadingbtn: true,
+            visible: true
         })
         const data = await (
             axios.post(`${Url()}/api/event-reports/`, { eventId: this.props.route.params.id }, {
@@ -184,7 +193,6 @@ export default class Report extends Component {
                     })
                 })
         )
-
         this.setState({
             data,
             loadingbtn: false,
@@ -211,7 +219,6 @@ export default class Report extends Component {
                     })
                 })
         )
-
         this.setState({
             data,
             refreshing: false,
@@ -237,6 +244,25 @@ export default class Report extends Component {
             index,
         });
     };
+
+    renderCreateBtn = () => {
+        if (!this.state.loadingbtn) {
+            if (checkPermisson(this.state.currentPermissions, constants.QL_SUKIEN_PERMISSION)) {
+                return (
+                    <TouchableOpacity
+                        style={styles.btnUpdate}
+                        underlayColor="#fff"
+                        onPress={this.createReport}
+                    >
+                        <Text style={styles.textUpdate}>Tạo báo cáo mới</Text>
+                    </TouchableOpacity>
+                )
+            } else return null
+        }
+        else return (
+            <Button loading style={styles.LoadingBtn}>loading</Button>
+        )
+    }
 
     render() {
         if (this.state.loggout) {
@@ -270,14 +296,7 @@ export default class Report extends Component {
                     if (this.state.currentPermissions) {
                         return (
                             <View>
-                                {checkPermisson(this.state.currentPermissions, constants.QL_SUKIEN_PERMISSION) ?
-                                    <TouchableOpacity
-                                        style={styles.btnUpdate}
-                                        underlayColor="#fff"
-                                        onPress={() => this.setState({ visible: true })}
-                                    >
-                                        <Text style={styles.textUpdate}>Tạo báo cáo mới</Text>
-                                    </TouchableOpacity> : null}
+                                {this.renderCreateBtn}
                             </View>
                         )
                     }

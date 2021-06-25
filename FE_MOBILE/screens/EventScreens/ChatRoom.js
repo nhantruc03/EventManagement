@@ -99,23 +99,23 @@ class ChatRoom extends Component {
 
   async componentDidMount() {
     this._isMounted = true;
-    this.props.navigation.setOptions({
-      headerRight: () => (
-        <View style={styles.IconRight}>
-          <TouchableOpacity
-            onPress={() =>
-              this.props.navigation.navigate("scriptview", {
-                id: this.state._id,
-                startDate: this.state.startDate,
-                startTime: this.state.startTime,
-              })
-            }
-          >
-            <Image source={require("../../assets/images/video.png")} />
-          </TouchableOpacity>
-        </View>
-      ),
-    });
+    // this.props.navigation.setOptions({
+    //   headerRight: () => (
+    //     <View style={styles.IconRight}>
+    //       <TouchableOpacity
+    //         onPress={() =>
+    //           this.props.navigation.navigate("scriptview", {
+    //             id: this.state._id,
+    //             startDate: this.state.startDate,
+    //             startTime: this.state.startTime,
+    //           })
+    //         }
+    //       >
+    //         <Image source={require("../../assets/images/video.png")} />
+    //       </TouchableOpacity>
+    //     </View>
+    //   ),
+    // });
     if (this._isMounted) {
       client.onopen = () => {
         console.log("Connect to ws");

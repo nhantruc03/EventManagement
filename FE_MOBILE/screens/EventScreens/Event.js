@@ -101,12 +101,12 @@ export default class Event extends Component {
     this._isMounted = true;
     var login = await AsyncStorage.getItem("login");
     var obj = JSON.parse(login);
-    let temp = moment(new Date()).format("YYYY-MM-DD");
+    let temp = moment(new Date()).utcOffset(0).format('YYYY-MM-DD')
     const [future_event, ongoing_event, past_event] = await Promise.all([
       axios
         .post(
           `${Url()}/api/events/getAll?gt=${temp}`,
-          { isClone: false, availUser: obj.id },
+          { isClone: false },
           {
             headers: {
               Authorization: await getToken(),
@@ -123,7 +123,7 @@ export default class Event extends Component {
       axios
         .post(
           `${Url()}/api/events/getAll?eq=${temp}`,
-          { isClone: false, availUser: obj.id },
+          { isClone: false },
           {
             headers: {
               Authorization: await getToken(),
@@ -140,7 +140,7 @@ export default class Event extends Component {
       axios
         .post(
           `${Url()}/api/events/getAll?lt=${temp}`,
-          { isClone: false, availUser: obj.id },
+          { isClone: false },
           {
             headers: {
               Authorization: await getToken(),
@@ -172,6 +172,7 @@ export default class Event extends Component {
         });
       }
     }
+
   }
 
 
@@ -184,12 +185,12 @@ export default class Event extends Component {
     });
     var login = await AsyncStorage.getItem("login");
     var obj = JSON.parse(login);
-    let temp = moment(new Date()).format("YYYY-MM-DD");
+    let temp = moment(new Date()).utcOffset(0).format('YYYY-MM-DD')
     const [future_event, ongoing_event, past_event] = await Promise.all([
       axios
         .post(
           `${Url()}/api/events/getAll?gt=${temp}`,
-          { isClone: false, availUser: obj.id },
+          { isClone: false },
           {
             headers: {
               Authorization: await getToken(),
@@ -206,7 +207,7 @@ export default class Event extends Component {
       axios
         .post(
           `${Url()}/api/events/getAll?eq=${temp}`,
-          { isClone: false, availUser: obj.id },
+          { isClone: false },
           {
             headers: {
               Authorization: await getToken(),
@@ -223,7 +224,7 @@ export default class Event extends Component {
       axios
         .post(
           `${Url()}/api/events/getAll?lt=${temp}`,
-          { isClone: false, availUser: obj.id },
+          { isClone: false },
           {
             headers: {
               Authorization: await getToken(),
@@ -267,8 +268,8 @@ export default class Event extends Component {
               source={require("../../assets/images/TimeIcon.png")}
             ></Image>
             <Text style={styles.Timecontent}>
-              {moment(item.startDate).format("DD/MM/YYYY")} -{" "}
-              {moment(item.startTime).format("HH:MM")}
+              {moment(item.startDate).utcOffset(0).format("DD/MM/YYYY")} -{" "}
+              {moment(item.startTime).utcOffset(0).format("HH:mm")}
             </Text>
           </View>
           <View style={styles.location}>

@@ -119,6 +119,7 @@ class listevents extends Component {
                     tags: tags
                 })
             }
+            console.log(this.state.data)
         }
     }
 
@@ -157,7 +158,7 @@ class listevents extends Component {
                     level={3}
                 >
                     Sự kiện
-              </Title>
+                </Title>
 
                 <Row style={{ marginLeft: 30, marginRight: 30 }}>
                     <Col span={12}>

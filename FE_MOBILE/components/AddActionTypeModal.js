@@ -158,8 +158,8 @@ class AddActionTypeModal extends ValidationComponent {
             style={styles.PrimaryBtn}
           >
             Xác nhận
-        </Button> : <Button style={styles.LoadingBtn} loading>ß
-        </Button>}
+          </Button> : <Button style={styles.LoadingBtn} loading>
+          </Button>}
 
         </View>
       );

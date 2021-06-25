@@ -39,9 +39,11 @@ class CalendarSection extends Component {
         ]));
         if (subActions !== null) {
             if (this._isMounted) {
+
                 this.setState({
                     listSubActions: subActions
                 })
+                console.log(this.state.listSubActions)
                 this.onSelect(moment(new Date()).utcOffset(0))
             }
         }

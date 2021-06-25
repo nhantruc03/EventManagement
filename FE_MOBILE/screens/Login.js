@@ -123,16 +123,23 @@ export default class Login extends ValidationComponent {
               }
             }
             else {
+              console.log("abc")
               alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
             }
           } else {
+            console.log("ab13")
             alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
+            this.setState({
+
+              Loading: false,
+            })
           }
         })
         .catch((error) => {
           console.log(error.response);
           alert("Đăng nhập thất bại! Vui lòng đăng nhập lại");
         });
+
     }
 
 

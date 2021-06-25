@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, RefreshControl, ScrollView } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { LocaleConfig } from "react-native-calendars";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -75,14 +75,14 @@ export default class Calendarscreen extends Component {
       currentSubActions: [],
       isLoading: false,
       currentDate: moment(new Date()).format("YYYY-MM-DD"),
-      loggout: false
+      loggout: false,
+      refreshing: false
     };
   }
   async componentDidMount() {
     this._isMounted = true;
     const login = await AsyncStorage.getItem("login");
     const obj = JSON.parse(login);
-
     const [subActions] = await Promise.all([
       axios
         .post(
@@ -104,11 +104,11 @@ export default class Calendarscreen extends Component {
     ]);
 
     if (subActions !== null) {
+      console.log(subActions)
       if (this._isMounted) {
         this.setState({
           listSubActions: subActions,
         });
-
         this.onSelect(moment(new Date()));
       }
     }
@@ -148,6 +148,42 @@ export default class Calendarscreen extends Component {
     });
     return listDate;
   };
+  onRefresh = async () => {
+    this.setState({
+      refreshing: true,
+    });
+    const login = await AsyncStorage.getItem("login");
+    const obj = JSON.parse(login);
+    const [subActions] = await Promise.all([
+      axios
+        .post(
+          `${Url()}/api/sub-actions/getAllWithUserId`,
+          { availUser: obj.id },
+          {
+            headers: {
+              Authorization: await getToken(),
+            },
+          }
+        )
+        .then((res) => res.data.data)
+        .catch(err => {
+          let errResult = ApiFailHandler(err.response?.data?.error)
+          this.setState({
+            loggout: errResult.isExpired
+          })
+        }),
+    ]);
+    this.setState({
+      refreshing: false,
+    });
+    if (subActions !== null) {
+
+      this.setState({
+        listSubActions: subActions,
+      });
+      this.onSelect(moment(new Date()));
+    }
+  }
 
   onSelect = (value) => {
     this.setState({
@@ -173,7 +209,13 @@ export default class Calendarscreen extends Component {
       )
     }
     else return (
-      <View
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this.onRefresh}
+          />
+        }
         style={
           Platform.OS == "ios" ? styles.containerIOS : styles.containerAndroid
         }
@@ -210,7 +252,7 @@ export default class Calendarscreen extends Component {
           keyExtractor={(item) => item._id}
           nestedScrollEnabled={true}
         />
-      </View>
+      </ScrollView>
     );
   }
 }

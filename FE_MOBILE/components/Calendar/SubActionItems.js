@@ -48,11 +48,12 @@ export default class SubActionItems extends Component {
     }
 
     render() {
+        console.log("data", this.props.data.endTime)
         return (
             <View style={styles.container}>
                 <View style={styles.content}>
                     <Text style={styles.nameText}>{this.props.data.name}</Text>
-                    <Text style={styles.timeText}>{moment(this.props.endTime).format("HH:MM")}</Text>
+                    <Text style={styles.timeText}>{moment(this.props.data.endTime).utcOffset(0).format("hh:mm")}</Text>
                 </View>
                 <View style={styles.borderRight} />
             </View>
