@@ -12,7 +12,7 @@ class EventMiniCard extends Component {
                         hoverable
                     >
                         <div className="flex-container-row">
-                            <img style={{ maxWidth: '129px' }} src={`/api/images/${this.props.data.posterUrl}`} alt="event posterUrl"></img>
+                            <img style={{ maxWidth: '129px' }} src={`${window.resource_url}${this.props.data.posterUrl}`} alt="event posterUrl"></img>
                             <div style={{ display: 'grid', marginLeft: '10px', width: '100%' }}>
                                 <Title className="cut-text" level={3}>{this.props.data.name}</Title>
 

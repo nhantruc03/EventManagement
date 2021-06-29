@@ -232,7 +232,7 @@ class actionDetails extends Component {
                     <Col lg={12} key={key}>
                         <div className="flex-container-row" >
                             <Tooltip title={value.name} placement="top" >
-                                <Avatar src={`/api/images/${value.photoUrl}`} />
+                                <Avatar src={`${window.resource_url}${value.photoUrl}`} />
                             </Tooltip >
                             <p style={{ marginLeft: '10px' }} className="black-2 flex-row-item-right">{value.name}</p>
                         </div>
@@ -423,7 +423,7 @@ class actionDetails extends Component {
                                 {this.state.resources.map((e, key) => <ResourceCard delete={(e) => this.deleteResources(e)} key={key} resourcePath={this.props.match.params.id} data={e}></ResourceCard>)}
                             </Col>
                             <Col sm={24} xl={10} className="event-detail">
-                                <Image style={{ maxHeight: '200px' }} src={`/api/images/${this.state.data.coverUrl}`}></Image>
+                                <Image style={{ maxHeight: '200px' }} src={`${window.resource_url}${this.state.data.coverUrl}`}></Image>
 
                                 <Title style={{ color: '#017567' }} level={1}>{this.state.data.name}</Title>
 
@@ -443,7 +443,7 @@ class actionDetails extends Component {
                                     <Col sm={24} md={10}>
                                         <Title level={4}>Người phụ trách</Title>
                                         <div className="flex-container-row" >
-                                            {this.state.manager ? <Avatar src={`/api/images/${this.state.manager.photoUrl}`} /> : null}
+                                            {this.state.manager ? <Avatar src={`${window.resource_url}${this.state.manager.photoUrl}`} /> : null}
                                             {this.state.manager ? <p style={{ marginLeft: '10px' }} className="black-2">{this.state.manager.name}</p> : null}
                                         </div>
                                     </Col>
@@ -473,7 +473,6 @@ class actionDetails extends Component {
 
 
                                 <Title className="event-detail-title" level={4}>Tags</Title>
-                                {/* <Image style={{ maxWidth: '300px' }} src={`/api/images/${this.state.data.coverUrl}`}></Image> */}
                                 {this.state.data.tagsId.map((e, key) => <Tag style={{ width: 'auto', background: e.background, color: e.color }} key={key}>{e.name}</Tag>)}
                             </Col>
                             <Col sm={24} xl={7} className="action-detail">

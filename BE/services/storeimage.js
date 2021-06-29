@@ -23,4 +23,31 @@ const storeImage = (base64string, dir) => {
         return null;
     }
 }
-module.exports = { storeImage };
+
+const getBuffer = (base64string) => {
+    try {
+        let matches = base64string.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),
+            response = {};
+        if (matches.length !== 3) {
+            console.log('Invalid image');
+        }
+        response.type = matches[1];
+        response.data = Buffer.from(matches[2], 'base64');
+        let decodeImg = response;
+        let buffer = decodeImg.data;
+        let type = decodeImg.type;
+        let extension = mime.extension(type);
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        let filename = uniqueSuffix + '-image.' + extension;
+        let result = {
+            filename,
+            buffer
+        }
+        return result;
+    }
+    catch (e) {
+        console.log(e);
+        return null;
+    }
+}
+module.exports = { storeImage, getBuffer };

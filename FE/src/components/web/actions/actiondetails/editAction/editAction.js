@@ -383,7 +383,7 @@ class editAction extends Component {
                     </Row>
                     <Row>
                         <Col span={12}>
-                            <Image style={{ maxHeight: '170px' }} src={`/api/images/${this.state.coverUrl}`}></Image>
+                            <Image style={{ maxHeight: '170px' }} src={`${window.resource_url}${this.state.coverUrl}`}></Image>
                         </Col>
                         <Col span={12}>
                             <Form.Item

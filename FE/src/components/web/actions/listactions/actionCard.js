@@ -27,7 +27,7 @@ class actionCard extends Component {
             this.props.data.availUser.map((value, key) => {
                 return (
                     <Tooltip title={value.name} placement="top" key={key}>
-                        <Avatar src={`api/images/${value.photoUrl}`} />
+                        <Avatar src={`${window.resource_url}${value.photoUrl}`} />
                     </Tooltip >
                 )
             })
@@ -103,8 +103,7 @@ class actionCard extends Component {
                 <Card
                     hoverable
                     className="eventCard"
-                    // cover={<img className="cover" alt="example" src={`api/images/${this.props.data.coverUrl}`} />}
-                    cover={this.state.showImage ? <Image className="cover" alt="example" src={`/api/images/${this.props.data.coverUrl}`} /> : null}
+                    cover={this.state.showImage ? <Image className="cover" alt="example" src={`${window.resource_url}${this.props.data.coverUrl}`} /> : null}
                     onMouseEnter={() => this.mouseHover(true)}
                     onMouseLeave={() => this.mouseHover(false)}
                 >

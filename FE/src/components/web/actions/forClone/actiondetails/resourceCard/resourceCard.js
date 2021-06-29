@@ -19,7 +19,7 @@ class resourceCard extends Component {
                 )
             case 'png':
                 return (
-                    <img style={{ maxWidth: '30px' }} alt="icon" src={`/api/resources/${this.props.resourcePath}/${this.props.data.url}`}></img>
+                    <img style={{ maxWidth: '30px' }} alt="icon" src={`${window.resource_url}${this.props.resourcePath}/${this.props.data.url}`}></img>
                 )
             default:
                 return (null)
@@ -30,7 +30,7 @@ class resourceCard extends Component {
             <div className="flex-container-row resource-card">
                 {this.renderIcon()}
                 <Tooltip title={this.props.data.url} placement="top" >
-                    <a className="cut-text" target="_blank" rel="noreferrer" href={`/api/resources/${this.props.resourcePath}/${this.props.data.url}`} style={{ marginLeft: '10px' }} >{this.props.data.url}</a>
+                    <a className="cut-text" target="_blank" rel="noreferrer" href={`${window.resource_url}${this.props.resourcePath}/${this.props.data.url}`} style={{ marginLeft: '10px' }} >{this.props.data.url}</a>
                 </Tooltip>
                 <Popconfirm
                     title="Bạn có chắc muốn xóa chứ?"

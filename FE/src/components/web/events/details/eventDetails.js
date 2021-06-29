@@ -305,7 +305,7 @@ class eventDetails extends Component {
       this.state.data.availUser.map((value, key) => {
         return (
           <Tooltip title={value.name} placement="top" key={key}>
-            <Avatar src={`/api/images/${value.photoUrl}`} />
+            <Avatar src={`${window.resource_url}${value.photoUrl}`} />
           </Tooltip >
         )
       })
@@ -313,7 +313,7 @@ class eventDetails extends Component {
   }
 
   deleteEvent = async () => {
-    const result = await trackPromise(axios.delete(`/api/events/${this.props.match.params.id}`, {
+    const result = await trackPromise(axios.delete(`${window.resource_url}${this.props.match.params.id}`, {
       headers: {
         'Authorization': { AUTH }.AUTH
       }
@@ -398,7 +398,7 @@ class eventDetails extends Component {
     if (this.state.currentUserInEvent) {
       return (
         <div className="flex-container-row" style={{ width: '100%' }}>
-          <img className="event-user-avartar" alt="avatar" src={`/api/images/${this.state.currentUserInEvent.userId.photoUrl}`}></img>
+          <img className="event-user-avartar" alt="avatar" src={`${window.resource_url}${this.state.currentUserInEvent.userId.photoUrl}`}></img>
           <div>
             <Title style={{ color: '#264653', margin: 'unset', fontSize: 20 }} level={3}>{this.state.currentUserInEvent.userId.name}</Title>
             <p style={{ color: '#AAB0B6' }}>{this.state.currentUserInEvent.userId.phone}</p>
@@ -536,7 +536,7 @@ class eventDetails extends Component {
 
                   <div style={{ marginTop: 10 }}>
                     <Title level={4}>Poster</Title>
-                    <Image style={{ maxWidth: '150px' }} src={`/api/images/${this.state.data.posterUrl}`} alt="poster"></Image>
+                    <Image style={{ maxWidth: '150px' }} src={`${window.resource_url}${this.state.data.posterUrl}`} alt="poster"></Image>
                   </div>
                 </Col>
                 <Col sm={24} xl={8} className="event-detail">

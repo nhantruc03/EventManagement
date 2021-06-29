@@ -292,7 +292,7 @@ class addevents extends Component {
 
                                             }
                                             this.setState({
-                                                fileList: info.fileList.filter(file => { file.url = `api/images/${this.state.posterUrl}`; return !!file.status })
+                                                fileList: info.fileList.filter(file => { file.url = `${window.resource_url}${this.state.posterUrl}`; return !!file.status })
                                             })
 
                                         }}

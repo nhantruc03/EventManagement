@@ -249,7 +249,8 @@ class thongtincanhan extends Component {
                                 <Col span={12} style={{ padding: '0 10px' }}>
                                     <Title className="normalLabel" level={4}>Ảnh đại diện hiện tại</Title>
                                     <div style={{ widht: '100%', textAlign: 'center' }}>
-                                        <Image style={{ maxWidth: '110px' }} src={`/api/images/${this.state.data.photoUrl}`}></Image>
+                                        {/* <Image style={{ maxWidth: '110px' }} src={"https://event-go.s3.us-east-2.amazonaws.com/1624966695834-470527781-image.jpeg"}></Image> */}
+                                        <Image style={{ maxWidth: '110px' }} src={`${window.resource_url}${this.state.data.photoUrl}`}></Image>
                                     </div>
                                 </Col>
                                 <Col span={12} style={{ padding: '0 10px' }}>
@@ -278,7 +279,7 @@ class thongtincanhan extends Component {
 
                                                 }
                                                 this.setState({
-                                                    fileList: info.fileList.filter(file => { file.url = `/api/images/${this.state.data.photoUrl}`; return !!file.status })
+                                                    fileList: info.fileList.filter(file => { file.url = `${window.resource_url}${this.state.data.photoUrl}`; return !!file.status })
                                                 })
 
                                             }}

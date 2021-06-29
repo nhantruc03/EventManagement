@@ -9,7 +9,7 @@ class eventCard extends Component {
             this.props.data.availUser.map((value, key) => {
                 return (
                     <Tooltip title={value.name} placement="top" key={key}>
-                        <Avatar src={`api/images/${value.photoUrl}`} />
+                        <Avatar src={`${window.resource_url}${value.photoUrl}`} />
                     </Tooltip >
                 )
             })
@@ -22,7 +22,7 @@ class eventCard extends Component {
                 <Card
                     hoverable
                     className="eventCard"
-                    cover={<Image className="cover" alt="example" src={`api/images/${this.props.data.posterUrl}`} />}
+                    cover={<Image className="cover" alt="example" src={`${window.resource_url}${this.props.data.posterUrl}`} />}
 
                 >
                     <Link to={`/eventclones/${this.props.data._id}`}>

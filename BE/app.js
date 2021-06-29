@@ -15,8 +15,9 @@ var mime = require('mime');
 // about WebSocket
 const webSocketServer = require('websocket').server;
 const http = require('http');
-const { storeImage } = require('./services/storeimage');
+const { storeImage, getBuffer } = require('./services/storeimage');
 const server = http.createServer(app);
+const AWS = require('aws-sdk');
 const clients = {};
 const getUniqueID = () => {
   const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
@@ -174,48 +175,83 @@ app.use("/api/script-histories", authenticateToken, require("./routes/scriptHist
 app.use("/api/participants", authenticateToken, require("./routes/participants"));
 app.use("/api/event-reports", authenticateToken, require("./routes/eventReports"));
 
-app.post("/api/uploads", (req, res) => {
+
+
+const AWSCredentials = {
+  accessKey: 'AKIA5CNZBV2SBNHNB2NN',
+  secret: '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',
+  bucketName: 'event-go'
+};
+
+const s3 = new AWS.S3({
+  accessKeyId: AWSCredentials.accessKey,
+  secretAccessKey: AWSCredentials.secret
+});
+
+const uploadToS3 = async (fileName, fileContent, root, extension) => {
+  // Read content from the file
+  // const fileContent = fs.readFileSync(fileName);
+
+  // Setting up S3 upload parameters
+  let temp_key = root ? root + "/" + fileName : fileName
+  const params = {
+    Bucket: AWSCredentials.bucketName,
+    Key: temp_key,
+    Body: fileContent
+  };
+
+  // Uploading files to the bucket
+  const result = await s3.upload(params).promise()
+  console.log(result.Location);
+  return fileName
+  // await s3.upload(params, function (err, data) {
+  //   if (err) {
+  //     throw err;
+  //   }
+  //   console.log(`File uploaded successfully. ${data.Location}`);
+  //   return data.Location
+  //   // return data.Location
+
+  // });
+};
+
+app.post("/api/uploads", async (req, res) => {
   if (req.body.mobile) {
-    let result = storeImage(req.body.file, `/images/`)
+    let result = getBuffer(req.body.file)
     if (result) {
+      let url = await uploadToS3(result.filename, result.buffer);
       return res.status(200).json({
         uploaded: true,
-        url: result
+        url
       });
     }
   } else {
     if (!req.files || Object.keys(req.files).length === 0) {
       return res.status(400).send('No files were uploaded.');
     }
-
     let sampleFile = req.files.file;
     let extension = mime.extension(sampleFile.mimetype);
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
     let filename = uniqueSuffix + '-image.' + extension;
-    // Use the mv() method to place the file somewhere on your server
-    sampleFile.mv('./images/' + filename, function (err) {
-      if (err)
-        return res.status(500).send(err);
-      res.status(200).json({
-        uploaded: true,
-        url: filename,
-      });
+
+    let url = await uploadToS3(filename, sampleFile.data, null, extension);
+    return res.status(200).json({
+      uploaded: true,
+      url
     });
   }
 })
 
 
 
-app.post("/api/upload-resources/:id", (req, res) => {
-  if (!fs.existsSync(`./resources/${req.params.id}`)) {
-    fs.mkdirSync(`./resources/${req.params.id}`);
-  }
+app.post("/api/upload-resources/:id", async (req, res) => {
   if (req.body.mobile) {
-    let result = storeImage(req.body.file, `/resources/${req.params.id}/`)
+    let result = getBuffer(req.body.file)
     if (result) {
+      let url = await uploadToS3(result.filename, result.buffer, req.params.id);
       return res.status(200).json({
         uploaded: true,
-        url: result
+        url
       });
     }
   } else {
@@ -228,19 +264,85 @@ app.post("/api/upload-resources/:id", (req, res) => {
     let extension = mime.extension(sampleFile.mimetype);
     const uniqueSuffix = Date.now()
     let filename = uniqueSuffix + '-' + req.files.file.name;
-    // Use the mv() method to place the file somewhere on your server
-    
-    sampleFile.mv(`./resources/${req.params.id}/` + filename, function (err) {
-      if (err)
-        return res.status(500).send(err);
-      res.status(200).json({
-        uploaded: true,
-        url: filename,
-        extension: extension
-      });
+
+    let url = await uploadToS3(filename, sampleFile.data, req.params.id);
+    return res.status(200).json({
+      uploaded: true,
+      url,
+      extension
     });
+
   }
 })
+// app.post("/api/uploads", (req, res) => {
+//   if (req.body.mobile) {
+//     let result = storeImage(req.body.file, `/images/`)
+//     if (result) {
+//       return res.status(200).json({
+//         uploaded: true,
+//         url: result
+//       });
+//     }
+//   } else {
+//     if (!req.files || Object.keys(req.files).length === 0) {
+//       return res.status(400).send('No files were uploaded.');
+//     }
+
+//     let sampleFile = req.files.file;
+//     let extension = mime.extension(sampleFile.mimetype);
+//     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+//     let filename = uniqueSuffix + '-image.' + extension;
+//     // Use the mv() method to place the file somewhere on your server
+//     console.log(sampleFile)
+//     uploadToS3(filename, sampleFile.data);
+//     sampleFile.mv('./images/' + filename, function (err) {
+//       if (err)
+//         return res.status(500).send(err);
+//       res.status(200).json({
+//         uploaded: true,
+//         url: filename,
+//       });
+//     });
+//   }
+// })
+
+
+
+// app.post("/api/upload-resources/:id", (req, res) => {
+//   if (!fs.existsSync(`./resources/${req.params.id}`)) {
+//     fs.mkdirSync(`./resources/${req.params.id}`);
+//   }
+//   if (req.body.mobile) {
+//     let result = storeImage(req.body.file, `/resources/${req.params.id}/`)
+//     if (result) {
+//       return res.status(200).json({
+//         uploaded: true,
+//         url: result
+//       });
+//     }
+//   } else {
+//     if (!req.files || Object.keys(req.files).length === 0) {
+//       return res.status(400).send('No files were uploaded.');
+//     }
+
+//     let sampleFile = req.files.file;
+
+//     let extension = mime.extension(sampleFile.mimetype);
+//     const uniqueSuffix = Date.now()
+//     let filename = uniqueSuffix + '-' + req.files.file.name;
+//     // Use the mv() method to place the file somewhere on your server
+//     uploadToS3(filename, sampleFile.data, req.params.id);
+//     sampleFile.mv(`./resources/${req.params.id}/` + filename, function (err) {
+//       if (err)
+//         return res.status(500).send(err);
+//       res.status(200).json({
+//         uploaded: true,
+//         url: filename,
+//         extension: extension
+//       });
+//     });
+//   }
+// })
 
 // Connect DB then start server
 mongoose.connect(

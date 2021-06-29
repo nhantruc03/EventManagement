@@ -43,7 +43,6 @@ class CalendarSection extends Component {
                 this.setState({
                     listSubActions: subActions
                 })
-                console.log(this.state.listSubActions)
                 this.onSelect(moment(new Date()).utcOffset(0))
             }
         }
@@ -54,9 +53,6 @@ class CalendarSection extends Component {
 
     getListData = (value) => {
         let listData = [];
-        if (this.state.listSubActions.length > 0) {
-            console.log('list sub actions', this.state.listSubActions)
-        }
         this.state.listSubActions.forEach(element => {
             if (!element.status) {
                 if (moment(element.endDate).utcOffset(0).format('YYYY-MM-DD') === value.utcOffset(0).format('YYYY-MM-DD')) {

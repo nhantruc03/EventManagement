@@ -12,7 +12,7 @@ class table extends Component {
                     title: 'Tên tệp đính kèm', dataIndex: '', key: 'x',
                     render: (e) => {
                         return (
-                            <a className="cut-text" target="_blank" rel="noreferrer" href={`/api/resources/${e.actionId}/${e.url}`} >
+                            <a className="cut-text" target="_blank" rel="noreferrer" href={`${window.resource_url}${e.actionId}/${e.url}`} >
                                 {e.url.slice(14, e.url.length)}
                             </a>
                         )

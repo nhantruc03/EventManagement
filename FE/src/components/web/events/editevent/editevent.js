@@ -735,7 +735,7 @@ class editevent extends Component {
 
                                             <Title className="normalLabel" level={4}>Ảnh đại diện hiện tại</Title>
                                             <div style={{ widht: '100%', textAlign: 'center' }}>
-                                                <Image style={{ maxWidth: '110px' }} src={`/api/images/${this.state.data.posterUrl}`}></Image>
+                                                <Image style={{ maxWidth: '110px' }} src={`${window.resource_url}${this.state.data.posterUrl}`}></Image>
                                             </div>
 
                                             <Form.Item
@@ -764,7 +764,7 @@ class editevent extends Component {
 
                                                         }
                                                         this.setState({
-                                                            fileList: info.fileList.filter(file => { file.url = `/api/images/${this.state.posterUrl}`; return !!file.status })
+                                                            fileList: info.fileList.filter(file => { file.url = `${window.resource_url}${this.state.posterUrl}`; return !!file.status })
                                                         })
 
                                                     }}

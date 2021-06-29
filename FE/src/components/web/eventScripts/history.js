@@ -16,7 +16,7 @@ class history extends Component {
     renderDot = (e) => {
         return (
             <Tooltip title={e.name}>
-                <Avatar src={`/api/images/${e.photoUrl}`} />
+                <Avatar src={`${window.resource_url}${e.photoUrl}`} />
             </Tooltip>
         );
     };

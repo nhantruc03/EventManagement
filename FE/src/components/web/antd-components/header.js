@@ -271,7 +271,7 @@ class header extends Component {
                                 }>
                                 <Button id="button-account">
                                     <div className="flex-container-row">
-                                        <p className="top-name-user cut-text">{this.state.currentUser.name}</p> <Avatar style={{ marginLeft: '10px' }} className="my-2" src={`/api/images/${this.state.currentUser.photoUrl}`} />
+                                        <p className="top-name-user cut-text">{this.state.currentUser.name}</p> <Avatar style={{ marginLeft: '10px' }} className="my-2" src={`${window.resource_url}${this.state.currentUser.photoUrl}`} />
                                     </div>
                                 </Button>
                             </Dropdown>
