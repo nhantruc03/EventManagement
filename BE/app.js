@@ -178,9 +178,9 @@ app.use("/api/event-reports", authenticateToken, require("./routes/eventReports"
 
 
 const AWSCredentials = {
-  accessKey: 'AKIA5CNZBV2SBNHNB2NN',
-  secret: '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',
-  bucketName: 'event-go'
+  accessKey: process.env.AWSaccessKey,
+  secret: process.env.AWSsecret,
+  bucketName: process.env.bucketName
 };
 
 const s3 = new AWS.S3({
