@@ -18,6 +18,7 @@ import { Redirect } from 'react-router';
 import ApiFailHandler from '../../components/helper/ApiFailHandler'
 import ValidationComponent from 'react-native-form-validator';
 import { KeyboardAvoidingView } from 'react-native';
+import ResourceUrl from "../../resourceurl"
 const styles = StyleSheet.create({
     avaContainer: {
         zIndex: 3,
@@ -389,7 +390,7 @@ class ProfileDetail extends ValidationComponent {
                                     /> : <Image
                                         style={styles.avaImg}
                                         source={{
-                                            uri: `${Url()}/api/images/${this.state.data.photoUrl}`,
+                                            uri: `${ResourceUrl()}${this.state.data.photoUrl}`,
                                         }}
                                     />}
 

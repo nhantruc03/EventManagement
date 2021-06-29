@@ -4,6 +4,7 @@ import { FlatList } from "react-native-gesture-handler";
 import { SearchBar } from "react-native-elements";
 import Search from "../helper/search";
 import Url from "../../env";
+import ResourceUrl from "../../resourceurl"
 import { ActivityIndicator } from "@ant-design/react-native";
 import { RefreshControl } from 'react-native';
 
@@ -131,7 +132,7 @@ class OrgTab extends Component {
                 <Image
                   style={styles.AvaImg}
                   source={{
-                    uri: `${Url()}/api/images/${item.userId.photoUrl}`,
+                    uri: `${ResourceUrl()}${item.userId.photoUrl}`,
                   }}
                 ></Image>
               </View>

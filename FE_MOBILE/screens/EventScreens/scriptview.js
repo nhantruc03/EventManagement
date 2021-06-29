@@ -172,6 +172,7 @@ class scriptview extends Component {
     await WebBrowser.openBrowserAsync(uri);
   }
 
+  
 
   async componentDidMount() {
     this.props.navigation.setOptions({

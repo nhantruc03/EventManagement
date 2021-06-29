@@ -9,6 +9,7 @@ import getToken from '../../Auth';
 import moment from 'moment';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ApiFailHandler from '../helper/ApiFailHandler';
+import ResourceUrl from "../../resourceurl"
 const styles = StyleSheet.create({
     container: {
         padding: 16
@@ -67,7 +68,7 @@ export default class AttachmentTab extends Component {
                         < Ionicons name='document' size={24} color='white' />
                     </View>
                     <View>
-                        <TouchableOpacity onPress={() => this.Download(`${Url()}/api/resources/${e.item.actionId}/${e.item.url}`, e.item.url)}>
+                        <TouchableOpacity onPress={() => this.Download(`${ResourceUrl()}${e.item.actionId}/${e.item.url}`, e.item.url)}>
                             <Text numberOfLines={2} style={styles.FileNameText}>{e.item.url}</Text>
                         </TouchableOpacity>
                         <Text style={styles.TimeText}>{moment(e.item.createAt).format("DD/MM/YYYY")}-{""}{moment(e.item.createAt).format("HH:mm")}</Text>

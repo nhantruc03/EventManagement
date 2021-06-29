@@ -5,6 +5,7 @@ import { Image } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import * as WebBrowser from 'expo-web-browser';
 import * as FileSystem from 'expo-file-system';
+import ResourceUrl from "../resourceurl"
 const W = Dimensions.get("window").width;
 
 const styles = StyleSheet.create({
@@ -77,19 +78,19 @@ class ChatMessage extends Component {
     } else {
       if (message.resourceUrl) {
         let temp_resourceUrl = this.props.message.resourceUrl
-        let extension = temp_resourceUrl.substring(temp_resourceUrl.length - 3, temp_resourceUrl.length)
-        let realName = temp_resourceUrl.substring(14, temp_resourceUrl.length)
-        if (["png", "svg"].includes(extension)) {
+        let extension = temp_resourceUrl.split(".")[1]
+        let realName = temp_resourceUrl.split(".")[0]
+        if (["png", "svg", "jpeg", "jpg"].includes(extension)) {
 
           return (<View>
-            <TouchableOpacity onPress={() => this.props.showImage(`${Url()}/api/resources/${this.props.roomId}/${temp_resourceUrl}`)}>
-              <Image style={styles.resourceImg} source={{ uri: `${Url()}/api/resources/${this.props.roomId}/${temp_resourceUrl}` }}></Image>
+            <TouchableOpacity onPress={() => this.props.showImage(`${ResourceUrl()}${this.props.roomId}/${temp_resourceUrl}`)}>
+              <Image style={styles.resourceImg} source={{ uri: `${ResourceUrl()}${this.props.roomId}/${temp_resourceUrl}` }}></Image>
             </TouchableOpacity>
           </View>
           )
         } else {
           return (<View >
-            <TouchableOpacity onPress={() => this.Download(`${Url()}/api/resources/${this.props.roomId}/${temp_resourceUrl}`, message.resourceUrl)}>
+            <TouchableOpacity onPress={() => this.Download(`${ResourceUrl()}${this.props.roomId}/${temp_resourceUrl}`, message.resourceUrl)}>
               <View style={styles.resourceContainer}>
                 <Image source={require("./../assets/images/Attachment.png")} /><Text numberOfLines={2} style={{ width: W * 0.5, backgroundColor: "#e5e5ea" }}>{realName}</Text>
               </View>
@@ -120,7 +121,7 @@ class ChatMessage extends Component {
           <Image
             style={styles.AvaImg}
             source={{
-              uri: `${Url()}/api/images/${this.props.message.userId.photoUrl}`,
+              uri: `${ResourceUrl()}${this.props.message.userId.photoUrl}`,
             }}
           ></Image>
 
@@ -133,7 +134,7 @@ class ChatMessage extends Component {
           <Image
             style={styles.AvaImg}
             source={{
-              uri: `${Url()}/api/images/${this.props.message.userId.photoUrl}`,
+              uri: `${ResourceUrl()}${this.props.message.userId.photoUrl}`,
             }}
           ></Image>
           {this.renderContent(this.props.messageClass, this.props.message)}

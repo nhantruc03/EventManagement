@@ -19,6 +19,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { RefreshControl } from "react-native";
 import { Redirect } from "react-router";
 import ApiFailHandler from '../../components/helper/ApiFailHandler'
+import ResourceUrl from "../../resourceurl"
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#F6F7F8",
@@ -258,7 +259,7 @@ export default class Event extends Component {
           <Image
             style={styles.cardImage}
             source={{
-              uri: `${Url()}/api/images/${item.posterUrl}`,
+              uri: `${ResourceUrl()}${item.posterUrl}`,
             }}
           ></Image>
           <Text style={styles.titleText}>{item.name}</Text>

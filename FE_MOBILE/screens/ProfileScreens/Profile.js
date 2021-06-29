@@ -11,6 +11,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Indicator from '../../components/helper/Loading';
 import { Redirect } from "react-router";
 import ApiFailHandler from '../../components/helper/ApiFailHandler'
+import ResourceUrl from "../../resourceurl"
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 
@@ -274,7 +275,7 @@ class Profilescreen extends Component {
                 <Image
                   style={styles.avaImg}
                   source={{
-                    uri: `${Url()}/api/images/${this.state.data.photoUrl}`,
+                    uri: `${ResourceUrl()}${this.state.data.photoUrl}`,
                   }}
                 />
               </TouchableOpacity>

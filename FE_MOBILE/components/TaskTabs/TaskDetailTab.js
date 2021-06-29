@@ -5,6 +5,7 @@ import Separator from "../helper/separator";
 import Url from "../../env";
 import moment from "moment";
 import { ScrollView } from "react-native-gesture-handler";
+import ResourceUrl from "../../resourceurl"
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F6F7F8" },
@@ -97,7 +98,7 @@ class TaskDetailTab extends Component {
           <Image
             style={styles.coverImg}
             source={{
-              uri: `${Url()}/api/images/${this.props.data.coverUrl}`,
+              uri: `${ResourceUrl()}${this.props.data.coverUrl}`,
             }}
           ></Image>
           <View style={styles.formContainer}>
@@ -170,7 +171,7 @@ class TaskDetailTab extends Component {
                   <Image
                     style={styles.avaImage}
                     source={{
-                      uri: `${Url()}/api/images/${this.props.data.managerId.photoUrl}`,
+                      uri: `${ResourceUrl()}${this.props.data.managerId.photoUrl}`,
                     }}
                   ></Image>
                   <Text style={styles.Text}>{this.props.data.managerId.name}</Text>
@@ -201,7 +202,7 @@ class TaskDetailTab extends Component {
                     <Image
                       style={styles.avaImage}
                       source={{
-                        uri: `${Url()}/api/images/${value.photoUrl}`,
+                        uri: `${ResourceUrl()}${value.photoUrl}`,
                       }}
                     ></Image>
                     <Text>{value.name}</Text>

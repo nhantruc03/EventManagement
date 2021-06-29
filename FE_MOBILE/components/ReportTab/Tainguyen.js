@@ -10,6 +10,7 @@ import moment from 'moment';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { RefreshControl } from 'react-native';
 import ApiFailHandler from '../helper/ApiFailHandler';
+import ResourceUrl from "../../resourceurl"
 
 const styles = StyleSheet.create({
     container: {
@@ -70,7 +71,7 @@ export default class Tainguyen extends Component {
                         < Ionicons name='document' size={24} color='white' />
                     </View>
                     <View>
-                        <TouchableOpacity onPress={() => this.Download(`${Url()}/api/resources/${e.item.actionId}/${e.item.url}`, e.item.url)}>
+                        <TouchableOpacity onPress={() => this.Download(`${ResourceUrl()}${e.item.actionId}/${e.item.url}`, e.item.url)}>
                             <Text numberOfLines={2} style={styles.FileNameText}>{e.item.url}</Text>
                         </TouchableOpacity>
                         <Text style={styles.NameText}>{e.item.userId.name}</Text>

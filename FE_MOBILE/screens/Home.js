@@ -21,6 +21,7 @@ import { RefreshControl } from "react-native";
 import ApiFailHandler from '../components/helper/ApiFailHandler'
 import { Redirect } from "react-router";
 import getPermission from "../components/helper/Credentials"
+import ResourceUrl from "../resourceurl"
 const W = Dimensions.get("window").width;
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
@@ -277,7 +278,7 @@ class Home extends Component {
             <View style={styles.cardContent}>
               <Image
                 style={styles.posterImg}
-                source={{ uri: `${Url()}/api/images/${e.posterUrl}` }}
+                source={{ uri: `${ResourceUrl()}${e.posterUrl}` }}
               />
               <Text style={styles.titleText} numberOfLines={1}>
                 {e.name}
@@ -361,7 +362,7 @@ class Home extends Component {
                 <Image
                   style={styles.avaImg}
                   source={{
-                    uri: `${Url()}/api/images/${this.state.currentUser.photoUrl}`,
+                    uri: `${ResourceUrl()}${this.state.currentUser.photoUrl}`,
                   }}
                 />
               </View>

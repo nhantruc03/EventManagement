@@ -8,6 +8,7 @@ import getToken from "../Auth";
 import ApiFailHandler from '../components/helper/ApiFailHandler'
 import { Redirect } from 'react-router';
 import Loader from 'react-native-modal-loader';
+import ResourceUrl from "../resourceurl"
 
 const styles = StyleSheet.create({
   cardImage: {
@@ -226,7 +227,7 @@ export default class TaskCard extends Component {
         <EventCard>
           <View>
             <Loader loading={this.state.loading} color="white" size="large" />
-            <Image style={styles.cardImage} source={{ uri: `${Url()}/api/images/${item.coverUrl}` }} />
+            <Image style={styles.cardImage} source={{ uri: `${ResourceUrl()}${item.coverUrl}` }} />
             <Text style={styles.titleText}>{item.name}</Text>
             <View style={styles.datetime}>
               <Image style={styles.Timeicon} source={require("../assets/images/timesolid.png")} />
@@ -258,25 +259,7 @@ export default class TaskCard extends Component {
                   ))}
                 </View>
 
-                {/* <View>
-                  {item.availUser.map((value, key) => (
-                    <View
-                      style={{
-                        marginRight: 10,
-                        paddingHorizontal: 10,
-                        borderRadius: 16,
-                      }}
-                      key={key}
-                    >
-                      <Image
-                        style={styles.avaImage}
-                        source={{
-                          uri: `${Url()}/api/images/${value.photoUrl}`,
-                        }}
-                      ></Image>
-                    </View>
-                  ))}
-                </View> */}
+
               </View>
 
             </View>

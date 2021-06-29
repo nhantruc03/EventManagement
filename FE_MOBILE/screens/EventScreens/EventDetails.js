@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import moment from "moment";
 import Url from '../../env'
+import ResourceUrl from "../../resourceurl"
 const H = Dimensions.get("window").height;
 
 const Separator = () => <View style={styles.separator} />;
@@ -134,7 +135,7 @@ export default class EventDetail extends Component {
         <ScrollView style={styles.formContainer}>
           <Image
             style={styles.posterImg}
-            source={{ uri: `${Url()}/api/images/${this.state.data.posterUrl}` }}
+            source={{ uri: `${ResourceUrl()}${this.state.data.posterUrl}` }}
           ></Image>
           <Text style={styles.mainLabel}>{this.state.data.name}</Text>
           <Text style={styles.description}>{this.state.data.description}</Text>
