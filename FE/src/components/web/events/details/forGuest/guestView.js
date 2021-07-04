@@ -18,7 +18,10 @@ class guestView extends Component {
                     title: 'Trạng thái',
                     dataIndex: 'status',
                     key: 'status',
-                    render: (e) => e ? <CheckCircleOutlined /> : <StopOutlined />,
+                    width: '20%',
+                    render: (e) => <div className="btn-group">
+                        {e ? <CheckCircleOutlined /> : <StopOutlined />}
+                    </div>,
                 },
             ],
             postsPerPage: 2
@@ -30,7 +33,7 @@ class guestView extends Component {
     renderView = () => {
         let temp = this.props.list.filter(e => e.guestTypeId._id === this.props.type)
 
-        return temp.length > 0 ? <Table rowKey="_id" key={this.props.key} pagination={this.getlistpage(temp) > 1 ? { pageSize: this.state.postsPerPage } : false} dataSource={temp} columns={this.state.columns} /> : null;
+        return temp.length > 0 ? <Table className="guest" rowKey="_id" showHeader={false} key={this.props.key} pagination={this.getlistpage(temp) > 1 ? { pageSize: this.state.postsPerPage } : false} dataSource={temp} columns={this.state.columns} /> : null;
     }
     render() {
         return (

@@ -9,6 +9,7 @@ class selectUsers extends Component {
         this.state = {
             columnsTable1: [
                 { title: 'Tên', dataIndex: 'name', key: 'name' },
+                { title: 'MSSV', dataIndex: 'mssv', key: 'mssv' },
                 { title: 'Số điện thoại', dataIndex: 'phone', key: 'phone' },
                 { title: 'Email', dataIndex: 'email', key: 'email' },
                 {
@@ -20,6 +21,7 @@ class selectUsers extends Component {
             ],
             columnsTable2_canDelete: [
                 { title: 'Tên', dataIndex: 'name', key: 'name' },
+                { title: 'MSSV', dataIndex: 'mssv', key: 'mssv' },
                 { title: 'Số điện thoại', dataIndex: 'phone', key: 'phone' },
                 { title: 'Email', dataIndex: 'email', key: 'email' },
                 {
@@ -56,7 +58,7 @@ class selectUsers extends Component {
         })
     }
 
-    UNSAFE_componentWillReceiveProps(e){
+    UNSAFE_componentWillReceiveProps(e) {
         console.log(e)
         this.setState({
             SearchData1: e.listusers,
@@ -87,8 +89,9 @@ class selectUsers extends Component {
             <div>
                 <Row>
                     <Col span={12} style={{ padding: 10 }}>
-                        <Search target="name" data={this.props.listusers} getSearchData={(e) => this.getSearchData1(e)} />
+                        <Search target={["name", 'phone', 'mssv', 'email']} multi={true} data={this.props.listusers} getSearchData={(e) => this.getSearchData1(e)} />
                         <Table
+                            style={{ marginTop: 20 }}
                             rowKey="_id"
                             columns={this.state.columnsTable1}
                             dataSource={this.state.SearchData1}
@@ -96,8 +99,9 @@ class selectUsers extends Component {
                         />
                     </Col>
                     <Col span={12} style={{ padding: 10 }}>
-                        <Search target="name" data={this.props.listusersforevent} getSearchData={(e) => this.getSearchData2(e)} />
+                        <Search target={["name", 'phone', 'mssv', 'email']} multi={true} data={this.props.listusersforevent} getSearchData={(e) => this.getSearchData2(e)} />
                         <Table
+                            style={{ marginTop: 20 }}
                             rowKey="_id"
                             columns={!this.props.canDelete ? this.state.columnsTable2 : this.state.columnsTable2_canDelete}
                             dataSource={this.state.SearchData2}

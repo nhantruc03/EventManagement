@@ -1,4 +1,4 @@
-import { Avatar, Breadcrumb, Button, Checkbox, Col, Image, message, Modal, Row, Tag, Tooltip, Upload } from 'antd';
+import { Avatar, Breadcrumb, Button, Checkbox, Col, Image, message, Modal, Popconfirm, Row, Tag, Tooltip, Upload } from 'antd';
 import { Content } from 'antd/lib/layout/layout';
 import Title from 'antd/lib/typography/Title';
 import axios from 'axios';
@@ -9,12 +9,14 @@ import { AUTH } from '../../../../env'
 import moment from 'moment';
 import {
     UploadOutlined,
+    DeleteOutlined,
     EyeOutlined
 } from '@ant-design/icons';
 import ResourceCard from './resourceCard/resourceCard';
 import AddSubAction from './subActions/add'
 import EditSubAction from './subActions/edit'
 import EditAction from './editAction/editAction'
+import ApiFailHandler from '../../../helper/ApiFailHandler'
 class actionDetails extends Component {
     constructor(props) {
         super(props)
@@ -125,7 +127,10 @@ class actionDetails extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/action-assign/getAll', { actionId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -133,7 +138,10 @@ class actionDetails extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/action-resources/getAll', { actionId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -141,7 +149,10 @@ class actionDetails extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/sub-actions/getAll', { actionId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -149,7 +160,10 @@ class actionDetails extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
 
 
@@ -189,7 +203,7 @@ class actionDetails extends Component {
                     <Col lg={12} key={key}>
                         <div className="flex-container-row" >
                             <Tooltip title={value.name} placement="top" >
-                                <Avatar src={`/api/images/${value.photoUrl}`} />
+                                <Avatar src={`${window.resource_url}${value.photoUrl}`} />
                             </Tooltip >
                             <p style={{ marginLeft: '10px' }} className="black-2 flex-row-item-right">{value.name}</p>
                         </div>
@@ -217,7 +231,7 @@ class actionDetails extends Component {
                     })
                 })
                 .catch(err => {
-                    console.log(err)
+                    ApiFailHandler(err.response?.data?.error)
                 }),
         )
     }
@@ -262,10 +276,30 @@ class actionDetails extends Component {
                     })
                 })
                 .catch(err => {
-                    console.log(err)
+                    ApiFailHandler(err.response?.data?.error)
                 }),
         )
 
+    }
+
+    deleteSubAction = async (e) => {
+        await trackPromise(
+            axios.delete('/api/sub-actions/' + e, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then((res) => {
+                    message.success(`${res.data.data.name} xóa thành công`);
+                    let temp = this.state.subActions.filter(x => x._id !== e)
+                    this.setState({
+                        subActions: temp
+                    })
+                })
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
+        )
     }
 
     renderSubActions = () => {
@@ -275,10 +309,43 @@ class actionDetails extends Component {
                     <div className="flex-container-row" style={{ marginTop: '10px' }} key={key}>
                         <Checkbox className="checkbox" onChange={this.onChange} checked={e.status} style={e.status ? { textDecoration: 'line-through' } : null} value={e._id} >{e.name}</Checkbox>
                         <Button onClick={() => this.setModalEditSubActionVisible(true, e)} className="flex-row-item-right no-border"><EyeOutlined /></Button>
+                        <Popconfirm
+                            title="Bạn có chắc muốn xóa chứ?"
+                            onConfirm={() => this.deleteSubAction(e._id)}
+                            okText="Đồng ý"
+                            cancelText="Hủy"
+                        >
+                            <Button className="no-border"><DeleteOutlined /></Button>
+                        </Popconfirm>
                     </div>
                 )}
             </div>
         )
+    }
+
+    goBack = (e) => {
+        e.preventDefault();
+        this.props.history.goBack();
+    }
+
+    deleteAction = async () => {
+        const result = await trackPromise(axios.delete('/api/actions/' + this.props.match.params.id, {
+            headers: {
+                'Authorization': { AUTH }.AUTH
+            }
+        })
+            .then((res) => {
+                message.success('Xóa công việc thành công')
+                return res.data.data
+            })
+            .catch(err => {
+                message.error('Xóa công việc thất bại')
+                ApiFailHandler(err.response?.data?.error)
+            })
+        )
+        if (result) {
+            this.props.history.goBack();
+        }
     }
 
     render() {
@@ -289,19 +356,33 @@ class actionDetails extends Component {
                         <div className="flex-container-row" style={{ width: '100%' }}>
                             <Breadcrumb separator=">">
                                 <Breadcrumb.Item >
-                                    <Link to="/actions">Danh sách</Link>
+                                    <Link to="/eventclones">Hồ sơ sự kiện</Link>
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
-                                    Chi tiết
-                            </Breadcrumb.Item>
+                                    <Link to="/#" onClick={this.goBack}>Chi tiết</Link>
+                                </Breadcrumb.Item>
+                                <Breadcrumb.Item>
+                                    Công việc
+                                </Breadcrumb.Item>
                             </Breadcrumb>
-                            <Button onClick={() => this.setModalEditActionVisible(true)} className="flex-row-item-right add">Chỉnh sửa</Button>
+                            <div className="flex-row-item-right">
+                                <Popconfirm
+                                    title="Bạn có chắc muốn xóa chứ?"
+                                    onConfirm={this.deleteAction}
+                                    okText="Đồng ý"
+                                    cancelText="Hủy"
+                                >
+                                    <Button className="delete">Xóa</Button>
+                                </Popconfirm>
+                                <Button style={{ marginLeft: 10 }} onClick={() => this.setModalEditActionVisible(true)} className="add">Chỉnh sửa</Button>
+                            </div>
+                            {/* <Button onClick={() => this.setModalEditActionVisible(true)} className="flex-row-item-right add">Chỉnh sửa</Button> */}
                         </div>
                     </Row >
 
                     <div className="site-layout-background-main">
                         <Row style={{ height: '95%' }}>
-                            <Col sm={24} xl={10} className="event-detail">
+                            <Col sm={24} xl={7} className="event-detail">
                                 <div className="flex-container-row">
                                     <Title style={{ color: '#264653' }} level={3}>Cần làm</Title>
                                     <Button onClick={() => this.setModalAddSubActionVisible(true)} className="flex-row-item-right add">Thêm</Button>
@@ -311,7 +392,6 @@ class actionDetails extends Component {
 
                                 <div className="flex-container-row" style={{ marginTop: '20px' }}>
                                     <Title style={{ color: '#264653' }} level={3}>File đính kèm</Title>
-                                    {/* <Button className="flex-row-item-right add">Thêm</Button> */}
                                     <Upload
                                         className="flex-row-item-right"
                                         fileList={this.state.fileList}
@@ -331,17 +411,14 @@ class actionDetails extends Component {
                                 {this.state.resources.map((e, key) => <ResourceCard delete={(e) => this.deleteResources(e)} key={key} resourcePath={this.props.match.params.id} data={e}></ResourceCard>)}
                             </Col>
                             <Col sm={24} xl={14} className="event-detail">
-                                {/* <Title level={3}>Cover</Title> */}
-                                <Image style={{ maxHeight: '200px' }} src={`/api/images/${this.state.data.coverUrl}`}></Image>
+                                <Image style={{ maxHeight: '200px' }} src={`${window.resource_url}${this.state.data.coverUrl}`}></Image>
 
                                 <Title style={{ color: '#017567' }} level={1}>{this.state.data.name}</Title>
 
                                 <div className="flex-container-row" style={{ width: '80%' }}>
-                                    {/* <Tag className="event-detail-status">{this.state.data.actionTypeId.name}</Tag> */}
                                     <Tag className="event-detail-status">{this.state.currentStatus}</Tag>
-                                    <p style={{ color: 'grey' }}>Bắt đầu: {moment(this.state.data.startTime).format("DD/MM/YYYY")}</p>
-                                    {/* <p className="flex-row-item-right">{this.state.data.priorityId.name}</p> */}
                                 </div>
+
 
                                 <Title level={4}>Mô tả</Title>
                                 <p style={{ color: '#001529' }}>{this.state.data.description}</p>
@@ -352,21 +429,20 @@ class actionDetails extends Component {
                                 <p className="black-2">{this.state.data.eventId.name}</p>
 
                                 <Row>
-
-                                    <Col sm={24} md={12} >
+                                    <Col sm={24} md={12} style={{ textAlign: 'left' }}>
                                         <Title level={4}>Ban</Title>
                                         <p >{this.state.data.facultyId.name}</p>
                                     </Col>
 
                                     <Col sm={24} md={12} style={{ textAlign: 'right' }}>
                                         <Title level={4}>Hạn chót</Title>
-                                        {moment(this.state.data.endDate).format("DD/MM/YYYY")}
+                                        {moment(this.state.data.endDate).utcOffset(0).format("DD/MM/YYYY")} - {moment(this.state.data.endTime).utcOffset(0).format("HH:mm")}
                                     </Col>
                                 </Row>
 
+
                                 <Title className="event-detail-title" level={4}>Tags</Title>
-                                {/* <Image style={{ maxWidth: '300px' }} src={`/api/images/${this.state.data.coverUrl}`}></Image> */}
-                                {this.state.data.tagsId.map((e, key) => <Tag style={{ width: 'auto' }} key={key}>{e.name}</Tag>)}
+                                {this.state.data.tagsId.map((e, key) => <Tag style={{ width: 'auto', background: e.background, color: e.color }} key={key}>{e.name}</Tag>)}
                             </Col>
                         </Row>
                     </div>

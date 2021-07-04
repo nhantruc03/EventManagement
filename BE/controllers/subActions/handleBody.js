@@ -12,9 +12,7 @@ const handleBody = (body) => {
       ...pick(body,
         "actionId",
         "name",
-        "startDate",
         "endDate",
-        "startTime",
         "endTime",
         "description",
       )

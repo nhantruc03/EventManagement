@@ -12,8 +12,8 @@ class EventMiniCard extends Component {
                         hoverable
                     >
                         <div className="flex-container-row">
-                            <img style={{ maxWidth: '129px' }} src={`/api/images/${this.props.data.posterUrl}`} alt="event posterUrl"></img>
-                            <div style={{ display: 'grid', marginLeft: '10px' }}>
+                            <img style={{ maxWidth: '129px' }} src={`${window.resource_url}${this.props.data.posterUrl}`} alt="event posterUrl"></img>
+                            <div style={{ display: 'grid', marginLeft: '10px', width: '100%' }}>
                                 <Title className="cut-text" level={3}>{this.props.data.name}</Title>
 
                                 <Tag className="status-tag">{this.props.onGoing ? "Đang diễn ra" : "Sắp diễn ra"}</Tag>
@@ -21,7 +21,7 @@ class EventMiniCard extends Component {
                                 <Row >
                                     <div className="flex-container-row">
                                         <img style={{ marginRight: '20px' }} alt="clock icon" src="/clock.png"></img>
-                                        {this.props.onGoing ? "Hôm nay" : moment(this.props.data.startDate).format('DD/MM/YYYY')} - {moment(this.props.data.startTime).format('HH:mm')}
+                                        {this.props.onGoing ? "Hôm nay" : moment(this.props.data.startDate).utcOffset(0).format('DD/MM/YYYY')} - {moment(this.props.data.startTime).utcOffset(0).format('HH:mm')}
                                     </div>
                                 </Row>
                                 <Row >

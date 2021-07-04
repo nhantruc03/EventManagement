@@ -11,7 +11,7 @@ const handleBody = (body) => {
     body: {
       ...pick(body,
         "name",
-        "startDate",
+        "endTime",
         "endDate",
         "description",
         "eventId",
@@ -21,7 +21,9 @@ const handleBody = (body) => {
         "facultyId",
         "coverUrl",
         "availUser",
-        "actionTypeId"
+        "actionTypeId",
+        "managerId",
+        "isClone"
       )
     }
   }

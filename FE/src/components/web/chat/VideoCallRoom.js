@@ -44,8 +44,6 @@ class VideoCallRoom extends Component {
                         </Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
-
-
                 </Row >
 
                 <div className="site-layout-background-main" style={{ padding: 'unset' }}>

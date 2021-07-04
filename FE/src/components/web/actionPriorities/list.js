@@ -5,9 +5,9 @@ import Search from '../helper/search';
 import { AUTH } from '../../env'
 import { trackPromise } from 'react-promise-tracker';
 import { Content } from 'antd/lib/layout/layout';
-import { Button, Table } from 'antd';
+import { Button, Popconfirm, Table } from 'antd';
 import Title from 'antd/lib/typography/Title';
-
+import ApiFailHandler from '../helper/ApiFailHandler'
 class list extends Component {
     constructor(props) {
         super(props);
@@ -31,8 +31,15 @@ class list extends Component {
 
     renderAction = (e) =>
         <div className="center">
-            <Button className="add"><Link to={`/editactionpriorities/${e._id}`}>Sửa</Link></Button >
-            <Button className="back" onClick={() => this.onDelete(e)}>Xoá</Button>
+            <Button className="add"><Link to={`/admin/editactionpriorities/${e._id}`}>Sửa</Link></Button >
+            <Popconfirm
+                title="Bạn có chắc muốn xóa chứ?"
+                onConfirm={() => this.onDelete(e)}
+                okText="Đồng ý"
+                cancelText="Hủy"
+            >
+                <Button className="back" >Xoá</Button>
+            </Popconfirm>
         </div>
 
     async componentDidMount() {
@@ -46,9 +53,11 @@ class list extends Component {
                 .then((res) =>
                     res.data.data
                 )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                })
         ]));
 
-        console.log(users)
         if (users !== null) {
             if (this._isMounted) {
                 this.setState({
@@ -83,17 +92,20 @@ class list extends Component {
                         SearchData: this.state.data.filter(o => o._id !== e._id)
                     })
                 }))
+            .catch(err => {
+                ApiFailHandler(err.response?.data?.error)
+            })
 
     }
 
-    printData = (SearchData) => {
+    printData = () => {
         return (
             <div >
-                <Title level={4}>Danh sách action-priorities</Title>
-                <div className="flex-container-row">
+                <Title level={4}>Danh sách độ ưu tiên công việc</Title>
+                <div className="flex-container-row" style={{ marginBottom: 20 }}>
                     <Search target="name" data={this.state.data} getSearchData={(e) => this.getSearchData(e)} />
                     <Button className="flex-row-item-right add">
-                        <Link to={`/addactionpriorities`} >
+                        <Link to={`/admin/addactionpriorities`} >
                             <div className="btn btn-createnew">Tạo mới</div>
                         </Link>
                     </Button>
@@ -107,7 +119,7 @@ class list extends Component {
         return (
             <Content style={{ margin: "0 16px" }}>
                 <div className="site-layout-background-main">
-                    {this.printData(this.state.SearchData)}
+                    {this.printData()}
                 </div>
             </Content>
         );

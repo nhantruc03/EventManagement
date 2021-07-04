@@ -1,4 +1,4 @@
-import { Avatar, Breadcrumb, Button, Checkbox, Col, Image, message, Modal, Row, Tabs, Tag, Tooltip, Upload } from 'antd';
+import { Avatar, Breadcrumb, Button, Checkbox, Col, Image, message, Modal, Popconfirm, Row, Tabs, Tag, Tooltip, Upload } from 'antd';
 import { Content } from 'antd/lib/layout/layout';
 import Title from 'antd/lib/typography/Title';
 import axios from 'axios';
@@ -10,12 +10,17 @@ import moment from 'moment';
 import ChatRoom from '../../chat/ChatRoom';
 import {
     UploadOutlined,
+    DeleteOutlined,
     EyeOutlined
 } from '@ant-design/icons';
 import ResourceCard from './resourceCard/resourceCard';
 import AddSubAction from './subActions/add'
 import EditSubAction from './subActions/edit'
 import EditAction from './editAction/editAction'
+import * as constants from "../../constant/actions"
+import checkPermission from "../../helper/checkPermissions"
+import getPermission from "../../helper/Credentials"
+import ApiFailHandler from '../../helper/ApiFailHandler'
 const { TabPane } = Tabs;
 class actionDetails extends Component {
     constructor(props) {
@@ -31,6 +36,8 @@ class actionDetails extends Component {
             currentSubAction: null,
             modalEditActionVisible: false,
             currentStatus: '',
+            currentPermissions: [],
+            currentUser: JSON.parse(localStorage.getItem('login'))
         }
     }
 
@@ -79,7 +86,6 @@ class actionDetails extends Component {
     }
 
     updateAction = (action, manager, actionAssign) => {
-        // console.log(e)
         this.setState({
             data: action,
             manager: manager,
@@ -88,9 +94,29 @@ class actionDetails extends Component {
         this.setModalEditActionVisible(false)
     }
 
+    deleteAction = async () => {
+        const result = await trackPromise(axios.delete('/api/actions/' + this.props.match.params.id, {
+            headers: {
+                'Authorization': { AUTH }.AUTH
+            }
+        })
+            .then((res) => {
+                message.success('Xóa công việc thành công')
+                return res.data.data
+            })
+            .catch(err => {
+                message.error('Xóa công việc thất bại')
+                ApiFailHandler(err.response?.data?.error)
+            })
+        )
+        if (result) {
+            this.props.history.goBack();
+        }
+    }
+
     renderModalEditAction = () => {
         return (
-            <EditAction data={this.state.data} manager={this.state.manager} update={(action, manager, actionAssign) => this.updateAction(action, manager, actionAssign)} />
+            <EditAction onClose={() => this.setModalEditActionVisible(false)} data={this.state.data} manager={this.state.manager} update={(action, manager, actionAssign) => this.updateAction(action, manager, actionAssign)} />
         )
     }
 
@@ -103,10 +129,8 @@ class actionDetails extends Component {
         if (this.state.currentSubAction) {
             let data = {
                 ...this.state.currentSubAction,
-                'startDate': moment(this.state.currentSubAction.startDate),
-                'endDate': moment(this.state.currentSubAction.endDate),
-                'startTime': moment(this.state.currentSubAction.startTime),
-                'endTime': moment(this.state.currentSubAction.endTime),
+                'endDate': moment(this.state.currentSubAction.endDate).utcOffset(0),
+                'endTime': moment(this.state.currentSubAction.endTime).utcOffset(0),
             }
             return (
                 <EditSubAction edit={(e) => this.editSubAction(e)} data={data} />
@@ -129,7 +153,10 @@ class actionDetails extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/action-assign/getAll', { actionId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -137,7 +164,10 @@ class actionDetails extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/action-resources/getAll', { actionId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -145,7 +175,10 @@ class actionDetails extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/sub-actions/getAll', { actionId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -153,13 +186,15 @@ class actionDetails extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
 
 
         if (action !== null) {
             if (this._isMounted) {
-                console.log(action)
                 let now = moment(new Date().setHours(0, 0, 0, 0))
                 let data_Date = moment(new Date(action.startDate).setHours(0, 0, 0, 0))
                 let temp_status = ''
@@ -171,13 +206,17 @@ class actionDetails extends Component {
                 else {
                     temp_status = 'Đã diễn ra'
                 }
+
+                let permissons = await getPermission(action.eventId._id)
+
                 this.setState({
                     data: action,
                     actionAssign: actionAssign.filter(e => e.role === 2),
-                    manager: actionAssign.filter(e => e.role === 1)[0],
+                    manager: action.managerId,
                     resources: resources,
                     subActions: subActions,
-                    currentStatus: temp_status
+                    currentStatus: temp_status,
+                    currentPermissions: permissons
                 })
             }
         }
@@ -193,7 +232,7 @@ class actionDetails extends Component {
                     <Col lg={12} key={key}>
                         <div className="flex-container-row" >
                             <Tooltip title={value.name} placement="top" >
-                                <Avatar src={`/api/images/${value.photoUrl}`} />
+                                <Avatar src={`${window.resource_url}${value.photoUrl}`} />
                             </Tooltip >
                             <p style={{ marginLeft: '10px' }} className="black-2 flex-row-item-right">{value.name}</p>
                         </div>
@@ -206,7 +245,8 @@ class actionDetails extends Component {
     uploadResources = async (e) => {
         let data = {
             ...e,
-            actionId: this.props.match.params.id
+            actionId: this.props.match.params.id,
+            userId: this.state.currentUser.id
         }
         await trackPromise(
             axios.post('/api/action-resources', data, {
@@ -221,7 +261,7 @@ class actionDetails extends Component {
                     })
                 })
                 .catch(err => {
-                    console.log(err)
+                    ApiFailHandler(err.response?.data?.error)
                 }),
         )
     }
@@ -241,7 +281,7 @@ class actionDetails extends Component {
                     })
                 })
                 .catch(err => {
-                    console.log(err)
+                    ApiFailHandler(err.response?.data?.error)
                 }),
         )
     }
@@ -266,19 +306,54 @@ class actionDetails extends Component {
                     })
                 })
                 .catch(err => {
-                    console.log(err)
+                    ApiFailHandler(err.response?.data?.error)
                 }),
         )
+    }
 
+    deleteSubAction = async (e) => {
+        await trackPromise(
+            axios.delete('/api/sub-actions/' + e, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then((res) => {
+                    message.success(`${res.data.data.name} xóa thành công`);
+                    let temp = this.state.subActions.filter(x => x._id !== e)
+                    this.setState({
+                        subActions: temp
+                    })
+                })
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
+        )
     }
 
     renderSubActions = () => {
         return (
             <div style={{ marginTop: '10px' }}>
-                { this.state.subActions.map((e, key) =>
+                {this.state.subActions.map((e, key) =>
                     <div className="flex-container-row" style={{ marginTop: '10px' }} key={key}>
-                        <Checkbox className="checkbox" onChange={this.onChange} checked={e.status} style={e.status ? { textDecoration: 'line-through' } : null} value={e._id} >{e.name}</Checkbox>
-                        <Button onClick={() => this.setModalEditSubActionVisible(true, e)} className="flex-row-item-right no-border"><EyeOutlined /></Button>
+                        {checkPermission(this.state.currentPermissions, constants.QL_CONGVIEC_PERMISSION) || this.state.currentUser.id === this.state.data.managerId._id ?
+                            <>
+                                <Checkbox className="checkbox" onChange={this.onChange} checked={e.status} style={e.status ? { textDecoration: 'line-through' } : null} value={e._id} >{e.name}</Checkbox>
+                                <Button onClick={() => this.setModalEditSubActionVisible(true, e)} className="flex-row-item-right no-border"><EyeOutlined /></Button>
+                                <Popconfirm
+                                    title="Bạn có chắc muốn xóa chứ?"
+                                    onConfirm={() => this.deleteSubAction(e._id)}
+                                    okText="Đồng ý"
+                                    cancelText="Hủy"
+                                >
+                                    <Button className="no-border"><DeleteOutlined /></Button>
+                                </Popconfirm>
+                            </> :
+                            <>
+                                <Checkbox disabled={true} className="checkbox" onChange={this.onChange} checked={e.status} style={e.status ? { textDecoration: 'line-through' } : null} value={e._id} >{e.name}</Checkbox>
+                                {/* <Button disabled={true} onClick={() => this.setModalEditSubActionVisible(true, e)} className="flex-row-item-right no-border"><EyeOutlined /></Button> */}
+                            </>
+                        }
                     </div>
                 )}
             </div>
@@ -297,9 +372,21 @@ class actionDetails extends Component {
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
                                     Chi tiết
-                            </Breadcrumb.Item>
+                                </Breadcrumb.Item>
                             </Breadcrumb>
-                            <Button onClick={() => this.setModalEditActionVisible(true)} className="flex-row-item-right add">Chỉnh sửa</Button>
+                            {checkPermission(this.state.currentPermissions, constants.QL_CONGVIEC_PERMISSION) || this.state.currentUser.id === this.state.data.managerId._id ?
+                                <div className="flex-row-item-right">
+                                    <Popconfirm
+                                        title="Bạn có chắc muốn xóa chứ?"
+                                        onConfirm={this.deleteAction}
+                                        okText="Đồng ý"
+                                        cancelText="Hủy"
+                                    >
+                                        <Button className="delete">Xóa</Button>
+                                    </Popconfirm>
+                                    <Button style={{ marginLeft: 10 }} onClick={() => this.setModalEditActionVisible(true)} className="add">Chỉnh sửa</Button>
+                                </div>
+                                : null}
                         </div>
                     </Row >
 
@@ -308,14 +395,15 @@ class actionDetails extends Component {
                             <Col sm={24} xl={7} className="event-detail">
                                 <div className="flex-container-row">
                                     <Title style={{ color: '#264653' }} level={3}>Cần làm</Title>
-                                    <Button onClick={() => this.setModalAddSubActionVisible(true)} className="flex-row-item-right add">Thêm</Button>
+                                    {checkPermission(this.state.currentPermissions, constants.QL_CONGVIEC_PERMISSION) || this.state.currentUser.id === this.state.data.managerId._id ?
+                                        <Button onClick={() => this.setModalAddSubActionVisible(true)} className="flex-row-item-right add">Thêm</Button>
+                                        : null}
                                 </div>
                                 {this.renderSubActions()}
 
 
                                 <div className="flex-container-row" style={{ marginTop: '20px' }}>
                                     <Title style={{ color: '#264653' }} level={3}>File đính kèm</Title>
-                                    {/* <Button className="flex-row-item-right add">Thêm</Button> */}
                                     <Upload
                                         className="flex-row-item-right"
                                         fileList={this.state.fileList}
@@ -335,20 +423,16 @@ class actionDetails extends Component {
                                 {this.state.resources.map((e, key) => <ResourceCard delete={(e) => this.deleteResources(e)} key={key} resourcePath={this.props.match.params.id} data={e}></ResourceCard>)}
                             </Col>
                             <Col sm={24} xl={10} className="event-detail">
-                                {/* <Title level={3}>Cover</Title> */}
-                                <Image style={{ maxHeight: '200px' }} src={`/api/images/${this.state.data.coverUrl}`}></Image>
+                                <Image style={{ maxHeight: '200px' }} src={`${window.resource_url}${this.state.data.coverUrl}`}></Image>
 
                                 <Title style={{ color: '#017567' }} level={1}>{this.state.data.name}</Title>
 
                                 <div className="flex-container-row" style={{ width: '80%' }}>
-                                    {/* <Tag className="event-detail-status">{this.state.data.actionTypeId.name}</Tag> */}
                                     <Tag className="event-detail-status">{this.state.currentStatus}</Tag>
-                                    <p style={{ color: 'grey' }}>Bắt đầu: {moment(this.state.data.startTime).format("DD/MM/YYYY")}</p>
-                                    {/* <p className="flex-row-item-right">{this.state.data.priorityId.name}</p> */}
                                 </div>
 
                                 <Title level={4}>Mô tả</Title>
-                                <p style={{ color: '#001529' }}>{this.state.data.description}</p>
+                                <p style={{ color: '#001529', fontSize: 20, lineHeight: 1.5 }}>{this.state.data.description}</p>
 
 
 
@@ -359,8 +443,8 @@ class actionDetails extends Component {
                                     <Col sm={24} md={10}>
                                         <Title level={4}>Người phụ trách</Title>
                                         <div className="flex-container-row" >
-                                            {this.state.manager ? <Avatar src={`/api/images/${this.state.manager.userId.photoUrl}`} /> : null}
-                                            {this.state.manager ? <p style={{ marginLeft: '10px' }} className="black-2">{this.state.manager.userId.name}</p> : null}
+                                            {this.state.manager ? <Avatar src={`${window.resource_url}${this.state.manager.photoUrl}`} /> : null}
+                                            {this.state.manager ? <p style={{ marginLeft: '10px' }} className="black-2">{this.state.manager.name}</p> : null}
                                         </div>
                                     </Col>
 
@@ -371,7 +455,7 @@ class actionDetails extends Component {
 
                                     <Col sm={24} md={8} style={{ textAlign: 'right' }}>
                                         <Title level={4}>Hạn chót</Title>
-                                        {moment(this.state.data.endDate).format("DD/MM/YYYY")}
+                                        {moment(this.state.data.endDate).utcOffset(0).format("DD/MM/YYYY")} - {moment(this.state.data.endTime).utcOffset(0).format("HH:mm")}
                                     </Col>
                                 </Row>
 
@@ -389,10 +473,9 @@ class actionDetails extends Component {
 
 
                                 <Title className="event-detail-title" level={4}>Tags</Title>
-                                {/* <Image style={{ maxWidth: '300px' }} src={`/api/images/${this.state.data.coverUrl}`}></Image> */}
-                                {this.state.data.tagsId.map((e, key) => <Tag style={{ width: 'auto' }} key={key}>{e.name}</Tag>)}
+                                {this.state.data.tagsId.map((e, key) => <Tag style={{ width: 'auto', background: e.background, color: e.color }} key={key}>{e.name}</Tag>)}
                             </Col>
-                            <Col sm={24} xl={7} className="event-detail">
+                            <Col sm={24} xl={7} className="action-detail">
                                 {/* <div className="vl"></div> */}
                                 <Tabs className="chat-tabs" defaultActiveKey="1" >
                                     <TabPane tab="Bình luận" key="1"><ChatRoom videocall={true} roomId={this.props.match.params.id} /></TabPane>

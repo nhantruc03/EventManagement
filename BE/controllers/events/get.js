@@ -5,8 +5,8 @@ const get = async (req, res) => {
     const query = { _id: req.params.id, isDeleted: false }
 
     const doc = await Events.findOne(query)
-      .populate({ path: 'tagId', select: 'name' })
-      .populate({ path: 'availUser', select: 'photoUrl name phone email' })
+      .populate({ path: 'tagId', select: 'name background color' })
+      .populate({ path: 'availUser', select: 'photoUrl name phone email mssv' })
       .populate({ path: 'eventTypeId', select: 'name' })
 
     return res.status(200).json({

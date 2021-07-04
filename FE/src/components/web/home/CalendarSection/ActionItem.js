@@ -8,7 +8,7 @@ class ActionItem extends Component {
         return (
             <div className="calendar-sub-action flex-container-row">
                 <div className="vl-action"></div>
-                <Link to={`/actions/${this.props.data.actionId}`}>
+                <Link to={`/actions/${this.props.data._id}`}>
                     <div style={{ marginLeft: '20px', maxWidth: '100%' }}>
                         <Tooltip title={
                             <div>
@@ -20,8 +20,8 @@ class ActionItem extends Component {
                             <p className="title cut-text">{this.props.data.name}</p>
                         </Tooltip>
                         <div>
-                            <p>Bắt đầu: {moment(this.props.data.startDate).format('DD/MM')}</p>
-                            <p>Kết thúc: {moment(this.props.data.endDate).format('DD/MM')}</p>
+                            {/* <p>Bắt đầu: {moment(this.props.data.startDate).format('DD/MM')}</p> */}
+                            <p>Kết thúc: {moment(this.props.data.endDate).utcOffset(0).format('DD/MM')} - {moment(this.props.data.endTime).utcOffset(0).format('HH:mm')}</p>
                         </div>
                     </div>
                 </Link>

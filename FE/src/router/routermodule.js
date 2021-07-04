@@ -23,6 +23,10 @@ import addroles from '../components/web/roles/add';
 import editroles from '../components/web/roles/edit';
 import roles from '../components/web/roles/list';
 
+import addcredentials from '../components/web/credentials/add';
+import edicredentials from '../components/web/credentials/edit';
+import credentials from '../components/web/credentials/list';
+
 import addsystemroles from '../components/web/systemRoles/add';
 import editsystemroles from '../components/web/systemRoles/edit';
 import systemroles from '../components/web/systemRoles/list';
@@ -72,8 +76,12 @@ import actiondetails from '../components/web/actions/actiondetails/actionDetails
 import listactionsForClone from '../components/web/actions/forClone/listactions/listactions'
 import actiondetailsForClone from '../components/web/actions/forClone/actiondetails/actionDetails'
 
-import videocall from '../components/web/chat/VideoCallRoom'
+import eventreport from '../components/web/reports/report'
 
+import videocall from '../components/web/chat/VideoCallRoom'
+import home from '../components/web/home/Admin/home';
+import pageAdmin from '../components/web/pageAdmin';
+import forgotpassword from '../components/web/forgotpassword/forgotPassword'
 class router extends Component {
     render() {
         return (
@@ -82,48 +90,56 @@ class router extends Component {
 
 
 
+                <AppRoute exact path="/forgot-password" component={forgotpassword} layout={loginpage} />
                 <AppRoute exact path="/login" component={login} layout={loginpage} />
                 <AppRoute exact path="/khongcoquyen" component={loginfail} layout={Page} />
+
+                <AppRoute exact path="/admin" component={home} layout={pageAdmin} />
 
                 <SecureRouteStaff exact path="/thongtincanhan" component={thongtincanhan} layout={Page} />
                 <SecureRouteStaff exact path="/updatePassword" component={updatePass} layout={Page} />
 
-                <SecureRouteAdmin exact path="/listusers" component={users} layout={Page} />
-                <SecureRouteAdmin exact path="/addusers" component={addusers} layout={Page} />
-                <SecureRouteAdmin exact path="/editusers/:id" component={editusers} layout={Page} />
+                <SecureRouteAdmin exact path="/admin/listusers" component={users} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/addusers" component={addusers} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/editusers/:id" component={editusers} layout={pageAdmin} />
 
-                <SecureRouteAdmin exact path="/listroles" component={roles} layout={Page} />
-                <SecureRouteAdmin exact path="/addroles" component={addroles} layout={Page} />
-                <SecureRouteAdmin exact path="/editroles/:id" component={editroles} layout={Page} />
+                <SecureRouteAdmin exact path="/admin/listroles" component={roles} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/addroles" component={addroles} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/editroles/:id" component={editroles} layout={pageAdmin} />
 
-                <SecureRouteAdmin exact path="/listsystemroles" component={systemroles} layout={Page} />
-                <SecureRouteAdmin exact path="/addsystemroles" component={addsystemroles} layout={Page} />
-                <SecureRouteAdmin exact path="/editsystemroles/:id" component={editsystemroles} layout={Page} />
+                <SecureRouteAdmin exact path="/admin/listcredentials" component={credentials} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/addcredentials" component={addcredentials} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/editcredentials/:id" component={edicredentials} layout={pageAdmin} />
 
-                <SecureRouteAdmin exact path="/listEventTypes" component={EventTypes} layout={Page} />
-                <SecureRouteAdmin exact path="/addEventTypes" component={addEventTypes} layout={Page} />
-                <SecureRouteAdmin exact path="/editEventTypes/:id" component={editEventTypes} layout={Page} />
+                <SecureRouteAdmin exact path="/admin/listsystemroles" component={systemroles} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/addsystemroles" component={addsystemroles} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/editsystemroles/:id" component={editsystemroles} layout={pageAdmin} />
 
-                <SecureRouteAdmin exact path="/listtags" component={Tags} layout={Page} />
-                <SecureRouteAdmin exact path="/addtags" component={addTags} layout={Page} />
-                <SecureRouteAdmin exact path="/edittags/:id" component={editTags} layout={Page} />
+                <SecureRouteAdmin exact path="/admin/listEventTypes" component={EventTypes} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/addEventTypes" component={addEventTypes} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/editEventTypes/:id" component={editEventTypes} layout={pageAdmin} />
 
-                <SecureRouteAdmin exact path="/listactiontags" component={ActionTags} layout={Page} />
-                <SecureRouteAdmin exact path="/addactiontags" component={addActionTags} layout={Page} />
-                <SecureRouteAdmin exact path="/editactiontags/:id" component={editActionTags} layout={Page} />
+                <SecureRouteAdmin exact path="/admin/listtags" component={Tags} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/addtags" component={addTags} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/edittags/:id" component={editTags} layout={pageAdmin} />
 
-                <SecureRouteAdmin exact path="/listactionpriorities" component={ActionPriorities} layout={Page} />
-                <SecureRouteAdmin exact path="/addactionpriorities" component={addActionPriorities} layout={Page} />
-                <SecureRouteAdmin exact path="/editactionpriorities/:id" component={editActionPriorities} layout={Page} />
+                <SecureRouteAdmin exact path="/admin/listactiontags" component={ActionTags} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/addactiontags" component={addActionTags} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/editactiontags/:id" component={editActionTags} layout={pageAdmin} />
 
-                <SecureRouteAdmin exact path="/listfaculties" component={Faculties} layout={Page} />
-                <SecureRouteAdmin exact path="/addfaculties" component={addFaculties} layout={Page} />
-                <SecureRouteAdmin exact path="/editfaculties/:id" component={editFaculties} layout={Page} />
+                <SecureRouteAdmin exact path="/admin/listactionpriorities" component={ActionPriorities} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/addactionpriorities" component={addActionPriorities} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/editactionpriorities/:id" component={editActionPriorities} layout={pageAdmin} />
+
+                <SecureRouteAdmin exact path="/admin/listfaculties" component={Faculties} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/addfaculties" component={addFaculties} layout={pageAdmin} />
+                <SecureRouteAdmin exact path="/admin/editfaculties/:id" component={editFaculties} layout={pageAdmin} />
 
                 <SecureRouteAdmin exact path="/events" component={events} layout={Page} />
                 <SecureRouteAdmin exact path="/events/:id" component={eventDetails} layout={Page} />
                 <SecureRouteAdmin exact path="/editevent/:id" component={editevent} layout={Page} />
                 <SecureRouteAdmin exact path="/addevents" component={addevents} layout={Page} />
+                <SecureRouteAdmin exact path="/eventreport/:id" component={eventreport} layout={Page} />
 
                 <SecureRouteAdmin exact path="/eventclones" component={eventClones} layout={Page} />
                 {/* <SecureRouteAdmin exact path="/eventclones/:id" component={eventcloneDetails} layout={Page} /> */}
@@ -147,9 +163,7 @@ class router extends Component {
 
                 <SecureRouteAdmin exact path="/videocall/:id" component={videocall} layout={Page} />
                 
-                {/* <SecureRouteAdmin exact path="/actions/:id" component={eventDetails} layout={Page} />
-                <SecureRouteAdmin exact path="/editactions/:id" component={editevent} layout={Page} /> */}
-                {/* <SecureRouteAdmin exact path="/addactions" component={addactions} layout={Page} /> */}
+                
             </div>
 
         );

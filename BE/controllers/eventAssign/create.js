@@ -4,9 +4,23 @@ const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
 const notifications = require("../../models/notifications")
 const Events = require('../../models/events');
+const { pick } = require("lodash")
+
+const constants = require("../../constants/actions")
+const Permission = require("../../helper/Permissions")
+
 const create = async (req, res) => {
   let sessions = []
   try {
+    //check permissson
+    let permissons = await Permission.getPermission(req.body.eventId, req.user._id, req.user.roleId._id)
+    if (!Permission.checkPermission(permissons, constants.QL_BANTOCHUC_PERMISSION)) {
+      return res.status(406).json({
+        success: false,
+        error: "Permission denied!"
+      })
+    }
+    // create
     const query = {
       $and: [
         { userId: req.body.userId },
@@ -15,14 +29,18 @@ const create = async (req, res) => {
       isDeleted: false
     } // for oldDocs
 
-    // Handle data
-    const { error, body } = handleBody(req.body) // for newDoc
-    if (error) {
-      return res.status(406).json({
-        success: false,
-        error: error
-      })
-    }
+    let body = []
+    req.body.data.forEach(element => {
+      let temp = {
+        ...pick(element,
+          "userId",
+          "eventId",
+          "roleId",
+          "facultyId"
+        )
+      }
+      body.push(temp)
+    });
 
     // Transactions
     let session = await startSession();
@@ -30,8 +48,8 @@ const create = async (req, res) => {
     sessions.push(session);
 
     // Create
-    const newDoc = await EventAssign.create(
-      [body],
+    const newDoc = await EventAssign.insertMany(
+      body,
       { session: session }
     )
 
@@ -46,8 +64,12 @@ const create = async (req, res) => {
     }
     // update Avail User
     const event = await Events.findOne({ _id: newDoc[0].eventId, isDeleted: false })
+    let data = [...event.availUser]
+    newDoc.forEach(e => {
+      data.push(e.userId.toString())
+    });
 
-    let data = [...event.availUser, newDoc[0].userId.toString()]
+
 
 
     const updated = await Events.findOneAndUpdate(
@@ -55,36 +77,50 @@ const create = async (req, res) => {
       { availUser: data },
       { new: true }
     )
-    // Success
-    await commitTransactions(sessions)
-    const doc = await EventAssign.findOne({ _id: newDoc[0]._id, isDeleted: false })
-      .populate("userId")
-      .populate("eventId")
-      .populate({ path: 'roleId', select: 'name' })
-      .populate({ path: 'userId', select: 'name phone email' })
-      .populate({ path: 'facultyId', select: 'name' })
-
-
 
     // start notification
     //prepare data
-    let body_notification = {}
-    body_notification.name = "Phân công"
-    body_notification.userId = newDoc[0].userId
-    body_notification.description = `Bạn được phân công vào sự kiện ${doc.eventId.name}`
-    body_notification.eventId = newDoc[0]._id
-
+    let temp_ListId = []
+    let list_noti = []
+    newDoc.forEach(e => {
+      let body_notification = {}
+      body_notification.name = "Phân công"
+      body_notification.userId = e.userId
+      body_notification.description = `Bạn được phân công vào sự kiện ${event.name}`
+      body_notification.eventId = e._id
+      list_noti.push(body_notification)
+      temp_ListId.push(e._id)
+    })
+    const doc = await EventAssign.find({ _id: { $in: temp_ListId }, isDeleted: false }, null, { session })
+      .populate("userId")
+      .populate("eventId")
+      .populate({ path: 'roleId', select: 'name' })
+      .populate({ path: 'userId', select: 'name phone email mssv' })
+      .populate({ path: 'facultyId', select: 'name' })
     //access DB
-    let created_notification = await notifications.create(
-      body_notification
+    let created_notification = await notifications.insertMany(
+      list_noti
     )
+
+    let list_userIdForNoti = created_notification.reduce((list, e) => {
+      list.push(e.userId)
+      return list;
+    }, [])
+
+    let result_notifications = await notifications.find({ _id: { $in: list_userIdForNoti } })
+      .populate({path:'userId',select:'push_notification_token'})
+
+
+
+    // Success
+    await commitTransactions(sessions)
     // done notification
 
     return res.status(200).json({
       success: true,
       data: doc,
       updated: updated,
-      notification: created_notification
+      notification: result_notifications
     });
   } catch (error) {
     await abortTransactions(sessions);

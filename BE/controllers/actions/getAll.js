@@ -8,30 +8,31 @@ const getAll = async (req, res) => {
   try {
 
     // let currentUser = { ...pick(req.body, "currentUser") }
-    let query = { ...pick(req.body, "eventId", "availUser"), isDeleted: false }
+    let query = { ...pick(req.body, "eventId", "availUser", "isClone"), isDeleted: false }
 
     let docs;
+
     if (!page || !limit) {
       docs = await Actions.find(query)
         .populate({ path: 'availUser', select: 'name photoUrl' })
-        .populate({ path: 'tagsId', select: 'name' })
+        .populate({ path: 'managerId', select: 'name photoUrl' })
+        .populate({ path: 'tagsId', select: 'name background color' })
         .populate({ path: 'facultyId', select: 'name' })
         .populate({ path: 'priorityId', select: 'name' })
         .populate({ path: 'eventId', select: 'name' })
         .populate({ path: 'actionTypeId', select: 'name' })
-        .populate("dependActionId")
     }
     else {
       docs = await Actions.find(query)
         .skip(limit * (page - 1))
         .limit(limit)
         .populate({ path: 'availUser', select: 'name photoUrl' })
-        .populate({ path: 'tagsId', select: 'name' })
+        .populate({ path: 'managerId', select: 'name photoUrl' })
+        .populate({ path: 'tagsId', select: 'name background color' })
         .populate({ path: 'facultyId', select: 'name' })
         .populate({ path: 'priorityId', select: 'name' })
         .populate({ path: 'eventId', select: 'name' })
         .populate({ path: 'actionTypeId', select: 'name' })
-        .populate("dependActionId")
     }
     return res.status(200).json({
       success: true,

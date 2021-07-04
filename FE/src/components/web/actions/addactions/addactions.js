@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Form, Input, message, Row, Select, Steps } from 'antd';
+import { Button, Col, DatePicker, Form, Input, message, Row, Select, Steps, TimePicker } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import axios from 'axios';
 import React, { Component } from 'react';
@@ -9,7 +9,11 @@ import {
 } from "@ant-design/icons";
 import Dragger from 'antd/lib/upload/Dragger';
 import { w3cwebsocket } from 'websocket';
-const client = new w3cwebsocket('ws://localhost:3001');
+import moment from 'moment'
+import * as PushNoti from '../../helper/pushNotification'
+import ApiFailHandler from '../../helper/ApiFailHandler'
+import { WebSocketServer } from '../../../env'
+const client = new w3cwebsocket(WebSocketServer);
 const { Step } = Steps;
 const { Option } = Select;
 const steps = [
@@ -43,9 +47,6 @@ class addactions extends Component {
 
     async componentDidMount() {
         this._isMounted = true;
-
-
-
         const [tags, priorities] = await trackPromise(Promise.all([
             axios.post('/api/action-tags/getAll', {}, {
                 headers: {
@@ -54,7 +55,10 @@ class addactions extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/action-priorities/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -62,7 +66,10 @@ class addactions extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]))
 
         if (tags !== null && priorities !== null) {
@@ -93,8 +100,8 @@ class addactions extends Component {
     onFinish_Form1 = async (e) => {
         let data = {
             ...e,
-            startDate: e['startDate'].toDate(),
-            endDate: e['endDate'].toDate(),
+            endTime: e.endTime.utc(true).toDate(),
+            endDate: e.endDate.utc(true).format('YYYY-MM-DD'),
             eventId: this.props.event._id
         }
 
@@ -108,7 +115,6 @@ class addactions extends Component {
             data1: data
         })
 
-        console.log('receive data', data)
         this.next()
     }
 
@@ -118,7 +124,6 @@ class addactions extends Component {
             ...e,
         }
 
-        console.log('receive data', data)
         await trackPromise(axios.post('/api/actions/start', data, {
             headers: {
                 'Authorization': { AUTH }.AUTH
@@ -127,18 +132,21 @@ class addactions extends Component {
             .then(res => {
                 message.success('Tạo thành công');
 
-                console.log(res.data.Notifications)
 
                 client.send(JSON.stringify({
                     type: "sendListNotifications",
                     notifications: res.data.Notifications
                 }))
-
-                this.props.done(res.data.action)
+                PushNoti.sendListPushNoti(res.data.Notifications)
+                let temp = res.data.action
+                temp.endTime = moment(temp.endTime).utcOffset(0)
+                temp.endDate = moment(temp.endDate).utcOffset(0)
+                
+                this.props.done(temp)
             })
             .catch(err => {
-                console.log(err)
                 message.error('Tạo thất bại');
+                ApiFailHandler(err.response?.data?.error)
             }))
     }
 
@@ -191,21 +199,22 @@ class addactions extends Component {
                                     <Col sm={24} md={8}>
                                         <Form.Item
                                             wrapperCol={{ sm: 24 }}
-                                            label="Bắt đầu"
-                                            rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
-                                            name="startDate"
+                                            label="Ngày kết thúc"
+                                            rules={[{ required: true, message: 'Cần chọn ngày kết thức!' }]}
+                                            name="endDate"
                                         >
-                                            <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày bắt đầu..." />
+                                            <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày kết thúc..." />
                                         </Form.Item>
                                     </Col>
                                     <Col sm={24} md={8}>
                                         <Form.Item
                                             wrapperCol={{ sm: 24 }}
-                                            label="Kết thúc"
-                                            rules={[{ required: true, message: 'Cần chọn ngày kết thức!' }]}
-                                            name="endDate"
+                                            label="Giờ kết thúc"
+                                            rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
+                                            name="endTime"
                                         >
-                                            <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày kết thúc..." />
+                                            {/* <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày bắt đầu..." /> */}
+                                            <TimePicker format="HH:mm" placeholder="Chọn giờ kết thúc"></TimePicker>
                                         </Form.Item>
                                     </Col>
                                     <Col sm={24} md={8}>
@@ -234,22 +243,22 @@ class addactions extends Component {
                                         action='/api/uploads'
                                         listType="picture"
                                         beforeUpload={file => {
-                                            if (file.type !== 'image/png') {
-                                                message.error(`${file.name} is not a png file`);
+                                            if (!['image/jpeg','image/png'].includes(file.type)) {
+                                                message.error(`${file.name} không phải dạng ảnh`);
                                             }
-                                            return file.type === 'image/png';
+                                            return ['image/jpeg','image/png'].includes(file.type);
                                         }}
                                         onChange={(info) => {
                                             // file.status is empty when beforeUpload return false
                                             if (info.file.status === 'done') {
-                                                message.success(`${info.file.response.url} file uploaded successfully`);
+                                                message.success(`${info.file.response.url} tải lên thành công`);
                                                 this.setState({
                                                     coverUrl: info.file.response.url
                                                 })
 
                                             }
                                             this.setState({
-                                                fileList: info.fileList.filter(file => { file.url = `api/images/${this.state.posterUrl}`; return !!file.status })
+                                                fileList: info.fileList.filter(file => { file.url = `${window.resource_url}${this.state.posterUrl}`; return !!file.status })
                                             })
 
                                         }}

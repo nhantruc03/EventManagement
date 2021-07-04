@@ -2,11 +2,11 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { AUTH } from '../../env'
 import { trackPromise } from 'react-promise-tracker';
-import { Message } from '../service/renderMessage';
 import { Content } from 'antd/lib/layout/layout';
-import { Breadcrumb, Button, Form, Input, Row } from 'antd';
+import { Breadcrumb, Button, Form, Input, message, Row } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
+import ApiFailHandler from '../helper/ApiFailHandler'
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -31,10 +31,12 @@ class edit extends Component {
                 }
             })
                 .then(res => {
-                    Message('Sửa thành công', true, this.props);
+                    message.success('Sửa thành công');
+                    this.props.history.goBack();
                 })
                 .catch(err => {
-                    Message('Sửa thất bại', false);
+                    message.error('Sửa thất bại');
+                    ApiFailHandler(err.response?.data?.error)
                 }))
     }
 
@@ -54,7 +56,10 @@ class edit extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
 
 
@@ -81,10 +86,10 @@ class edit extends Component {
                     < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }}>
                         <Breadcrumb separator=">">
                             <Breadcrumb.Item >
-                                <Link to="/listeventtypes">Sự kiện</Link>
+                                <Link to="/admin/listfaculties">Danh sách</Link>
                             </Breadcrumb.Item>
                             <Breadcrumb.Item>
-                                Chỉnh sửa sự kiện
+                                Chỉnh sửa ban
                             </Breadcrumb.Item>
                         </Breadcrumb>
                     </Row>

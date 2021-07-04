@@ -9,13 +9,11 @@ class page extends Component {
         return (
             <React.Fragment>
                 <Layout className="site-drawer-render-in-current-wrapper">
-                    {/* <SiderDemo /> */}
                     <SiderDemo />
                     <Layout className="site-layout">
                         <Header />
                         {React.cloneElement(this.props.children, { showDrawer: () => this.showDrawer() })}
                         <LoadingIndicator />
-                        {/* <div className="beforeend text-center" id="beforeend"></div> */}
                     </Layout>
                 </Layout>
             </React.Fragment>

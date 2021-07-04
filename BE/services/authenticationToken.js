@@ -7,7 +7,7 @@ const authenticateToken = async (req, res, next) => {
     process.env.ACCESS_TOKEN_KEY,
     async function (err, decoded) {
       if (err) {
-        return res.json({ success: false, error: err.message });
+        return res.status(409).json({ success: false, error: err.message });
       }
       const user = await mongoose
         .model("users")
@@ -21,7 +21,7 @@ const authenticateToken = async (req, res, next) => {
         req.user = user;
         req.role = user.roleId.name;
       } else {
-        return res.json({ success: false, error: "User not found" });
+        return res.status(409).json({ success: false, error: "User not found" });
       }
       next();
     }

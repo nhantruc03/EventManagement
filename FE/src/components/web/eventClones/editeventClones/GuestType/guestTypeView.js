@@ -6,6 +6,7 @@ import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
 import { AUTH } from '../../../../env'
 import Pagination from '../../../helper/Pagination';
+import ApiFailHandler from '../../../helper/ApiFailHandler'
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -47,6 +48,7 @@ class guestTypeView extends Component {
             })
             .catch(err => {
                 message.error('Sửa thất bại');
+                ApiFailHandler(err.response?.data?.error)
             }))
 
     }
@@ -113,6 +115,7 @@ class guestTypeView extends Component {
                 })
                 .catch(err => {
                     message.error('Thêm thất bại');
+                    ApiFailHandler(err.response?.data?.error)
                 }))
     }
 
@@ -142,6 +145,7 @@ class guestTypeView extends Component {
                 })
                 .catch(err => {
                     message.success('Xóa thất bại');
+                    ApiFailHandler(err.response?.data?.error)
                 }))
     }
     getlistpage = (SearchData) => {
@@ -164,12 +168,12 @@ class guestTypeView extends Component {
     render() {
         return (
             <div >
-                <Row>
+                <Row style={{ marginBottom: '20px' }}>
                     <Col span={20}>
                         <Search target="name" data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
                     </Col>
                     <Col span={4}>
-                        <Button className="add" style={{ float: "right" }} onClick={() => this.setModalVisible(true)}>Tạo loại khách mời</Button>
+                        <Button className="back" style={{ float: "right" }} onClick={() => this.setModalVisible(true)}>Tạo loại khách mời</Button>
                     </Col>
                 </Row>
                 <TableData deleteClick={(id) => this.deleteClick(id)} canDelete={this.props.canDelete} listFaculty={this.props.listFaculty} listRole={this.props.listRole} edit={(info) => this.edit(info)} data={this.getCurData(this.state.data)} />

@@ -37,7 +37,7 @@ const createMany = async (req, res) => {
         await body.forEach(async (e) => {
             if (e.password != null) {
                 e.password = await bcrypt.hashSync(e.password, 10);
-                
+
             }
         })
         //get List userBefore create
@@ -65,6 +65,7 @@ const createMany = async (req, res) => {
                         { phone: element.phone },
                         { email: element.email },
                         { username: element.username },
+                        { mssv: element.mssv }
                     ],
                     isDeleted: false
                 }, null, { session })

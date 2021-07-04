@@ -2,17 +2,19 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { AUTH } from '../../../env'
 import { trackPromise } from 'react-promise-tracker';
-import { Button, Table, Tooltip } from 'antd';
+import { Button, message, Popconfirm, Row, Table, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
+import Search from "../../helper/search";
 import {
     ToolOutlined,
     CloseOutlined,
     ZoomInOutlined,
 
 } from '@ant-design/icons';
-
 import moment from 'moment'
+import { Content } from 'antd/lib/layout/layout';
+import ApiFailHandler from '../../helper/ApiFailHandler'
 class list extends Component {
     constructor(props) {
         super(props);
@@ -40,16 +42,23 @@ class list extends Component {
                     title: 'Hành động',
                     dataIndex: '_id',
                     key: '_id',
-                    width: '30%',
+                    width: '15%',
                     render: (e) =>
-                        <div className="btn-group">
+                        <div className="btn-group" style={{ textAlign: 'center' }}>
                             <Tooltip title="Chỉnh sửa" arrow>
                                 <Link to={`/editscriptsclone/${e}`} >
                                     <Button className="add"><ToolOutlined /></Button>
                                 </Link>
                             </Tooltip>
                             <Tooltip title="Xóa" arrow>
-                                <Button onClick={() => this.deleteClick(e)} className="add" ><CloseOutlined /></Button>
+                                <Popconfirm
+                                    title="Bạn có chắc muốn xóa chứ?"
+                                    onConfirm={() => this.deleteClick(e)}
+                                    okText="Đồng ý"
+                                    cancelText="Hủy"
+                                >
+                                    <Button className="add" ><CloseOutlined /></Button>
+                                </Popconfirm>
                             </Tooltip>
                             <Tooltip title="Xem" arrow>
                                 <Link to={`/viewscriptsclone/${e}`} >
@@ -73,8 +82,11 @@ class list extends Component {
                 .then((res) =>
                     res.data.data
                 )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                })
         ]));
-        console.log(scripts)
+
         if (scripts !== null) {
             if (this._isMounted) {
                 this.setState({
@@ -100,15 +112,20 @@ class list extends Component {
     deleteClick = async (e) => {
         console.log(e)
         await trackPromise(
-            Axios.delete("/api/scripts/" + e, {
+            Axios.delete("/api/scripts/" + e + "?clone=true", {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
             })
                 .then((res) => {
+                    message.success('Xóa thành công')
                     this.setState({
-                        data: this.state.data.filter(o => o._id !== e)
+                        data: this.state.data.filter(o => o._id !== e),
+                        SearchData: this.state.SearchData.filter(o => o._id !== e)
                     })
+                })
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
                 })
         )
     }
@@ -116,13 +133,45 @@ class list extends Component {
         return Math.ceil(SearchData.length / this.state.postsPerPage);
     }
 
+    getSearchData = (data) => {
+        this.setState({
+            SearchData: data
+        })
+    }
+
     printData = () => {
         return (
-            <div className='mt-1'>
-                {this.state.data.length > 0 ?
-                    <Table className="scripts" pagination={this.getlistpage(this.state.data) > 1 ? { pageSize: this.state.postsPerPage } : false} showHeader={false} rowKey="_id" columns={this.state.columns} dataSource={this.state.data}></Table> : null
-                }
-            </div>
+            <Content>
+                <Row style={{ marginBottom: '20px' }}>
+                    <div style={{ width: '100%' }} className="flex-container-row">
+                        <Title
+                            id="home-top-header"
+                            level={2}
+                        >
+                            Kịch bản
+                    </Title>
+                        <div className="flex-row-item-right">
+                            <div className="flex-container-row">
+                                <Search
+                                    target={["name"]}
+                                    multi={true}
+                                    data={this.state.data}
+                                    getSearchData={(e) => this.getSearchData(e)}
+                                />
+                                <Button className="add" style={{ marginLeft: '20px' }}>
+                                    <Link to={`/addscriptsclone/${this.props.eventId}`}>Thêm kịch bản</Link>
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </Row>
+
+                <div style={{ padding: '30px' }}>
+                    {this.state.data.length > 0 ?
+                        <Table className="scripts" pagination={this.getlistpage(this.state.SearchData) > 1 ? { pageSize: this.state.postsPerPage } : false} showHeader={false} rowKey="_id" columns={this.state.columns} dataSource={this.state.SearchData}></Table> : null
+                    }
+                </div>
+            </Content>
         )
     }
 

@@ -1,4 +1,4 @@
-var AUTH= ''
+var AUTH = ''
 try {
     var login = localStorage.getItem('login');
     var obj = JSON.parse(login);
@@ -10,8 +10,8 @@ try {
 
 export { AUTH }
 
-const WebSocketServer = 'ws://localhost:3001'
-// const WebSocketServer = 'ws://backend:3001'
-// const WebSocketServer = 'wss://api-benhvien.herokuapp.com'
-export {WebSocketServer}
+// heroku deployed
+// const WebSocketServer = 'wss://back-e-e.herokuapp.com'
 
+const WebSocketServer = 'ws://localhost:3001'
+export { WebSocketServer }

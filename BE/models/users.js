@@ -9,6 +9,11 @@ const Users = new Schema(
       required: true,
       index: true
     },
+    mssv: {
+      type: String,
+      index: true,
+      unique: true
+    },
     roleId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "systemroles",
@@ -47,6 +52,7 @@ const Users = new Schema(
     photoUrl: {
       type: String,
       index: true,
+      default: "user_default.jpeg"
     },
     username: {
       type: String,
@@ -57,6 +63,10 @@ const Users = new Schema(
       type: String,
       required: true,
       minlength: 8
+    },
+    push_notification_token: {
+      type: String,
+      index: true
     },
     isDeleted: {
       type: Boolean,

@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Form, Image, Input, message, Row, Select } from 'antd';
+import { Button, Col, DatePicker, Form, Image, Input, message, Row, Select, TimePicker } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import Dragger from 'antd/lib/upload/Dragger';
 import React, { Component } from 'react';
@@ -10,7 +10,10 @@ import {
 import axios from 'axios';
 import moment from 'moment'
 import { w3cwebsocket } from 'websocket';
-const client = new w3cwebsocket('ws://localhost:3001');
+import * as PushNoti from '../../../helper/pushNotification'
+import ApiFailHandler from '../../../helper/ApiFailHandler'
+import { WebSocketServer } from '../../../../env'
+const client = new w3cwebsocket(WebSocketServer);
 const { Option } = Select;
 const formItemLayout = {
     labelCol: {
@@ -46,7 +49,10 @@ class editAction extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/action-tags/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -54,7 +60,10 @@ class editAction extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/action-priorities/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -62,7 +71,10 @@ class editAction extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/faculties/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -70,7 +82,10 @@ class editAction extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/action-types/getAll', { eventId: this.props.data.eventId._id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -78,13 +93,14 @@ class editAction extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]))
 
-        console.log(event)
 
         if (tags !== null && priorities !== null) {
-            console.log(event)
             this.setState({
                 event: event,
                 listTags: tags,
@@ -94,7 +110,6 @@ class editAction extends Component {
             })
         }
         // prepare init data
-        console.log('data', this.props.data)
         let temp_availUser = []
         this.props.data.availUser.forEach(e => {
             temp_availUser.push(e._id)
@@ -107,12 +122,12 @@ class editAction extends Component {
         let data = {
             ...this.props.data,
             facultyId: this.props.data.facultyId._id,
-            managerId: this.props.manager.userId._id,
+            managerId: this.props.manager?._id,
             actionTypeId: this.props.data.actionTypeId._id,
             availUser: temp_availUser,
             tagsId: temp_tagsId,
-            startDate: moment(this.props.data.startDate),
-            endDate: moment(this.props.data.endDate),
+            endTime: moment(this.props.data.endTime).utcOffset(0),
+            endDate: moment(this.props.data.endDate).utcOffset(0),
             priorityId: this.props.data.priorityId._id,
             coverUrl: undefined
         }
@@ -131,7 +146,10 @@ class editAction extends Component {
             ...e,
             coverUrl: this.state.coverUrl,
             eventId: this.props.data.eventId._id,
+            endTime: e.endTime.utc(true).toDate(),
+            endDate: e.endDate.utc(true).format('YYYY-MM-DD')
         }
+        console.log(data)
         let managerId_change = false
         if (data.managerId !== this.state.data.managerId) {
             managerId_change = true
@@ -159,8 +177,7 @@ class editAction extends Component {
 
                     let temp_Action = res.data.data
                     let temp_actionAssign = res.data.actionAssign.filter(e => e.role === 2)
-                    let temp_manager = res.data.actionAssign.filter(e => e.role === 1)[0]
-                    console.log('temp_manager', temp_manager)
+                    let temp_manager = res.data.data.managerId
                     // prepare init data
                     let temp_availUser = []
                     temp_Action.availUser.forEach(e => {
@@ -175,12 +192,12 @@ class editAction extends Component {
                     let data = {
                         ...temp_Action,
                         facultyId: temp_Action.facultyId._id,
-                        managerId: temp_manager.userId._id,
+                        managerId: temp_manager._id,
                         actionTypeId: temp_Action.actionTypeId._id,
                         availUser: temp_availUser,
                         tagsId: temp_tagsId,
-                        startDate: moment(temp_Action.startDate),
-                        endDate: moment(temp_Action.endDate),
+                        endTime: moment(temp_Action.endTime).utcOffset(0),
+                        endDate: moment(temp_Action.endDate).utcOffset(0),
                         priorityId: temp_Action.priorityId._id,
                         coverUrl: undefined
                     }
@@ -193,14 +210,16 @@ class editAction extends Component {
                         type: "sendListNotifications",
                         notifications: res.data.notifications
                     }))
+
+                    PushNoti.sendListPushNoti(res.data.notifications)
+
                     this.props.update(temp_Action, temp_manager, temp_actionAssign)
 
                 })
                 .catch(err => {
-                    console.log(err)
                     message.error('Cập nhật thất bại');
+                    ApiFailHandler(err.response?.data?.error)
                 }))
-        // console.log(data)
     }
 
     renderView = () => {
@@ -257,21 +276,21 @@ class editAction extends Component {
                                 <Col span={12}>
                                     <Form.Item
                                         wrapperCol={{ sm: 24 }}
-                                        label="Bắt đầu"
-                                        rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
-                                        name="startDate"
+                                        label="Ngày kết thúc"
+                                        rules={[{ required: true, message: 'Cần chọn ngày kết thức!' }]}
+                                        name="endDate"
                                     >
-                                        <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày bắt đầu..." />
+                                        <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày kết thúc..." />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item
                                         wrapperCol={{ sm: 24 }}
-                                        label="Kết thúc"
-                                        rules={[{ required: true, message: 'Cần chọn ngày kết thức!' }]}
-                                        name="endDate"
+                                        label="Giờ kết thúc"
+                                        rules={[{ required: true, message: 'Cần giờ kết thúc!' }]}
+                                        name="endTime"
                                     >
-                                        <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày kết thúc..." />
+                                        <TimePicker format="HH:mm" placeholder="Chọn giờ kết thúc"></TimePicker>
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -364,7 +383,7 @@ class editAction extends Component {
                     </Row>
                     <Row>
                         <Col span={12}>
-                            <Image style={{ maxHeight: '170px' }} src={`/api/images/${this.state.coverUrl}`}></Image>
+                            <Image style={{ maxHeight: '170px' }} src={`${window.resource_url}${this.state.coverUrl}`}></Image>
                         </Col>
                         <Col span={12}>
                             <Form.Item
@@ -378,15 +397,16 @@ class editAction extends Component {
                                     listType="picture"
                                     showUploadList={false}
                                     beforeUpload={file => {
-                                        if (file.type !== 'image/png') {
-                                            message.error(`${file.name} is not a png file`);
+                                        console.log(file.type)
+                                        if (!['image/jpeg','image/png'].includes(file.type)) {
+                                            message.error(`${file.name} không phải dạng ảnh`);
                                         }
-                                        return file.type === 'image/png';
+                                        return ['image/jpeg','image/png'].includes(file.type);
                                     }}
                                     onChange={(info) => {
                                         // file.status is empty when beforeUpload return false
                                         if (info.file.status === 'done') {
-                                            message.success(`${info.file.response.url} file uploaded successfully`);
+                                            message.success(`${info.file.response.url} tải lên thành công`);
                                             this.setState({
                                                 coverUrl: info.file.response.url
                                             })
@@ -403,14 +423,9 @@ class editAction extends Component {
                             </Form.Item>
                         </Col>
                         <div style={{ textAlign: 'center', width: '100%' }}>
-                            <Button style={{ width: '20%' }} htmlType="submit" className="back">Hủy</Button>
+                            <Button style={{ width: '20%' }} onClick={this.props.onClose} className="back">Hủy</Button>
                             <Button style={{ marginLeft: '20px', width: '20%' }} htmlType="submit" className="add">Cập nhật</Button>
                         </div>
-                        {/* <div className="flex-container-row" style={{ marginTop: '20px' }}>
-                            <div className="flex-row-item-right">
-                                <Button htmlType="submit" className="add">Cập nhật</Button>
-                            </div>
-                        </div> */}
                     </Row>
                 </Form>
             )

@@ -9,6 +9,16 @@ const Tags = new Schema(
             required: true,
             index: true
         },
+        background: {
+            type: String,
+            required: true,
+            index: true
+        },
+        color: {
+            type: String,
+            required: true,
+            index: true
+        },
         isDeleted: {
             type: Boolean,
             required: true,

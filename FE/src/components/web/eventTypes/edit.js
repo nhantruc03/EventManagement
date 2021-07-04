@@ -6,6 +6,7 @@ import { Content } from 'antd/lib/layout/layout';
 import { Breadcrumb, Button, Form, Input, message, Row } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
+import ApiFailHandler from '../helper/ApiFailHandler'
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -31,11 +32,13 @@ class edit extends Component {
             })
                 .then(res => {
                     message.success('Cập nhật thành công')
+                    this.props.history.goBack();
                     // Message('Sửa thành công', true, this.props);
                 })
                 .catch(err => {
                     message.error('Cập nhật thành công')
                     // Message('Sửa thất bại', false);
+                    ApiFailHandler(err.response?.data?.error)
                 }))
     }
 
@@ -55,7 +58,10 @@ class edit extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
 
 
@@ -82,10 +88,10 @@ class edit extends Component {
                     < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }}>
                         <Breadcrumb separator=">">
                             <Breadcrumb.Item >
-                                <Link to="/listeventtypes">Sự kiện</Link>
+                                <Link to="/admin/listeventtypes">Danh sách</Link>
                             </Breadcrumb.Item>
                             <Breadcrumb.Item>
-                                Chỉnh sửa sự kiện
+                                Chỉnh sửa hình thức sự kiện
                             </Breadcrumb.Item>
                         </Breadcrumb>
                     </Row>

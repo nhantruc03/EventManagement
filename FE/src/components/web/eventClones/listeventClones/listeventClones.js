@@ -8,6 +8,7 @@ import { trackPromise } from 'react-promise-tracker';
 import { AUTH } from '../../../env'
 import axios from 'axios';
 import EventCard from './eventCardClones';
+import ApiFailHandler from '../../helper/ApiFailHandler'
 class listevents extends Component {
     constructor(props) {
         super(props);
@@ -28,6 +29,9 @@ class listevents extends Component {
                 .then((res) =>
                     res.data.data
                 )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                })
         ]));
 
         if (events !== null) {
@@ -82,12 +86,12 @@ class listevents extends Component {
                 </Row>
 
                 <Row>
-                    <Col sm={24} lg={8} style={{ padding: 20 }}>
-                        {/* <Title level={3}>Sắp diễn ra</Title> */}
-                        {this.state.SearchData.map((value, key) =>
-                            <EventCard data={value} key={key} />
-                        )}
-                    </Col>
+                    {/* <Title level={3}>Sắp diễn ra</Title> */}
+                    {this.state.SearchData.map((value, key) =>
+                        <Col sm={24} lg={8} key={key} style={{ padding: 20 }}>
+                            <EventCard data={value} />
+                        </Col>
+                    )}
                 </Row>
 
             </Content>

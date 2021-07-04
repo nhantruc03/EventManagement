@@ -40,9 +40,10 @@ class EditRow extends Component {
 
     componentDidMount() {
         console.log(this.props.data)
+        console.log(this.props.guestTypeId)
         let data = {
             ...this.props.data,
-            'guestTypeId': this.props.guestTypeId
+            'guestTypeId': this.props.data.guestTypeId._id
         }
         this.form.current.setFieldsValue(data)
     }

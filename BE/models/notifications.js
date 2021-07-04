@@ -20,6 +20,11 @@ const notifications = new Schema(
             ref: "events",
             index: true,
         },
+        scriptId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "scripts",
+            index: true,
+        },
         name: {
             type: String,
             index: true,
@@ -29,6 +34,12 @@ const notifications = new Schema(
             type: String,
             index: true,
             required: true,
+        },
+        watch: {
+            type: Boolean,
+            required: true,
+            default: false,
+            index: true
         },
         status: {
             type: Boolean,

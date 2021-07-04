@@ -9,12 +9,9 @@ const update = async (req, res) => {
   try {
     // Check owner:  not admin && not owner => out
     const user = await Users
-        .findOne({ _id: req.user._id, isDeleted: false })
-        .populate({ path: 'roleId', select: 'name' })
-    // const role = await Credentials
-    //   .findOne({ userId: req.user._id, isDeleted: false })
-    //   .populate({ path: 'roleId', select: 'name' })
-    
+      .findOne({ _id: req.user._id, isDeleted: false })
+      .populate({ path: 'roleId', select: 'name' })
+      
     if (user.roleId.name !== "Admin" && req.user._id !== req.params.id) {
       return res.status(406).json({
         success: false,
@@ -28,6 +25,7 @@ const update = async (req, res) => {
         { phone: req.body.phone },
         { email: req.body.email },
         { username: req.body.username },
+        { mssv: req.body.mssv }
       ],
       isDeleted: false
     }

@@ -3,7 +3,7 @@ import { Pagination } from 'antd';
 class Paginations extends Component {
     renderRow = () => {
         return (
-            <Pagination className="flex-row-item-right" defaultCurrent={2} defaultPageSize={this.props.PageSize} total={this.props.totalPosts} onChange={(e) => this.props.paginate(e)} />
+            <Pagination className="flex-row-item-right" pageSize={this.props.PageSize} total={this.props.totalPosts} onChange={(e) => this.props.paginate(e)} />
         )
     }
     render() {

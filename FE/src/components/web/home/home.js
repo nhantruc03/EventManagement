@@ -9,7 +9,7 @@ import EventMiniCard from './EventMiniCard/EventMiniCard';
 import { Link } from 'react-router-dom';
 import ActionItem from './ActionItem/ActionItem';
 import CalendarSection from './CalendarSection/CalendarSection'
-
+import ApiFailHandler from '../helper/ApiFailHandler'
 class home extends Component {
     constructor(props) {
         super(props);
@@ -34,16 +34,23 @@ class home extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
-            axios.post('/api/actions/getAll', { availUser: obj.id }, {
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
+            axios.post('/api/actions/getAll', { availUser: obj.id, isClone:false }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
+        console.log(actions)
 
         if (events !== null) {
             if (this._isMounted) {
@@ -98,9 +105,13 @@ class home extends Component {
     renderEventCard1 = () => {
         return (
             this.state.listForCarousel.slice(0, 2).map((e, key) => {
+                let onGoing = false
+                if (this.state.event_ongoing.includes(e)) {
+                    onGoing = true
+                }
                 return (
-                    <Col key={key} sm={24} xl={12} style={{ padding: '10px' }}>
-                        <EventMiniCard onGoing={true} data={e} key={key} />
+                    <Col key={key} xs={24} sm={24} xl={12} style={{ padding: '10px' }}>
+                        <EventMiniCard onGoing={onGoing} data={e} key={key} />
                     </Col>
                 )
             }))
@@ -108,9 +119,13 @@ class home extends Component {
     renderEventCard2 = () => {
         return (
             this.state.listForCarousel.slice(2, 4).map((e, key) => {
+                let onGoing = false
+                if (this.state.event_ongoing.includes(e)) {
+                    onGoing = true
+                }
                 return (
-                    <Col key={key} sm={24} xl={12} style={{ padding: '10px' }}>
-                        <EventMiniCard onGoing={true} data={e} key={key} />
+                    <Col key={key} xs={24} sm={24} xl={12} style={{ padding: '10px' }}>
+                        <EventMiniCard onGoing={onGoing} data={e} key={key} />
                     </Col>
                 )
             }))
@@ -128,39 +143,36 @@ class home extends Component {
                                 level={3}
                             >
                                 Trang chủ
-                                    </Title>
+                            </Title>
                         </div>
                         <Row>
-                            <Col sm={24} xl={16}>
+                            <Col xs={24} sm={24} xl={16}>
                                 <Row className="status-event-row">
-                                    <Col sm={24} md={8}>
+                                    <Col xs={24} sm={24} xl={8}>
                                         <div className="flex-container-row status-event-card">
                                             <p className="status-event-number">{this.state.event_ongoing.length}</p>
                                             <div className="status-event-info">
                                                 <p>Sự kiện</p>
                                                 <p>Đang diễn ra</p>
                                             </div>
-                                            {/* <img className="flex-row-item-right" src="/event-ongoing.png" /> */}
                                         </div>
                                     </Col>
-                                    <Col sm={24} md={8}>
+                                    <Col xs={24} sm={24} xl={8}>
                                         <div className="flex-container-row status-event-card">
                                             <p className="status-event-number">{this.state.event_future.length}</p>
                                             <div className="status-event-info">
                                                 <p>Sự kiện</p>
                                                 <p>Sắp diễn ra</p>
                                             </div>
-                                            {/* <img className="flex-row-item-right" src="/event-future.png" /> */}
                                         </div>
                                     </Col>
-                                    <Col sm={24} md={8}>
+                                    <Col xs={24} sm={24} xl={8}>
                                         <div className="flex-container-row status-event-card">
                                             <p className="status-event-number">{this.state.event_past.length}</p>
                                             <div className="status-event-info">
                                                 <p>Sự kiện</p>
                                                 <p>Đã kết thúc</p>
                                             </div>
-                                            {/* <img className="flex-row-item-right" src="/event-done.png" /> */}
                                         </div>
                                     </Col>
                                 </Row>
@@ -170,7 +182,7 @@ class home extends Component {
                                         <Link className="flex-row-item-right" to="/events">Xem tất cả</Link>
                                     </div>
 
-                                    <Col lg={24}>
+                                    <Col xl={24}>
                                         <Carousel autoplay={false}>
                                             <div >
                                                 <Row>
@@ -185,8 +197,8 @@ class home extends Component {
                                         </Carousel>
                                     </Col>
                                 </Row>
-                                <Row>
-                                    <Col sm={24} lg={12} style={{ padding: '10px' }}>
+                                <Row style={{ height: '48%' }}>
+                                    <Col span={24} style={{ padding: '10px', height: '100%' }}>
                                         <div className="flex-container-row" style={{ width: '100%' }}>
                                             <Title level={3}>Công việc</Title>
                                             <Link className="flex-row-item-right" to="/actions">Xem tất cả</Link>
@@ -195,13 +207,10 @@ class home extends Component {
                                             {this.renderListAction()}
                                         </div>
                                     </Col>
-                                    <Col sm={24} lg={12}>
-
-                                    </Col>
                                 </Row>
                             </Col>
-                            <Col sm={24} xl={8}>
-                                <div style={{ padding: '10px', height: '100%' }}>
+                            <Col xs={24} sm={24} xl={8}>
+                                <div style={{ padding: '5px 10px', height: '100%' }}>
                                     <CalendarSection listActions={this.state.actions} />
                                 </div>
 

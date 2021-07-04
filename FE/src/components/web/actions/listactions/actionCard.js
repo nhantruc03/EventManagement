@@ -1,4 +1,4 @@
-import { Avatar, Card, Col, Row, Tag, Tooltip } from 'antd';
+import { Avatar, Card, Col, Image, Row, Tag, Tooltip } from 'antd';
 import React, { Component } from 'react';
 import moment from 'moment';
 import {
@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
 import { AUTH } from '../../../env'
+import ApiFailHandler from '../../helper/ApiFailHandler'
 const { Meta } = Card;
 
 class actionCard extends Component {
@@ -17,16 +18,16 @@ class actionCard extends Component {
         this.state = {
             completeSubAction: [],
             totalSubAction: [],
-            resources: []
+            resources: [],
+            showImage: false
         }
     }
     renderAvailUser = () => {
         return (
             this.props.data.availUser.map((value, key) => {
-                // console.log(value.photoUrl)
                 return (
                     <Tooltip title={value.name} placement="top" key={key}>
-                        <Avatar src={`api/images/${value.photoUrl}`} />
+                        <Avatar src={`${window.resource_url}${value.photoUrl}`} />
                     </Tooltip >
                 )
             })
@@ -44,7 +45,10 @@ class actionCard extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/action-resources/getAll', { actionId: this.props.data._id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -52,7 +56,10 @@ class actionCard extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
 
 
@@ -78,25 +85,35 @@ class actionCard extends Component {
             }
         }
     }
+
     componentWillUnmount() {
         this._isMounted = false;
     }
+
+    mouseHover = (value) => {
+        this.setState({
+            showImage: value
+        })
+    }
+
     render() {
         return (
             <div className="event-card-container">
-                <Link to={`/actions/${this.props.data._id}`}>
-                    <Card
-                        hoverable
-                        className="eventCard"
-                        cover={<img className="cover" alt="example" src={`api/images/${this.props.data.coverUrl}`} />}
 
-                    >
+                <Card
+                    hoverable
+                    className="eventCard"
+                    cover={this.state.showImage ? <Image className="cover" alt="example" src={`${window.resource_url}${this.props.data.coverUrl}`} /> : null}
+                    onMouseEnter={() => this.mouseHover(true)}
+                    onMouseLeave={() => this.mouseHover(false)}
+                >
+                    <Link to={`/actions/${this.props.data._id}`}>
                         <Tooltip title={this.props.data.description} placement="top">
                             <Meta title={this.props.data.name} />
                         </Tooltip>
 
                         <Row >
-                            <img style={{ marginRight: '20px' }} alt="clock icon" src="/clock.png" />  {moment(this.props.data.startTime).format('DD/MM/YYYY')} - {moment(this.props.data.startDate).format('DD/MM/YYYY')}
+                            <img style={{ marginRight: '20px' }} alt="clock icon" src="/clock.png" />  {moment(this.props.data.endDate).utcOffset(0).format('DD/MM/YYYY')} - {moment(this.props.data.endTime).utcOffset(0).format('HH:mm')}
                         </Row>
 
                         <Row>
@@ -108,16 +125,10 @@ class actionCard extends Component {
                                 <p >{this.state.completeSubAction.length}/{this.state.totalSubAction.length}</p>
                             </div>
                         </Row>
-                        {/* 
-                        <div className="flex-container-row" style={{ marginTop: '10px' }}>
-                            <div>Độ ưu tiên</div>
-                            <div className="flex-row-item-right">{this.props.data.priorityId.name}</div>
-                        </div> */}
-
 
                         <Row className="eventCardFooter">
                             <div style={{ width: '100%' }} className="flex-container-row">
-                                {this.props.data.tagsId.map((value, key) => <Tag style={{ width: 'auto' }} key={key}>{value.name}</Tag>)}
+                                {this.props.data.tagsId.map((value, key) => <Tag style={{ width: 'auto', background: value.background, color: value.color }} key={key}>{value.name}</Tag>)}
                                 <Avatar.Group
                                     className="flex-row-item-right"
                                     maxCount={2}
@@ -133,9 +144,10 @@ class actionCard extends Component {
                             <Col span={4}>
                             </Col>
                         </Row>
-                    </Card>
-                </Link>
-            </div>
+                    </Link>
+                </Card>
+
+            </div >
         );
     }
 }

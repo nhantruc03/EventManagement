@@ -74,7 +74,7 @@ class addGuest extends Component {
     render() {
         return (
             <div>
-                <Row >
+                <Row style={{ marginBottom: 20 }}>
                     <Col span={20}>
                         <Search target={["name", "phone", "email"]} multi={true} data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
                     </Col>

@@ -3,11 +3,10 @@ import React, { Component } from 'react';
 import ScriptItem from './item'
 class list extends Component {
     printData = (data) => {
-
         return (
             data.map((e, key) => {
                 return (
-                    <ScriptItem data={e} key={key} onUpdate={this.props.onUpdate} onDelete={this.props.onDelete} />
+                    <ScriptItem onAdd={this.props.onAdd} data={e} key={key} onUpdate={this.props.onUpdate} onDelete={this.props.onDelete} />
                 )
             })
         )
@@ -16,8 +15,10 @@ class list extends Component {
     render() {
         return (
             <div style={{ width: '90%' }}>
-                {this.printData(this.props.data)}
-                <Button onClick={this.props.onAdd} className="add-btn-scripdetail">
+                <div className="list-script-details">
+                    {this.printData(this.props.data)}
+                </div>
+                <Button onClick={this.props.onAddWithoutApi} className="add-btn-scripdetail">
                     +
                 </Button>
             </div>

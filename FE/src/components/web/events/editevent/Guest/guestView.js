@@ -6,6 +6,7 @@ import { AUTH } from '../../../../env'
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
 import Pagination from '../../../helper/Pagination';
+import ApiFailHandler from '../../../helper/ApiFailHandler'
 class guestView extends Component {
     constructor(props) {
         super(props);
@@ -40,7 +41,6 @@ class guestView extends Component {
                     }
                 });
 
-                console.log(temp_data)
 
                 // cap nhat du lieu
                 this.setState({
@@ -52,6 +52,7 @@ class guestView extends Component {
             })
             .catch(err => {
                 message.error('Sửa thất bại');
+                ApiFailHandler(err.response?.data?.error)
             }))
 
 
@@ -77,7 +78,8 @@ class guestView extends Component {
                     message.success('Xóa thành công');
                 })
                 .catch(err => {
-                    message.success('Xóa thất bại');
+                    message.error('Xóa thất bại');
+                    ApiFailHandler(err.response?.data?.error)
                 }))
     }
 
@@ -110,6 +112,7 @@ class guestView extends Component {
                     })
                     .catch(err => {
                         message.err('Tạo thất thất bại');
+                        ApiFailHandler(err.response?.data?.error)
                     }))
         }
     }
@@ -144,18 +147,18 @@ class guestView extends Component {
     render() {
         return (
             <div>
-                <Row >
+                <Row style={{ marginBottom: '20px' }}>
                     <Col span={20}>
                         <Search target={["name", "phone", "email"]} multi={true} data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
                     </Col>
                     <Col span={4}>
-                        <Button className="add" style={{ float: "right" }} onClick={() => this.TaoKM()}>Tạo khách mời</Button>
+                        <Button className="back" style={{ float: "right" }} onClick={() => this.TaoKM()}>Tạo khách mời</Button>
                     </Col>
                 </Row>
                 <TableData guestTypeId={this.props.guestTypeId} canDelete={this.props.canDelete} listguesttype={this.props.listguesttype} edit={(info) => this.edit(info)} deleteClick={(id) => this.deleteClick(id)} data={this.state.data} />
                 {this.getlistpage(this.state.data) > 1 ?
                     <Pagination
-                        totalPosts={this.getlistpage(this.state.data)}
+                        totalPosts={this.state.data.length}
                         paginate={(e) => this.paginate(e)}
                         PageSize={this.state.postsPerPage}
                     /> :

@@ -6,6 +6,7 @@ import { Content } from 'antd/lib/layout/layout';
 import { Breadcrumb, Button, Form, Input, message, Row } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
+import ApiFailHandler from '../helper/ApiFailHandler'
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -37,10 +38,12 @@ class updatePass extends Component {
             })
                 .then(res => {
                     message.success('Cập nhật thành công')
+                    this.goBack()
                     // Message('Sửa thành công', true, this.props);
                 })
                 .catch(err => {
                     message.error('Cập nhật thất bại')
+                    ApiFailHandler(err.response?.data?.error)
                     // Message('Sửa thất bại', false);
                 }))
     }
@@ -52,7 +55,7 @@ class updatePass extends Component {
     }
 
     goBack = () => {
-        this.props.history.goBack();
+        this.props.history.push("/");
     }
     render() {
         return (

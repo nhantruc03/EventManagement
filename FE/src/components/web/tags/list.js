@@ -5,9 +5,9 @@ import Search from '../helper/search';
 import { AUTH } from '../../env'
 import { trackPromise } from 'react-promise-tracker';
 import { Content } from 'antd/lib/layout/layout';
-import { Button, Table } from 'antd';
+import { Button, Popconfirm, Table, Tag } from 'antd';
 import Title from 'antd/lib/typography/Title';
-
+import ApiFailHandler from '../helper/ApiFailHandler'
 class list extends Component {
     constructor(props) {
         super(props);
@@ -18,7 +18,10 @@ class list extends Component {
             listPage: [],
             SearchData: [],
             columns: [
-                { title: 'Tên', dataIndex: 'name', key: 'name' },
+                {
+                    title: 'Tên', dataIndex: '', key: 'k',
+                    render: (e) => <Tag style={{ background: e.background, color: `${e.color}` }}>{e.name}</Tag>
+                },
                 {
                     title: 'Hành động',
                     dataIndex: '',
@@ -31,8 +34,15 @@ class list extends Component {
 
     renderAction = (e) =>
         <div className="center">
-            <Button className="add"><Link to={`/edittags/${e._id}`}>Sửa</Link></Button >
-            <Button className="back" onClick={() => this.onDelete(e)}>Xoá</Button>
+            <Button className="add"><Link to={`/admin/edittags/${e._id}`}>Sửa</Link></Button >
+            <Popconfirm
+                title="Bạn có chắc muốn xóa chứ?"
+                onConfirm={() => this.onDelete(e)}
+                okText="Đồng ý"
+                cancelText="Hủy"
+            >
+                <Button className="back" >Xoá</Button>
+            </Popconfirm>
         </div>
 
     async componentDidMount() {
@@ -46,9 +56,11 @@ class list extends Component {
                 .then((res) =>
                     res.data.data
                 )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                })
         ]));
 
-        console.log(users)
         if (users !== null) {
             if (this._isMounted) {
                 this.setState({
@@ -83,6 +95,9 @@ class list extends Component {
                         SearchData: this.state.data.filter(o => o._id !== e._id)
                     })
                 }))
+            .catch(err => {
+                ApiFailHandler(err.response?.data?.error)
+            })
 
     }
 
@@ -90,10 +105,10 @@ class list extends Component {
         return (
             <div >
                 <Title level={4}>Danh sách Tags</Title>
-                <div className="flex-container-row">
+                <div className="flex-container-row" style={{ marginBottom: 20 }}>
                     <Search target="name" data={this.state.data} getSearchData={(e) => this.getSearchData(e)} />
                     <Button className="flex-row-item-right add">
-                        <Link to={`/addtags`} >
+                        <Link to={`/admin/addtags`} >
                             <div className="btn btn-createnew">Tạo mới</div>
                         </Link>
                     </Button>

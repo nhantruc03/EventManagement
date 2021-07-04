@@ -8,6 +8,7 @@ import {
 } from '@ant-design/icons';
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
+import ApiFailHandler from '../../../helper/ApiFailHandler'
 class listGuest extends Component {
     constructor(props) {
         super(props);
@@ -40,7 +41,7 @@ class listGuest extends Component {
     }
 
     changeStatus = async (e) => {
-        await trackPromise(axios.put('/api/guests/' + e._id, { name: e.name, guestTypeId: e.guestTypeId, status: !e.status }, {
+        await trackPromise(axios.put('/api/guests/' + e._id, { status: !e.status, guestTypeId: e.guestTypeId._id }, {
             headers: {
                 'Authorization': { AUTH }.AUTH
             }
@@ -60,8 +61,9 @@ class listGuest extends Component {
                 console.log(temp_data)
                 message.success(`Trạng thái của khách mời ${e.name} cập nhật thành công`);
             })
-            .catch(() => {
+            .catch(err => {
                 message.error(`Trạng thái của khách mời ${e.name} cập nhật thất bại`);
+                ApiFailHandler(err.response?.data?.error)
             }))
 
     }
@@ -85,7 +87,7 @@ class listGuest extends Component {
     render() {
         return (
             <div>
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
                     <Search multi={true} target={["name", "phone", "email"]} data={this.state.data} getSearchData={(e) => this.getSearchData1(e)} />
                 </div>
                 <Table

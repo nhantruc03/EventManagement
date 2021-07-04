@@ -30,6 +30,8 @@ import AddTagType from "./add_TagType";
 import GuestView from "./forGuest/guestView";
 import EventAssignView from "./EventAssign/EventAssignView";
 import { Link } from "react-router-dom";
+import * as XLSX from 'xlsx'
+import ApiFailHandler from '../../helper/ApiFailHandler'
 const { Option } = Select;
 const { TabPane } = Tabs;
 const formItemLayout = {
@@ -62,6 +64,7 @@ class addevents extends Component {
             listRole: [],
             listFaculty: [],
         }
+        this.selectedFile = React.createRef();
     }
 
     addusertoevent = (e) => {
@@ -104,7 +107,6 @@ class addevents extends Component {
     }
 
     updateEventAssign = (e) => {
-        console.log(e)
         this.setState({
             listEventAssign: e
         })
@@ -120,7 +122,10 @@ class addevents extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/event-types/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -128,7 +133,10 @@ class addevents extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/tags/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -136,7 +144,10 @@ class addevents extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/faculties/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -144,7 +155,10 @@ class addevents extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/roles/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -153,12 +167,14 @@ class addevents extends Component {
                 .then((res) =>
                     res.data.data
                 )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                })
         ]));
 
 
         if (users !== null && eventTypes !== null && tags !== null && roles !== null && faculties !== null) {
             if (this._isMounted) {
-                console.log(users)
                 this.setState({
                     listRole: roles,
                     listFaculty: faculties,
@@ -175,7 +191,7 @@ class addevents extends Component {
 
 
 
-    
+
     goBack = (e) => {
         e.preventDefault();
         this.props.history.goBack();
@@ -194,8 +210,8 @@ class addevents extends Component {
         let data = {
             ...values,
             'availUser': this.state.listusersforevent.reduce((a, o) => { a.push(o._id); return a }, []),
-            'startDate': values['startDate'].format('YYYY-MM-DD'),
-            'startTime': values['startTime'].toDate(),
+            'startDate': values['startDate'].utc(true).format('YYYY-MM-DD'),
+            'startTime': values['startTime'].utc(true).toDate(),
             // .toDate
             'posterUrl': values['posterUrl'].fileList[0].response.url,
             'guestTypes': this.state.listguesttype,
@@ -204,7 +220,6 @@ class addevents extends Component {
             'eventAssigns': temp_listEventAssign
         }
 
-        console.log('Received values of form: ', data);
 
         await trackPromise(axios.post('/api/events/start', data, {
             headers: {
@@ -213,9 +228,11 @@ class addevents extends Component {
         })
             .then(res => {
                 message.success('Tạo thành công');
+                this.props.history.goBack()
             })
             .catch(err => {
                 message.error('Tạo thất bại');
+                ApiFailHandler(err.response?.data?.error)
             }))
     };
 
@@ -231,7 +248,6 @@ class addevents extends Component {
 
     updatelistguesttype = (values) => {
         let temp = this.state.listguest.filter(e => values.includes(e.guestTypeName))
-        console.log('after delete', temp)
         this.setState({
             listguesttype: values,
             listguest: temp
@@ -251,6 +267,7 @@ class addevents extends Component {
     renderModel = () => {
         return (
             <SelectUser
+                canDelete={true}
                 removeuserfromevent={(e) => this.removeuserfromevent(e)}
                 addusertoevent={(e) => this.addusertoevent(e)}
                 listusers={this.state.listusers}
@@ -272,7 +289,6 @@ class addevents extends Component {
     }
 
     finishaddguesttype = (values) => {
-        console.log(values)
         values._id = uuidv1();
         this.setState({
             listguesttype: [...this.state.listguesttype, values]
@@ -281,6 +297,93 @@ class addevents extends Component {
         this.setModal2Visible3(false)
     }
 
+
+    uploadExcelFile = (file) => {
+        const promise = new Promise((resolve, reject) => {
+
+            const fileReader = new FileReader();
+
+            fileReader.readAsArrayBuffer(file)
+            fileReader.onload = (e) => {
+                const bufferArray = e.target.result
+
+                const wb = XLSX.read(bufferArray, { type: 'buffer' });
+
+                const wsname = wb.SheetNames[0]
+
+                const ws = wb.Sheets[wsname]
+
+                const data = XLSX.utils.sheet_to_json(ws)
+
+                resolve(data)
+            }
+            fileReader.onerror = (err) => {
+                reject(err)
+            }
+        })
+
+        promise.then((result) => {
+            let temp_list_user = []
+            result.forEach(e => {
+                temp_list_user.push(e.mssv.toString())
+            })
+
+            let temp = this.state.listusers.filter(e => temp_list_user.includes(e.mssv))
+            let exist_user = []
+            temp.forEach(e => {
+                this.addusertoevent(e)
+                exist_user.push(e.mssv)
+            })
+
+            let temp_EventAssign = []
+            result.forEach(e => {
+                if (exist_user.includes(e.mssv.toString())) {
+                    let temp = {
+                        key: this.getUserByMSSV(e.mssv.toString())._id,
+                        userId: this.getUserByMSSV(e.mssv.toString()),
+                        facultyId: this.getFacultyByName(e.ban),
+                        roleId: this.getRoleByName(e['chức vụ']),
+                    }
+                    temp_EventAssign.push(temp)
+                }
+            })
+            // console.log(this.state.listEventAssign)
+            // this.setState({
+            //     listEventAssign: [...this.state.listEventAssign,...temp_EventAssign]
+            // })
+            this.updateEventAssign(temp_EventAssign)
+        })
+    }
+    getUserByMSSV = (mssv) => {
+        let result = {}
+
+        this.state.listusersforevent.forEach(e => {
+            if (e.mssv === mssv) {
+                result = e
+            }
+        })
+        return result
+    }
+
+    getFacultyByName = (name) => {
+        let result = {}
+        this.state.listFaculty.forEach(e => {
+            if (name.toLowerCase() === e.name.toLowerCase()) {
+                result = e
+            }
+        })
+        return result
+    }
+
+    getRoleByName = (name) => {
+        let result = {}
+        this.state.listRole.forEach(e => {
+            if (name.toLowerCase() === e.name.toLowerCase()) {
+                result = e
+            }
+        })
+        return result
+    }
 
     render() {
         return (
@@ -339,12 +442,26 @@ class addevents extends Component {
                                     </Select>
 
 
-                                    <Button className="flex-row-item-right" onClick={() => this.setModal2Visible(true)}>Thêm</Button>
+                                    <Button className="flex-row-item-right back" onClick={() => this.setModal2Visible(true)}>Thêm</Button>
                                 </div>
 
                                 <div className="flex-container-row">
                                     <Title level={4}>Phân công</Title>
-                                    <Button className="flex-row-item-right" onClick={() => this.setModal2Visible3(true)} >Phân công</Button>
+                                    <Button className="flex-row-item-right add" onClick={() => this.setModal2Visible3(true)} >Phân công</Button>
+
+                                    <input
+                                        // ref={this.selectedFile}
+                                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                        ref={input => this.selectedFile = input}
+                                        type="file"
+                                        onChange={e => {
+                                            const file = e.target.files[0];
+                                            this.uploadExcelFile(file)
+                                        }}
+                                        style={{ display: 'none' }}
+                                    />
+                                    <Button className="add" onClick={() => this.selectedFile.click()} >Tải lên file</Button>
+
                                 </div>
 
                                 <EventAssignView data={this.state.listEventAssign} />
@@ -380,14 +497,17 @@ class addevents extends Component {
                                     <AddTagType update={(e) => this.updatelistguesttype(e)} />
                                 </Form.Item>
 
-                                <Form.Item
+                                {/* <Form.Item
                                     wrapperCol={{ sm: 24 }}
                                     name="guests"
                                     label={<Title level={4}>Khách mời</Title>}
                                     hasFeedback
                                 >
-                                    <Button onClick={() => this.setModal2Visible2(true)} >Chỉnh sửa</Button>
-                                </Form.Item>
+                                </Form.Item> */}
+                                <div style={{ width: '100%' }} className="flex-container-row">
+                                    <Title level={4}>Khách mời</Title>
+                                    <Button className="flex-row-item-right back" onClick={() => this.setModal2Visible2(true)}>Thêm</Button>
+                                </div>
                                 <Tabs style={{ width: '90%' }} defaultActiveKey="1" >
                                     {this.renderguest()}
                                 </Tabs>
@@ -453,22 +573,22 @@ class addevents extends Component {
                                         action='/api/uploads'
                                         listType="picture"
                                         beforeUpload={file => {
-                                            if (file.type !== 'image/png') {
-                                                message.error(`${file.name} is not a png file`);
+                                            if (!['image/jpeg', 'image/png'].includes(file.type)) {
+                                                message.error(`${file.name} không phải dạng ảnh`);
                                             }
-                                            return file.type === 'image/png';
+                                            return ['image/jpeg', 'image/png'].includes(file.type);
                                         }}
                                         onChange={(info) => {
                                             // file.status is empty when beforeUpload return false
                                             if (info.file.status === 'done') {
-                                                message.success(`${info.file.response.url} file uploaded successfully`);
+                                                message.success(`${info.file.response.url} tải lên thành công`);
                                                 this.setState({
                                                     posterUrl: info.file.response.url
                                                 })
 
                                             }
                                             this.setState({
-                                                fileList: info.fileList.filter(file => { file.url = `api/images/${this.state.posterUrl}`; return !!file.status })
+                                                fileList: info.fileList.filter(file => { file.url = `${window.resource_url}${this.state.posterUrl}`; return !!file.status })
                                             })
 
                                         }}
@@ -527,7 +647,7 @@ class addevents extends Component {
                     visible={this.state.modal2Visible2}
                     onOk={() => this.setModal2Visible2(false)}
                     onCancel={() => this.setModal2Visible2(false)}
-                    width="70%"
+                    width="80%"
                     pagination={false}
                     footer={false}
                 >
@@ -540,7 +660,7 @@ class addevents extends Component {
                     visible={this.state.modal2Visible3}
                     onOk={() => this.setModal2Visible3(false)}
                     onCancel={() => this.setModal2Visible3(false)}
-                    width="70%"
+                    width="80%"
                     pagination={false}
                     footer={false}
                 >

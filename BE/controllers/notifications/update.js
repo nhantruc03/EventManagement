@@ -1,23 +1,31 @@
+const { pick, isElement, isEmpty } = require('lodash')
 const notifications = require('../../models/notifications')
-const { handleBody } = require('./handleBody')
 const update = async (req, res) => {
   try {
-    const queryUpdate = { _id: req.params.id, isDeleted: false }
-
-    // Handle data
-    const { error, body } = handleBody(req.body) // for newDoc
-    if (error) {
-      return res.status(406).json({
-        success: false,
-        error: error
-      })
+    const filter = {
+      ...pick(req.body, 'userId', "_id"),
+      isDeleted: false
     }
 
-    const updated = await notifications.findOneAndUpdate(
-      queryUpdate,
-      body,
-      { new: true }
-    )
+    const body = {
+      ...pick(req.body, 'watch', 'status')
+    }
+
+    let updated
+    if (isEmpty(filter._id)) {
+      updated = await notifications.updateMany(
+        filter,
+        body,
+        { new: true }
+      )
+    }
+    else {
+      updated = await notifications.findOneAndUpdate(
+        filter,
+        body,
+        { new: true }
+      )
+    }
 
     // Updated Successfully
     return res.status(200).json({

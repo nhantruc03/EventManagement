@@ -4,9 +4,20 @@ const notifications = require('../../models/notifications')
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
 const { pick, isEmpty } = require('lodash')
+const constants = require("../../constants/actions")
+const Permission = require("../../helper/Permissions")
 const update = async (req, res) => {
   let sessions = []
   try {
+    //check permissson
+    const doc = await Actions.findOne({ _id: req.params.id, isDeleted: false })
+    let permissons = await Permission.getPermission(req.body.eventId, req.user._id, req.user.roleId._id)
+    if (!Permission.checkPermission(permissons, constants.QL_CONGVIEC_PERMISSION) && !doc.managerId === req.user._id) {
+      return res.status(406).json({
+        success: false,
+        error: "Permission denied!"
+      })
+    }
     const queryOld = {
       $and: [
         { name: req.body.name },
@@ -20,7 +31,7 @@ const update = async (req, res) => {
     let body = {
       ...pick(req.body,
         "name",
-        "startDate",
+        "endTime",
         "endDate",
         "description",
         "priorityId",
@@ -29,6 +40,7 @@ const update = async (req, res) => {
         "coverUrl",
         "availUser",
         "actionTypeId",
+        "managerId",
         "managerId_change",
         "availUser_change")
     }
@@ -168,18 +180,27 @@ const update = async (req, res) => {
 
 
       //access DB
-      listNotifications = await notifications.insertMany(
+      // listNotifications
+      let temp_listNoti = await notifications.insertMany(
         listNoti,
         { session: session }
       )
 
-      if (isEmpty(listNotifications) || listNotifications.length != listNoti.length) {
+      if (isEmpty(temp_listNoti) || temp_listNoti.length != listNoti.length) {
         await abortTransactions(sessions);
         return res.status(406).json({
           success: false,
           error: "Created failed"
         });
       }
+
+      let list_userIdForNoti = temp_listNoti.reduce((list, e) => {
+        list.push(e.userId)
+        return list;
+      }, [])
+  
+      listNotifications = await notifications.find({ _id: { $in: list_userIdForNoti } })
+        .populate({path:'userId',select:'push_notification_token'})
 
     }
     // done notification
@@ -188,7 +209,8 @@ const update = async (req, res) => {
     await commitTransactions(sessions)
     let new_data = await Actions.findOne({ _id: updated._id, isDeleted: false })
       .populate({ path: 'availUser', select: 'name photoUrl' })
-      .populate({ path: 'tagsId', select: 'name' })
+      .populate({ path: 'managerId', select: 'name photoUrl' })
+      .populate({ path: 'tagsId', select: 'name background color' })
       .populate({ path: 'facultyId', select: 'name' })
       .populate({ path: 'priorityId', select: 'name' })
       .populate({ path: 'eventId', select: 'name' })

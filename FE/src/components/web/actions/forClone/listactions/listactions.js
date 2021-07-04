@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Modal, Row } from 'antd';
+import { Button, Col, Form, Input, message, Modal, Row } from 'antd';
 import { Content } from 'antd/lib/layout/layout';
 import Title from 'antd/lib/typography/Title';
 import React, { Component } from 'react';
@@ -8,6 +8,9 @@ import { AUTH } from '../../../../env'
 import axios from 'axios';
 import Search from "../../../helper/search";
 import ActionColumn from './actionColumn';
+import ApiFailHandler from '../../../helper/ApiFailHandler'
+import * as constants from "../../../constant/actions";
+import checkPermisson from "../../../helper/checkPermissions";
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -27,8 +30,16 @@ class listactions extends Component {
             currentActionTypes: [],
             currentFaculties: null,
             currentActions: [],
-            temp_data: []
+            temp_data: [],
+            modalEditActionTypeVisible: false,
+            ActionTypeForEdit: {}
         }
+    }
+
+    setModalEditActionTypeVisible(modalEditActionTypeVisible) {
+        this.setState({
+            modalEditActionTypeVisible
+        })
     }
 
     setModalVisible(modalVisible) {
@@ -36,6 +47,106 @@ class listactions extends Component {
     }
     setModalVisible2(modalVisible2) {
         this.setState({ modalVisible2 });
+    }
+
+    deleteActionTypes = async (value) => {
+        const result = await trackPromise(axios.delete(`/api/action-types/${value._id}`, {
+            headers: {
+                Authorization: { AUTH }.AUTH,
+            },
+        })
+            .then((res) => {
+                message.success("Xóa thành công")
+                return res.data.data;
+            })
+            .catch(err => {
+                message.error("Xóa thất bại")
+                ApiFailHandler(err.response?.data?.error)
+            })
+        )
+        if (result) {
+            this.setState({
+                currentActionTypes: this.state.currentActionTypes.filter(x => x._id !== result._id)
+            })
+        }
+    }
+
+    onEditActionType = (ActionTypeForEdit) => {
+        // console.log(e)
+        this.setState({
+            ActionTypeForEdit,
+        })
+        if (this.formEditActionType.current) {
+            this.formEditActionType.current.setFieldsValue(ActionTypeForEdit)
+        }
+        this.setModalEditActionTypeVisible(true)
+    }
+
+    onFinishEditActionType = async (e) => {
+        let data = {
+            ...e,
+            eventId: this.state.currentEvent._id,
+        }
+
+        const result = await trackPromise(axios.put(`/api/action-types/${this.state.ActionTypeForEdit._id}`, data, {
+            headers: {
+                Authorization: { AUTH }.AUTH,
+            },
+        })
+            .then((res) => {
+                message.success("Cập nhật thành công")
+                return res.data.data;
+            })
+            .catch(err => {
+                message.error("Cập nhật thất bại")
+                ApiFailHandler(err.response?.data?.error)
+            })
+        )
+        if (result) {
+            let temp = this.state.currentActionTypes
+            temp.forEach(x => {
+                if (x._id === result._id) {
+                    x.name = result.name
+                }
+            })
+            this.setState({
+                currentActionTypes: temp
+            })
+            this.setModalEditActionTypeVisible(false)
+        }
+    }
+
+    formEditActionType = React.createRef()
+    renderModelEditActionType = () => {
+        return (
+            <Form
+                ref={this.formEditActionType}
+                name="validate_other"
+                {...formItemLayout}
+                onFinish={(e) => this.onFinishEditActionType(e)}
+                layout="vertical"
+                initialValues={this.state.ActionTypeForEdit}
+            >
+                <Form.Item
+                    wrapperCol={{ sm: 24 }}
+                    name="name"
+                    rules={[{ required: true, message: "Cần nhập tên loại công việc" }]}
+                >
+                    <Input placeholder="Tên loại công việc..." />
+                </Form.Item>
+                <br></br>
+                <div className="flex-container-row">
+                    <div className="flex-container-row flex-row-item-right">
+                        <Button onClick={() => this.setModalEditActionTypeVisible(false)} style={{ marginRight: 5 }} className="back">
+                            Hủy
+              </Button>
+                        <Button htmlType="submit" className="add">
+                            Cập nhật
+            </Button>
+                    </div>
+                </div>
+            </Form>
+        );
     }
 
     onFinish = async (e) => {
@@ -58,7 +169,7 @@ class listactions extends Component {
                     this.setModalVisible2(false)
                 })
                 .catch((err) => {
-                    console.log(err)
+                    ApiFailHandler(err.response?.data?.error)
                 })
         )
     }
@@ -114,7 +225,10 @@ class listactions extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/action-types/getAll', { eventId: this.props.eventId }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -122,7 +236,10 @@ class listactions extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/faculties/getAll', { eventId: this.props.eventId }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -130,7 +247,10 @@ class listactions extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/actions/getAll', { eventId: this.props.eventId }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -138,8 +258,10 @@ class listactions extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
-
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]))
 
 
@@ -163,40 +285,30 @@ class listactions extends Component {
     renderActionsView = (value, keyCol) => {
         let temp_listActions = this.state.currentActions.filter(e => e.actionTypeId._id === value._id)
         return (
-            <Col sm={24} xl={24 / this.state.currentActionTypes.length} key={keyCol}>
-                <ActionColumn title={value.name} listActions={temp_listActions} />
-                {/* <Title level={3}>{value.name}</Title>
-                {this.state.currentActions.map((e, key) => {
-                    if (e.actionTypeId._id === value._id) {
-                        return (
-                            <ActionCard data={e} key={key} />
-                        )
-                    } else {
-                        return null
-                    }
-                })} */}
+            <Col sm={24} xl={24 / this.state.currentActionTypes.length} key={keyCol} style={{ padding: "10px 0" }}>
+                <ActionColumn canEdit={checkPermisson(this.props.currentPermissions, constants.QL_CONGVIEC_PERMISSION)} onDeleteActionType={() => this.deleteActionTypes(value)} onEditActionType={() => { this.onEditActionType(value) }} title={value.name} listActions={temp_listActions} />
             </Col>
         )
     }
 
     renderView = () => {
-        return (
-            <div className="flex-container-row" style={{ alignItems: 'unset' }}>
-                <Row>
-                    {this.state.currentActionTypes.map((e, key) => {
-                        return (
-                            this.renderActionsView(e, key)
-                        )
-                    })}
-                </Row>
+        if (this.state.currentEvent) {
+            return (
+                <div className="flex-container-row" style={{ alignItems: 'unset' }}>
+                    <div className="flex-container-row horizontal-container" style={{ width: "100%" }}>
+                        {this.state.currentActionTypes.map((e, key) => {
+                            return this.renderActionsView(e, key)
+                        })}
+                    </div>
 
-                <Button className="add flex-row-item-right" onClick={() => this.setModalVisible2(true)}>
-                    +
+                    <Button className="add flex-row-item-right" onClick={() => this.setModalVisible2(true)}>
+                        +
                     </Button>
-            </div>
-        )
-
-
+                </div>
+            )
+        } else {
+            return null;
+        }
     }
 
     getSearchData = (data) => {
@@ -208,16 +320,15 @@ class listactions extends Component {
 
     render() {
         return (
-            <Content style={{ margin: "0 16px" }}>
-                <Row style={{ marginLeft: 30, marginRight: 30 }}>
+            <Content>
+                <Row>
                     <div style={{ width: '100%' }} className="flex-container-row">
                         <Title
                             id="home-top-header"
-                            style={{ marginTop: 15 }}
                             level={2}
                         >
                             Công việc
-                            </Title>
+                        </Title>
                         <div className="flex-row-item-right">
                             <div className="flex-container-row">
                                 <Search
@@ -234,9 +345,7 @@ class listactions extends Component {
                     </div>
                 </Row>
 
-                <div style={{ padding: '30px' }}>
-                    {this.renderView()}
-                </div>
+                <div style={{ padding: "10px 30px" }}>{this.renderView()}</div>
 
 
                 <Modal
@@ -262,6 +371,18 @@ class listactions extends Component {
                     footer={false}
                 >
                     {this.renderModel2()}
+                </Modal>
+                <Modal
+                    title="Sửa loại công việc"
+                    centered
+                    visible={this.state.modalEditActionTypeVisible}
+                    onOk={() => this.setModalEditActionTypeVisible(false)}
+                    onCancel={() => this.setModalEditActionTypeVisible(false)}
+                    width="30%"
+                    pagination={false}
+                    footer={false}
+                >
+                    {this.renderModelEditActionType()}
                 </Modal>
             </Content >
         );

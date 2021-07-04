@@ -1,4 +1,4 @@
-import { Button, Col, Row } from 'antd';
+import { Button, Col, Popconfirm, Row } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import React, { Component } from 'react';
 import Edit from './edit'
@@ -6,6 +6,7 @@ import {
     ClockCircleOutlined,
 } from '@ant-design/icons';
 import moment from 'moment'
+
 class item extends Component {
     constructor(props) {
         super(props);
@@ -17,7 +18,7 @@ class item extends Component {
     renderState = () => {
         if (this.state.current === 'edit' || this.props.data.noinfo) {
             return (
-                <Edit data={this.props.data} onClose={() => { this.setState({ current: null }) }} onDelete={this.props.onDelete} onUpdate={this.props.onUpdate} />
+                <Edit data={this.props.data} onAdd={this.props.onAdd} onClose={() => { this.setState({ current: null }) }} onDelete={this.props.onDelete} onUpdate={this.props.onUpdate} />
             )
         }
         else {
@@ -29,7 +30,7 @@ class item extends Component {
                                 <Title level={5}>Mốc thời gian</Title>
                                 <div className="input-disable">
                                     <div className="flex-container-row">
-                                        {moment(this.props.data.time).format("HH:mm")}
+                                        {moment(this.props.data.time).utcOffset(0).format("HH:mm")}
                                         <ClockCircleOutlined className="flex-row-item-right" />
                                     </div>
                                 </div>
@@ -41,7 +42,14 @@ class item extends Component {
                                 </div>
                             </Col>
                             <Col sm={24} lg={6} style={{ padding: '50px 0 0 0' }}>
-                                <Button style={{ width: '50%' }} className="back" onClick={() => this.props.onDelete(this.props.data._id)}>Xóa</Button>
+                                <Popconfirm
+                                    title="Bạn có chắc muốn xóa chứ?"
+                                    onConfirm={() => this.props.onDelete(this.props.data)}
+                                    okText="Đồng ý"
+                                    cancelText="Hủy"
+                                >
+                                    <Button style={{ width: '50%' }} className="back">Xóa</Button>
+                                </Popconfirm>
                                 <Button style={{ width: '50%' }} className="add" onClick={() => { this.setState({ current: 'edit' }) }}>Sửa</Button>
                             </Col>
                         </Row>

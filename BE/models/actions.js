@@ -40,7 +40,7 @@ const Actions = new Schema(
       required: true,
       index: true
     },
-    startDate: {
+    endTime: {
       type: Date,
       index: true,
       required: true
@@ -66,6 +66,12 @@ const Actions = new Schema(
       required: true,
       default: false,
     },
+    isClone: {
+      type: Boolean,
+      index: true,
+      required: true,
+      default: false,
+    },
     availUser: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -74,6 +80,12 @@ const Actions = new Schema(
         require: true
       }
     ],
+    managerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users',
+      index: true,
+      require: true
+    },
     isDeleted: {
       type: Boolean,
       required: true,

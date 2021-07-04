@@ -10,37 +10,28 @@ import { AUTH } from '../../env'
 import { w3cwebsocket } from 'websocket';
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
-const client = new w3cwebsocket('ws://localhost:3001');
+import ApiFailHandler from '../helper/ApiFailHandler'
+import { WebSocketServer } from '../../env'
+const client = new w3cwebsocket(WebSocketServer);
 const { Header } = Layout;
-
-// const formItemLayout = {
-//     labelCol: {
-//         span: 6,
-//     },
-//     wrapperCol: {
-//         span: 14,
-//     },
-// };
-
 class header extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentUser: null,
+            currentUser: JSON.parse(localStorage.getItem('login')),
             modal2Visible: false,
             model: { dondathang: [] },
             notifications: [],
             logout: false,
-            info_pass: false
+            info_pass: false,
+            onNoti: false,
+            notiUrl: ''
         }
     }
 
     async componentDidMount() {
         this._isMounted = true
         if (this._isMounted) {
-            var login = localStorage.getItem('login');
-            var obj = JSON.parse(login);
-
             client.onopen = () => {
                 console.log('Connect to ws')
             }
@@ -49,26 +40,25 @@ class header extends Component {
                 const dataFromServer = JSON.parse(message.data);
                 if (dataFromServer.type === "sendListNotifications") {
                     if (dataFromServer.notifications.length > 0) {
-                        // console.log(dataFromServer.message)
                         dataFromServer.notifications.forEach(e => {
-                            if (e.userId === this.state.currentUser.id) {
+                            if (e.userId._id === this.state.currentUser.id) {
                                 this.setState({
-                                    notifications: [...this.state.notifications, e]
+                                    notifications: [e, ...this.state.notifications]
                                 })
                             }
                         })
                     }
                 } else if (dataFromServer.type === "sendNotification") {
-                    if (dataFromServer.notification.userId === this.state.currentUser.id) {
+                    if (dataFromServer.notification.userId._id === this.state.currentUser.id) {
                         this.setState({
-                            notifications: [...this.state.notifications, dataFromServer.notification]
+                            notifications: [dataFromServer.notification, ...this.state.notifications]
                         })
                     }
                 }
             };
 
             const [notifications] = await trackPromise(Promise.all([
-                axios.post('/api/notifications/getAll', { userId: obj.id }, {
+                axios.post('/api/notifications/getAll', { userId: this.state.currentUser.id }, {
                     headers: {
                         'Authorization': { AUTH }.AUTH
                     }
@@ -76,17 +66,19 @@ class header extends Component {
                     .then((res) =>
                         res.data.data
                     )
+                    .catch(err => {
+                        ApiFailHandler(err.response?.data?.error)
+                    })
             ]));
-
-            if (notifications !== null) {
+            if (notifications) {
                 if (this._isMounted) {
                     this.setState({
-                        notifications: notifications,
-                        currentUser: obj
+                        notifications: notifications.reverse()
                     })
                 }
             }
         }
+
     }
 
     handleButtonClick = (e) => {
@@ -120,123 +112,96 @@ class header extends Component {
             })
         }
     }
-    // formRef = React.createRef();
-    // renderModel = (val) => {
-    //     console.log(this.state.model)
-    //     console.log(val)
-    //     return (
-    //         <Form
-    //             ref={this.formRef}
-    //             name="validate_other"
-    //             {...formItemLayout}
-    //             onFinish={(e) => this.onFinish(e)}
-    //             layout="vertical"
-    //             defaultValue={val}
-    //         >
 
-    //             <Row>
-    //                 <Col span={24}>
-    //                     <Title>Thông tin đơn mua hàng</Title>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Mã đơn hàng">
-    //                         <p className="special">{val.ID}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Người phụ trách">
-    //                         <p className="special">{val.nguoiphutrach}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Tên hàng">
-    //                         <p className="special">{val.tensanpham}</p>
-    //                     </Form.Item>
-    //                 </Col>
+    updateNoti = (e, id, url) => {
+        e.preventDefault()
+        let data = {
+            status: true,
+            _id: id
+        }
+        axios.put('/api/notifications', data, {
+            headers: {
+                'Authorization': { AUTH }.AUTH
+            }
+        })
+            .then((res) => {
+                let temp_list = this.state.notifications;
+                temp_list.forEach(e => {
+                    if (e._id === id) {
+                        e.status = true
+                    }
+                })
+                this.setState({
+                    notifications: temp_list
+                })
 
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Số lượng" >
-    //                         <p className="special">{val.soluong}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Đơn giá" >
-    //                         <p className="special">{val.dongia}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Thành tiền" >
-    //                         <p className="special">{val.tongtien}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Ngày nhận hàng" >
-    //                         <p className="special">{val.ngaynhanhang}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Thanh toán" >
-    //                         <p className="special">{val.ngaythanhtoan}</p>
-    //                     </Form.Item>
-    //                 </Col>
-
-    //                 <Col span={24}>
-    //                     <Title>Thông tin nhà cung cấp</Title>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Nhà cung cấp">
-    //                         <p className="special">{val.tennhacungcap}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Email">
-    //                         <p className="special">{val.emailncc}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Số điện thoại">
-    //                         <p className="special">{val.sdtncc}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //                 <Col span={12}>
-    //                     <Form.Item wrapperCol={{ sm: 24 }} label="Người đại diện">
-    //                         <p className="special">{val.nguoidaidien}</p>
-    //                     </Form.Item>
-    //                 </Col>
-    //             </Row>
-    //         </Form>
-    //     )
-    // }
+            })
+        this.setState({
+            notiUrl: url,
+            onNoti: true
+        })
+    }
 
     renderNotificationContent = (e) => {
         if (e.eventId) {
             return (
-                <Link to={`/events/${e.eventId}`}>
-                    <Tooltip title={
+                <Link className={e.status ? 'noti-watched' : 'noti'} onClick={(x) => this.updateNoti(x, e._id, `/events/${e.eventId}`)} to={'/#'}>
+                    <Tooltip
+                        placement="leftTop"
+                        title={
+                            <div>
+                                <p>Thông báo: {e.name}</p>
+                                <br></br>
+                                <p>Mô tả: {e.description}</p>
+                            </div>
+                        }
+                    >
                         <div>
-                            <p>Sự kiện: {e.name}</p>
-                            <br></br>
-                            <p>Mô tả: {e.description}</p>
+                            <p style={{ fontWeight: 'bold' }} >{e.name}</p>
+                            <p className="cut-text">{e.description}</p>
                         </div>
-                    } placement="top">
-                        <p style={{ fontWeight: 'bold' }} >{e.name}</p>
-                        <p className="cut-text">{e.description}</p>
                     </Tooltip>
                 </Link>
             )
         }
         else if (e.actionId) {
             return (
-                <Link to={`/actions/${e.actionId}`}>
-                    <Tooltip title={
-                        <div>
-                            <p>Công việc: {e.name}</p>
-                            <br></br>
-                            <p>Mô tả: {e.description}</p>
+                <Link className={e.status ? 'noti-watched' : 'noti'} onClick={(x) => this.updateNoti(x, e._id, `/actions/${e.actionId}`)} to={"/#"}>
+                    <Tooltip
+                        placement="leftTop"
+                        title={
+                            <div>
+                                <p>Thông báo: {e.name}</p>
+                                <br></br>
+                                <p>Mô tả: {e.description}</p>
+                            </div>
+                        }
+                    >
+                        <div >
+                            <p style={{ fontWeight: 'bold' }}>{e.name}</p>
+                            <p className="cut-text">{e.description}</p>
                         </div>
-                    } placement="top">
-                        <p style={{ fontWeight: 'bold' }}>{e.name}</p>
-                        <p className="cut-text">{e.description}</p>
+                    </Tooltip>
+                </Link >
+            )
+        }
+        else if (e.scriptId) {
+            return (
+                <Link className={e.status ? 'noti-watched' : 'noti'} onClick={(x) => this.updateNoti(x, e._id, `/viewscripts/${e.scriptId}`)} to={"/#"}>
+                    <Tooltip
+                        placement="leftTop"
+                        title={
+                            <div>
+                                <p>Thông báo: {e.name}</p>
+                                <br></br>
+                                <p>Mô tả: {e.description}</p>
+                            </div>
+                        }>
+                        <div>
+
+                            <p style={{ fontWeight: 'bold' }}>{e.name}</p>
+                            <p className="cut-text">{e.description}</p>
+                        </div>
                     </Tooltip>
                 </Link >
             )
@@ -246,7 +211,7 @@ class header extends Component {
     renderNotifications = () => {
         return (
             <Menu>
-                {this.state.notifications.reverse().map((e, key) =>
+                {this.state.notifications.map((e, key) =>
                     <Menu.Item key={key} >
                         {this.renderNotificationContent(e)}
                     </Menu.Item>
@@ -254,6 +219,69 @@ class header extends Component {
             </Menu>
         )
     }
+
+    onVisibleChange = (e) => {
+        if (e) {
+            axios.put('/api/notifications', { userId: this.state.currentUser.id, watch: true }, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then((res) =>
+                    res.data.data
+                )
+
+            let temp = this.state.notifications
+            temp.map(e => e.watch = true)
+            this.setState({
+                notifications: temp,
+                dropdownVisible: e
+            })
+        } else {
+            this.setState({
+                dropdownVisible: e
+            })
+        }
+    }
+
+    renderView = () => {
+        return (
+            <Header className="site-layout-background flex-container-row" >
+                <div className="flex-row-item-right">
+                    <div className="flex-container-row">
+                        <Dropdown visible={this.state.dropdownVisible} onVisibleChange={this.onVisibleChange} overlayClassName='dropdown' overlay={this.renderNotifications} placement='bottomRight'>
+                            <Badge count={this.state.notifications.filter(e => e.watch === false).length}>
+                                <Button style={{ border: 'none' }}><BellOutlined /></Button>
+                            </Badge>
+                        </Dropdown>
+                        {this.state.currentUser ?
+                            <Dropdown
+                                overlay={
+                                    <Menu onClick={(e) => this.handleButtonClick(e)}>
+                                        <Menu.Item key="info" icon={<UserOutlined />}>
+                                            Thông tin cá nhân
+                                        </Menu.Item>
+                                        <Menu.Item key="info-pass" icon={<UserOutlined />}>
+                                            Cập nhật mật khẩu
+                                        </Menu.Item>
+                                        <Menu.Item key="logout" icon={<UserOutlined />}>
+                                            Đăng xuất
+                                        </Menu.Item>
+                                    </Menu>
+                                }>
+                                <Button id="button-account">
+                                    <div className="flex-container-row">
+                                        <p className="top-name-user cut-text">{this.state.currentUser.name}</p> <Avatar style={{ marginLeft: '10px' }} className="my-2" src={`${window.resource_url}${this.state.currentUser.photoUrl}`} />
+                                    </div>
+                                </Button>
+                            </Dropdown>
+                            : null}
+                    </div>
+                </div>
+            </Header >
+        )
+    }
+
     render() {
         if (this.state.logout) {
             return (
@@ -270,64 +298,21 @@ class header extends Component {
                 <Redirect to="/updatePassword" />
             )
         }
+        else if (this.state.onNoti) {
+            if (window.location.pathname !== this.state.notiUrl) {
+                return (
+                    <Redirect to={this.state.notiUrl} />
+                )
+            } else {
+                window.location.reload();
+            }
+        }
         else {
-
             return (
-                <Header className="site-layout-background" style={{ padding: 15 }} >
-                    <div className="flex-container-row">
-                        {/* <div style={{ float: 'right', marginBottom: 20, marginRight: 20, display: 'inline-grid' }}> */}
-                        <div className="flex-row-item-right">
-
-                            <Dropdown overlayClassName='dropdown' overlay={this.renderNotifications} placement='bottomRight'>
-                                <Badge count={this.state.notifications.filter(e => e.status === false).length}>
-                                    <Button style={{ border: 'none' }}><BellOutlined /></Button>
-                                </Badge>
-                            </Dropdown>
-                            {this.state.currentUser ?
-                                <Dropdown
-                                    overlay={
-                                        <Menu onClick={(e) => this.handleButtonClick(e)}>
-                                            <Menu.Item key="info" icon={<UserOutlined />}>
-                                                Thông tin cá nhân
-                                            </Menu.Item>
-                                            <Menu.Item key="info-pass" icon={<UserOutlined />}>
-                                                Cập nhật mật khẩu
-                                            </Menu.Item>
-                                            <Menu.Item key="logout" icon={<UserOutlined />}>
-                                                Đăng xuất
-                                            </Menu.Item>
-                                        </Menu>
-                                    }>
-                                    <Button id="button-account" >
-                                        {this.state.currentUser.name} <Avatar style={{ marginLeft: '10px' }} className="my-2" src={`/api/images/${this.state.currentUser.photoUrl}`} />
-                                    </Button>
-                                </Dropdown>
-                                : null}
-                        </div>
-                    </div>
-                    {/* <Modal
-                            title='Chi tiết đơn mua hàng'
-                            centered
-                            visible={this.state.modal2Visible}
-                            onOk={() => this.setModal2Visible(false)}
-                            onCancel={() => this.setModal2Visible(false)}
-                            width='30%'
-                            footer={false}
-                        >
-                             {this.renderModel(this.state.model)}
-                        </Modal>  */}
-
-                </Header >
-            );
+                this.renderView()
+            )
         }
     }
 }
 
-// const mapStateToProps = state => {
-//     return {
-//         data: state.DONMUAHANG
-//     }
-// }
-
-// export default connect(mapStateToProps, null)(header);
 export default header;

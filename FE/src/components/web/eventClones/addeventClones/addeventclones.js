@@ -23,6 +23,7 @@ import { trackPromise } from "react-promise-tracker";
 import axios from "axios";
 import AddTagType from "./add_TagType";
 import { Link } from "react-router-dom";
+import ApiFailHandler from '../../helper/ApiFailHandler'
 const { Option } = Select;
 const formItemLayout = {
     labelCol: {
@@ -57,7 +58,10 @@ class addevents extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/tags/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -66,6 +70,9 @@ class addevents extends Component {
                 .then((res) =>
                     res.data.data
                 )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                })
         ]));
 
 
@@ -90,15 +97,13 @@ class addevents extends Component {
     onFinish = async (values) => {
         let data = {
             ...values,
-            'startDate': values['startDate'].format('YYYY-MM-DD'),
-            'startTime': values['startTime'].toDate(),
+            'startDate': values['startDate'].utc(true).format('YYYY-MM-DD'),
+            'startTime': values['startTime'].utc(true).toDate(),
             'posterUrl': values['posterUrl'].fileList[0].response.url,
             'guestTypes': this.state.listguesttype,
             'groups': this.state.listgroups,
             'isClone': true
         }
-
-        console.log('Received values of form: ', data);
 
         await trackPromise(axios.post('/api/events/start', data, {
             headers: {
@@ -110,6 +115,7 @@ class addevents extends Component {
             })
             .catch(err => {
                 message.error('Tạo thất bại');
+                ApiFailHandler(err.response?.data?.error)
             }))
     };
 
@@ -161,7 +167,7 @@ class addevents extends Component {
                         className="event-form"
                     >
                         <Row>
-                            <Col className="event-col" sm={24} lg={10}>
+                            <Col className="event-col" sm={24} lg={12}>
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
                                     name="eventTypeId"
@@ -202,9 +208,15 @@ class addevents extends Component {
                                 >
                                     <AddTagType update={(e) => this.updatelistguesttype(e)} />
                                 </Form.Item>
-
+                                <Form.Item
+                                    wrapperCol={{ sm: 24 }}
+                                    label={<Title level={4}>Phòng hội thoại</Title>}
+                                    hasFeedback
+                                >
+                                    <AddTagType update={(e) => this.updatelistgroup(e)} />
+                                </Form.Item>
                             </Col>
-                            <Col className="event-col" sm={24} lg={10}>
+                            <Col className="event-col" sm={24} lg={12}>
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
                                     name="name"
@@ -280,7 +292,7 @@ class addevents extends Component {
 
                                             }
                                             this.setState({
-                                                fileList: info.fileList.filter(file => { file.url = `api/images/${this.state.posterUrl}`; return !!file.status })
+                                                fileList: info.fileList.filter(file => { file.url = `${window.resource_url}${this.state.posterUrl}`; return !!file.status })
                                             })
 
                                         }}
@@ -290,7 +302,7 @@ class addevents extends Component {
                                     </Upload>
                                 </Form.Item>
                             </Col>
-                            <Col className="event-col" sm={24} lg={4}>
+                            {/* <Col className="event-col" sm={24} lg={4}>
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}
                                     label={<Title level={4}>Phòng hội thoại</Title>}
@@ -299,7 +311,7 @@ class addevents extends Component {
                                     <AddTagType update={(e) => this.updatelistgroup(e)} />
                                 </Form.Item>
 
-                            </Col>
+                            </Col> */}
                         </Row>
                         <br></br>
                         <Form.Item wrapperCol={{ span: 24, offset: 9 }}>

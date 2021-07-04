@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import TableData from '../../addevent/EventAssign/TableData';
-import { Button, Col, message, Row } from 'antd';
+import { Button, message } from 'antd';
 import Search from '../../../helper/search';
 import { trackPromise } from 'react-promise-tracker';
 import axios from 'axios';
 import { AUTH } from '../../../../env'
 import Pagination from '../../../helper/Pagination';
+import ApiFailHandler from '../../../helper/ApiFailHandler'
 class EventAssign extends Component {
     constructor(props) {
         super(props);
@@ -15,7 +16,7 @@ class EventAssign extends Component {
             searchKey: '',
             onEditUser: false,
             currentPage: 1,
-            postsPerPage: 5,
+            postsPerPage: 3,
         }
     }
 
@@ -56,6 +57,7 @@ class EventAssign extends Component {
             .catch(err => {
                 // Message('Sửa thất bại', false);
                 message.error('Sửa thất bại')
+                ApiFailHandler(err.response?.data?.error)
             }))
 
     }
@@ -87,18 +89,29 @@ class EventAssign extends Component {
                 .then(res => {
 
                     let temp = this.props.data.filter(e => e._id !== res.data.data._id)
-                    console.log('temp', temp)
                     this.setState({
                         data: temp
                     })
                     this.props.update(temp, res.data.data.userId)
-
-                    // Message('Xóa thành công', true);
                     message.success('Xóa thành công')
                 })
                 .catch(err => {
-                    // Message('Xóa thất bại', false);
-                    message.success('Xóa thất bại')
+                    ApiFailHandler(err.response?.data?.error)
+                    let list_actions = err.response.data.list_actions.reduce((list, e) => { list.push(e.name); return list }, [])
+                    let list_scripts = err.response.data.list_scripts.reduce((list, e) => { list.push(e.name); return list }, [])
+
+                    if (list_actions.length > 0 || list_scripts.length > 0) {
+                        let error = (
+                            <div>
+                                <p>Xóa thất bại, Người dùng đang được phân công vào các: </p>
+                                {list_actions.length > 0 ? <p>Công việc: {list_actions}</p> : null}
+                                {list_scripts.length > 0 ? <p>Kịch bản: {list_scripts}</p> : null}
+                            </div>
+                        )
+                        message.error(error, 10)
+                    } else {
+                        message.error("Xóa thất bại")
+                    }
                 }))
     }
 
@@ -107,10 +120,9 @@ class EventAssign extends Component {
     }
 
     paginate = (pageNumber) => {
-        this.setState(
-            {
-                currentPage: pageNumber
-            });
+        this.setState({
+            currentPage: pageNumber
+        });
     }
     getCurData = (SearchData) => {
         var indexOfLastPost = this.state.currentPage * this.state.postsPerPage;
@@ -118,21 +130,35 @@ class EventAssign extends Component {
         return SearchData.slice(indexOfFirstPost, indexOfLastPost);
 
     }
+
     render() {
         return (
             <div >
-                <Row style={{ width: '100%' }}>
-                    <Col span={20}>
-                        <Search targetParent="userId" target="name" data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
-                    </Col>
-                    <Col span={4}>
-                        <Button className="add" style={{ float: "right" }} onClick={() => this.props.onAddClick()}>Thêm ban tổ chức</Button>
-                    </Col>
-                </Row>
+                <div className="flex-container-row" style={{ marginBottom: '20px' }}>
+                    <Search targetParent="userId" target="name" data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
+                    {!this.props.noBigAction ?
+                        <>
+                            <Button className="flex-row-item-right back" style={{ marginRight: '10px' }} onClick={() => this.props.onAddClick()}>Thêm ban tổ chức</Button>
+                            <input
+                                // ref={this.selectedFile}
+                                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                ref={input => this.selectedFile = input}
+                                type="file"
+                                onChange={e => {
+                                    const file = e.target.files[0];
+                                    this.props.uploadExcelFile(file)
+                                    this.selectedFile.value = ""
+                                }}
+                                style={{ display: 'none' }}
+                            />
+                            <Button className="back" onClick={() => this.selectedFile.click()} >Tải lên file</Button>
+                        </> : null
+                    }
+                </div>
                 <TableData deleteClick={(id) => this.deleteClick(id)} canDelete={this.props.canDelete} listFaculty={this.props.listFaculty} listRole={this.props.listRole} getUserEditInfo={(info) => this.getUserEditInfo(info)} dataUser={this.getCurData(this.state.data)} />
                 {this.getlistpage(this.state.data) > 1 ?
                     <Pagination
-                        totalPosts={this.getlistpage(this.state.data)}
+                        totalPosts={this.state.data.length}
                         paginate={(e) => this.paginate(e)}
                         PageSize={this.state.postsPerPage}
                     /> :

@@ -16,6 +16,8 @@ import {
     Breadcrumb,
     Image,
     Tabs,
+    Popconfirm,
+    Modal,
 } from "antd";
 import {
     UploadOutlined,
@@ -29,7 +31,10 @@ import GroupView from "./Group/groupView";
 import ListScripts from '../../eventScripts/forClone/list'
 import ListActionsClone from '../../actions/forClone/listactions/listactions'
 import { w3cwebsocket } from 'websocket';
-const client = new w3cwebsocket('ws://localhost:3001');
+import ApiFailHandler from '../../helper/ApiFailHandler'
+import getPermission from "../../helper/Credentials"
+import { WebSocketServer } from '../../../env'
+const client = new w3cwebsocket(WebSocketServer);
 const { Option } = Select;
 const { TabPane } = Tabs;
 const formItemLayout = {
@@ -53,7 +58,76 @@ class editevent extends Component {
             listguesttype: [],
             listgroups: [],
             data: null,
-            currentUser: JSON.parse(localStorage.getItem('login'))
+            currentUser: JSON.parse(localStorage.getItem('login')),
+            currentPermissions: [],
+            modalVisible: false
+        }
+    }
+
+    setModalVisible = (modalVisible) => {
+        this.setState({
+            modalVisible
+        })
+    }
+
+    form = React.createRef()
+    renderModel = () => {
+        return (
+            <Form
+                ref={this.form}
+                name="validate_other"
+                {...formItemLayout}
+                onFinish={(e) => this.onFinishClone(e)}
+                layout="vertical"
+                initialValues={this.state.ActionTypeForEdit}
+            >
+                <Form.Item
+                    wrapperCol={{ sm: 24 }}
+                    name="name"
+                    rules={[{ required: true, message: "Cần nhập tên sự kiện" }]}
+                >
+                    <Input placeholder="Tên sự kiện..." />
+                </Form.Item>
+                <br></br>
+                <div className="flex-container-row">
+                    <div className="flex-container-row flex-row-item-right">
+                        <Button onClick={() => this.setModalVisible(false)} style={{ marginRight: 5 }} className="back">
+                            Hủy
+                        </Button>
+                        <Button htmlType="submit" className="add">
+                            Tạo
+                        </Button>
+                    </div>
+                </div>
+            </Form>
+        )
+    }
+
+    onFinishClone = async (e) => {
+        let data = {
+            ...e,
+            eventId: this.props.match.params.id
+        }
+
+        const result = await trackPromise(
+            axios.post('/api/events/start-clone', data, {
+                headers: {
+                    'Authorization': { AUTH }.AUTH
+                }
+            })
+                .then(res => {
+                    message.success('Tạo thành công');
+                    return true
+                })
+                .catch(err => {
+                    message.error('Tạo thất bại');
+                    ApiFailHandler(err.response?.data?.error)
+                    return false
+                })
+        )
+        if (result) {
+            this.form.current.resetFields()
+            this.setModalVisible(false)
         }
     }
 
@@ -95,8 +169,6 @@ class editevent extends Component {
     }
 
     updateEventAssign = (a, b) => {
-        console.log('updated', a)
-
         this.setState({
             listEventAssign: a,
         })
@@ -112,7 +184,7 @@ class editevent extends Component {
 
     async componentDidMount() {
         this._isMounted = true;
-        const [users, eventTypes, tags, faculties, roles, event, listeventassign, guesttypes, groups] = await trackPromise(Promise.all([
+        const [users, eventTypes, tags, faculties, roles, event, listeventassign, guesttypes, groups, permissons] = await trackPromise(Promise.all([
             axios.post('/api/users/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -120,7 +192,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/event-types/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -128,7 +203,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/tags/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -136,7 +214,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/faculties/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -144,7 +225,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/roles/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -152,7 +236,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.get('/api/events/' + this.props.match.params.id, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -160,7 +247,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/event-assign/getAll', { eventId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -168,7 +258,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/guest-types/getAll', { eventId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -176,7 +269,10 @@ class editevent extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/groups/getAll', { eventId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -185,6 +281,10 @@ class editevent extends Component {
                 .then((res) =>
                     res.data.data
                 )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
+            getPermission(this.props.match.params.id).then(res => res)
 
         ]));
 
@@ -203,8 +303,10 @@ class editevent extends Component {
                 }).then((res) =>
                     res.data.data
                 ))
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                })
 
-            console.log(guests)
         }
 
 
@@ -217,8 +319,8 @@ class editevent extends Component {
                 })
                 let data = {
                     ...event,
-                    'startTime': moment(event.startTime),
-                    'startDate': moment(event.startDate),
+                    'startTime': moment(event.startTime).utcOffset(0),
+                    'startDate': moment(event.startDate).utcOffset(0),
                     'eventTypeId': event.eventTypeId._id,
                     'tagId': temp_tagId
                 }
@@ -229,7 +331,7 @@ class editevent extends Component {
                     temp_userForEvent.push(e.userId._id)
                 })
                 let temp_userNotInEvent = users.filter(e => !temp_userForEvent.includes(e._id))
-
+                console.log('permission', permissons)
                 // prepare state
                 this.setState({
                     listRole: roles,
@@ -242,7 +344,8 @@ class editevent extends Component {
                     listtags: tags,
                     listguesttype: guesttypes,
                     listguest: guests,
-                    listgroups: groups
+                    listgroups: groups,
+                    currentPermissions: permissons
                 })
             }
         }
@@ -258,8 +361,8 @@ class editevent extends Component {
     onFinish = async (values) => {
         let data = {
             ...values,
-            'startDate': values['startDate'].toDate(),
-            'startTime': values['startTime'].toDate(),
+            'startDate': values['startDate'].utc(true).format('YYYY-MM-DD'),
+            'startTime': values['startTime'].utc(true).toDate(),
         }
         if (this.state.posterUrl !== null) {
             data = {
@@ -267,8 +370,6 @@ class editevent extends Component {
                 'posterUrl': this.state.posterUrl,
             }
         }
-
-        console.log('Received values of form: ', data);
 
         await trackPromise(axios.put('/api/events/' + this.state.data._id, data, {
             headers: {
@@ -280,12 +381,9 @@ class editevent extends Component {
             })
             .catch(err => {
                 message.error('Cập nhật thất bại');
+                ApiFailHandler(err.response?.data?.error)
             }))
     };
-
-    setModal2Visible(modal2Visible) {
-        this.setState({ modal2Visible });
-    }
 
     updatelistguesttype = (values) => {
         this.setState({
@@ -297,6 +395,28 @@ class editevent extends Component {
         this.setState({
             listgroups: values,
         })
+    }
+
+    deleteEvent = async () => {
+        const result = await trackPromise(axios.delete(`/api/events/${this.props.match.params.id}`, {
+            headers: {
+                'Authorization': { AUTH }.AUTH
+            }
+        })
+            .then(res => {
+                message.success('Xóa sự kiện thành công')
+                return res.data.data
+            })
+            .catch(err => {
+                message.error('Xóa sự kiện thất bại')
+                ApiFailHandler(err.response?.data?.error)
+            })
+        )
+        if (result) {
+            this.setState({
+                doneDelete: true
+            })
+        }
     }
 
     onClickAddEvent = async () => {
@@ -311,6 +431,7 @@ class editevent extends Component {
             })
             .catch(err => {
                 message.error('Tạo thất bại');
+                ApiFailHandler(err.response?.data?.error)
             }))
     }
 
@@ -322,14 +443,24 @@ class editevent extends Component {
                         <div className="flex-container-row" style={{ width: '100%', padding: '0 10px' }}>
                             <Breadcrumb separator=">">
                                 <Breadcrumb.Item >
-                                    <Link to="/eventclones">Sự kiện</Link>
+                                    <Link to="/eventclones">Hồ sơ sự kiện</Link>
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
                                     Chi tiết
                                 </Breadcrumb.Item>
                             </Breadcrumb>
                             {this.state.currentUser.role === 'Admin' ?
-                                <Button onClick={this.onClickAddEvent} className="add flex-row-item-right">Tạo sự kiện</Button>
+                                <div className="flex-row-item-right">
+                                    <Popconfirm
+                                        title="Bạn có chắc muốn xóa chứ?"
+                                        onConfirm={this.deleteEvent}
+                                        okText="Đồng ý"
+                                        cancelText="Hủy"
+                                    >
+                                        <Button className="delete">Xóa</Button>
+                                    </Popconfirm>
+                                    <Button style={{ marginLeft: 10 }} onClick={() => this.setModalVisible(true)} className="add ">Tạo sự kiện</Button>
+                                </div>
                                 : null
                             }
                         </div>
@@ -337,7 +468,7 @@ class editevent extends Component {
 
                     <div className="site-layout-background-main">
                         <Tabs defaultActiveKey="1" >
-                            <TabPane tab='Thông tin' key={1}>
+                            <TabPane style={{ padding: '0 15px' }} tab='Thông tin' key={1}>
                                 <Row >
                                     <Col sm={24} lg={12}>
                                         <Form
@@ -385,7 +516,7 @@ class editevent extends Component {
 
                                                     <Title className="normalLabel" level={4}>Ảnh đại diện hiện tại</Title>
                                                     <div style={{ widht: '100%', textAlign: 'center' }}>
-                                                        <Image style={{ maxWidth: '110px' }} src={`/api/images/${this.state.data.posterUrl}`}></Image>
+                                                        <Image style={{ maxWidth: '110px' }} src={`${window.resource_url}${this.state.data.posterUrl}`}></Image>
                                                     </div>
 
                                                     <Form.Item
@@ -414,7 +545,7 @@ class editevent extends Component {
 
                                                                 }
                                                                 this.setState({
-                                                                    fileList: info.fileList.filter(file => { file.url = `/api/images/${this.state.posterUrl}`; return !!file.status })
+                                                                    fileList: info.fileList.filter(file => { file.url = `${window.resource_url}${this.state.posterUrl}`; return !!file.status })
                                                                 })
 
                                                             }}
@@ -473,24 +604,25 @@ class editevent extends Component {
                                                     >
                                                         <Input placeholder="Địa điểm..." />
                                                     </Form.Item>
-                                                    <Row>
-                                                        <Col span={24} style={{ marginTop: '20px' }}>
-                                                            <div style={{ textAlign: 'center' }}>
-                                                                <div >
-                                                                    <Button
-                                                                        onClick={this.goBack}
-                                                                        className="back"
-                                                                        style={{ marginRight: 20 }}
-                                                                    >
-                                                                        Hủy
-                                                    </Button>
-                                                                    <Button htmlType="submit" className="add" >
-                                                                        Cập nhật
-                                                    </Button>
-                                                                </div>
-                                                            </div>
-                                                        </Col>
-                                                    </Row>
+
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col span={24} style={{ marginTop: '20px' }}>
+                                                    <div style={{ textAlign: 'center' }}>
+                                                        <div >
+                                                            {/* <Button
+                                                                onClick={this.goBack}
+                                                                className="back"
+                                                                style={{ marginRight: 20 }}
+                                                            >
+                                                                Hủy
+                                                            </Button> */}
+                                                            <Button htmlType="submit" className="add" >
+                                                                Cập nhật
+                                                            </Button>
+                                                        </div>
+                                                    </div>
                                                 </Col>
                                             </Row>
                                         </Form>
@@ -507,21 +639,27 @@ class editevent extends Component {
                                     </Col>
                                 </Row>
                             </TabPane>
-                            <TabPane tab='Kịch bản' key={2}>
-                                <div className="flex-container-row">
-                                    {/* <Title className="event-detail-title" level={3}>Kịch bản</Title> */}
-                                    <Title level={4}>Kịch bản</Title>
-                                    <Button className="flex-row-item-right" ><Link to={`/addscriptsclone/${this.props.match.params.id}`}>Thêm</Link></Button>
-                                </div>
-                                <ListScripts eventId={this.props.match.params.id} />
+                            <TabPane style={{ padding: '0 15px' }} tab='Kịch bản' key={2}>
+                                <ListScripts eventId={this.props.match.params.id} currentPermissions={this.state.currentPermissions} />
                             </TabPane>
-                            <TabPane tab='Công việc' key={3}>
-                                <ListActionsClone eventId={this.props.match.params.id} />
+                            <TabPane style={{ padding: '0 15px' }} tab='Công việc' key={3}>
+                                <ListActionsClone eventId={this.props.match.params.id} currentPermissions={this.state.currentPermissions} />
                             </TabPane>
                         </Tabs>
                     </div>
 
-
+                    <Modal
+                        title="Tạo sự kiện"
+                        centered
+                        visible={this.state.modalVisible}
+                        onOk={() => this.setModalVisible(false)}
+                        onCancel={() => this.setModalVisible(false)}
+                        width="30%"
+                        pagination={false}
+                        footer={false}
+                    >
+                        {this.renderModel()}
+                    </Modal>
                 </Content >
             );
         }

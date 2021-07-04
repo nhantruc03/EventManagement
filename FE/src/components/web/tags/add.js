@@ -2,11 +2,12 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { AUTH } from '../../env';
 import { trackPromise } from 'react-promise-tracker';
-import { Message } from '../service/renderMessage';
-import { Breadcrumb, Button, Form, Input, Row } from 'antd';
+import { Breadcrumb, Button, Col, Form, Input, message, Row, Tag } from 'antd';
 import { Link } from 'react-router-dom';
 import { Content } from 'antd/lib/layout/layout';
 import Title from 'antd/lib/typography/Title';
+import ReactAntColorPicker from '@feizheng/react-ant-color-picker';
+import ApiFailHandler from '../helper/ApiFailHandler'
 const formItemLayout = {
     labelCol: {
         span: 6,
@@ -16,22 +17,60 @@ const formItemLayout = {
     },
 };
 class add extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            name: '',
+            background: '#2A9D8F',
+            color: '#282c34',
+
+        }
+    }
+
     onSubmit = async (e) => {
-        await trackPromise(Axios.post('/api/tags', e, {
+
+        let data = {
+            ...e,
+            background: this.state.background,
+            color: this.state.color
+        }
+
+        await trackPromise(Axios.post('/api/tags', data, {
             headers: {
                 'Authorization': { AUTH }.AUTH
             }
         })
             .then(res => {
-                Message('Tạo thành công', true, this.props);
+                message.success('Tạo thành công');
+                this.props.history.goBack();
             })
             .catch(err => {
-                Message('Tạo thất bại', false);
+                message.error('Tạo thất bại')
+                ApiFailHandler(err.response?.data?.error)
+                // Message('Tạo thất bại', false);
             }))
     }
 
     goBack = () => {
         this.props.history.goBack();
+    }
+
+    onChangeName = (e) => {
+        // console.log(e.target.value)
+        this.setState({
+            name: e.target.value
+        })
+    }
+
+    onChangeBackground = (e) => {
+        this.setState({
+            background: e.target.value
+        })
+    }
+    onChangeColor = (e) => {
+        this.setState({
+            color: e.target.value
+        })
     }
 
     render() {
@@ -40,10 +79,10 @@ class add extends Component {
                 < Row style={{ marginTop: 15, marginLeft: 30, marginRight: 30 }}>
                     <Breadcrumb separator=">">
                         <Breadcrumb.Item >
-                            <Link to="/events">Sự kiện</Link>
+                            <Link to="/admin/listtags">Danh sách</Link>
                         </Breadcrumb.Item>
                         <Breadcrumb.Item>
-                            Thêm mới sự kiện
+                            Thêm mới tags sự kiện
                             </Breadcrumb.Item>
                     </Breadcrumb>
                 </Row>
@@ -54,15 +93,48 @@ class add extends Component {
                         onFinish={(e) => this.onSubmit(e)}
                         layout="vertical"
                     >
-                        <Form.Item
-                            wrapperCol={{ sm: 24 }}
-                            name="name"
-                            label={<Title level={4}>Tên tags</Title>}
-                            hasFeedback
-                            rules={[{ required: true, message: 'Cần nhập tên tags!' }]}
-                        >
-                            <Input placeholder="Nhập tên tags..."></Input>
-                        </Form.Item>
+                        <Row style={{ padding: '10px' }}>
+                            <Col span={24}>
+                                <Form.Item
+                                    wrapperCol={{ sm: 24 }}
+                                    name="name"
+                                    label={<Title level={4}>Tên tags</Title>}
+                                    hasFeedback
+                                    rules={[{ required: true, message: 'Cần nhập tên tags!' }]}
+                                >
+                                    <Input onChange={this.onChangeName} placeholder="Nhập tên tags..."></Input>
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row style={{ marginTop: '20px' }}>
+                            <Col style={{ padding: '10px' }} span={12}>
+                                <div className="flex-container-row">
+                                    <Tag style={{ background: `${this.state.background}`, color: 'white' }}>{this.state.name}</Tag>
+                                    <Button className="flex-row-item-right">
+                                        <ReactAntColorPicker onChange={this.onChangeBackground} value={this.state.background} label="Màu nền" />
+                                    </Button>
+
+                                </div>
+                            </Col>
+                            <Col style={{ padding: '10px' }} span={12}>
+                                <div className="flex-container-row">
+                                    <Tag style={{ background: 'white', color: `${this.state.color}`, border: `1px solid black` }}>{this.state.name}</Tag>
+
+                                    <Button className="flex-row-item-right">
+                                        <ReactAntColorPicker onChange={this.onChangeColor} value={this.state.color} label="Màu chữ" />
+                                    </Button>
+
+                                </div>
+                            </Col>
+                        </Row>
+                        <Row style={{ marginTop: '20px', width: '100%', textAlign: 'center' }}>
+
+                            <div style={{ width: '50%', margin: '0 auto' }} >
+                                <Title level={4}>Kết quả</Title>
+                                <Tag style={{ background: `${this.state.background}`, color: `${this.state.color}` }}>{this.state.name}</Tag>
+                            </div>
+
+                        </Row>
                         <br></br>
                         <Form.Item wrapperCol={{ span: 24, offset: 9 }}>
                             <Button

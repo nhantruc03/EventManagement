@@ -3,13 +3,15 @@ import React, { Component } from 'react';
 import { AUTH } from '../../env'
 import { trackPromise } from 'react-promise-tracker';
 import { Content } from 'antd/lib/layout/layout';
-import { Breadcrumb, Button, Col, DatePicker, Form, Image, Input, InputNumber, message, Row, Select, Upload } from 'antd';
+import { Breadcrumb, Button, Col, DatePicker, Form, Image, Input, message, Row, Select, Upload } from 'antd';
 import { Link } from 'react-router-dom';
 import Title from 'antd/lib/typography/Title';
 import moment from 'moment'
 import {
     UploadOutlined,
 } from "@ant-design/icons";
+import ApiFailHandler from '../helper/ApiFailHandler'
+import NumericInput from '../helper/numericInput'
 // var Roles = [
 //     { value: 'admin', label: 'Quản trị viên' },
 //     { value: 'doctor', label: 'Bác sĩ' },
@@ -42,11 +44,10 @@ class thongtincanhan extends Component {
     }
 
     onSubmit = async (e) => {
-        console.log(e)
-        console.log(this.state.fileList)
         let data = {
             ...e,
             phone: e.phone.toString(),
+            birthday: e.birthday.utc(true).toDate()
         }
 
         if (this.state.fileList.length > 0) {
@@ -65,12 +66,16 @@ class thongtincanhan extends Component {
                 }
             })
                 .then(res => {
+                    let data_from_res = res.data.data
+                    obj.photoUrl = data_from_res.photoUrl
+                    obj.name = data_from_res.name
+                    localStorage.setItem('login', JSON.stringify(obj));
                     message.success('Cập nhật thành công')
-                    // Message('Sửa thành công', true, this.props);
+                    this.goBack()
                 })
                 .catch(err => {
                     message.error('Cập nhật thất bại')
-                    // Message('Sửa thất bại', false);
+                    ApiFailHandler(err.response?.data?.error)
                 }))
     }
 
@@ -93,24 +98,29 @@ class thongtincanhan extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
-            Axios.post('/api/roles/getAll', {}, {
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
+            Axios.post('/api/system-roles/getAll', {}, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
                 }
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err => {
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
-        console.log(data)
 
         if (data !== null && roles !== null) {
             if (this._isMounted) {
                 this.setState({
                     data: {
                         ...data,
-                        phone: Number(data.phone),
+                        phone: data.phone,
                         birthday: moment(data.birthday)
                     },
                     listRoles: roles
@@ -124,7 +134,7 @@ class thongtincanhan extends Component {
     }
 
     goBack = () => {
-        this.props.history.goBack();
+        this.props.history.push("/");
     }
     render() {
         if (this.state.data) {
@@ -138,7 +148,7 @@ class thongtincanhan extends Component {
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
                                     Chi tiết
-                            </Breadcrumb.Item>
+                                </Breadcrumb.Item>
                             </Breadcrumb>
                             <Button onClick={() => this.setModalEditActionVisible(true)} className="flex-row-item-right add">Chỉnh sửa</Button>
                         </div>
@@ -181,7 +191,8 @@ class thongtincanhan extends Component {
                                 hasFeedback
                                 rules={[{ required: true, message: 'Cần nhập số điện thoại!' }, { type: 'number' }]}
                             >
-                                <InputNumber style={{ width: '100%' }} minLength={9} maxLength={11} placeholder="Nhập số điện thoại..."></InputNumber>
+                                {/* <InputNumber style={{ width: '100%' }} minLength={9} maxLength={11} placeholder="Nhập số điện thoại..."></InputNumber> */}
+                                <NumericInput placeholder="Nhập số điện thoại..." />
                             </Form.Item>
                             <Row>
                                 <Col span={12} style={{ padding: '0 10px' }}>
@@ -238,7 +249,8 @@ class thongtincanhan extends Component {
                                 <Col span={12} style={{ padding: '0 10px' }}>
                                     <Title className="normalLabel" level={4}>Ảnh đại diện hiện tại</Title>
                                     <div style={{ widht: '100%', textAlign: 'center' }}>
-                                        <Image style={{ maxWidth: '110px' }} src={`/api/images/${this.state.data.photoUrl}`}></Image>
+                                        {/* <Image style={{ maxWidth: '110px' }} src={"https://event-go.s3.us-east-2.amazonaws.com/1624966695834-470527781-image.jpeg"}></Image> */}
+                                        <Image style={{ maxWidth: '110px' }} src={`${window.resource_url}${this.state.data.photoUrl}`}></Image>
                                     </div>
                                 </Col>
                                 <Col span={12} style={{ padding: '0 10px' }}>
@@ -252,10 +264,10 @@ class thongtincanhan extends Component {
                                             action='/api/uploads'
                                             listType="picture"
                                             beforeUpload={file => {
-                                                if (file.type !== 'image/png') {
-                                                    message.error(`${file.name} is not a png file`);
+                                                if (!['image/jpeg', 'image/png'].includes(file.type)) {
+                                                    message.error(`${file.name} không phải dạng ảnh`);
                                                 }
-                                                return file.type === 'image/png';
+                                                return ['image/jpeg', 'image/png'].includes(file.type);
                                             }}
                                             onChange={(info) => {
                                                 // file.status is empty when beforeUpload return false
@@ -267,7 +279,7 @@ class thongtincanhan extends Component {
 
                                                 }
                                                 this.setState({
-                                                    fileList: info.fileList.filter(file => { file.url = `/api/images/${this.state.data.photoUrl}`; return !!file.status })
+                                                    fileList: info.fileList.filter(file => { file.url = `${window.resource_url}${this.state.data.photoUrl}`; return !!file.status })
                                                 })
 
                                             }}
@@ -286,10 +298,10 @@ class thongtincanhan extends Component {
                                     style={{ width: 150, marginRight: 20 }}
                                 >
                                     Hủy
-                            </Button>
+                                </Button>
                                 <Button htmlType="submit" className="add" style={{ width: 150 }}>
                                     Cập nhật
-                            </Button>
+                                </Button>
                             </Form.Item>
                         </Form>
                     </div>

@@ -1,4 +1,4 @@
-import { Button } from 'antd';
+import { Button, Carousel } from 'antd';
 import React, { Component } from 'react';
 import Peer from "simple-peer";
 import { w3cwebsocket } from 'websocket';
@@ -8,7 +8,8 @@ import {
     SoundOutlined,
     MessageOutlined,
 } from '@ant-design/icons';
-const client = new w3cwebsocket('ws://localhost:3001');
+import { WebSocketServer } from '../../env'
+const client = new w3cwebsocket(WebSocketServer);
 
 
 const videoConstraints = {
@@ -23,7 +24,7 @@ class VideoCall extends Component {
         this.state = {
             peers: [],
             peersRef: [],
-            video: false,
+            video: true,
             audio: true,
             stream: null
         }
@@ -32,7 +33,7 @@ class VideoCall extends Component {
         this._ismounted = true
         if (this._ismounted) {
             client.onopen = () => {
-                // console.log('connected ws')
+                console.log('connected ws')
             }
 
             navigator.mediaDevices.getUserMedia({ video: this.state.video ? videoConstraints : false, audio: this.state.audio }).then(stream => {
@@ -51,24 +52,16 @@ class VideoCall extends Component {
 
                     switch (dataFromServer.type) {
                         case 'all users':
-                            // console.log('all user')
                             const peers = [];
                             dataFromServer.message.forEach(userID => {
-                                // console.log('self', dataFromServer.currentId)
-                                // console.log('other user in room', userID)
                                 const peer = this.createPeer(userID, dataFromServer.currentId, this.state.stream);
                                 let temp_peersRef = {
                                     peerID: userID,
                                     peer,
                                 }
-                                // console.log('add peersRef')
                                 this.setState({
                                     peersRef: [...this.state.peersRef, temp_peersRef]
                                 })
-                                // this.peersRef.current.push({
-                                //     peerID: userID,
-                                //     peer,
-                                // })
                                 peers.push(peer);
                             })
                             this.setState({
@@ -76,47 +69,30 @@ class VideoCall extends Component {
                             })
                             break;
                         case 'user joined':
-                            // console.log('user joined')
                             const peer = this.addPeer(dataFromServer.message.signal, dataFromServer.message.callerID, this.state.stream);
-                            // this.peersRef.current.push({
-                            //     peerID: dataFromServer.message.callerID,
-                            //     peer,
-                            // })
                             let temp_peersRef2 = {
                                 peerID: dataFromServer.message.callerID,
                                 peer,
                             }
-                            // console.log('add peerRefs')
                             this.setState({
                                 peers: [...this.state.peers, peer],
                                 peersRef: [...this.state.peersRef, temp_peersRef2]
                             })
                             break;
                         case 'receiving returned signal':
-                            // console.log('receiving returned signal')
                             const item = this.state.peersRef.find(p => p.peerID === dataFromServer.message.id);
                             item.peer.peer.signal(dataFromServer.message.signal);
                             break;
                         case 'room full':
-                            // console.log('room full')
                             alert("room is full");
                             break;
                         case 'user disconnected':
-                            // console.log('user disconnected')
-                            // this.state.peersRef.current = this.peersRef.current.filter(p => p.peerID !== dataFromServer.message)
                             let temp = this.state.peers
                             let need_delete = temp.filter(p => p.Id === dataFromServer.message)
-                            // console.log('need delete', dataFromServer.message)
-                            temp.forEach(e => {
-                                // console.log(e.Id)
-                            })
-                            console.log(need_delete.length)
                             if (need_delete.length > 0) {
                                 need_delete[0].peer.destroy()
                                 let temp1 = this.state.peers.filter(p => p.Id !== dataFromServer.message)
-                                console.log('peers', temp1.length)
                                 let temp2 = this.state.peersRef.filter(p => p.peerID !== dataFromServer.message)
-                                console.log('peersRef', temp2.length)
                                 this.setState({
                                     peers: temp1,
                                     peersRef: temp2
@@ -124,24 +100,9 @@ class VideoCall extends Component {
                             }
                             break;
                         default:
-                            // console.log('default')
                             break;
                     }
                 }
-
-                // var video_button = document.createElement("video_button");
-                // video_button.appendChild(document.createTextNode("Toggle hold"));
-
-                // video_button.video_onclick = function () {
-                //     stream.getVideoTracks()[0].enabled = !(stream.getVideoTracks()[0].enabled);
-                // }
-
-                // var audio_button = document.createElement("audio_button");
-                // video_button.appendChild(document.createTextNode("Toggle hold"));
-
-                // audio_button.audio_onclick = function () {
-                //     stream.getAudioTracks()[0].enabled = !(stream.getAudioTracks()[0].enabled);
-                // }
             })
         }
     }
@@ -196,49 +157,118 @@ class VideoCall extends Component {
     stopVideo = () => {
         let temp_video = !this.state.video
         let temp = this.state.stream
-        if (temp.getVideoTracks()[0]) {
-            temp.getVideoTracks()[0].enabled = !(temp.getVideoTracks()[0].enabled);
-        } else {
-            try {
+        try {
+            if (temp.getVideoTracks()[0]) {
+                temp.getVideoTracks()[0].enabled = !(temp.getVideoTracks()[0].enabled);
+            } else {
+
                 navigator.mediaDevices.getUserMedia({ video: temp_video ? videoConstraints : false, audio: this.state.audio }).then(stream => {
                     temp = stream
                 })
             }
-            catch (err) {
-                console.log(err)
-            }
+            this.setState({
+                stream: temp,
+                video: !this.state.video
+            })
         }
-        this.setState({
-            stream: temp,
-            video: !this.state.video
-        })
-    }
-    stopAudio = () => {
-        let temp = this.state.stream;
-        temp.getAudioTracks()[0].enabled = !(temp.getAudioTracks()[0].enabled);
-        this.setState({
-            stream: temp,
-            audio: !this.state.audio
-        })
+        catch (err) {
+            console.log(err)
+        }
     }
 
+    stopAudio = () => {
+        let temp = this.state.stream;
+        if (temp) {
+            temp.getAudioTracks()[0].enabled = !(temp.getAudioTracks()[0].enabled);
+            this.setState({
+                stream: temp,
+                audio: !this.state.audio
+            })
+        }
+    }
+
+    render1pageofListVideo = (i) => {
+        let temp = (4 * i)
+        return (
+            this.state.peers.slice(i === 0 ? temp : temp - 1, i === 0 ? temp + 2 : temp + 3).map((peer, index) => {
+                return (
+                    <Video
+                        style={{
+                            width: '25%',
+                            padding: 5
+                        }}
+                        key={index}
+                        peer={peer.peer}
+                        show={this.show}
+                    />
+                )
+            })
+        )
+    }
+
+    show = (e) => {
+        this.ref_For_Show.current.srcObject = e.current.srcObject
+    }
+
+    renderListVideo = () => {
+        let temp = this.state.peers.length
+        let pagecount = temp % 4;
+        let arr = []
+        for (var i = 0; i < pagecount; i++) {
+            arr.push(i)
+        }
+        if (arr.length > 0) {
+            return (
+                arr.map((i, index) => {
+                    return (
+                        <div key={index}>
+                            {i === 0 ? <video
+                                onClick={() => { this.show(this.userVideo) }}
+                                style={{
+                                    width: '25%',
+                                    padding: 5
+                                }} className="styled-video" ref={this.userVideo} muted={true} autoPlay playsInline /> : null}
+                            {this.render1pageofListVideo(i)}
+                        </div>
+                    )
+                })
+            )
+        } else {
+            return (
+                <div>
+                    <video
+                        onClick={() => { this.show(this.userVideo) }}
+                        style={{
+                            width: '25%',
+                            padding: 5
+                        }} className="styled-video" ref={this.userVideo} muted={true} autoPlay playsInline />
+                </div>
+            )
+        }
+
+    }
+
+    ref_For_Show = React.createRef()
     userVideo = React.createRef()
     render() {
         return (
             <div className="video-container">
-                <video className="styled-video" ref={this.userVideo} muted={true} autoPlay playsInline />
-                {
-                    this.state.peers.map((peer, index) => {
-                        return (
-                            <Video key={index} peer={peer.peer} />
-                        );
-                    })
-                }
+                <video style={{
+                    width: '100%',
+                    height: '100%'
+                }} ref={this.ref_For_Show} muted={true} autoPlay playsInline />
 
-                <div className="video-controller">
-                    <Button className="openbtn" onClick={this.stopVideo}>{this.state.video ? null : <div className="red-slash" />}<VideoCameraOutlined /></Button>
-                    <Button className="openbtn" onClick={this.stopAudio}>{this.state.audio ? null : <div className="red-slash" />}<SoundOutlined /></Button>
-                    <Button className="openbtn" onClick={this.props.changeStatusChatRoom}>{this.props.StatusChatRoom ? null : <div className="red-slash" />}<MessageOutlined /></Button>
+
+
+                <div className="list-video-carousel">
+                    <div className="video-controller">
+                        <Button className="openbtn" onClick={this.stopVideo}>{this.state.video ? null : <div className="red-slash" />}<VideoCameraOutlined /></Button>
+                        <Button className="openbtn" onClick={this.stopAudio}>{this.state.audio ? null : <div className="red-slash" />}<SoundOutlined /></Button>
+                        <Button className="openbtn" onClick={this.props.changeStatusChatRoom}>{this.props.StatusChatRoom ? null : <div className="red-slash" />}<MessageOutlined /></Button>
+                    </div>
+                    <Carousel style={{ width: '100%' }} arrows={true} autoplay={false}>
+                        {this.renderListVideo()}
+                    </Carousel>
                 </div>
             </div >
         );

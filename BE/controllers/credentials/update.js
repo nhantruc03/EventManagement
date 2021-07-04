@@ -6,10 +6,7 @@ const update = async (req, res) => {
   let sessions = []
   try {
     const queryOld = {
-      $and: [
-        { roleId: req.body.roleId },
-        { userId: req.body.userId },
-      ],
+      name: req.body.name,
       isDeleted: false
     }
     const queryUpdate = { _id: req.params.id, isDeleted: false }

@@ -13,6 +13,7 @@ const create = async (req, res) => {
         { phone: req.body.phone },
         { email: req.body.email },
         { username: req.body.username },
+        { mssv: req.body.mssv }
       ],
       isDeleted: false
     } // for oldDocs
@@ -77,7 +78,7 @@ const create = async (req, res) => {
     //     error: "Created failed"
     //   });
     // }
-    
+
     // Success
     await commitTransactions(sessions)
     return res.status(200).json({

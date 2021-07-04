@@ -6,6 +6,7 @@ import { trackPromise } from 'react-promise-tracker';
 import { Link } from 'react-router-dom';
 import { AUTH } from '../../../env'
 import ReviewScriptDetail from '../review'
+import ApiFailHandler from '../../helper/ApiFailHandler'
 class view extends Component {
     constructor(props) {
         super(props)
@@ -29,7 +30,10 @@ class view extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
             axios.post('/api/script-details/getAll', { scriptId: this.props.match.params.id }, {
                 headers: {
                     'Authorization': { AUTH }.AUTH
@@ -37,11 +41,12 @@ class view extends Component {
             })
                 .then((res) =>
                     res.data.data
-                ),
+                )
+                .catch(err=>{
+                    ApiFailHandler(err.response?.data?.error)
+                }),
         ]));
 
-        console.log(scripts)
-        console.log(scripts_details)
 
         if (scripts !== null) {
             if (this._isMounted) {
@@ -82,10 +87,10 @@ class view extends Component {
                         <div className="flex-container-row" style={{ width: '100%', padding: '0 10px' }}>
                             <Breadcrumb separator=">">
                                 <Breadcrumb.Item >
-                                    <Link to="/events">Sự kiện</Link>
+                                    <Link to="/eventclones">Hồ sơ sự kiện</Link>
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
-                                    <Link to="/#" onClick={this.goBack}>Sự kiện</Link>
+                                    <Link to="/#" onClick={this.goBack}>Chi tiết</Link>
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item>
                                     Xem kịch bản

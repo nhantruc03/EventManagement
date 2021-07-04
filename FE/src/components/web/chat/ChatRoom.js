@@ -11,7 +11,10 @@ import { trackPromise } from 'react-promise-tracker';
 import Loader from 'react-loader-spinner';
 import { Link } from 'react-router-dom';
 import { Upload } from 'antd';
-const client = new w3cwebsocket('ws://localhost:3001');
+import { AUTH } from '../../env'
+import ApiFailHandler from '../helper/ApiFailHandler'
+import { WebSocketServer } from '../../env'
+const client = new w3cwebsocket(WebSocketServer);
 class ChatRoom extends Component {
     constructor(props) {
         super(props);
@@ -27,10 +30,18 @@ class ChatRoom extends Component {
         }
     }
     getData = async () => {
-        const temp = await trackPromise(axios.post('/api/chat-message/getAll?page=1&limit=15', { roomId: this.props.roomId })
+        const temp = await trackPromise(axios.post('/api/chat-message/getAll?page=1&limit=15', { roomId: this.props.roomId }, {
+            headers: {
+                'Authorization': { AUTH }.AUTH
+            }
+        })
             .then((res) =>
                 res.data.data
             ))
+            .catch(err => {
+                ApiFailHandler(err.response?.data?.error)
+            })
+
         this.setState({
             messages: temp.reverse()
         })
@@ -39,6 +50,7 @@ class ChatRoom extends Component {
     async componentDidMount() {
         this._isMounted = true;
         if (this._isMounted) {
+
             client.onopen = () => {
                 console.log('Connect to ws')
             }
@@ -86,8 +98,17 @@ class ChatRoom extends Component {
             roomId: this.props.roomId
         }
 
-        await axios.post('/api/chat-message', message)
-
+        await axios.post('/api/chat-message', message, {
+            headers: {
+                'Authorization': { AUTH }.AUTH
+            }
+        })
+            .then(res => {
+                message._id = res.data.data[0]._id
+            })
+            .catch(err => {
+                ApiFailHandler(err.response?.data?.error)
+            })
 
         client.send(JSON.stringify({
             type: "sendMessage",
@@ -114,7 +135,14 @@ class ChatRoom extends Component {
             roomId: this.props.roomId
         }
 
-        await axios.post('/api/chat-message', message)
+        await axios.post('/api/chat-message', message, {
+            headers: {
+                'Authorization': { AUTH }.AUTH
+            }
+        })
+            .catch(err => {
+                ApiFailHandler(err.response?.data?.error)
+            })
 
         client.send(JSON.stringify({
             type: "sendMessage",
@@ -138,7 +166,11 @@ class ChatRoom extends Component {
                     onLoadMore: true
                 })
 
-                await axios.post(`/api/chat-message/getAll?page=${this.state.page + 1}&limit=15`, { roomId: this.props.roomId })
+                await axios.post(`/api/chat-message/getAll?page=${this.state.page + 1}&limit=15`, { roomId: this.props.roomId }, {
+                    headers: {
+                        'Authorization': { AUTH }.AUTH
+                    }
+                })
                     .then((res) => {
                         const temp = res.data.data;
                         this.setState({
@@ -146,6 +178,9 @@ class ChatRoom extends Component {
                             page: this.state.page + 1,
                             messages: [...temp.reverse(), ...this.state.messages]
                         })
+                    })
+                    .catch(err => {
+                        ApiFailHandler(err.response?.data?.error)
                     })
             }
         }
@@ -160,7 +195,7 @@ class ChatRoom extends Component {
     renderMessage = () => {
         return (
             this.state.messages.map((msg, index) => (
-                <ChatMessage key={index} messageClass={msg.userId._id === this.state.currentUser ? 'sent' : 'received'} message={msg} />
+                <ChatMessage key={index} roomId={this.props.roomId} messageClass={msg.userId._id === this.state.currentUser ? 'sent' : 'received'} message={msg} />
             ))
         )
     }
@@ -183,7 +218,11 @@ class ChatRoom extends Component {
                                 <input className="input-chat" value={this.state.formValue} onChange={(e) => this.setFormValue(e.target.value)} placeholder="Hãy chia sẻ ý kiến của bạn" />
                                 <button className="chat-button"><Link to={`/videocall/${this.props.roomId}`} style={{ color: 'black' }} ><VideoCameraOutlined /></Link></button>
                             </>
-                            : null}
+                            :
+                            <>
+                                <input className="input-chat" value={this.state.formValue} onChange={(e) => this.setFormValue(e.target.value)} placeholder="Hãy chia sẻ ý kiến của bạn" />
+                            </>
+                        }
                         <Upload
                             className="flex-row-item-right"
                             fileList={this.state.fileList}

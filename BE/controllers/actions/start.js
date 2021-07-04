@@ -5,9 +5,21 @@ const { handleBody } = require("./handleBody")
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
 const { isEmpty, pick } = require("lodash")
+const constants = require("../../constants/actions")
+const Permission = require("../../helper/Permissions")
 const start = async (req, res) => {
     let sessions = []
     try {
+        //check permissson
+        let permissons = await Permission.getPermission(req.body.eventId, req.user._id, req.user.roleId._id)
+        if (!Permission.checkPermission(permissons, constants.QL_CONGVIEC_PERMISSION)) {
+
+            return res.status(406).json({
+                success: false,
+                error: "Permission denied!"
+            })
+        }
+        console.log('thỏa điều kiện')
         const query = {
             $and: [
                 { name: req.body.name },
@@ -24,6 +36,7 @@ const start = async (req, res) => {
                 error: error
             })
         }
+        console.log('data', body)
 
         // Transactions
         let session = await startSession();
@@ -82,7 +95,7 @@ const start = async (req, res) => {
                 await abortTransactions(sessions);
                 return res.status(406).json({
                     success: false,
-                    error: "Created failed"
+                    error: "Created action assign failed"
                 });
             }
             // Check duplicate Action Assign
@@ -129,18 +142,17 @@ const start = async (req, res) => {
                 body.push(temp)
             })
             //access DB
-            listNotifications = await notifications.insertMany(
-                body,
-                { session: session }
+            let temp_listNoti = await notifications.insertMany(
+                body
             )
 
-            if (isEmpty(listNotifications) || listNotifications.length != body.length) {
-                await abortTransactions(sessions);
-                return res.status(406).json({
-                    success: false,
-                    error: "Created failed"
-                });
-            }
+            let list_Id = temp_listNoti.reduce((list, e) => {
+                list.push(e._id)
+                return list;
+            }, [])
+
+            listNotifications = await notifications.find({ _id: { $in: list_Id } })
+                .populate({ path: 'userId', select: 'push_notification_token' })
 
         }
         // done notification
@@ -149,7 +161,8 @@ const start = async (req, res) => {
         await commitTransactions(sessions)
         const doc = await Actions.findOne({ _id: newDoc[0]._id, isDeleted: false })
             .populate({ path: 'availUser', select: 'name photoUrl' })
-            .populate({ path: 'tagsId', select: 'name' })
+            .populate({ path: 'managerId', select: 'name photoUrl' })
+            .populate({ path: 'tagsId', select: 'name background color' })
             .populate({ path: 'facultyId', select: 'name' })
             .populate({ path: 'priorityId', select: 'name' })
             .populate({ path: 'eventId', select: 'name' })
@@ -161,6 +174,7 @@ const start = async (req, res) => {
             Notifications: listNotifications
         });
     } catch (error) {
+        console.log(error.message)
         await abortTransactions(sessions)
         return res.status(500).json({
             success: false,

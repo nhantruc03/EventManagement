@@ -23,7 +23,10 @@ const handleBody = (body) => {
         "password",
         "email",
         "roleId",
-        "gender")
+        "gender",
+        "mssv",
+        "photoUrl",
+        "push_notification_token")
     }
   }
 } // for newDoc

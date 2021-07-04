@@ -12,9 +12,19 @@ const { handleBody } = require("./handleBody")
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
 const { pick } = require("lodash")
+const constants = require("../../constants/actions")
+const Permission = require("../../helper/Permissions")
 const startClone = async (req, res) => {
     let sessions = []
     try {
+        //check permissson
+        let permissons = await Permission.getPermission(req.body.eventId, req.user._id, req.user.roleId._id)
+        if (!Permission.checkPermission(permissons, constants.NHOM_TOANQUYEN)) {
+            return res.status(406).json({
+                success: false,
+                error: "Permission denied!"
+            })
+        }
         const query = {
             $or: [
                 {
@@ -43,7 +53,8 @@ const startClone = async (req, res) => {
         }
 
 
-        const docEvent = await Events.findOne({ _id: body_ref.eventId, isDeleted: false, isClone: true })
+        // const docEvent = await Events.findOne({ _id: body_ref.eventId, isDeleted: false, isClone: true })
+        const docEvent = await Events.findById(body_ref.eventId)
 
         // Handle data
         const { error, body } = handleBody(docEvent) // for newDoc
@@ -55,7 +66,11 @@ const startClone = async (req, res) => {
         }
         let temp_body = {
             ...body,
-            isClone: false
+            availUser: [],
+            isClone: !body.isClone,
+            ...pick(req.body,
+                "name"
+            )
         }
         // Access DB
         const newDoc = await Events.create([temp_body], { session: session })
@@ -126,7 +141,7 @@ const startClone = async (req, res) => {
         // for (const e of clone_Scripts) {
         await Promise.all(clone_Scripts.map(async (e) => {
             let clone_ScriptDetails = await ScriptDetails.find({ scriptId: e._id, isDeleted: false })
-   
+
             let data_insert_Script = {
                 ...pick(e,
                     "name",
@@ -187,7 +202,7 @@ const startClone = async (req, res) => {
                 let data_insert_Actions = {
                     ...pick(a,
                         "name",
-                        "startDate",
+                        "endTime",
                         "endDate",
                         "description",
                         "priorityId",
@@ -196,10 +211,11 @@ const startClone = async (req, res) => {
                         "coverUrl",
                         "availUser",
                     ),
+                    isClone: !a.isClone,
                     eventId: newDoc[0]._id,
                     actionTypeId: new_ActionTypes[0]._id
                 }
-                
+
                 let new_Actions = await Actions.create([data_insert_Actions], { session: session })
                 listActions.push(new_Actions[0])
 
@@ -208,7 +224,6 @@ const startClone = async (req, res) => {
                     let temp = {
                         ...pick(e,
                             "name",
-                            "startDate",
                             "endDate",
                             "startTime",
                             "endTime",
@@ -228,7 +243,8 @@ const startClone = async (req, res) => {
                     let temp = {
                         ...pick(e,
                             "url",
-                            "extension"
+                            "extension",
+                            "userId"
                         ),
                         actionId: new_Actions[0]._id
                     }
@@ -261,7 +277,7 @@ const startClone = async (req, res) => {
         }
 
         // Success
-        
+
         await commitTransactions(sessions)
         return res.status(200).json(result);
     } catch (error) {

@@ -1,0 +1,1 @@
+var resource_url="https://event-go.s3.us-east-2.amazonaws.com/"

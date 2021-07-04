@@ -1,14 +1,23 @@
 const Scripts = require("../../models/scripts")
 const ScriptDetails = require("../../models/scriptDetails")
-const Guests = require("../../models/guests")
-const Groups = require("../../models/groups")
 const { handleBody } = require("./handleBody")
 const { startSession } = require('mongoose')
 const { commitTransactions, abortTransactions } = require('../../services/transaction')
-const { isEmpty, pick } = require("lodash")
+const { isEmpty, pick, result } = require("lodash")
+const constants = require("../../constants/actions")
+const Permission = require("../../helper/Permissions")
+const notifications = require("../../models/notifications")
 const start = async (req, res) => {
     let sessions = []
     try {
+        //check permissson
+        let permissons = await Permission.getPermission(req.body.eventId, req.user._id, req.user.roleId._id)
+        if (!Permission.checkPermission(permissons, constants.QL_KICHBAN_PERMISSION)) {
+            return res.status(406).json({
+                success: false,
+                error: "Permission denied!"
+            })
+        }
         const query = {
             $and: [
                 { name: req.body.name },
@@ -107,13 +116,40 @@ const start = async (req, res) => {
             }
         }
         // done guest types
-        // Success
-        await commitTransactions(sessions)
-        return res.status(200).json({
-            success: true,
-            script: newDoc,
-            ScriptDetails: listScriptDetails,
-        });
+        // start notification
+        if (req.body.clone !== true) {
+            const curDoc = await Scripts.findOne({ _id: newDoc[0]._id }, null, { session: session })
+                .populate({ path: 'eventId', select: 'name' })
+            //prepare data
+            let noti = {}
+            noti.name = "Tạo mới"
+            noti.userId = curDoc.forId
+            noti.description = `Sự kiện ${curDoc.eventId.name} đã được tạo kịch bản ${curDoc.name}`
+            noti.scriptId = curDoc._id
+            //access DB
+            let created_notification = await notifications.create(
+                noti
+            )
+            let result_noti = await notifications.findById(created_notification._id)
+                .populate({ path: 'userId', select: 'push_notification_token' })
+            // done notification
+            // Success
+            await commitTransactions(sessions)
+            return res.status(200).json({
+                success: true,
+                script: newDoc,
+                ScriptDetails: listScriptDetails,
+                notification: result_noti
+            });
+        }else{
+            await commitTransactions(sessions)
+            return res.status(200).json({
+                success: true,
+                script: newDoc,
+                ScriptDetails: listScriptDetails,
+            });
+        }
+
     } catch (error) {
         await abortTransactions(sessions)
         return res.status(500).json({

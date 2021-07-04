@@ -4,15 +4,10 @@ const Schema = mongoose.Schema;
 
 const Credentials = new Schema(
     {
-        userId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "users",
+        name: {
+            type: String,
             index: true,
-        },
-        roleId:{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "roles",
-            index: true,
+            required:true
         },
         isDeleted: {
             type: Boolean,

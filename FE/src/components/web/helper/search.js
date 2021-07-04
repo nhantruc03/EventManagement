@@ -8,21 +8,28 @@ class ss extends Component {
             this.props.data.forEach((item) => {
                 if (this.props.multi === true) {
                     this.props.target.every(x => {
-                        if (item[x].toString().toLowerCase().indexOf(e.target.value) !== -1) {
-                            ketqua.push(item);
-                            return false;
+                        if (item[x]) {
+                            if (item[x].toString().toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1) {
+                                ketqua.push(item);
+                                return false;
+                            }
                         }
                         return true;
                     })
                 } else {
                     if (this.props.targetParent == null) {
-                        if (item[this.props.target].toString().toLowerCase().indexOf(e.target.value) !== -1) {
-                            ketqua.push(item);
+                        if (item[this.props.target]) {
+                            if (item[this.props.target].toString().toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1) {
+                                ketqua.push(item);
+
+                            }
                         }
                     }
                     else {
-                        if (item[this.props.targetParent][this.props.target].toString().toLowerCase().indexOf(e.target.value) !== -1) {
-                            ketqua.push(item);
+                        if (item[this.props.targetParent][this.props.target]) {
+                            if (item[this.props.targetParent][this.props.target].toString().toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1) {
+                                ketqua.push(item);
+                            }
                         }
                     }
                 }
@@ -32,7 +39,6 @@ class ss extends Component {
         if (e.target.value === "") {
             ketqua = this.props.data
         }
-        console.log(ketqua)
         this.props.getSearchData(ketqua)
 
     }
@@ -40,9 +46,8 @@ class ss extends Component {
         return (
             <Row >
                 <Col >
-                    <Search placeholder="Tìm kiếm..." style={{ width: '100%', borderTopLeftRadius: '10px' }} onChange={(e) => this.onChange(e)}></Search>
+                    <Search suffix={this.props.suffix} placeholder="Tìm kiếm..." style={{ width: '100%' }} onChange={(e) => this.onChange(e)}></Search>
                 </Col>
-
             </Row>
         );
     }
