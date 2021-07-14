@@ -478,7 +478,7 @@ class actionDetails extends Component {
                             <Col sm={24} xl={7} className="action-detail">
                                 {/* <div className="vl"></div> */}
                                 <Tabs className="chat-tabs" defaultActiveKey="1" >
-                                    <TabPane tab="Bình luận" key="1"><ChatRoom videocall={true} roomId={this.props.match.params.id} /></TabPane>
+                                    <TabPane tab="Bình luận" key="1"><ChatRoom comment={true} videocall={true} roomId={this.props.match.params.id} /></TabPane>
                                 </Tabs>
                             </Col>
                         </Row>

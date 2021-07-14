@@ -193,11 +193,20 @@ class ChatRoom extends Component {
     }
 
     renderMessage = () => {
-        return (
-            this.state.messages.map((msg, index) => (
-                <ChatMessage key={index} roomId={this.props.roomId} messageClass={msg.userId._id === this.state.currentUser ? 'sent' : 'received'} message={msg} />
-            ))
-        )
+        if (this.props.comment) {
+            return (
+                this.state.messages.map((msg, index) => (
+                    <ChatMessage key={index} roomId={this.props.roomId} messageClass={'received'} message={msg} />
+                ))
+            )
+        }
+        else {
+            return (
+                this.state.messages.map((msg, index) => (
+                    <ChatMessage key={index} roomId={this.props.roomId} messageClass={msg.userId._id === this.state.currentUser ? 'sent' : 'received'} message={msg} />
+                ))
+            )
+        }
     }
     chatbox = React.createRef()
     render() {

@@ -211,6 +211,8 @@ class Profilescreen extends Component {
           res.data.data
         )
         .catch(err => {
+          // console.log('lỗi here', err)
+
           let errResult = ApiFailHandler(err.response?.data?.error)
           this.setState({
             loggout: errResult.isExpired
@@ -252,7 +254,7 @@ class Profilescreen extends Component {
         data_ongoing: ongoing_event,
         data_future: future_event,
         listTasks: ListNotCompletedTask,
-        isLoading: false,
+        isLoading: false
       })
     }
   }

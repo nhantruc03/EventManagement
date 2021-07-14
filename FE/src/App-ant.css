@@ -641,7 +641,6 @@ ul, li {
 
 .chat-message {
   max-width: 200px;
-  word-break: break-all;
   margin-bottom: 12px;
   line-height: 24px;
   padding: 10px 20px;
@@ -649,6 +648,7 @@ ul, li {
   position: relative;
   color: white;
   text-align: left;
+  overflow-wrap: break-word;
 }
 .chat-button:disabled {
   opacity: 0.5;
