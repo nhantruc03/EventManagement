@@ -28,7 +28,6 @@ import ListAvailUser from './forAvailUser/listAvailUser'
 import EventAssign from './EventAssign/EventAssign'
 import ListGuest from './forGuest/listGuest'
 import GuestView from "./forGuest/guestView";
-// import ListParticipants from './Participants/list'
 import ParticipantsView from "./Participants/View";
 import ListParticipants from "../editevent/Participants/participantsView";
 import { Link, Redirect } from "react-router-dom";
@@ -62,8 +61,12 @@ class eventDetails extends Component {
       doneDelete: false,
       currentUserInEvent: {},
       lissParticipants: [],
+      modalScriptsVisible: false,
+      listScripts: [],
     }
   }
+
+
 
   updateguest = (e) => {
     this.setState({
@@ -74,7 +77,7 @@ class eventDetails extends Component {
 
   async componentDidMount() {
     this._isMounted = true;
-    const [event, guestTypes, listEventAssign, faculties, roles, groups, permissons, lissParticipants] = await trackPromise(Promise.all([
+    const [event, guestTypes, listEventAssign, faculties, roles, groups, permissons, lissParticipants, listscripts] = await trackPromise(Promise.all([
       axios.get('/api/events/' + this.props.match.params.id, {
         headers: {
           'Authorization': { AUTH }.AUTH
@@ -153,6 +156,17 @@ class eventDetails extends Component {
         .catch(err => {
           ApiFailHandler(err.response?.data?.error)
         }),
+      axios.post('/api/scripts/getAll', { eventId: this.props.match.params.id }, {
+        headers: {
+          'Authorization': { AUTH }.AUTH
+        }
+      })
+        .then((res) =>
+          res.data.data
+        )
+        .catch(err => {
+          ApiFailHandler(err.response?.data?.error)
+        })
     ]));
 
 
@@ -196,6 +210,8 @@ class eventDetails extends Component {
           return e.userId._id === this.state.currentUser.id
         })
 
+        console.log(listscripts)
+
         this.setState({
           data: event,
           listEventAssign: listEventAssign,
@@ -205,7 +221,8 @@ class eventDetails extends Component {
           listGroups: groups,
           currentPermissions: permissons,
           currentUserInEvent: currentUserInEvent[0],
-          listParticipants: lissParticipants
+          listParticipants: lissParticipants,
+          listScripts: listscripts.reverse()
         })
         if (guestTypes !== undefined) {
           this.setState({
@@ -238,6 +255,25 @@ class eventDetails extends Component {
 
   setModalParticipantsVisible(modalParticipantsVisible) {
     this.setState({ modalParticipantsVisible });
+  }
+
+  setModalScriptsVisible(modalScriptsVisible) {
+    this.setState({ modalScriptsVisible })
+  }
+
+
+  renderModalScripts = () => {
+    return (
+      // <ListParticipants canEdit={checkPermisson(this.state.currentPermissions, constants.QL_NGUOITHAMGIA_PERMISSION)} list={this.state.listParticipants} uploadExcelFile={this.uploadExcelFile} />
+      // <ScriptModelView eventId={this.props.match.params.id} data={this.state.listScripts} />
+      <ListScripts updateListScripts={this.updateListScripts} showHeader={true} postsPerPage={10} currentPermissions={this.state.currentPermissions} eventId={this.props.match.params.id} data={this.state.listScripts} />
+    )
+  }
+
+  updateListScripts = (e) => {
+    this.setState({
+      listScripts: e
+    })
   }
 
   renderModalParticipants = () => {
@@ -464,9 +500,10 @@ class eventDetails extends Component {
 
                   <div className="flex-container-row" style={{ marginTop: '10px' }}>
                     <Title level={4}>Khách mời</Title>
-                    {checkPermisson(this.state.currentPermissions, constants.QL_KHACHMOI_PERMISSION) ?
+                    {/* {checkPermisson(this.state.currentPermissions, constants.QL_KHACHMOI_PERMISSION) ?
                       <Button className="flex-row-item-right no-border" onClick={() => this.setModal2Visible2(true)}>Xem tất cả</Button>
-                      : null}
+                      : null} */}
+                    <Button className="flex-row-item-right no-border" onClick={() => this.setModal2Visible2(true)}>Xem tất cả</Button>
                   </div>
 
                   <Tabs defaultActiveKey="1" >
@@ -476,17 +513,20 @@ class eventDetails extends Component {
                   <div className="flex-container-row" style={{ marginBottom: 10, marginTop: 10 }}>
                     {/* <Title className="event-detail-title" level={3}>Kịch bản</Title> */}
                     <Title level={4}>Kịch bản</Title>
-                    {checkPermisson(this.state.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
+                    {/* {checkPermisson(this.state.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
                       <Button className="flex-row-item-right add" ><Link to={`/addscripts/${this.props.match.params.id}`}>Thêm</Link></Button>
-                      : null}
+                      : null} */}
+                    {/* <Button className="flex-row-item-right add" ><Link to={`/addscripts/${this.props.match.params.id}`}>Thêm</Link></Button> */}
+                    <Button className="flex-row-item-right no-border" onClick={() => this.setModalScriptsVisible(true)}>Xem tất cả</Button>
                   </div>
-                  <ListScripts currentPermissions={this.state.currentPermissions} eventId={this.props.match.params.id} />
+                  <ListScripts updateListScripts={this.updateListScripts} currentPermissions={this.state.currentPermissions} eventId={this.props.match.params.id} data={this.state.listScripts} />
 
                   <div className="flex-container-row" style={{ marginBottom: 10, marginTop: 10 }}>
                     <Title level={4}>Người tham gia</Title>
-                    {checkPermisson(this.state.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
+                    {/* {checkPermisson(this.state.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
                       <Button className="flex-row-item-right no-border" onClick={() => this.setModalParticipantsVisible(true)}>Xem tất cả</Button>
-                      : null}
+                      : null} */}
+                    <Button className="flex-row-item-right no-border" onClick={() => this.setModalParticipantsVisible(true)}>Xem tất cả</Button>
                   </div>
                   {this.renderParticipants()}
                   {/* <ListScripts currentPermissions={this.state.currentPermissions} eventId={this.props.match.params.id} /> */}
@@ -546,13 +586,12 @@ class eventDetails extends Component {
 
 
                   <Title className="event-detail-title" level={3}>Phòng hội thoại</Title>
-                  <Tabs className="chat-tabs" defaultActiveKey="1" >
+                  <Tabs className="chat-tabs" defaultActiveKey="0" >
                     {this.renderGroups()}
                   </Tabs>
                 </Col>
               </Row>
             </div>
-
 
             <Modal
               title="Ban tổ chức"
@@ -566,7 +605,6 @@ class eventDetails extends Component {
             >
               {this.renderModel(this.state.listusers)}
             </Modal>
-
             <Modal
               title="Cập nhật khách mời"
               centered
@@ -590,6 +628,18 @@ class eventDetails extends Component {
               footer={false}
             >
               {this.renderModalParticipants(this.state.listusers)}
+            </Modal>
+            <Modal
+              title="Danh sách kịch bản"
+              centered
+              visible={this.state.modalScriptsVisible}
+              onOk={() => this.setModalScriptsVisible(false)}
+              onCancel={() => this.setModalScriptsVisible(false)}
+              width="70%"
+              pagination={false}
+              footer={false}
+            >
+              {this.renderModalScripts(this.state.listScripts)}
             </Modal>
           </Content >
         );

@@ -18,6 +18,7 @@ import { w3cwebsocket } from 'websocket';
 import * as PushNoti from '../helper/pushNotification'
 import ApiFailHandler from '../helper/ApiFailHandler'
 import { WebSocketServer } from '../../env'
+import Search from '../helper/search';
 const client = new w3cwebsocket(WebSocketServer);
 class list extends Component {
     constructor(props) {
@@ -75,32 +76,31 @@ class list extends Component {
                             </Tooltip >
                         </div >
                 }
-            ]
+            ],
+            SearchData: []
         }
     }
-
+    UNSAFE_componentWillReceiveProps(e) {
+        this.setState({
+            SearchData: e.data
+        })
+    }
     async componentDidMount() {
         this._isMounted = true;
-        const [scripts] = await trackPromise(Promise.all([
-            Axios.post('/api/scripts/getAll', { eventId: this.props.eventId }, {
-                headers: {
-                    'Authorization': { AUTH }.AUTH
-                }
-            })
-                .then((res) =>
-                    res.data.data
-                )
-                .catch(err => {
-                    ApiFailHandler(err.response?.data?.error)
-                })
-        ]));
-
-        if (scripts !== null) {
-            if (this._isMounted) {
+        if (this._isMounted) {
+            if (this.props.data) {
                 this.setState({
-                    data: scripts.reverse(),
+                    SearchData: this.props.data,
                 })
             }
+
+            if (this.props.postsPerPage) {
+                console.log(this.props.postsPerPage)
+                this.setState({
+                    postsPerPage: this.props.postsPerPage
+                })
+            }
+
         }
     }
 
@@ -114,6 +114,7 @@ class list extends Component {
             onAdd: true
         })
     }
+
 
     deleteClick = async (e) => {
 
@@ -129,9 +130,12 @@ class list extends Component {
                         notification: res.data.notification
                     }))
                     PushNoti.sendPushNoti(res.data.notification)
+                    let temp_list = this.props.data.slice()
+                    temp_list = temp_list.filter(o => o._id !== e)
                     this.setState({
-                        data: this.state.data.filter(o => o._id !== e)
+                        SearchData: temp_list
                     })
+                    this.props.updateListScripts(temp_list)
                 })
                 .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
@@ -142,10 +146,30 @@ class list extends Component {
         return Math.ceil(e.length / this.state.postsPerPage);
     }
 
+    getSearchData = (data) => {
+        this.setState({
+            SearchData: data
+        })
+    }
+    renderHeader = () => {
+        if (this.props.showHeader) {
+            return (
+                <div className="flex-container-row" style={{ marginBottom: 20 }}>
+                    <Search target="name" data={this.props.data} getSearchData={(e) => this.getSearchData(e)} />
+                    {checkPermission(this.props.currentPermissions, constants.QL_KICHBAN_PERMISSION) ?
+                        <Button className="flex-row-item-right add" ><Link to={`/addscripts/${this.props.eventId}`}>Thêm</Link></Button>
+                        : null}
+                </div>
+            )
+        }
+    }
+
     printData = () => {
         return (
-            <div className='mt-1'>
-                <Table className="scripts" pagination={this.getlistpage(this.state.data) > 1 ? { pageSize: this.state.postsPerPage } : false} showHeader={false} rowKey="_id" columns={this.state.columns} dataSource={this.state.data}></Table>
+            <div>
+                {this.renderHeader()}
+                {/* <Button className="flex-row-item-right add" ><Link to={`/addscripts/${this.props.match.params.id}`}>Thêm</Link></Button> */}
+                <Table className="scripts" pagination={this.getlistpage(this.state.SearchData) > 1 ? { pageSize: this.state.postsPerPage } : false} showHeader={false} rowKey="_id" columns={this.state.columns} dataSource={this.state.SearchData}></Table>
             </div>
         )
     }
