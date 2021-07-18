@@ -25,7 +25,7 @@ class home extends Component {
         this._isMounted = true;
         const login = localStorage.getItem('login');
         const obj = JSON.parse(login);
-
+        console.log(AUTH())
         const [events, actions] = await trackPromise(Promise.all([
             axios.post('/api/events/getAll', { isClone: false }, {
                 headers: {

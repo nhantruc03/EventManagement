@@ -189,7 +189,7 @@ class thongtincanhan extends Component {
                                 name="phone"
                                 label={<Title className="normalLabel" level={4}>Số điện thoại</Title>}
                                 hasFeedback
-                                rules={[{ required: true, message: 'Cần nhập số điện thoại!' }, { type: 'number' }]}
+                                rules={[{ required: true, message: 'Cần nhập số điện thoại!' }]}
                             >
                                 {/* <InputNumber style={{ width: '100%' }} minLength={9} maxLength={11} placeholder="Nhập số điện thoại..."></InputNumber> */}
                                 <NumericInput placeholder="Nhập số điện thoại..." />
