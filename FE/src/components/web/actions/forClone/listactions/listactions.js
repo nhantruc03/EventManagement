@@ -52,7 +52,7 @@ class listactions extends Component {
     deleteActionTypes = async (value) => {
         const result = await trackPromise(axios.delete(`/api/action-types/${value._id}`, {
             headers: {
-                Authorization: { AUTH }.AUTH,
+                Authorization: AUTH(),
             },
         })
             .then((res) => {
@@ -90,7 +90,7 @@ class listactions extends Component {
 
         const result = await trackPromise(axios.put(`/api/action-types/${this.state.ActionTypeForEdit._id}`, data, {
             headers: {
-                Authorization: { AUTH }.AUTH,
+                Authorization: AUTH(),
             },
         })
             .then((res) => {
@@ -157,7 +157,7 @@ class listactions extends Component {
         await trackPromise(
             axios.post('/api/action-types', data, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) => {
@@ -220,7 +220,7 @@ class listactions extends Component {
         const [event, actionTypes, falcuties, actions] = await trackPromise(Promise.all([
             axios.get('/api/events/' + this.props.eventId, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -231,7 +231,7 @@ class listactions extends Component {
                 }),
             axios.post('/api/action-types/getAll', { eventId: this.props.eventId }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -242,7 +242,7 @@ class listactions extends Component {
                 }),
             axios.post('/api/faculties/getAll', { eventId: this.props.eventId }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -253,7 +253,7 @@ class listactions extends Component {
                 }),
             axios.post('/api/actions/getAll', { eventId: this.props.eventId }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>

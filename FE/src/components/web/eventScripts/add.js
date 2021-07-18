@@ -58,7 +58,7 @@ class add extends Component {
         const [event] = await trackPromise(Promise.all([
             Axios.get('/api/events/' + this.props.match.params.id, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -97,7 +97,7 @@ class add extends Component {
         console.log('Received values of form: ', data);
         await trackPromise(Axios.post('/api/scripts/start', data, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then(res => {

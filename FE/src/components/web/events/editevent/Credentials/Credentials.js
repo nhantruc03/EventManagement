@@ -36,7 +36,7 @@ class EventAssign extends Component {
 
         await trackPromise(axios.put('/api/event-assign/' + info._id, data, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then(res => {

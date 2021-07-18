@@ -234,7 +234,6 @@ class scriptdetail extends ValidationComponent {
     console.log('test')
   }
 
-
   async componentDidMount() {
     this._isMounted = true;
     this.props.navigation.setOptions({

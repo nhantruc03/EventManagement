@@ -25,7 +25,7 @@ class view extends Component {
         const [scripts, scripts_details] = await trackPromise(Promise.all([
             axios.get('/api/scripts/' + this.props.match.params.id, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -36,7 +36,7 @@ class view extends Component {
                 }),
             axios.post('/api/script-details/getAll', { scriptId: this.props.match.params.id }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>

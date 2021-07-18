@@ -1,10 +1,16 @@
-var AUTH = ''
-try {
-    var login = localStorage.getItem('login');
-    var obj = JSON.parse(login);
-    AUTH = obj.token;
-} catch (e) {
-    console.log(e);
+// var AUTH = ''
+
+
+let AUTH = () => {
+    try {
+        var login = localStorage.getItem('login');
+        var obj = JSON.parse(login);
+        // AUTH = obj.token;
+        return obj.token
+    } catch (e) {
+        console.log(e);
+        return ""
+    }
 }
 
 

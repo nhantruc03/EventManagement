@@ -33,7 +33,7 @@ class updatePass extends Component {
         await trackPromise(
             Axios.put('/api/users/updatePass/' + obj.id, e, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then(res => {

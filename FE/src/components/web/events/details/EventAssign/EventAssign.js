@@ -37,7 +37,7 @@ class EventAssign extends Component {
 
         await trackPromise(axios.put('/api/event-assign/' + info._id, data, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then(res => {
@@ -83,7 +83,7 @@ class EventAssign extends Component {
         await trackPromise(
             axios.delete('/api/event-assign/' + id, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then(res => {

@@ -36,7 +36,7 @@ class login extends Component {
                     auth.login(res.data.data);
                     if (auth.isAuthenticatedAdmin() === true || auth.isAuthenticatedDoctor() === true || auth.isAuthenticatedPharmacist() === true || auth.isAuthenticatedStaff() === true) {
                         var login = localStorage.getItem('login');
-                        if (login !== null) {
+                        if (JSON.parse(login).token !== null) {
                             this.props.history.push("/");
                         }
                     }
@@ -95,7 +95,7 @@ class login extends Component {
                             <Button disabled={(this.state.username !== '' && this.state.password !== '') ? false : true} htmlType="submit" className="add">
                                 Đăng nhập
                             </Button>
-                            <Button onClick={()=>{
+                            <Button onClick={() => {
                                 this.props.history.push('/forgot-password')
                             }} style={{ width: '100%', marginTop: 10 }} className="back">
                                 Quên mật khẩu

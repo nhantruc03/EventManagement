@@ -50,7 +50,7 @@ class addactions extends Component {
         const [tags, priorities] = await trackPromise(Promise.all([
             axios.post('/api/action-tags/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -61,7 +61,7 @@ class addactions extends Component {
                 }),
             axios.post('/api/action-priorities/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -126,7 +126,7 @@ class addactions extends Component {
 
         await trackPromise(axios.post('/api/actions/start', data, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then(res => {
@@ -141,13 +141,24 @@ class addactions extends Component {
                 let temp = res.data.action
                 temp.endTime = moment(temp.endTime).utcOffset(0)
                 temp.endDate = moment(temp.endDate).utcOffset(0)
-                
+                try {
+                    this.form2.current.resetFields()
+                    this.back()
+                    this.form1.current.resetFields()
+                    this.setState({
+                        coverUrl: null
+                    })
+                }
+                catch (ex) {
+                    console.log(ex)
+                }
                 this.props.done(temp)
             })
             .catch(err => {
                 message.error('Tạo thất bại');
                 ApiFailHandler(err.response?.data?.error)
             }))
+
     }
 
     form1 = React.createRef();
@@ -157,12 +168,12 @@ class addactions extends Component {
             if (this.state.current === 0) {
                 return (
                     <Form
+                        ref={this.form1}
                         name="validate_other"
                         {...formItemLayout}
                         onFinish={(e) => this.onFinish_Form1(e)}
                         layout="vertical"
                         className="form"
-                        ref={this.form1}
                     >
                         <Row style={{ marginTop: '20px' }}>
                             <Col span={24} style={{ padding: '15px' }}>
@@ -243,10 +254,10 @@ class addactions extends Component {
                                         action='/api/uploads'
                                         listType="picture"
                                         beforeUpload={file => {
-                                            if (!['image/jpeg','image/png'].includes(file.type)) {
+                                            if (!['image/jpeg', 'image/png'].includes(file.type)) {
                                                 message.error(`${file.name} không phải dạng ảnh`);
                                             }
-                                            return ['image/jpeg','image/png'].includes(file.type);
+                                            return ['image/jpeg', 'image/png'].includes(file.type);
                                         }}
                                         onChange={(info) => {
                                             // file.status is empty when beforeUpload return false
@@ -285,12 +296,14 @@ class addactions extends Component {
             else {
                 return (
                     <Form
+                        ref={this.form2}
                         name="validate_other"
                         {...formItemLayout}
                         onFinish={(e) => this.onFinish_Form2(e)}
                         layout="vertical"
                         className="form"
-                        ref={this.form2}
+                    // ref={this.form2}
+                    // ref={(r) => { this.form2 = r }}
                     >
                         <Row style={{ marginTop: '20px' }}>
                             <Col span={24}>

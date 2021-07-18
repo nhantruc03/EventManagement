@@ -29,7 +29,7 @@ class home extends Component {
         const [events, actions] = await trackPromise(Promise.all([
             axios.post('/api/events/getAll', { isClone: false }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -38,9 +38,9 @@ class home extends Component {
                 .catch(err => {
                     ApiFailHandler(err.response?.data?.error)
                 }),
-            axios.post('/api/actions/getAll', { availUser: obj.id, isClone:false }, {
+            axios.post('/api/actions/getAll', { availUser: obj.id, isClone: false }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -50,7 +50,6 @@ class home extends Component {
                     ApiFailHandler(err.response?.data?.error)
                 }),
         ]));
-        console.log(actions)
 
         if (events !== null) {
             if (this._isMounted) {

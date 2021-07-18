@@ -67,7 +67,7 @@ class addusers extends Component {
         console.log(data)
         await trackPromise(Axios.post('/api/users', data, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then(res => {
@@ -87,7 +87,7 @@ class addusers extends Component {
         const [roles] = await trackPromise(Promise.all([
             Axios.post('/api/roles/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -271,7 +271,7 @@ export default addusers;
 //         console.log(data)
 //         await trackPromise(Axios.post('/api/users', data, {
 //             headers: {
-//                 'Authorization': { AUTH }.AUTH
+//                 'Authorization': AUTH()
 //             }
 //         })
 //             .then(res => {

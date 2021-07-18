@@ -53,7 +53,7 @@ class addevents extends Component {
         const [eventTypes, tags] = await trackPromise(Promise.all([
             axios.post('/api/event-types/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -64,7 +64,7 @@ class addevents extends Component {
                 }),
             axios.post('/api/tags/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -107,7 +107,7 @@ class addevents extends Component {
 
         await trackPromise(axios.post('/api/events/start', data, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then(res => {

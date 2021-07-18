@@ -134,7 +134,7 @@ export default class BottomNav extends React.Component {
   //   axios
   //     .put("/api/notifications", data, {
   //       headers: {
-  //         Authorization: { AUTH }.AUTH,
+  //         Authorization: AUTH(),
   //       },
   //     })
   //     .then((res) => console.log(res.data.data));

@@ -117,7 +117,7 @@ class addevents extends Component {
         const [users, eventTypes, tags, faculties, roles] = await trackPromise(Promise.all([
             axios.post('/api/users/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -128,7 +128,7 @@ class addevents extends Component {
                 }),
             axios.post('/api/event-types/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -139,7 +139,7 @@ class addevents extends Component {
                 }),
             axios.post('/api/tags/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -150,7 +150,7 @@ class addevents extends Component {
                 }),
             axios.post('/api/faculties/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -161,7 +161,7 @@ class addevents extends Component {
                 }),
             axios.post('/api/roles/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -223,7 +223,7 @@ class addevents extends Component {
 
         await trackPromise(axios.post('/api/events/start', data, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then(res => {

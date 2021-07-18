@@ -24,7 +24,7 @@ class ActionItem extends Component {
         const [subActions, resources] = await trackPromise(Promise.all([
             axios.post('/api/sub-actions/getAll', { actionId: this.props.data._id }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -34,7 +34,7 @@ class ActionItem extends Component {
                 }),
             axios.post('/api/action-resources/getAll', { actionId: this.props.data._id }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>

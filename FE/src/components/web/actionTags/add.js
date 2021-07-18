@@ -34,7 +34,7 @@ class add extends Component {
         }
         await trackPromise(Axios.post('/api/action-tags', data, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then(res => {

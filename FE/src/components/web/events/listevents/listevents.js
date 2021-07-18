@@ -67,7 +67,7 @@ class listevents extends Component {
         const [tags, future_event, ongoing_event, past_event] = await trackPromise(Promise.all([
             axios.post('/api/tags/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -77,7 +77,7 @@ class listevents extends Component {
                 }),
             axios.post(`/api/events/getAll?gt=${temp}`, { isClone: false }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -88,7 +88,7 @@ class listevents extends Component {
                 }),
             axios.post(`/api/events/getAll?eq=${temp}`, { isClone: false }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -99,7 +99,7 @@ class listevents extends Component {
                 }),
             axios.post(`/api/events/getAll?lt=${temp}`, { isClone: false }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>

@@ -122,7 +122,7 @@ class actionDetails extends Component {
         const [action, actionAssign, resources, subActions] = await trackPromise(Promise.all([
             axios.get('/api/actions/' + this.props.match.params.id, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -133,7 +133,7 @@ class actionDetails extends Component {
                 }),
             axios.post('/api/action-assign/getAll', { actionId: this.props.match.params.id }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -144,7 +144,7 @@ class actionDetails extends Component {
                 }),
             axios.post('/api/action-resources/getAll', { actionId: this.props.match.params.id }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -155,7 +155,7 @@ class actionDetails extends Component {
                 }),
             axios.post('/api/sub-actions/getAll', { actionId: this.props.match.params.id }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -221,7 +221,7 @@ class actionDetails extends Component {
         await trackPromise(
             axios.post('/api/action-resources', data, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) => {
@@ -240,7 +240,7 @@ class actionDetails extends Component {
         await trackPromise(
             axios.delete('/api/action-resources/' + e, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) => {
@@ -260,7 +260,7 @@ class actionDetails extends Component {
         await trackPromise(
             axios.put('/api/sub-actions/' + e.target.value, { status: e.target.checked }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) => {
@@ -286,7 +286,7 @@ class actionDetails extends Component {
         await trackPromise(
             axios.delete('/api/sub-actions/' + e, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) => {
@@ -331,7 +331,7 @@ class actionDetails extends Component {
     deleteAction = async () => {
         const result = await trackPromise(axios.delete('/api/actions/' + this.props.match.params.id, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then((res) => {

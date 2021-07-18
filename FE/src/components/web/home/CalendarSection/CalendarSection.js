@@ -27,7 +27,7 @@ class CalendarSection extends Component {
         const [subActions] = await trackPromise(Promise.all([
             axios.post('/api/sub-actions/getAllWithUserId', { availUser: obj.id }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>

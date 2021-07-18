@@ -62,7 +62,7 @@ class thongtincanhan extends Component {
         await trackPromise(
             Axios.put('/api/users/' + obj.id, data, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then(res => {
@@ -93,7 +93,7 @@ class thongtincanhan extends Component {
         const [data, roles] = await trackPromise(Promise.all([
             Axios.get('/api/users/' + obj.id, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -104,7 +104,7 @@ class thongtincanhan extends Component {
                 }),
             Axios.post('/api/system-roles/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>

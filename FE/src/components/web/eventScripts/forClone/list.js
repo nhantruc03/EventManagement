@@ -76,7 +76,7 @@ class list extends Component {
         const [scripts] = await trackPromise(Promise.all([
             Axios.post('/api/scripts/getAll', { eventId: this.props.eventId }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -114,7 +114,7 @@ class list extends Component {
         await trackPromise(
             Axios.delete("/api/scripts/" + e + "?clone=true", {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) => {

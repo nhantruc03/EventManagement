@@ -29,7 +29,7 @@ class listusers extends Component {
         const [users] = await trackPromise(Promise.all([
             Axios.post('/api/users/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>

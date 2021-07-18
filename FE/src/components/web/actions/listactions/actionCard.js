@@ -4,6 +4,8 @@ import moment from 'moment';
 import {
     PaperClipOutlined,
     CheckSquareOutlined,
+    PushpinOutlined,
+    TagsOutlined
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { trackPromise } from 'react-promise-tracker';
@@ -40,7 +42,7 @@ class actionCard extends Component {
         const [subActions, resources] = await trackPromise(Promise.all([
             axios.post('/api/sub-actions/getAll', { actionId: this.props.data._id }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -51,7 +53,7 @@ class actionCard extends Component {
                 }),
             axios.post('/api/action-resources/getAll', { actionId: this.props.data._id }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -97,6 +99,7 @@ class actionCard extends Component {
     }
 
     render() {
+        console.log(this.props.data)
         return (
             <div className="event-card-container">
 
@@ -120,9 +123,20 @@ class actionCard extends Component {
                             <div className="flex-container-row">
                                 <PaperClipOutlined style={{ marginLeft: '5px' }} />
                                 <p>{this.state.resources.length}</p>
-
                                 <CheckSquareOutlined style={{ marginLeft: '20px' }} />
                                 <p >{this.state.completeSubAction.length}/{this.state.totalSubAction.length}</p>
+                            </div>
+                        </Row>
+                        <Row>
+                            <div className="flex-container-row">
+                                <PushpinOutlined style={{ marginLeft: '5px' }} />
+                                <p>{this.props.data.facultyId.name}</p>
+                            </div>
+                        </Row>
+                        <Row>
+                            <div className="flex-container-row">
+                                <TagsOutlined style={{ marginLeft: '5px' }} />
+                                <p>{this.props.data.priorityId.name}</p>
                             </div>
                         </Row>
 
@@ -133,7 +147,6 @@ class actionCard extends Component {
                                     className="flex-row-item-right"
                                     maxCount={2}
                                     maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}
-                                // className="flex-row-item-right"
                                 >
                                     {this.renderAvailUser()}
                                 </Avatar.Group>

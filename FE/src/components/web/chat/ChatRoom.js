@@ -32,7 +32,7 @@ class ChatRoom extends Component {
     getData = async () => {
         const temp = await trackPromise(axios.post('/api/chat-message/getAll?page=1&limit=15', { roomId: this.props.roomId }, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then((res) =>
@@ -100,7 +100,7 @@ class ChatRoom extends Component {
 
         await axios.post('/api/chat-message', message, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then(res => {
@@ -137,7 +137,7 @@ class ChatRoom extends Component {
 
         await axios.post('/api/chat-message', message, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .catch(err => {
@@ -168,7 +168,7 @@ class ChatRoom extends Component {
 
                 await axios.post(`/api/chat-message/getAll?page=${this.state.page + 1}&limit=15`, { roomId: this.props.roomId }, {
                     headers: {
-                        'Authorization': { AUTH }.AUTH
+                        'Authorization': AUTH()
                     }
                 })
                     .then((res) => {

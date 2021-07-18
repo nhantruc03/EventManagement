@@ -53,7 +53,7 @@ class listactions extends Component {
 
     const result = await trackPromise(axios.put(`/api/action-types/${this.state.ActionTypeForEdit._id}`, data, {
       headers: {
-        Authorization: { AUTH }.AUTH,
+        Authorization: AUTH(),
       },
     })
       .then((res) => {
@@ -82,7 +82,7 @@ class listactions extends Component {
   deleteActionTypes = async (value) => {
     const result = await trackPromise(axios.delete(`/api/action-types/${value._id}`, {
       headers: {
-        Authorization: { AUTH }.AUTH,
+        Authorization: AUTH(),
       },
     })
       .then((res) => {
@@ -150,7 +150,7 @@ class listactions extends Component {
       axios
         .post("/api/action-types", data, {
           headers: {
-            Authorization: { AUTH }.AUTH,
+            Authorization: AUTH(),
           },
         })
         .then((res) => {
@@ -223,7 +223,7 @@ class listactions extends Component {
             { isClone: false },
             {
               headers: {
-                Authorization: { AUTH }.AUTH,
+                Authorization: AUTH(),
               },
             }
           )
@@ -260,7 +260,7 @@ class listactions extends Component {
             { eventId: temp[0]._id },
             {
               headers: {
-                Authorization: { AUTH }.AUTH,
+                Authorization: AUTH(),
               },
             }
           )
@@ -274,7 +274,7 @@ class listactions extends Component {
             { eventId: temp[0]._id },
             {
               headers: {
-                Authorization: { AUTH }.AUTH,
+                Authorization: AUTH(),
               },
             }
           )
@@ -288,7 +288,7 @@ class listactions extends Component {
             { eventId: temp[0]._id },
             {
               headers: {
-                Authorization: { AUTH }.AUTH,
+                Authorization: AUTH(),
               },
             }
           )
@@ -328,7 +328,7 @@ class listactions extends Component {
       (e) => e.actionTypeId._id === value._id
     );
     return (
-      <Col sm={24} xl={12} key={keyCol} style={{ padding: "10px 0" }}>
+      <Col sm={24} xl={8} key={keyCol} style={{ padding: "10px 0" }}>
         <ActionColumn canEdit={checkPermisson(this.state.currentPermissons, constants.QL_CONGVIEC_PERMISSION)} onDeleteActionType={() => this.deleteActionTypes(value)} onEditActionType={() => { this.onEditActionType(value) }} title={value.name} listActions={temp_listActions} />
       </Col>
     );

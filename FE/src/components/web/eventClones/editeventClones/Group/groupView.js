@@ -31,7 +31,7 @@ class groupView extends Component {
         console.log(info)
         await trackPromise(axios.put('/api/groups/' + info._id, info, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then(res => {
@@ -98,7 +98,7 @@ class groupView extends Component {
         await trackPromise(
             axios.post('/api/groups/', data, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then(res => {
@@ -129,7 +129,7 @@ class groupView extends Component {
         await trackPromise(
             axios.delete('/api/groups/' + id, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then(res => {

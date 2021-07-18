@@ -8,7 +8,7 @@ export default async function getCredentials(eventId) {
     const event_assign = await trackPromise(
         axios.post('/api/event-assign/getAll', { eventId: eventId, userId: user.id }, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then(res => res.data.data)

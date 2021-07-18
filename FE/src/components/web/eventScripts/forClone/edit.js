@@ -39,7 +39,7 @@ class edit extends Component {
         const [script] = await trackPromise(Promise.all([
             Axios.get('/api/scripts/' + this.props.match.params.id, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -52,7 +52,7 @@ class edit extends Component {
         const [scriptdetails] = await trackPromise(Promise.all([
             Axios.post('/api/script-details/getAll', { scriptId: this.props.match.params.id }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -96,7 +96,7 @@ class edit extends Component {
 
         await trackPromise(Axios.put('/api/scripts/' + this.props.match.params.id, data, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then(res => {
@@ -122,7 +122,7 @@ class edit extends Component {
         await trackPromise(
             Axios.put("/api/script-details/" + value._id, temp, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) => {
@@ -166,7 +166,7 @@ class edit extends Component {
         await trackPromise(
             Axios.post("/api/script-details", temp, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) => {
@@ -207,7 +207,7 @@ class edit extends Component {
             await trackPromise(
                 Axios.delete("/api/script-details/" + value._id + "?clone=true", {
                     headers: {
-                        'Authorization': { AUTH }.AUTH
+                        'Authorization': AUTH()
                     }
                 })
                     .then((res) => {
@@ -228,7 +228,7 @@ class edit extends Component {
         await trackPromise(
             Axios.post("/api/scripts/genDoc", { scriptId: this.props.match.params.id }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) => {

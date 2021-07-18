@@ -22,7 +22,7 @@ class TableDataRow extends Component {
     deleteClick = async () => {
         await trackPromise(Axios.delete("/api/" + this.props.obj + "/" + this.props.data._id, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then((res) => {

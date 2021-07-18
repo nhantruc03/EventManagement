@@ -65,7 +65,7 @@ class list extends Component {
         const [users] = await trackPromise(Promise.all([
             Axios.post('/api/users/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -101,7 +101,7 @@ class list extends Component {
         await trackPromise(
             Axios.delete("/api/users/" + e._id, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) => {

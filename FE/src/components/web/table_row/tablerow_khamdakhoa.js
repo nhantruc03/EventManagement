@@ -22,7 +22,7 @@ class tablerow_khamdakhoa extends Component {
     onComplete = async () => {
         await Axios.delete('/api/departments/' + this.props.departmentId + '/remove-patient/' + this.props.data._id, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then(res => {

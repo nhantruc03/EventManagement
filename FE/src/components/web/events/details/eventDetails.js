@@ -80,7 +80,7 @@ class eventDetails extends Component {
     const [event, guestTypes, listEventAssign, faculties, roles, groups, permissons, lissParticipants, listscripts] = await trackPromise(Promise.all([
       axios.get('/api/events/' + this.props.match.params.id, {
         headers: {
-          'Authorization': { AUTH }.AUTH
+          'Authorization': AUTH()
         }
       })
         .then((res) =>
@@ -91,7 +91,7 @@ class eventDetails extends Component {
         }),
       axios.post('/api/guest-types/getAll', { eventId: this.props.match.params.id }, {
         headers: {
-          'Authorization': { AUTH }.AUTH
+          'Authorization': AUTH()
         }
       })
         .then((res) =>
@@ -102,7 +102,7 @@ class eventDetails extends Component {
         }),
       axios.post('/api/event-assign/getAll', { eventId: this.props.match.params.id }, {
         headers: {
-          'Authorization': { AUTH }.AUTH
+          'Authorization': AUTH()
         }
       })
         .then((res) =>
@@ -113,7 +113,7 @@ class eventDetails extends Component {
         }),
       axios.post('/api/faculties/getAll', {}, {
         headers: {
-          'Authorization': { AUTH }.AUTH
+          'Authorization': AUTH()
         }
       })
         .then((res) =>
@@ -124,7 +124,7 @@ class eventDetails extends Component {
         }),
       axios.post('/api/roles/getAll', {}, {
         headers: {
-          'Authorization': { AUTH }.AUTH
+          'Authorization': AUTH()
         }
       })
         .then((res) =>
@@ -135,7 +135,7 @@ class eventDetails extends Component {
         }),
       axios.post('/api/groups/getAll', { eventId: this.props.match.params.id }, {
         headers: {
-          'Authorization': { AUTH }.AUTH
+          'Authorization': AUTH()
         }
       })
         .then((res) =>
@@ -147,7 +147,7 @@ class eventDetails extends Component {
       getPermission(this.props.match.params.id).then(res => res),
       axios.post('/api/participants/getAll', { eventId: this.props.match.params.id }, {
         headers: {
-          'Authorization': { AUTH }.AUTH
+          'Authorization': AUTH()
         }
       })
         .then((res) =>
@@ -158,7 +158,7 @@ class eventDetails extends Component {
         }),
       axios.post('/api/scripts/getAll', { eventId: this.props.match.params.id }, {
         headers: {
-          'Authorization': { AUTH }.AUTH
+          'Authorization': AUTH()
         }
       })
         .then((res) =>
@@ -178,7 +178,7 @@ class eventDetails extends Component {
       const temp = await trackPromise(
         axios.post('/api/guests/getAll', { listguesttype: listguesttype }, {
           headers: {
-            'Authorization': { AUTH }.AUTH
+            'Authorization': AUTH()
           }
         })
           .then((res) =>
@@ -351,7 +351,7 @@ class eventDetails extends Component {
   deleteEvent = async () => {
     const result = await trackPromise(axios.delete(`${window.resource_url}${this.props.match.params.id}`, {
       headers: {
-        'Authorization': { AUTH }.AUTH
+        'Authorization': AUTH()
       }
     })
       .then(res => {
@@ -411,7 +411,7 @@ class eventDetails extends Component {
     await trackPromise(
       axios.post('/api/participants', temp, {
         headers: {
-          'Authorization': { AUTH }.AUTH
+          'Authorization': AUTH()
         }
       })
         .then(res => {

@@ -43,7 +43,7 @@ class listGuest extends Component {
     changeStatus = async (e) => {
         await trackPromise(axios.put('/api/guests/' + e._id, { status: !e.status, guestTypeId: e.guestTypeId._id }, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then(() => {

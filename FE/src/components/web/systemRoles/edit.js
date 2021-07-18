@@ -27,7 +27,7 @@ class edit extends Component {
         await trackPromise(
             Axios.put('/api/system-roles/' + this.props.match.params.id, e, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then(res => {
@@ -53,7 +53,7 @@ class edit extends Component {
         const [data] = await trackPromise(Promise.all([
             Axios.get('/api/system-roles/' + this.props.match.params.id, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>

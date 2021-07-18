@@ -49,7 +49,7 @@ class addactions extends Component {
         const [tags, priorities] = await trackPromise(Promise.all([
             axios.post('/api/action-tags/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -60,7 +60,7 @@ class addactions extends Component {
                 }),
             axios.post('/api/action-priorities/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -126,7 +126,7 @@ class addactions extends Component {
         console.log('receive data', data)
         await trackPromise(axios.post('/api/actions/start', data, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then(res => {

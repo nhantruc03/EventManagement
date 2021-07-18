@@ -19,7 +19,7 @@ class add extends Component {
     onSubmit = async (e) => {
         await trackPromise(Axios.post('/api/faculties', e, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then(res => {

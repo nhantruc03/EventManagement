@@ -31,7 +31,7 @@ class edit extends Component {
         await trackPromise(
             axios.put('/api/sub-actions/' + this.props.data._id, data, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then(res => {

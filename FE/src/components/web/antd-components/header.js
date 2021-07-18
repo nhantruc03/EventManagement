@@ -60,7 +60,7 @@ class header extends Component {
             const [notifications] = await trackPromise(Promise.all([
                 axios.post('/api/notifications/getAll', { userId: this.state.currentUser.id }, {
                     headers: {
-                        'Authorization': { AUTH }.AUTH
+                        'Authorization': AUTH()
                     }
                 })
                     .then((res) =>
@@ -121,7 +121,7 @@ class header extends Component {
         }
         axios.put('/api/notifications', data, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then((res) => {
@@ -224,7 +224,7 @@ class header extends Component {
         if (e) {
             axios.put('/api/notifications', { userId: this.state.currentUser.id, watch: true }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>

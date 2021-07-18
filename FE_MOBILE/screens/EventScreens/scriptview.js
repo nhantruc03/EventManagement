@@ -172,7 +172,13 @@ class scriptview extends Component {
     await WebBrowser.openBrowserAsync(uri);
   }
 
-  
+  ViewChat = () => {
+    console.log(this.state.data)
+    this.props.navigation.navigate("Phòng hội thoại", {
+      id: this.props.route.params.id,
+      name: "Bình luận",
+    })
+  }
 
   async componentDidMount() {
     this.props.navigation.setOptions({
@@ -181,8 +187,8 @@ class scriptview extends Component {
           <OptionsMenu
             button={Icon}
             destructiveIndex={1}
-            options={["Xuất kịch bản", "Lịch sử thay đổi", "Huỷ bỏ"]}
-            actions={[this.export, this.ViewHistory, this.test]}
+            options={["Phòng hội thoại", "Xuất kịch bản", "Lịch sử thay đổi", "Huỷ bỏ"]}
+            actions={[this.ViewChat, this.export, this.ViewHistory, this.test]}
           />
         </View>
       ),

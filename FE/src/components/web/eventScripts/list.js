@@ -121,7 +121,7 @@ class list extends Component {
         await trackPromise(
             Axios.delete("/api/scripts/" + e, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) => {

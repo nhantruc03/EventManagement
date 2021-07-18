@@ -32,7 +32,7 @@ class guestTypeView extends Component {
         console.log(info)
         await trackPromise(axios.put('/api/guest-types/' + info._id, info, {
             headers: {
-                'Authorization': { AUTH }.AUTH
+                'Authorization': AUTH()
             }
         })
             .then(res => {
@@ -131,7 +131,7 @@ class guestTypeView extends Component {
         await trackPromise(
             axios.post('/api/participants/', data, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then(res => {
@@ -162,7 +162,7 @@ class guestTypeView extends Component {
         await trackPromise(
             axios.delete('/api/participants/' + id, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then(res => {

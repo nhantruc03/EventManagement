@@ -44,7 +44,7 @@ class editAction extends Component {
         const [event, tags, priorities, faculties, actionTypes] = await trackPromise(Promise.all([
             axios.get('/api/events/' + this.props.data.eventId._id, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -55,7 +55,7 @@ class editAction extends Component {
                 }),
             axios.post('/api/action-tags/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -66,7 +66,7 @@ class editAction extends Component {
                 }),
             axios.post('/api/action-priorities/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -77,7 +77,7 @@ class editAction extends Component {
                 }),
             axios.post('/api/faculties/getAll', {}, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -88,7 +88,7 @@ class editAction extends Component {
                 }),
             axios.post('/api/action-types/getAll', { eventId: this.props.data.eventId._id }, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then((res) =>
@@ -170,7 +170,7 @@ class editAction extends Component {
         await trackPromise(
             axios.put('/api/actions/' + this.props.data._id, data, {
                 headers: {
-                    'Authorization': { AUTH }.AUTH
+                    'Authorization': AUTH()
                 }
             })
                 .then(res => {
