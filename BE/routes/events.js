@@ -9,7 +9,7 @@ const { get } = require('../controllers/events/get')
 const { getAll } = require('../controllers/events/getAll')
 const { update } = require('../controllers/events/update')
 const { _delete } = require('../controllers/events/delete')
-const { getProcess } = require('../controllers/events/getProcess')
+// const { getProcess } = require('../controllers/events/getProcess')
 
 router.post("/", authenticateToken, isAdmin, create)
 router.post("/start", authenticateToken, isAdmin, start)
@@ -18,6 +18,6 @@ router.get("/:id", authenticateToken, get)
 router.post("/getAll", authenticateToken, isAdmin, getAll)
 router.put("/:id", authenticateToken, isAdmin, update)
 router.delete("/:id", authenticateToken, isAdmin, _delete)
-router.get("/process/:id", authenticateToken, isAdmin, getProcess)
+// router.get("/process/:id", authenticateToken, isAdmin, getProcess)
 
 module.exports = router

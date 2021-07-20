@@ -94,7 +94,7 @@ class actionDetails extends Component {
 
     renderModalAddSubAction = () => {
         return (
-            <AddSubAction actionId={this.props.match.params.id} add={(e) => this.addSubAction(e)} />
+            <AddSubAction action={this.state.data} actionId={this.props.match.params.id} add={(e) => this.addSubAction(e)} />
         )
     }
     renderModalEditSubAction = () => {
@@ -107,7 +107,7 @@ class actionDetails extends Component {
                 'endTime': moment(this.state.currentSubAction.endTime),
             }
             return (
-                <EditSubAction edit={(e) => this.editSubAction(e)} data={data} />
+                <EditSubAction action={this.state.data} edit={(e) => this.editSubAction(e)} data={data} />
             )
         } else {
             return null

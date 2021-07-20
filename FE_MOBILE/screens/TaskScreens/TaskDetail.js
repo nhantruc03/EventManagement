@@ -101,7 +101,6 @@ class TaskDetail extends Component {
         updateListSubTask={(e) => this.updateListSubTask(e)}
         data={this.state.subActions}
         actionId={this.state.data._id}
-        // updateToCard={(e) => this.updateToCard(e)}
         updateFullListSub={(e) => this.updateFullListSub(e)}
       />
     ) : (
@@ -248,7 +247,6 @@ class TaskDetail extends Component {
     } else {
       temp_data = this.props.route.params.data
     }
-    console.log(this.props.route.params.currentPermissions)
     this.props.navigation.setOptions({
       headerRight: () => (
         <View style={styles.IconRight}>

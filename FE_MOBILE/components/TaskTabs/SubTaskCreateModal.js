@@ -12,6 +12,7 @@ import { Dimensions } from "react-native";
 import { SafeAreaView } from "react-native";
 import { Redirect } from "react-router";
 import ValidationComponent from 'react-native-form-validator';
+import moment from 'moment'
 const H = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   Label: {
@@ -120,47 +121,58 @@ class SubTaskCreateModal extends ValidationComponent {
         ...this.state.data,
         actionId: this.props.actionId,
       };
+      
+      let expireSubActionDate = moment(`${moment(data.endDate).utcOffset(0).format("YYYY-MM-DD")} ${moment(data.endTime).utcOffset(0).format("HH:mm")}`)
+      let expireActionDate = moment(`${moment(this.props.action.endDate).utcOffset(0).format("YYYY-MM-DD")} ${moment(this.props.action.endTime).utcOffset(0).format("HH:mm")}`)
 
-      if (this.props.onAdd) {
-        await axios
-          .post(`${Url()}/api/sub-actions`, data, {
-            headers: {
-              Authorization: await getToken(),
-            },
-          })
-          .then((res) => {
-            alert("Tạo subtask thành công");
-            this.props.onClose();
-            this.props.addToList(res.data.data);
-
-          })
-          .catch((err) => {
-            console.log(err);
-            this.setState({
-              loadingbtn: false
+      if (expireSubActionDate.isAfter(expireActionDate)) {
+        alert(`Hạn chót trước hạn chót công việc ${expireActionDate.format('DD/MM/YYYY')}`);
+        this.setState({
+          loadingbtn: false,
+        })
+      }
+      else {
+        if (this.props.onAdd) {
+          await axios
+            .post(`${Url()}/api/sub-actions`, data, {
+              headers: {
+                Authorization: await getToken(),
+              },
             })
-            alert("Tạo subtask thất bại");
-          });
-      } else {
-        await axios
-          .put(`${Url()}/api/sub-actions/${this.props.data._id}`, data, {
-            headers: {
-              Authorization: await getToken(),
-            },
-          })
-          .then((res) => {
-            alert("Cập nhật subtask thành công");
-            this.props.onClose();
-            this.props.updateToList(res.data.data);
-          })
-          .catch((err) => {
-            console.log(err);
-            this.setState({
-              loadingbtn: false
-            })
-            alert("Cập nhật subtask thất bại");
+            .then((res) => {
+              alert("Tạo subtask thành công");
+              this.props.onClose();
+              this.props.addToList(res.data.data);
 
-          });
+            })
+            .catch((err) => {
+              console.log(err);
+              this.setState({
+                loadingbtn: false
+              })
+              alert("Tạo subtask thất bại");
+            });
+        } else {
+          await axios
+            .put(`${Url()}/api/sub-actions/${this.props.data._id}`, data, {
+              headers: {
+                Authorization: await getToken(),
+              },
+            })
+            .then((res) => {
+              alert("Cập nhật subtask thành công");
+              this.props.onClose();
+              this.props.updateToList(res.data.data);
+            })
+            .catch((err) => {
+              console.log(err);
+              this.setState({
+                loadingbtn: false
+              })
+              alert("Cập nhật subtask thất bại");
+
+            });
+        }
       }
     }
   };

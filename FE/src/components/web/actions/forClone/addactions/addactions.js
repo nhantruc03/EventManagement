@@ -11,6 +11,7 @@ import Dragger from 'antd/lib/upload/Dragger';
 import { w3cwebsocket } from 'websocket';
 import ApiFailHandler from '../../../helper/ApiFailHandler'
 import { WebSocketServer } from '../../../../env'
+import moment from 'moment'
 const client = new w3cwebsocket(WebSocketServer);
 const { Step } = Steps;
 const { Option } = Select;
@@ -110,11 +111,22 @@ class addactions extends Component {
                 coverUrl: this.state.coverUrl
             }
         }
-        this.setState({
-            data1: data
-        })
+        let expireEventDate = moment(this.props.event.expireDate).utcOffset(0)
+        let beginEventDate = moment(this.props.event.beginDate).utcOffset(0)
+        
+        if (new Date(data.endDate) > new Date(expireEventDate.format('YYYY-MM-DD'))) {
+            message.error(`Hạn chót công việc phải trước hạn chót sự kiện ${expireEventDate.format('DD/MM/YYYY')}`);
+        }
+        else if (new Date(data.endDate) < new Date(beginEventDate.format('YYYY-MM-DD'))) {
+            message.error(`Hạn chót công việc phải sau thời gian bắt đầu sự kiện ${beginEventDate.format('DD/MM/YYYY')}`);
+        }
+        else {
+            this.setState({
+                data1: data
+            })
 
-        this.next()
+            this.next()
+        }
     }
 
     onFinish_Form2 = async (e) => {

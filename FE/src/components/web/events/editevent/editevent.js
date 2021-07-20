@@ -52,7 +52,7 @@ const formItemLayout = {
         span: 14,
     },
 };
-
+const { RangePicker } = DatePicker;
 
 class editevent extends Component {
     constructor(props) {
@@ -396,6 +396,7 @@ class editevent extends Component {
                     ...event,
                     'startTime': moment(event.startTime).utcOffset(0),
                     'startDate': moment(event.startDate).utcOffset(0),
+                    'RangePicker': [moment(event.beginDate).utcOffset(0), moment(event.expireDate).utcOffset(0)],
                     'eventTypeId': event.eventTypeId._id,
                     'tagId': temp_tagId
                 }
@@ -438,6 +439,8 @@ class editevent extends Component {
             ...values,
             'startDate': values['startDate'].utc(true).format('YYYY-MM-DD'),
             'startTime': values['startTime'].utc(true).toDate(),
+            'beginDate': values['RangePicker'][0].utc(true).format('YYYY-MM-DD'),
+            'expireDate': values['RangePicker'][1].utc(true).format('YYYY-MM-DD'),
         }
         if (this.state.posterUrl !== null) {
             data = {
@@ -445,18 +448,22 @@ class editevent extends Component {
                 'posterUrl': this.state.posterUrl,
             }
         }
+        if (new Date(data.startDate) < new Date(data.beginDate) || new Date(data.startDate) > new Date(data.expireDate)) {
+            message.error('Thời gian diễn ra sự kiện không khớp với thời giản tổ chức');
+        } else {
 
-        await trackPromise(axios.put('/api/events/' + this.state.data._id, data, {
-            headers: {
-                'Authorization': AUTH()
-            }
-        })
-            .then(res => {
-                message.success('Cập nhật thành công');
+            await trackPromise(axios.put('/api/events/' + this.state.data._id, data, {
+                headers: {
+                    'Authorization': AUTH()
+                }
             })
-            .catch(err => {
-                message.error('Cập nhật thất bại');
-            }))
+                .then(res => {
+                    message.success('Cập nhật thành công');
+                })
+                .catch(err => {
+                    message.error('Cập nhật thất bại');
+                }))
+        }
     };
     setModal2Visible(modal2Visible) {
         this.setState({ modal2Visible });
@@ -702,6 +709,14 @@ class editevent extends Component {
                                         <Col className="event-col" sm={24} lg={12}>
                                             <Form.Item
                                                 wrapperCol={{ sm: 24 }}
+                                                name="name"
+                                                label={<Title className="normalLabel" level={4}>Tên sự kiện</Title>}
+                                                rules={[{ required: true, message: 'Cần nhập tên sự kiện' }]}
+                                            >
+                                                <Input placeholder="Tên sự kiện..." />
+                                            </Form.Item>
+                                            <Form.Item
+                                                wrapperCol={{ sm: 24 }}
                                                 name="eventTypeId"
                                                 label={<Title className="normalLabel" level={4}>Hình thức</Title>}
                                                 hasFeedback
@@ -777,21 +792,32 @@ class editevent extends Component {
                                         <Col className="event-col" sm={24} lg={12}>
                                             <Form.Item
                                                 wrapperCol={{ sm: 24 }}
-                                                name="name"
-                                                label={<Title className="normalLabel" level={4}>Tên sự kiện</Title>}
-                                                rules={[{ required: true, message: 'Cần nhập tên sự kiện' }]}
-                                            >
-                                                <Input placeholder="Tên sự kiện..." />
-                                            </Form.Item>
-
-                                            <Form.Item
-                                                wrapperCol={{ sm: 24 }}
                                                 name="description"
                                                 label={<Title className="normalLabel" level={4}>Thông tin</Title>}
                                                 rules={[{ required: true, message: 'Cần nhập thông tin' }]}
                                             >
-                                                <Input.TextArea rows={5} placeholder="Eg.mô tả yêu cầu" />
+                                                <Input.TextArea rows={8} placeholder="Eg.mô tả yêu cầu" />
                                             </Form.Item>
+                                            <Row>
+                                                <Col span={24}>
+                                                    <Form.Item
+                                                        wrapperCol={{ sm: 24 }}
+                                                        label={<Title className="normalLabel" level={4}>Thời gian tổ chức sự kiện</Title>}
+                                                        name="RangePicker"
+                                                        rules={[{
+                                                            type: 'array',
+                                                            required: true,
+                                                            message: 'Cần chọn thời gian tổ chức sự kiện!',
+                                                        }]}
+
+                                                    >
+                                                        <RangePicker
+                                                            style={{ width: '100%' }}
+                                                            format="DD/MM/YYYY"
+                                                        />
+                                                    </Form.Item>
+                                                </Col>
+                                            </Row>
 
                                             <Row >
                                                 <Col span={12}>

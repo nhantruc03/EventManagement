@@ -10,7 +10,7 @@ const get = async (req, res) => {
       .populate({ path: 'tagsId', select: 'name background color' })
       .populate({ path: 'facultyId', select: 'name' })
       .populate({ path: 'priorityId', select: 'name' })
-      .populate({ path: 'eventId', select: 'name' })
+      .populate({ path: 'eventId', select: 'name expireDate beginDate' })
       .populate({ path: 'actionTypeId', select: 'name' })
     return res.status(200).json({
       success: true,

@@ -43,6 +43,8 @@ const formItemLayout = {
     },
 };
 
+const { RangePicker } = DatePicker;
+
 
 class addevents extends Component {
     constructor(props) {
@@ -212,7 +214,8 @@ class addevents extends Component {
             'availUser': this.state.listusersforevent.reduce((a, o) => { a.push(o._id); return a }, []),
             'startDate': values['startDate'].utc(true).format('YYYY-MM-DD'),
             'startTime': values['startTime'].utc(true).toDate(),
-            // .toDate
+            'beginDate': values['RangePicker'][0].utc(true).format('YYYY-MM-DD'),
+            'expireDate': values['RangePicker'][1].utc(true).format('YYYY-MM-DD'),
             'posterUrl': values['posterUrl'].fileList[0].response.url,
             'guestTypes': this.state.listguesttype,
             'guests': this.state.listguest,
@@ -220,20 +223,28 @@ class addevents extends Component {
             'eventAssigns': temp_listEventAssign
         }
 
-
-        await trackPromise(axios.post('/api/events/start', data, {
-            headers: {
-                'Authorization': AUTH()
-            }
-        })
-            .then(res => {
-                message.success('Tạo thành công');
-                this.props.history.goBack()
+        if (new Date(data.startDate) < new Date(data.beginDate) || new Date(data.startDate) > new Date(data.expireDate)) {
+            message.error('Thời gian diễn ra sự kiện không khớp với thời giản tổ chức');
+        } else {
+            await trackPromise(axios.post('/api/events/start', data, {
+                headers: {
+                    'Authorization': AUTH()
+                }
             })
-            .catch(err => {
-                message.error('Tạo thất bại');
-                ApiFailHandler(err.response?.data?.error)
-            }))
+                .then(res => {
+                    message.success('Tạo thành công');
+                    this.props.history.goBack()
+                })
+                .catch(err => {
+                    message.error('Tạo thất bại');
+                    ApiFailHandler(err.response?.data?.error)
+                }))
+        }
+
+        // console.log(data)
+
+
+
     };
 
     setModal2Visible(modal2Visible) {
@@ -385,6 +396,15 @@ class addevents extends Component {
         return result
     }
 
+    onChangeRangePicker = (e, x) => {
+        console.log(e)
+        console.log(x)
+    }
+
+    onOKRangePicker = (e) => {
+        console.log(e)
+    }
+
     render() {
         return (
             <Content style={{ margin: "0 16px" }}>
@@ -528,31 +548,53 @@ class addevents extends Component {
                                     label={<Title className="normalLabel" level={4}>Thông tin</Title>}
                                     rules={[{ required: true, message: 'Cần nhập thông tin' }]}
                                 >
-                                    <Input.TextArea rows={6} placeholder="Eg.mô tả yêu cầu" />
+                                    <Input.TextArea rows={3} placeholder="Eg.mô tả yêu cầu" />
                                 </Form.Item>
+                                <Row>
+                                    <Col span={24}>
+
+                                        <Form.Item
+                                            wrapperCol={{ sm: 24 }}
+                                            label={<Title className="normalLabel" level={4}>Thời gian tổ chức sự kiện</Title>}
+                                            name="RangePicker"
+                                            rules={[{
+                                                type: 'array',
+                                                required: true,
+                                                message: 'Cần chọn thời gian tổ chức sự kiện!',
+                                            }]}
+
+                                        >
+                                            <RangePicker
+                                                style={{ width: '100%' }}
+                                                format="DD/MM/YYYY"
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
 
                                 <Row >
                                     <Col span={12}>
                                         <Form.Item
                                             wrapperCol={{ sm: 22 }}
-                                            label={<Title className="normalLabel" level={4}>Ngày</Title>}
-                                            rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
+                                            label={<Title className="normalLabel" level={4}>Ngày diễn ra sự kiện</Title>}
+                                            rules={[{ required: true, message: 'Cần chọn ngày diễn ra!' }]}
                                             name="startDate"
                                         >
-                                            <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày bắt đầu..." />
+                                            <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày diễn ra..." />
                                         </Form.Item>
                                     </Col>
                                     <Col span={12}>
                                         <Form.Item
                                             wrapperCol={{ sm: 24 }}
-                                            label={<Title className="normalLabel" level={4}>Giờ</Title>}
-                                            rules={[{ required: true, message: 'Cần chọn giờ bắt đầu!' }]}
+                                            label={<Title className="normalLabel" level={4}>Giờ diễn ra sự kiện</Title>}
+                                            rules={[{ required: true, message: 'Cần chọn giờ diễn ra!' }]}
                                             name="startTime"
                                         >
-                                            <TimePicker format="HH:mm" placeholder="Chọn giờ..." />
+                                            <TimePicker format="HH:mm" placeholder="Chọn giờ diễn ra..." />
                                         </Form.Item>
                                     </Col>
                                 </Row>
+
 
                                 <Form.Item
                                     wrapperCol={{ sm: 24 }}

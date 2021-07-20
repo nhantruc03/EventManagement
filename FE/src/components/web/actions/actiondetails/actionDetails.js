@@ -116,13 +116,13 @@ class actionDetails extends Component {
 
     renderModalEditAction = () => {
         return (
-            <EditAction onClose={() => this.setModalEditActionVisible(false)} data={this.state.data} manager={this.state.manager} update={(action, manager, actionAssign) => this.updateAction(action, manager, actionAssign)} />
+            <EditAction event={this.state.data.eventId} onClose={() => this.setModalEditActionVisible(false)} data={this.state.data} manager={this.state.manager} update={(action, manager, actionAssign) => this.updateAction(action, manager, actionAssign)} />
         )
     }
 
     renderModalAddSubAction = () => {
         return (
-            <AddSubAction actionId={this.props.match.params.id} add={(e) => this.addSubAction(e)} />
+            <AddSubAction action={this.state.data} actionId={this.props.match.params.id} add={(e) => this.addSubAction(e)} />
         )
     }
     renderModalEditSubAction = () => {
@@ -133,7 +133,7 @@ class actionDetails extends Component {
                 'endTime': moment(this.state.currentSubAction.endTime).utcOffset(0),
             }
             return (
-                <EditSubAction edit={(e) => this.editSubAction(e)} data={data} />
+                <EditSubAction action={this.state.data} edit={(e) => this.editSubAction(e)} data={data} />
             )
         } else {
             return null

@@ -28,23 +28,31 @@ class edit extends Component {
             endDate: e.endDate.utc(true).format('YYYY-MM-DD'),
         }
 
-        await trackPromise(
-            axios.put('/api/sub-actions/' + this.props.data._id, data, {
-                headers: {
-                    'Authorization': AUTH()
-                }
-            })
-                .then(res => {
-                    message.success('Cập nhật thành công');
-                    let temp = res.data.data
-                    temp.endTime = moment(e.endTime).utcOffset(0)
-                    temp.endDate = moment(e.endDate).utcOffset(0)
-                    this.props.edit(temp)
+        let expireSubActionDate = moment(`${data.endDate} ${moment(data.endTime).utcOffset(0).format("HH:mm")}`)
+        let expireActionDate = moment(`${moment(this.props.action.endDate).utcOffset(0).format("YYYY-MM-DD")} ${moment(this.props.action.endTime).utcOffset(0).format("HH:mm")}`)
+
+        if (expireSubActionDate.isAfter(expireActionDate)) {
+            message.error(`Hạn chót trước hạn chót công việc ${expireActionDate.format('DD/MM/YYYY')}`);
+        }
+        else {
+            await trackPromise(
+                axios.put('/api/sub-actions/' + this.props.data._id, data, {
+                    headers: {
+                        'Authorization': AUTH()
+                    }
                 })
-                .catch(err => {
-                    message.error('Cập nhật thất bại');
-                    ApiFailHandler(err.response?.data?.error)
-                }))
+                    .then(res => {
+                        message.success('Cập nhật thành công');
+                        let temp = res.data.data
+                        temp.endTime = moment(e.endTime).utcOffset(0)
+                        temp.endDate = moment(e.endDate).utcOffset(0)
+                        this.props.edit(temp)
+                    })
+                    .catch(err => {
+                        message.error('Cập nhật thất bại');
+                        ApiFailHandler(err.response?.data?.error)
+                    }))
+        }
     }
 
     UNSAFE_componentWillReceiveProps(e) {

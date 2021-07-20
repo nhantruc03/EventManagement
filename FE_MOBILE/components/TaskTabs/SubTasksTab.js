@@ -93,6 +93,7 @@ class SubTasksTab extends Component {
   }
 
   componentDidMount() {
+    console.log('need dsfsdf',this.props.data)
     this.setState({
       data: this.props.data,
       actionId: this.props.actionId,
@@ -292,7 +293,6 @@ class SubTasksTab extends Component {
     let temp = this.state.data
     temp.forEach(x => {
       if (x._id === e._id) {
-        console.log('found')
         x.name = e.name
         x.description = e.description
         x.startDate = e.startDate
@@ -301,7 +301,6 @@ class SubTasksTab extends Component {
         x.endTime = e.endTime
       }
     })
-    console.log('list after update', temp)
     this.setState({
       data: temp
     })
@@ -369,7 +368,7 @@ class SubTasksTab extends Component {
                   actionId={this.state.actionId}
                   addToList={(e) => this.addToList(e)}
                   updateToList={(e) => this.updateToList(e)}
-
+                  action={this.props.data}
                 />
               </Modal>
             </View>

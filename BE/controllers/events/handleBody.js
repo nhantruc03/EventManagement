@@ -13,6 +13,8 @@ const handleBody = (body) => {
         "name",
         "startDate",
         "startTime",
+        "beginDate",
+        "expireDate",
         "address",
         "posterUrl",
         "availUser",

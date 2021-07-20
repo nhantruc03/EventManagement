@@ -48,7 +48,7 @@ const startClone = async (req, res) => {
         sessions.push(session);
         let body_ref = {
             ...pick(req.body,
-                "eventId"
+                "eventId",
             )
         }
 
@@ -209,7 +209,6 @@ const startClone = async (req, res) => {
                         "tagsId",
                         "facultyId",
                         "coverUrl",
-                        "availUser",
                     ),
                     isClone: !a.isClone,
                     eventId: newDoc[0]._id,
@@ -224,9 +223,8 @@ const startClone = async (req, res) => {
                     let temp = {
                         ...pick(e,
                             "name",
-                            "endDate",
-                            "startTime",
                             "endTime",
+                            "endDate",
                             "description",
                         ),
                         actionId: new_Actions[0]._id

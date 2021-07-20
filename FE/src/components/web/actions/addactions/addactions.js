@@ -105,17 +105,30 @@ class addactions extends Component {
             eventId: this.props.event._id
         }
 
+
         if (this.state.coverUrl !== null) {
             data = {
                 ...data,
                 coverUrl: this.state.coverUrl
             }
         }
-        this.setState({
-            data1: data
-        })
 
-        this.next()
+        let expireEventDate = moment(this.props.event.expireDate).utcOffset(0)
+        let beginEventDate = moment(this.props.event.beginDate).utcOffset(0)
+        
+        if (new Date(data.endDate) > new Date(expireEventDate.format('YYYY-MM-DD'))) {
+            message.error(`Hạn chót công việc phải trước hạn chót sự kiện ${expireEventDate.format('DD/MM/YYYY')}`);
+        }
+        else if (new Date(data.endDate) < new Date(beginEventDate.format('YYYY-MM-DD'))) {
+            message.error(`Hạn chót công việc phải sau thời gian bắt đầu sự kiện ${beginEventDate.format('DD/MM/YYYY')}`);
+        }
+        else {
+            this.setState({
+                data1: data
+            })
+
+            this.next()
+        }
     }
 
     onFinish_Form2 = async (e) => {

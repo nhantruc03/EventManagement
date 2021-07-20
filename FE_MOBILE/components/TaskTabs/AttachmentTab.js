@@ -60,7 +60,6 @@ export default class AttachmentTab extends Component {
     }
 
     renderItem = (e) => {
-        console.log("data", e)
         return (
             <View style={styles.listContainer}>
                 <View style={styles.itemContainer}>

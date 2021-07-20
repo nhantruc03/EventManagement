@@ -342,34 +342,53 @@ class CreateTask extends ValidationComponent {
           coverUrl: this.state.coverUrl,
         };
       }
-      await axios
-        .post(`${Url()}/api/actions/start`, data, {
-          headers: {
-            Authorization: await getToken(),
-          },
-        })
-        .then((res) => {
-          alert("Tạo thành công");
 
-          client.send(
-            JSON.stringify({
-              type: "sendListNotifications",
-              notifications: res.data.Notifications,
-            })
-          );
-          PushNoti.sendListPushNoti(res.data.Notifications)
-          this.props.route.params.updateListActions(res.data.action)
-          this.props.navigation.goBack()
-
-        })
-        .catch((err) => {
-          let errResult = ApiFailHandler(err.response?.data?.error)
-          this.setState({
-            loggout: errResult.isExpired,
-            loadingbtn: false,
-          })
-          alert(`${errResult.message}`);
+      let expireEventDate = moment(this.props.route.params.event.expireDate).utcOffset(0)
+      let beginEventDate = moment(this.props.route.params.event.beginDate).utcOffset(0)
+      // console.log(expireEventDate.format('DD/MM/YYYY'))
+      // console.log(beginEventDate.format('DD/MM/YYYY'))
+      if (new Date(data.endDate) > new Date(expireEventDate.format('YYYY-MM-DD'))) {
+        alert(`Hạn chót công việc phải trước hạn chót sự kiện ${expireEventDate.format('DD/MM/YYYY')}`);
+        this.setState({
+          loadingbtn: false,
         });
+      }
+      else if (new Date(data.endDate) < new Date(beginEventDate.format('YYYY-MM-DD'))) {
+        alert(`Hạn chót công việc phải sau thời gian bắt đầu sự kiện ${beginEventDate.format('DD/MM/YYYY')}`);
+        this.setState({
+          loadingbtn: false,
+        });
+      }
+      else {
+        await axios
+          .post(`${Url()}/api/actions/start`, data, {
+            headers: {
+              Authorization: await getToken(),
+            },
+          })
+          .then((res) => {
+            alert("Tạo thành công");
+
+            client.send(
+              JSON.stringify({
+                type: "sendListNotifications",
+                notifications: res.data.Notifications,
+              })
+            );
+            PushNoti.sendListPushNoti(res.data.Notifications)
+            this.props.route.params.updateListActions(res.data.action)
+            this.props.navigation.goBack()
+
+          })
+          .catch((err) => {
+            let errResult = ApiFailHandler(err.response?.data?.error)
+            this.setState({
+              loggout: errResult.isExpired,
+              loadingbtn: false,
+            })
+            alert(`${errResult.message}`);
+          });
+      }
     }
   };
 

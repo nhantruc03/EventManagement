@@ -41,6 +41,7 @@ class editAction extends Component {
     }
     async componentDidMount() {
         this._isMounted = true;
+       
         const [event, tags, priorities, faculties, actionTypes] = await trackPromise(Promise.all([
             axios.get('/api/events/' + this.props.data.eventId._id, {
                 headers: {
@@ -149,7 +150,7 @@ class editAction extends Component {
             endTime: e.endTime.utc(true).toDate(),
             endDate: e.endDate.utc(true).format('YYYY-MM-DD')
         }
-        console.log(data)
+        
         let managerId_change = false
         if (data.managerId !== this.state.data.managerId) {
             managerId_change = true
@@ -165,61 +166,71 @@ class editAction extends Component {
             availUser_change: availUser_change,
         }
 
-
-
-        await trackPromise(
-            axios.put('/api/actions/' + this.props.data._id, data, {
-                headers: {
-                    'Authorization': AUTH()
-                }
-            })
-                .then(res => {
-
-                    let temp_Action = res.data.data
-                    let temp_actionAssign = res.data.actionAssign.filter(e => e.role === 2)
-                    let temp_manager = res.data.data.managerId
-                    // prepare init data
-                    let temp_availUser = []
-                    temp_Action.availUser.forEach(e => {
-                        temp_availUser.push(e._id)
-                    })
-
-                    let temp_tagsId = []
-                    temp_Action.tagsId.forEach(e => {
-                        temp_tagsId.push(e._id)
-                    })
-
-                    let data = {
-                        ...temp_Action,
-                        facultyId: temp_Action.facultyId._id,
-                        managerId: temp_manager._id,
-                        actionTypeId: temp_Action.actionTypeId._id,
-                        availUser: temp_availUser,
-                        tagsId: temp_tagsId,
-                        endTime: moment(temp_Action.endTime).utcOffset(0),
-                        endDate: moment(temp_Action.endDate).utcOffset(0),
-                        priorityId: temp_Action.priorityId._id,
-                        coverUrl: undefined
+        let expireEventDate = moment(this.props.event.expireDate).utcOffset(0)
+        let beginEventDate = moment(this.props.event.beginDate).utcOffset(0)
+        
+        if (new Date(data.endDate) > new Date(expireEventDate.format('YYYY-MM-DD'))) {
+            message.error(`Hạn chót công việc phải trước hạn chót sự kiện ${expireEventDate.format('DD/MM/YYYY')}`);
+        }
+        else if (new Date(data.endDate) < new Date(beginEventDate.format('YYYY-MM-DD'))) {
+            message.error(`Hạn chót công việc phải sau thời gian bắt đầu sự kiện ${beginEventDate.format('DD/MM/YYYY')}`);
+        }
+        else {
+            await trackPromise(
+                axios.put('/api/actions/' + this.props.data._id, data, {
+                    headers: {
+                        'Authorization': AUTH()
                     }
-                    this.setState({
-                        data: data,
-                        coverUrl: temp_Action.coverUrl
-                    })
-                    message.success('Cập nhật thành công');
-                    client.send(JSON.stringify({
-                        type: "sendListNotifications",
-                        notifications: res.data.notifications
-                    }))
-
-                    PushNoti.sendListPushNoti(res.data.notifications)
-
-                    this.props.update(temp_Action, temp_manager, temp_actionAssign)
-
                 })
-                .catch(err => {
-                    message.error('Cập nhật thất bại');
-                    ApiFailHandler(err.response?.data?.error)
-                }))
+                    .then(res => {
+
+                        let temp_Action = res.data.data
+                        let temp_actionAssign = res.data.actionAssign.filter(e => e.role === 2)
+                        let temp_manager = res.data.data.managerId
+                        // prepare init data
+                        let temp_availUser = []
+                        temp_Action.availUser.forEach(e => {
+                            temp_availUser.push(e._id)
+                        })
+
+                        let temp_tagsId = []
+                        temp_Action.tagsId.forEach(e => {
+                            temp_tagsId.push(e._id)
+                        })
+
+                        let data = {
+                            ...temp_Action,
+                            facultyId: temp_Action.facultyId._id,
+                            managerId: temp_manager._id,
+                            actionTypeId: temp_Action.actionTypeId._id,
+                            availUser: temp_availUser,
+                            tagsId: temp_tagsId,
+                            endTime: moment(temp_Action.endTime).utcOffset(0),
+                            endDate: moment(temp_Action.endDate).utcOffset(0),
+                            priorityId: temp_Action.priorityId._id,
+                            coverUrl: undefined
+                        }
+                        this.setState({
+                            data: data,
+                            coverUrl: temp_Action.coverUrl
+                        })
+                        message.success('Cập nhật thành công');
+                        client.send(JSON.stringify({
+                            type: "sendListNotifications",
+                            notifications: res.data.notifications
+                        }))
+
+                        PushNoti.sendListPushNoti(res.data.notifications)
+
+                        this.props.update(temp_Action, temp_manager, temp_actionAssign)
+
+                    })
+                    .catch(err => {
+                        message.error('Cập nhật thất bại');
+                        ApiFailHandler(err.response?.data?.error)
+                    }))
+        }
+
     }
 
     renderView = () => {
@@ -398,10 +409,10 @@ class editAction extends Component {
                                     showUploadList={false}
                                     beforeUpload={file => {
                                         console.log(file.type)
-                                        if (!['image/jpeg','image/png'].includes(file.type)) {
+                                        if (!['image/jpeg', 'image/png'].includes(file.type)) {
                                             message.error(`${file.name} không phải dạng ảnh`);
                                         }
-                                        return ['image/jpeg','image/png'].includes(file.type);
+                                        return ['image/jpeg', 'image/png'].includes(file.type);
                                     }}
                                     onChange={(info) => {
                                         // file.status is empty when beforeUpload return false

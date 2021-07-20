@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Form, Image, Input, message, Row, Select } from 'antd';
+import { Button, Col, DatePicker, Form, Image, Input, message, Row, Select, TimePicker } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import Dragger from 'antd/lib/upload/Dragger';
 import React, { Component } from 'react';
@@ -12,6 +12,7 @@ import moment from 'moment'
 import { w3cwebsocket } from 'websocket';
 import ApiFailHandler from '../../../../helper/ApiFailHandler'
 import { WebSocketServer } from '../../../../../env'
+// import moment from 'moment'
 const client = new w3cwebsocket(WebSocketServer);
 const { Option } = Select;
 const formItemLayout = {
@@ -123,8 +124,8 @@ class editAction extends Component {
             facultyId: this.props.data.facultyId._id,
             actionTypeId: this.props.data.actionTypeId._id,
             tagsId: temp_tagsId,
-            startDate: moment(this.props.data.startDate),
-            endDate: moment(this.props.data.endDate),
+            endTime: moment(this.props.data.endTime).utcOffset(0),
+            endDate: moment(this.props.data.endDate).utcOffset(0),
             priorityId: this.props.data.priorityId._id,
             coverUrl: undefined
         }
@@ -143,52 +144,65 @@ class editAction extends Component {
             ...e,
             coverUrl: this.state.coverUrl,
             eventId: this.props.data.eventId._id,
+            endTime: e.endTime.utc(true).toDate(),
+            endDate: e.endDate.utc(true).format('YYYY-MM-DD')
         }
 
-        await trackPromise(
-            axios.put('/api/actions/' + this.props.data._id, data, {
-                headers: {
-                    'Authorization': AUTH()
-                }
-            })
-                .then(res => {
-
-                    let temp_Action = res.data.data
-
-                    // prepare init data
-
-                    let temp_tagsId = []
-                    temp_Action.tagsId.forEach(e => {
-                        temp_tagsId.push(e._id)
-                    })
-
-                    let data = {
-                        ...temp_Action,
-                        facultyId: temp_Action.facultyId._id,
-                        actionTypeId: temp_Action.actionTypeId._id,
-                        tagsId: temp_tagsId,
-                        startDate: moment(temp_Action.startDate),
-                        endDate: moment(temp_Action.endDate),
-                        priorityId: temp_Action.priorityId._id,
-                        coverUrl: undefined
+        let expireEventDate = moment(this.state.event.expireDate).utcOffset(0)
+        let beginEventDate = moment(this.state.event.beginDate).utcOffset(0)
+        
+        if (new Date(data.endDate) > new Date(expireEventDate.format('YYYY-MM-DD'))) {
+            message.error(`Hạn chót công việc phải trước hạn chót sự kiện ${expireEventDate.format('DD/MM/YYYY')}`);
+        }
+        else if (new Date(data.endDate) < new Date(beginEventDate.format('YYYY-MM-DD'))) {
+            message.error(`Hạn chót công việc phải sau thời gian bắt đầu sự kiện ${beginEventDate.format('DD/MM/YYYY')}`);
+        }
+        else {
+            await trackPromise(
+                axios.put('/api/actions/' + this.props.data._id, data, {
+                    headers: {
+                        'Authorization': AUTH()
                     }
-                    this.setState({
-                        data: data,
-                        coverUrl: temp_Action.coverUrl
-                    })
-                    message.success('Cập nhật thành công');
-                    client.send(JSON.stringify({
-                        type: "sendListNotifications",
-                        notifications: res.data.notifications
-                    }))
-                    this.props.update(temp_Action)
-
                 })
-                .catch(err => {
-                    message.error('Cập nhật thất bại');
-                    ApiFailHandler(err.response?.data?.error)
-                }))
-        // console.log(data)
+                    .then(res => {
+
+                        let temp_Action = res.data.data
+
+                        // prepare init data
+
+                        let temp_tagsId = []
+                        temp_Action.tagsId.forEach(e => {
+                            temp_tagsId.push(e._id)
+                        })
+
+                        let data = {
+                            ...temp_Action,
+                            facultyId: temp_Action.facultyId._id,
+                            actionTypeId: temp_Action.actionTypeId._id,
+                            tagsId: temp_tagsId,
+                            startDate: moment(temp_Action.startDate),
+                            endDate: moment(temp_Action.endDate),
+                            priorityId: temp_Action.priorityId._id,
+                            coverUrl: undefined
+                        }
+                        this.setState({
+                            data: data,
+                            coverUrl: temp_Action.coverUrl
+                        })
+                        message.success('Cập nhật thành công');
+                        client.send(JSON.stringify({
+                            type: "sendListNotifications",
+                            notifications: res.data.notifications
+                        }))
+                        this.props.update(temp_Action)
+
+                    })
+                    .catch(err => {
+                        message.error('Cập nhật thất bại');
+                        ApiFailHandler(err.response?.data?.error)
+                    }))
+            // console.log(data)
+        }
     }
 
     renderView = () => {
@@ -245,21 +259,21 @@ class editAction extends Component {
                                 <Col span={12}>
                                     <Form.Item
                                         wrapperCol={{ sm: 24 }}
-                                        label="Bắt đầu"
-                                        rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
-                                        name="startDate"
+                                        label="Ngày kết thúc"
+                                        rules={[{ required: true, message: 'Cần chọn ngày kết thức!' }]}
+                                        name="endDate"
                                     >
-                                        <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày bắt đầu..." />
+                                        <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày kết thúc..." />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item
                                         wrapperCol={{ sm: 24 }}
-                                        label="Kết thúc"
-                                        rules={[{ required: true, message: 'Cần chọn ngày kết thức!' }]}
-                                        name="endDate"
+                                        label="Giờ kết thúc"
+                                        rules={[{ required: true, message: 'Cần giờ kết thúc!' }]}
+                                        name="endTime"
                                     >
-                                        <DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày kết thúc..." />
+                                        <TimePicker format="HH:mm" placeholder="Chọn giờ kết thúc"></TimePicker>
                                     </Form.Item>
                                 </Col>
                             </Row>

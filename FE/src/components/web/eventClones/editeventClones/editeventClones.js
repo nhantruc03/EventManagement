@@ -45,7 +45,7 @@ const formItemLayout = {
         span: 14,
     },
 };
-
+const { RangePicker } = DatePicker;
 
 class editevent extends Component {
     constructor(props) {
@@ -321,6 +321,7 @@ class editevent extends Component {
                     ...event,
                     'startTime': moment(event.startTime).utcOffset(0),
                     'startDate': moment(event.startDate).utcOffset(0),
+                    'RangePicker': [moment(event.beginDate).utcOffset(0), moment(event.expireDate).utcOffset(0)],
                     'eventTypeId': event.eventTypeId._id,
                     'tagId': temp_tagId
                 }
@@ -483,6 +484,14 @@ class editevent extends Component {
                                                 <Col className="event-col" sm={12} lg={12}>
                                                     <Form.Item
                                                         wrapperCol={{ sm: 24 }}
+                                                        name="name"
+                                                        label={<Title className="normalLabel" level={4}>Tên sự kiện</Title>}
+                                                        rules={[{ required: true, message: 'Cần nhập tên sự kiện' }]}
+                                                    >
+                                                        <Input placeholder="Tên sự kiện..." />
+                                                    </Form.Item>
+                                                    <Form.Item
+                                                        wrapperCol={{ sm: 24 }}
                                                         name="eventTypeId"
                                                         label={<Title className="normalLabel" level={4}>Hình thức</Title>}
                                                         hasFeedback
@@ -558,27 +567,38 @@ class editevent extends Component {
                                                 <Col className="event-col" sm={12} lg={12}>
                                                     <Form.Item
                                                         wrapperCol={{ sm: 24 }}
-                                                        name="name"
-                                                        label={<Title className="normalLabel" level={4}>Tên sự kiện</Title>}
-                                                        rules={[{ required: true, message: 'Cần nhập tên sự kiện' }]}
-                                                    >
-                                                        <Input placeholder="Tên sự kiện..." />
-                                                    </Form.Item>
-
-                                                    <Form.Item
-                                                        wrapperCol={{ sm: 24 }}
                                                         name="description"
                                                         label={<Title className="normalLabel" level={4}>Thông tin</Title>}
                                                         rules={[{ required: true, message: 'Cần nhập thông tin' }]}
                                                     >
-                                                        <Input.TextArea rows={5} placeholder="Eg.mô tả yêu cầu" />
+                                                        <Input.TextArea rows={8} placeholder="Eg.mô tả yêu cầu" />
                                                     </Form.Item>
+                                                    <Row>
+                                                        <Col span={24}>
 
+                                                            <Form.Item
+                                                                wrapperCol={{ sm: 24 }}
+                                                                label={<Title className="normalLabel" level={4}>Thời gian tổ chức sự kiện</Title>}
+                                                                name="RangePicker"
+                                                                rules={[{
+                                                                    type: 'array',
+                                                                    required: true,
+                                                                    message: 'Cần chọn thời gian tổ chức sự kiện!',
+                                                                }]}
+
+                                                            >
+                                                                <RangePicker
+                                                                    style={{ width: '100%' }}
+                                                                    format="DD/MM/YYYY"
+                                                                />
+                                                            </Form.Item>
+                                                        </Col>
+                                                    </Row>
                                                     <Row >
                                                         <Col span={12}>
                                                             <Form.Item
                                                                 wrapperCol={{ sm: 22 }}
-                                                                label={<Title className="normalLabel" level={4}>Ngày</Title>}
+                                                                label={<Title className="normalLabel" level={4}>Ngày diễn ra sự kiện</Title>}
                                                                 rules={[{ required: true, message: 'Cần chọn ngày bắt đầu!' }]}
                                                                 name="startDate"
                                                             >
@@ -588,7 +608,7 @@ class editevent extends Component {
                                                         <Col span={12}>
                                                             <Form.Item
                                                                 wrapperCol={{ sm: 24 }}
-                                                                label={<Title className="normalLabel" level={4}>Giờ</Title>}
+                                                                label={<Title className="normalLabel" level={4}>Giờ diễn ra sự kiện</Title>}
                                                                 rules={[{ required: true, message: 'Cần chọn giờ bắt đầu!' }]}
                                                                 name="startTime"
                                                             >

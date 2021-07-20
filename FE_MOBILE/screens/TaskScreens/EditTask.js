@@ -400,6 +400,7 @@ class EditTask extends ValidationComponent {
     });
   }
   onFinish = async () => {
+    // console.log(this.state.data)
     let temp_validate = this.validate({
       taskname: { required: true },
       taskdescription: { required: true },
@@ -411,6 +412,7 @@ class EditTask extends ValidationComponent {
       selectedPriorities: { objectDifferent: 1 },
       selectedTags: { arrayObjectHasValue: 1 },
     });
+    // console.log(temp_validate)
     if (temp_validate) {
       this.onLoading();
       let data = {
@@ -454,38 +456,59 @@ class EditTask extends ValidationComponent {
         managerId_change: managerId_change,
         availUser_change: availUser_change,
       };
-      console.log("before", data.description);
-      await axios
-        .put(`${Url()}/api/actions/${this.props.route.params.data._id}`, data, {
-          headers: {
-            Authorization: await getToken(),
-          },
-        })
-        .then((res) => {
-          alert("Cập nhật thành công");
-          client.send(
-            JSON.stringify({
-              type: "sendListNotifications",
-              notifications: res.data.notifications,
-            })
-          );
-          PushNoti.sendListPushNoti(res.data.notifications)
+      // console.log("before", data.description);
 
-          console.log("after", res.data.data.description);
-          // this.props.route.params.updateListActions(res.data.action);
-          this.props.route.params.updateData(res.data.data);
-          this.props.navigation.navigate("TaskDetail", {
-            data: res.data.data,
-          });
-        })
-        .catch((err) => {
-          let errResult = ApiFailHandler(err.response?.data?.error)
-          this.setState({
-            loggout: errResult.isExpired,
-            loadingbtn: false,
-          })
-          alert(`${errResult.message}`);
+      let expireEventDate = moment(this.state.event.expireDate).utcOffset(0)
+      let beginEventDate = moment(this.state.event.beginDate).utcOffset(0)
+      // console.log(expireEventDate.format('DD/MM/YYYY'))
+      // console.log(beginEventDate.format('DD/MM/YYYY'))
+      if (new Date(data.endDate) > new Date(expireEventDate.format('YYYY-MM-DD'))) {
+        // console.log(1)
+        alert(`Hạn chót công việc phải trước hạn chót sự kiện ${expireEventDate.format('DD/MM/YYYY')}`);
+        this.setState({
+          loadingbtn: false,
         });
+      }
+      else if (new Date(data.endDate) < new Date(beginEventDate.format('YYYY-MM-DD'))) {
+        // console.log(2)
+        alert(`Hạn chót công việc phải sau thời gian bắt đầu sự kiện ${beginEventDate.format('DD/MM/YYYY')}`);
+        this.setState({
+          loadingbtn: false,
+        });
+      }
+      else {
+        await axios
+          .put(`${Url()}/api/actions/${this.props.route.params.data._id}`, data, {
+            headers: {
+              Authorization: await getToken(),
+            },
+          })
+          .then((res) => {
+            alert("Cập nhật thành công");
+            client.send(
+              JSON.stringify({
+                type: "sendListNotifications",
+                notifications: res.data.notifications,
+              })
+            );
+            PushNoti.sendListPushNoti(res.data.notifications)
+
+            console.log("after", res.data.data.description);
+            // this.props.route.params.updateListActions(res.data.action);
+            this.props.route.params.updateData(res.data.data);
+            this.props.navigation.navigate("TaskDetail", {
+              data: res.data.data,
+            });
+          })
+          .catch((err) => {
+            let errResult = ApiFailHandler(err.response?.data?.error)
+            this.setState({
+              loggout: errResult.isExpired,
+              loadingbtn: false,
+            })
+            alert(`${errResult.message}`);
+          });
+      }
     }
   };
 

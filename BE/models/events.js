@@ -25,6 +25,16 @@ const Events = new Schema(
             index: true,
             required: true
         },
+        beginDate: {
+            type: Date,
+            index: true,
+            required: true
+        },
+        expireDate: {
+            type: Date,
+            index: true,
+            required: true
+        },
         description: {
             type: String,
             index: true,
