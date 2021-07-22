@@ -34,7 +34,7 @@ class login extends Component {
             .then(res => {
                 if (res.data.success === true) {
                     auth.login(res.data.data);
-                    if (auth.isAuthenticatedAdmin() === true || auth.isAuthenticatedDoctor() === true || auth.isAuthenticatedPharmacist() === true || auth.isAuthenticatedStaff() === true) {
+                    if (auth.isAuthenticatedAdmin() === true || auth.isAuthenticatedStaff() === true) {
                         var login = localStorage.getItem('login');
                         if (JSON.parse(login).token !== null) {
                             this.props.history.push("/");

@@ -26,7 +26,7 @@ class Auth {
             this.authenticatedDoctor = false
             this.authenticatedStaff = false
         }
-        else if(data.role === "staff"){
+        else if(data.role === "Nhân viên"){
             this.authenticatedAdmin = false
             this.authenticatedPharmarcist = false
             this.authenticatedDoctor = false

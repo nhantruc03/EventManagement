@@ -12,9 +12,9 @@ const { genDoc } = require('../controllers/scripts/genDoc')
 
 router.post("/", authenticateToken, isAdmin, create)
 router.post("/start", authenticateToken, isAdmin, start)
-router.post("/genDoc", authenticateToken, isAdmin, genDoc)
+router.post("/genDoc", authenticateToken, genDoc)
 router.get("/:id", authenticateToken, get)
-router.post("/getAll", authenticateToken, isAdmin, getAll)
+router.post("/getAll", authenticateToken, getAll)
 router.put("/:id", authenticateToken, isAdmin, update)
 router.delete("/:id", authenticateToken, isAdmin, _delete)
 

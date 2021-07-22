@@ -10,7 +10,7 @@ const { _delete } = require('../controllers/systemRoles/delete')
 
 router.post("/", authenticateToken, isAdmin, create)
 router.get("/:id", authenticateToken, get)
-router.post("/getAll", authenticateToken, isAdmin, getAll)
+router.post("/getAll", authenticateToken, getAll)
 router.put("/:id", authenticateToken, isAdmin, update)
 router.delete("/:id", authenticateToken, isAdmin, _delete)
 

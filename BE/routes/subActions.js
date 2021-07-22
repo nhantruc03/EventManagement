@@ -11,9 +11,9 @@ const { _delete } = require('../controllers/subActions/delete')
 
 router.post("/", authenticateToken, isAdmin, create)
 router.get("/:id", authenticateToken, get)
-router.post("/getAll", authenticateToken, isAdmin, getAll)
-router.post("/getAllWithUserId", authenticateToken, isAdmin, getAllWithUserId)
-router.put("/:id", authenticateToken, isAdmin, update)
+router.post("/getAll", authenticateToken, getAll)
+router.post("/getAllWithUserId", authenticateToken, getAllWithUserId)
+router.put("/:id", authenticateToken, update)
 router.delete("/:id", authenticateToken, isAdmin, _delete)
 
 module.exports = router

@@ -8,10 +8,10 @@ const { getAll } = require('../controllers/guestTypes/getAll')
 const { update } = require('../controllers/guestTypes/update')
 const { _delete } = require('../controllers/guestTypes/delete')
 
-router.post("/", authenticateToken, isAdmin, create)
+router.post("/", authenticateToken, create)
 router.get("/:id", authenticateToken, get)
-router.post("/getAll", authenticateToken, isAdmin, getAll)
-router.put("/:id", authenticateToken, isAdmin, update)
-router.delete("/:id", authenticateToken, isAdmin, _delete)
+router.post("/getAll", authenticateToken, getAll)
+router.put("/:id", authenticateToken, update)
+router.delete("/:id", authenticateToken, _delete)
 
 module.exports = router

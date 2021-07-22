@@ -135,33 +135,33 @@ class router extends Component {
                 <SecureRouteAdmin exact path="/admin/addfaculties" component={addFaculties} layout={pageAdmin} />
                 <SecureRouteAdmin exact path="/admin/editfaculties/:id" component={editFaculties} layout={pageAdmin} />
 
-                <SecureRouteAdmin exact path="/events" component={events} layout={Page} />
-                <SecureRouteAdmin exact path="/events/:id" component={eventDetails} layout={Page} />
-                <SecureRouteAdmin exact path="/editevent/:id" component={editevent} layout={Page} />
-                <SecureRouteAdmin exact path="/addevents" component={addevents} layout={Page} />
-                <SecureRouteAdmin exact path="/eventreport/:id" component={eventreport} layout={Page} />
+                <SecureRouteStaff exact path="/events" component={events} layout={Page} />
+                <SecureRouteStaff exact path="/events/:id" component={eventDetails} layout={Page} />
+                <SecureRouteStaff exact path="/editevent/:id" component={editevent} layout={Page} />
+                <SecureRouteStaff exact path="/addevents" component={addevents} layout={Page} />
+                <SecureRouteStaff exact path="/eventreport/:id" component={eventreport} layout={Page} />
 
-                <SecureRouteAdmin exact path="/eventclones" component={eventClones} layout={Page} />
+                <SecureRouteStaff exact path="/eventclones" component={eventClones} layout={Page} />
                 {/* <SecureRouteAdmin exact path="/eventclones/:id" component={eventcloneDetails} layout={Page} /> */}
-                <SecureRouteAdmin exact path="/eventclones/:id" component={editeventClones} layout={Page} />
+                <SecureRouteStaff exact path="/eventclones/:id" component={editeventClones} layout={Page} />
                 {/* <SecureRouteAdmin exact path="/editevent/:id" component={editevent} layout={Page} /> */}
-                <SecureRouteAdmin exact path="/addeventclones" component={addeventClones} layout={Page} />
+                <SecureRouteStaff exact path="/addeventclones" component={addeventClones} layout={Page} />
 
-                <SecureRouteAdmin exact path="/addscripts/:id" component={addscripts} layout={Page} />
-                <SecureRouteAdmin exact path="/editscripts/:id" component={editscripts} layout={Page} />
-                <SecureRouteAdmin exact path="/viewscripts/:id" component={viewscripts} layout={Page} />
+                <SecureRouteStaff exact path="/addscripts/:id" component={addscripts} layout={Page} />
+                <SecureRouteStaff exact path="/editscripts/:id" component={editscripts} layout={Page} />
+                <SecureRouteStaff exact path="/viewscripts/:id" component={viewscripts} layout={Page} />
 
-                <SecureRouteAdmin exact path="/viewscriptsclone/:id" component={viewscriptsForClone} layout={Page} />
-                <SecureRouteAdmin exact path="/addscriptsclone/:id" component={addscriptsForClone} layout={Page} />
-                <SecureRouteAdmin exact path="/editscriptsclone/:id" component={editscriptsForClone} layout={Page} />
+                <SecureRouteStaff exact path="/viewscriptsclone/:id" component={viewscriptsForClone} layout={Page} />
+                <SecureRouteStaff exact path="/addscriptsclone/:id" component={addscriptsForClone} layout={Page} />
+                <SecureRouteStaff exact path="/editscriptsclone/:id" component={editscriptsForClone} layout={Page} />
 
 
-                <SecureRouteAdmin exact path="/actions" component={listactions} layout={Page} />
-                <SecureRouteAdmin exact path="/actions/:id" component={actiondetails} layout={Page} />
-                <SecureRouteAdmin exact path="/actionsclone" component={listactionsForClone} layout={Page} />
-                <SecureRouteAdmin exact path="/actionsclone/:id" component={actiondetailsForClone} layout={Page} />
+                <SecureRouteStaff exact path="/actions" component={listactions} layout={Page} />
+                <SecureRouteStaff exact path="/actions/:id" component={actiondetails} layout={Page} />
+                <SecureRouteStaff exact path="/actionsclone" component={listactionsForClone} layout={Page} />
+                <SecureRouteStaff exact path="/actionsclone/:id" component={actiondetailsForClone} layout={Page} />
 
-                <SecureRouteAdmin exact path="/videocall/:id" component={videocall} layout={Page} />
+                <SecureRouteStaff exact path="/videocall/:id" component={videocall} layout={Page} />
                 
                 
             </div>

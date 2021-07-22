@@ -5,7 +5,7 @@ const { authenticateToken } = require("../services/authenticationToken")
 const { getAll } = require('../controllers/notifications/getAll')
 const { update } = require('../controllers/notifications/update')
 
-router.post("/getAll", authenticateToken, isAdmin, getAll)
-router.put("/", authenticateToken, isAdmin, update)
+router.post("/getAll", authenticateToken, getAll)
+router.put("/", authenticateToken, update)
 
 module.exports = router

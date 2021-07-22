@@ -19,11 +19,12 @@ class SubActionItems extends Component {
         }
     }
     render() {
+        console.log(this.props.data)
         return (
             <div className="calendar-sub-action flex-container-row">
 
                 <div className="vl-sub-action"></div>
-                <Link to={`/actions/${this.props.data.actionId}`}>
+                <Link to={`/actions/${this.props.data.actionId._id}`}>
                     <div style={{ marginLeft: '20px', maxWidth: '100%' }}>
                         <Tooltip title={
                             <div>
