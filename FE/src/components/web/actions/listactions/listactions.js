@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, message, Modal, Row, Select, Image } from "antd";
+import { Button, Col, Form, Input, message, Modal, Row, Select, Image, Dropdown, Menu, Checkbox } from "antd";
 import { Content } from "antd/lib/layout/layout";
 import Title from "antd/lib/typography/Title";
 import React, { Component } from "react";
@@ -12,6 +12,9 @@ import * as constants from "../../constant/actions";
 import checkPermisson from "../../helper/checkPermissions";
 import getPermisson from "../../helper/Credentials";
 import ApiFailHandler from '../../helper/ApiFailHandler'
+import {
+  MenuUnfoldOutlined
+} from '@ant-design/icons';
 const { Option } = Select;
 const formItemLayout = {
   labelCol: {
@@ -35,7 +38,8 @@ class listactions extends Component {
       temp_data: [],
       currentPermissons: [],
       modalEditActionTypeVisible: false,
-      ActionTypeForEdit: {}
+      ActionTypeForEdit: {},
+      tags: []
     };
   }
 
@@ -215,8 +219,18 @@ class listactions extends Component {
 
   async componentDidMount() {
     this._isMounted = true;
-    const [events] = await trackPromise(
+    const [tags, events] = await trackPromise(
       Promise.all([
+        axios.post('/api/action-tags/getAll', {}, {
+          headers: {
+            'Authorization': AUTH()
+          }
+        })
+          .then((res) =>
+            res.data.data
+          ).catch(err => {
+            ApiFailHandler(err.response?.data?.error)
+          }),
         axios
           .post(
             "/api/events/getAll",
@@ -237,6 +251,7 @@ class listactions extends Component {
       if (this._isMounted) {
         this.setState({
           events: events,
+          tags: tags
         });
       }
     }
@@ -374,6 +389,40 @@ class listactions extends Component {
     });
   };
 
+
+  menu = () => (
+    <Menu>
+      <Menu.Item>
+        <Checkbox.Group onChange={this.onChange} >
+          <div className="flex-container-column">
+            {this.renderFilterTags()}
+          </div>
+        </Checkbox.Group>
+      </Menu.Item>
+    </Menu>
+  )
+
+  renderFilterTags = () =>
+    this.state.tags.map((e, key) => {
+      return (
+        <Checkbox key={key} value={e._id}>{e.name}</Checkbox>
+      )
+    })
+
+
+  onChange = (checkedValues) => {
+    // console.log()
+    let temp
+    if (checkedValues.length > 0) {
+      temp = this.state.temp_data.filter(e => {
+        return e.tagsId.some(x => checkedValues.includes(x._id))
+      })
+    } else {
+      temp = this.state.temp_data
+    }
+    this.getSearchData(temp)
+  }
+
   render() {
     if (this.state.events !== null) {
       return (
@@ -390,6 +439,10 @@ class listactions extends Component {
                     multi={true}
                     data={this.state.temp_data}
                     getSearchData={(e) => this.getSearchData(e)}
+                    suffix={
+                      <Dropdown className="flex-row-item-right" overlay={this.menu} placement="bottomCenter" arrow >
+                        <MenuUnfoldOutlined />
+                      </Dropdown>}
                   />
                   {checkPermisson(
                     this.state.currentPermissons,

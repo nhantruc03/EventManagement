@@ -173,8 +173,6 @@ class listevents extends Component {
                                         <MenuUnfoldOutlined />
                                     </Dropdown>}
                             />
-
-
                         </div>
                     </Col>
                     {this.state.currentUser.role === 'Admin' ?
@@ -230,51 +228,6 @@ class listevents extends Component {
                             )}
                         </div>
                     </Col>
-                    {/* {this.state.data_future.length > 0 ?
-                        <Col lg={24} xl={8} className="list-events-col">
-                            <div style={{ padding: '0 20px' }} className="flex-container-row">
-                                <Title level={3}>Sắp diễn ra:</Title>
-                                <div className="flex-row-item-right">
-                                    <Title level={3}>{this.state.data_future.length}</Title>
-                                </div>
-                            </div>
-                            <div className="list-events-col-data">
-                                {this.state.data_future.map((value, key) =>
-                                    <EventCard data={value} key={key} />
-                                )}
-                            </div>
-                        </Col> : null
-                    } */}
-                    {/* {this.state.data_ongoing.length > 0 ?
-                        <Col lg={24} xl={8} className="list-events-col" >
-                            <div style={{ padding: '0 20px' }} className="flex-container-row">
-                                <Title level={3}>Đang diễn ra:</Title>
-                                <div className="flex-row-item-right">
-                                    <Title level={3}>{this.state.data_ongoing.length}</Title>
-                                </div>
-                            </div>
-                            <div className="list-events-col-data">
-                                {this.state.data_ongoing.map((value, key) =>
-                                    <EventCard data={value} key={key} />
-                                )}
-                            </div>
-                        </Col> : null
-                    } */}
-                    {/* {this.state.data_past.length > 0 ?
-                        <Col lg={24} xl={8} className="list-events-col" >
-                            <div style={{ padding: '0 20px' }} className="flex-container-row">
-                                <Title level={3}>Đã diễn ra:</Title>
-                                <div className="flex-row-item-right">
-                                    <Title level={3}>{this.state.data_past.length}</Title>
-                                </div>
-                            </div>
-                            <div className="list-events-col-data">
-                                {this.state.data_past.map((value, key) =>
-                                    <EventCard data={value} key={key} />
-                                )}
-                            </div>
-                        </Col> : null
-                    } */}
                 </Row>
 
             </Content>
